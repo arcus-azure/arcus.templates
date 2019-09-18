@@ -29,7 +29,7 @@ namespace Arcus.Template.WebApi.Controllers
         /// <summary>
         ///     Get health of API application.
         /// </summary>
-        /// <remarks>Provides an indication about the health of the API and its dependencies (Sim Database).</remarks>
+        /// <remarks>Provides an indication about the health of the API.</remarks>
         /// <response code="200">API is healthy</response>
         /// <response code="503">API is unhealthy or in degraded state</response>
         [HttpGet]

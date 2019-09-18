@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <Authors>Arcus</Authors>
+    <Company>Arcus</Company>
+    <RepositoryType>Git</RepositoryType>
+    <Description>Provide a template to easily build Web APIs running in Azure.</Description>
+    <PackageTags>Azure;WebAPI;App Services;Web App;Web;API</PackageTags>
+    <Copyright>Copyright (c) Arcus</Copyright>
+    <PackageLicenseUrl>https://github.com/arcus-azure/arcus.templates/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/arcus-azure/arcus.templates</PackageProjectUrl>
+    <PackageTags>Azure;WebAPI;App Services;Web App;Web;API</PackageTags>
+    <RepositoryUrl>https://github.com/arcus-azure/arcus.templates</RepositoryUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/arcus-azure/arcus/master/media/arcus.png</PackageIconUrl>
+    <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include=".template.config\template.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
+    <PackageReference Include="Arcus.WebApi.Logging" Version="0.2"/>
+  </ItemGroup>
+
+</Project>

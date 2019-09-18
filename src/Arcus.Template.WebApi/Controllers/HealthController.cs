@@ -11,7 +11,7 @@ namespace Arcus.Template.WebApi.Controllers
     /// API endpoint to check the health of the application.
     /// </summary>
     [ApiController]
-    [Route("api/v1/[controller]")]
+    [Route("api/v1/health")]
     public class HealthController : ControllerBase
     {
         private readonly HealthCheckService _healthCheckService;

@@ -13,8 +13,7 @@ namespace Arcus.Template.WebApi
         {
             services.AddMvc();
 
-            services.AddHealthChecks()
-                    .AddCheck("self", () => HealthCheckResult.Healthy());
+            services.AddHealthChecks();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -26,8 +25,6 @@ namespace Arcus.Template.WebApi
             #warning "Please configure application with authentication mechanism: https://webapi.arcus-azure.net/features/security/auth/shared-access-key"
 
             app.UseMvc();
-
-            app.UseHealthChecks("/health");
         }
     }
 }

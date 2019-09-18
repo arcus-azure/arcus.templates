@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Arcus.Template.WebApi
 {
@@ -15,6 +16,7 @@ namespace Arcus.Template.WebApi
         public static IWebHostBuilder CreateWebHostBuilder(string[] args)
         {
             return WebHost.CreateDefaultBuilder(args)
+                          .ConfigureLogging(logging => logging.AddConsole())
                           .UseStartup<Startup>();
         }
     }

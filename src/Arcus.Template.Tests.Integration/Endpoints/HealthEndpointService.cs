@@ -25,11 +25,13 @@ namespace Arcus.Template.Tests.Integration.Endpoints
         public HealthEndpointService(TestConfig configuration, ITestOutputHelper outputWriter)
         {
             Guard.NotNull(configuration, nameof(configuration));
+            Guard.NotNull(outputWriter, nameof(outputWriter));
 
             string healthEndpoint = configuration.GetBaseUrl()?.AppendPathSegments("health");
             Guard.NotNullOrWhitespace(healthEndpoint, nameof(healthEndpoint), "Provided test configuration doesn't contain a base API url to construct a health endpoint from");
 
             _healthEndpoint = healthEndpoint;
+            _outputWriter = outputWriter;
         }
 
         /// <summary>

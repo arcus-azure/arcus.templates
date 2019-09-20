@@ -39,9 +39,9 @@ namespace Arcus.Template.Tests.Integration.Endpoints
         /// </summary>
         public async Task<HttpResponseMessage> GetAsync()
         {
-            _outputWriter.WriteLine("GET {endpoint} ->", _healthEndpoint);
+            _outputWriter.WriteLine("GET {0} ->", _healthEndpoint);
             var response = await HttpClient.GetAsync(_healthEndpoint);
-            _outputWriter.WriteLine("<- {code}", response.StatusCode);
+            _outputWriter.WriteLine("<- {0}", response.StatusCode);
 
             return response;
         }

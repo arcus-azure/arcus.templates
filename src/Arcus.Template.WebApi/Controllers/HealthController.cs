@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using GuardNet;
-using Swashbuckle.AspNetCore.Annotations;
 
 namespace Arcus.Template.WebApi.Controllers
 {
@@ -33,10 +32,9 @@ namespace Arcus.Template.WebApi.Controllers
         /// <remarks>Provides an indication about the health of the API.</remarks>
         /// <response code="200">API is healthy</response>
         /// <response code="503">API is unhealthy or in degraded state</response>
-        [HttpGet]
+        [HttpGet(Name = "Health_Get")]
         [ProducesResponseType(typeof(HealthReport), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(HealthReport), StatusCodes.Status503ServiceUnavailable)]
-        [SwaggerOperation(OperationId = "Health_Get")]
         public async Task<IActionResult> Get()
         {
             HealthReport healthReport = await _healthCheckService.CheckHealthAsync();

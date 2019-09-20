@@ -11,7 +11,8 @@ WORKDIR "/src/Arcus.Template.WebApi"
 RUN dotnet build "Arcus.Template.WebApi.csproj" -c Release
 RUN dotnet new -i "bin/Release/Arcus.Template.WebApi.*.nupkg"
 RUN dotnet new arcus-webapi -o /output -n MyProject
-RUN dotnet build "output/MyProject.csproj" -c Release -o /app
+WORKDIR "output"
+RUN dotnet build "MyProject.csproj" -c Release -o /app
 
 FROM build AS publish
 RUN dotnet publish "MyProject.csproj" -c Release -o /app

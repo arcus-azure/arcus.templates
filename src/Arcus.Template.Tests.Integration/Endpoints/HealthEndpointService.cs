@@ -25,6 +25,8 @@ namespace Arcus.Template.Tests.Integration.Endpoints
 
             string healthEndpoint = configuration.GetBaseUrl()?.AppendPathSegments("health");
             Guard.NotNullOrWhitespace(healthEndpoint, nameof(healthEndpoint), "Provided test configuration doesn't contain a base API url to construct a health endpoint from");
+
+            _healthEndpoint = healthEndpoint;
         }
 
         /// <summary>

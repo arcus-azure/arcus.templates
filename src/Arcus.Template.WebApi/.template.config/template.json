@@ -24,8 +24,17 @@
         "**/*.user",
         "**/*.lock.json",
         "**/Dockerfile",
-        "**/launchSettings.json" 
+        "**/launchSettings.json"
       ]
     }
-  ]
+  ],
+  "symbols": {
+    "AuthoringMode": {
+      "type": "generated",
+      "generator": "constant",
+      "parameters": {
+        "value": false
+      }
+    }
+  }
 }

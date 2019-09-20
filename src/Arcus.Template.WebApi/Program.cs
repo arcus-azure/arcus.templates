@@ -15,7 +15,10 @@ namespace Arcus.Template.WebApi
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args)
         {
+            const string httpEndpointUrl = "http://+:5000";
+
             return WebHost.CreateDefaultBuilder(args)
+                          .UseUrls(httpEndpointUrl)
                           .ConfigureLogging(logging => logging.AddConsole())
                           .UseStartup<Startup>();
         }

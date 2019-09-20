@@ -1,0 +1,9 @@
+version: '3.4'
+
+services:
+  arcus.template.webapi:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ARCUS_HTTP_PORT=88
+    ports:
+      - "42063:88"

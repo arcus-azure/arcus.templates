@@ -6,6 +6,10 @@
     <Company>Arcus</Company>
     <RepositoryType>Git</RepositoryType>
     <Description>Provide a template to easily build Web APIs running in Azure.</Description>
+    <IsPackable>true</IsPackable>
+    <PackageId>Arcus.Template.WebAPi</PackageId>
+    <Title>Template for web API project</Title>
+    <PackageType>Template</PackageType>
     <PackageTags>Azure;WebAPI;App Services;Web App;Web;API</PackageTags>
     <Copyright>Copyright (c) Arcus</Copyright>
     <PackageLicenseUrl>https://github.com/arcus-azure/arcus.templates/blob/master/LICENSE</PackageLicenseUrl>
@@ -15,16 +19,22 @@
     <PackageIconUrl>https://raw.githubusercontent.com/arcus-azure/arcus/master/media/arcus.png</PackageIconUrl>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <IncludeContentInPack>true</IncludeContentInPack>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <ContentTargetFolders>content</ContentTargetFolders>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerComposeProjectPath>..\Arcus.Template.Orchestrator.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include=".template.config\template.json" />
+    <Content Include="**\*" Exclude="**\bin\**\*;**\obj\**\*;**\.vs\**\*;**\launchSettings.json" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
-    <PackageReference Include="Arcus.WebApi.Logging" Version="0.2"/>
+    <PackageReference Include="Arcus.WebApi.Logging" Version="0.2" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.7.12" />
   </ItemGroup>
 
 </Project>

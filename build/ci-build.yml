@@ -1,0 +1,107 @@
+name: $(date:yyyyMMdd)$(rev:.r)
+
+trigger:
+  branches:
+    include:
+      - master
+  paths:
+    include:
+      - src/*
+
+pr:
+  paths:
+    include:
+      - src/*
+      - build/ci-build.yml
+
+variables:
+  - group: 'Build Configuration'
+  # Always use fixed version for .NET Core SDK
+  - name: 'DotNet.Sdk.Version'
+    value: '2.2.105'
+  - name: 'Project'
+    value: 'Arcus.Template'
+  - name: 'Arcus_Api_BaseUrl'
+    value: 'http://localhost:888/api/v1'
+
+stages:
+  - stage: Build
+    jobs:
+      - job: Compile
+        pool:
+          vmImage: 'ubuntu-16.04'
+        steps:
+          - task: DotNetCoreInstaller@0
+            displayName: 'Import .NET Core SDK ($(DotNet.Sdk.Version))'
+            inputs:
+              version: '$(DotNet.Sdk.Version)'
+          - task: DotNetCoreCLI@2
+            displayName: 'Compile'
+            inputs:
+              projects: 'src/*.sln'
+              arguments: '--configuration $(Build.Configuration)'
+          - task: CopyFiles@2
+            displayName: 'Copy build artifacts'
+            inputs:
+              contents: '**/?(bin|obj)/**'
+              targetFolder: '$(Pipeline.Workspace)/build'
+          - task: PublishPipelineArtifact@0
+            displayName: 'Publish build artifacts'
+            inputs:
+              targetPath: '$(Pipeline.Workspace)/build'
+              artifactName: Build
+
+  - stage: IntegrationTests
+    displayName: Integration Tests
+    dependsOn: Build
+    condition: succeeded()
+    jobs:
+      - job: RunIntegrationTests
+        displayName: 'Run integration tests'
+        pool:
+          vmImage: 'ubuntu-16.04'
+        steps:
+          - task: DownloadPipelineArtifact@2
+            displayName: 'Download build artifacts'
+            inputs:
+              artifact: 'Build'
+              path: '$(Build.SourcesDirectory)'
+          - task: qetza.replacetokens.replacetokens-task.replacetokens@3
+            displayName: 'Replace integration test tokens'
+            inputs:
+              rootDirectory: 'src/$(Project).Tests.Integration/'
+              targetFiles: 'appsettings.json'
+              encoding: 'auto'
+              writeBOM: true
+              actionOnMissing: 'fail'
+              keepToken: false
+              tokenPrefix: '#{'
+              tokenSuffix: '}#'
+          - task: DotNetCoreInstaller@0
+            displayName: 'Import .NET Core SDK ($(DotNet.Sdk.Version)) in web API template'
+            inputs:
+              version: '$(DotNet.Sdk.Version)'
+          - task: Docker@1
+            displayName: 'Build Docker image'
+            inputs:
+              dockerFile: src/$(Project).WebApi/Dockerfile
+              imageName: 'azure-template-webapi:$(Build.BuildId)'
+              useDefaultContext: false
+              buildContext: src
+          - task: Docker@1
+            displayName: 'Run web API template Docker image'
+            inputs:
+              command: 'Run an image'
+              imageName: 'azure-template-webapi:$(Build.BuildId)'
+              containerName: 'azure-template-webapi'
+              ports: '888:888'
+              envVars: |
+                ARCUS_HTTP_PORT=888
+          - task: DotNetCoreCLI@2
+            displayName: 'Run integration tests'
+            inputs:
+              command: test
+              projects: 'src/**/$(Project).Tests.Integration.csproj'
+              arguments: '--configuration $(Build.Configuration)'
+              nobuild: true
+              publishTestResults: true

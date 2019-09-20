@@ -13,5 +13,19 @@
   "tags": {
     "language": "C#",
     "type": "project"
-  }
+  },
+  "sources": [
+    {
+      "exclude": [
+        "**/[Bb]in/**",
+        "**/[Oo]bj/**",
+        ".template.config/**/*",
+        "**/*.filelist",
+        "**/*.user",
+        "**/*.lock.json",
+        "**/Dockerfile",
+        "**/launchSettings.json" 
+      ]
+    }
+  ]
 }

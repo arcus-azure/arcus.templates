@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Arcus.Template.Tests.Integration.Fixture;
 using Flurl;
 using GuardNet;
+using Xunit.Abstractions;
 
 namespace Arcus.Template.Tests.Integration.Endpoints
 {
@@ -12,6 +13,7 @@ namespace Arcus.Template.Tests.Integration.Endpoints
     public class HealthEndpointService
     {
         private readonly string _healthEndpoint;
+        private readonly ITestOutputHelper _outputWriter;
         
         private static readonly HttpClient HttpClient = new HttpClient();
 
@@ -19,7 +21,8 @@ namespace Arcus.Template.Tests.Integration.Endpoints
         /// Initializes a new instance of the <see cref="HealthEndpointService"/> class.
         /// </summary>
         /// <param name="configuration">The configuration used to call the health endpoints of the API.</param>
-        public HealthEndpointService(TestConfig configuration)
+        /// <param name="outputWriter">The test logger to document run operations in the health functionality.</param>
+        public HealthEndpointService(TestConfig configuration, ITestOutputHelper outputWriter)
         {
             Guard.NotNull(configuration, nameof(configuration));
 
@@ -34,7 +37,10 @@ namespace Arcus.Template.Tests.Integration.Endpoints
         /// </summary>
         public async Task<HttpResponseMessage> GetAsync()
         {
+            _outputWriter.WriteLine("GET {endpoint} ->", _healthEndpoint);
             var response = await HttpClient.GetAsync(_healthEndpoint);
+            _outputWriter.WriteLine("<- {code}", response.StatusCode);
+
             return response;
         }
     }

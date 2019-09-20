@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Arcus.Template.Tests.Integration.Fixture;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Arcus.Template.Tests.Integration.Endpoints.v1
 {
@@ -12,10 +13,10 @@ namespace Arcus.Template.Tests.Integration.Endpoints.v1
         private readonly TestConfig _configuration;
         private readonly HealthEndpointService _healthService;
 
-        public HealthEndpointTests()
+        public HealthEndpointTests(ITestOutputHelper outputWriter)
         {
             _configuration = TestConfig.Create();
-            _healthService = new HealthEndpointService(_configuration);
+            _healthService = new HealthEndpointService(_configuration, outputWriter);
         }
 
         [Fact]

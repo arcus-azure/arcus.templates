@@ -10,7 +10,8 @@ COPY . .
 WORKDIR "/src/Arcus.Template.WebApi"
 RUN dotnet build "Arcus.Template.WebApi.csproj" -c Release
 RUN dotnet new -i "bin/Release/Arcus.Template.WebApi.*.nupkg"
-RUN dotnet new arcus-webapi -o /output -n MyProject
+RUN mkdir output \
+	&& dotnet new arcus-webapi -o /output -n MyProject \
 	&& dotnet build "output/MyProject.csproj" -c Release -o /app
 
 WORKDIR "/output"

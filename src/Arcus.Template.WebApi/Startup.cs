@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Builder;
+using System.Linq;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.DependencyInjection;
-using System.Linq;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace Arcus.Template.WebApi
 {
@@ -20,6 +21,8 @@ namespace Arcus.Template.WebApi
                 
                 RestrictToJsonContentType(options);
             });
+
+            services.AddHealthChecks();
         }
 
         private static void RestrictToJsonContentType(MvcOptions options)

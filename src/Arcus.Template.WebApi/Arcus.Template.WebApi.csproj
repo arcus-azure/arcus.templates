@@ -7,7 +7,7 @@
     <RepositoryType>Git</RepositoryType>
     <Description>Provide a template to easily build Web APIs running in Azure.</Description>
     <IsPackable>true</IsPackable>
-    <PackageId>Arcus.Template.WebAPi</PackageId>
+    <PackageId>Arcus.Template.WebApi</PackageId>
     <Title>Template for web API project</Title>
     <PackageType>Template</PackageType>
     <PackageTags>Azure;WebAPI;App Services;Web App;Web;API</PackageTags>

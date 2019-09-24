@@ -25,14 +25,75 @@ variables:
     value: 'http://localhost:5000/api/v1'
 
 stages:
+  - stage: Build
+    jobs:
+      - job: Compile
+        pool:
+          vmImage: 'ubuntu-16.04'
+        steps:
+          - task: DotNetCoreInstaller@0
+            displayName: 'Import .NET Core SDK ($(DotNet.Sdk.Version))'
+            inputs:
+              version: '$(DotNet.Sdk.Version)'
+          - task: DotNetCoreCLI@2
+            displayName: 'Compile'
+            inputs:
+              projects: 'src/*.sln'
+              arguments: '--configuration $(Build.Configuration)'
+          - task: CopyFiles@2
+            displayName: 'Copy build artifacts'
+            inputs:
+              contents: '**/?(bin|obj)/**'
+              targetFolder: '$(Pipeline.Workspace)/build'
+          - task: PublishPipelineArtifact@0
+            displayName: 'Publish build artifacts'
+            inputs:
+              targetPath: '$(Pipeline.Workspace)/build'
+              artifactName: Build
+
   - stage: IntegrationTests
     displayName: Integration Tests
+    dependsOn: Build
+    condition: succeeded()
     jobs:
       - job: RunIntegrationTests
         displayName: 'Run integration tests'
         pool:
           vmImage: 'ubuntu-16.04'
         steps:
+          - task: DownloadPipelineArtifact@2
+            displayName: 'Download build artifacts'
+            inputs:
+              artifact: 'Build'
+              path: '$(Build.SourcesDirectory)'
+          - task: DotNetCoreInstaller@0
+            displayName: 'Import .NET Core SDK ($(DotNet.Sdk.Version)) in web API template'
+            inputs:
+              version: '$(DotNet.Sdk.Version)'
+          - task: DotNetCoreCLI@2
+            displayName: 'Install template'
+            command: 'custom'
+            custom: 'new -i "src/$(Project).WebApi/bin/$(Build.Configuration)/$(Project).WebApi.*.nupkg"'
+          - task: DotNetCoreCLI@2
+            displayName: 'Create new project from template'
+            command: 'custom'
+            custom: 'new arcus-webapi -n MyProject -o /output'
+          - task: Docker@1
+            displayName: 'Build Docker image from newly created web API project from template'
+            inputs:
+              dockerFile: output/Dockerfile
+              imageName: 'myproject:$(Build.BuildId)'
+              buildContext: output
+              useDefaultContext: false
+          - task: Docker@1
+            displayName: 'Run new web API project Docker image from template'
+            inputs:
+              command: 'Run an image'
+              imageName: 'myproject:$(Build.BuildId)'
+              containerName: 'myproject'
+              ports: '5000:5000'
+              envVars: |
+                ARCUS_HTTP_PORT=5000
           - task: qetza.replacetokens.replacetokens-task.replacetokens@3
             displayName: 'Replace integration test tokens'
             inputs:
@@ -44,26 +105,6 @@ stages:
               keepToken: false
               tokenPrefix: '#{'
               tokenSuffix: '}#'
-          - task: DotNetCoreInstaller@0
-            displayName: 'Import .NET Core SDK ($(DotNet.Sdk.Version)) in web API template'
-            inputs:
-              version: '$(DotNet.Sdk.Version)'
-          - task: Docker@1
-            displayName: 'Build Docker image'
-            inputs:
-              dockerFile: src/$(Project).WebApi/Dockerfile
-              imageName: 'azure-template-webapi:$(Build.BuildId)'
-              useDefaultContext: false
-              buildContext: src
-          - task: Docker@1
-            displayName: 'Run web API template Docker image'
-            inputs:
-              command: 'Run an image'
-              imageName: 'azure-template-webapi:$(Build.BuildId)'
-              containerName: 'azure-template-webapi'
-              ports: '5000:5000'
-              envVars: |
-                ARCUS_HTTP_PORT=5000
           - task: DotNetCoreCLI@2
             displayName: 'Run integration tests'
             inputs:
@@ -72,3 +113,26 @@ stages:
               arguments: '--configuration $(Build.Configuration)'
               nobuild: true
               publishTestResults: true
+
+  - stage: ReleaseToMyget
+    displayName: 'Release to MyGet'
+    dependsOn: IntegrationTests
+    condition: succeeded()
+    jobs:
+      - job: PushToMyGet
+        displayName: 'Push to MyGet'
+        pool:
+          vmImage: 'ubuntu-16.04'
+        steps:
+          - task: DownloadPipelineArtifact@2
+            displayName: 'Download build artifacts'
+            inputs:
+              artifact: 'Build'
+              path: '$(Build.SourcesDirectory)'
+          - task: NuGetCommand@2
+            displayName: 'Push to MyGet.org'
+            inputs:
+              command: push
+              packagesToPush: 'src/**/*.nupkg'
+              nuGetFeedType: external
+              publishFeedCredentials: 'MyGet.org (Push)'

@@ -9,15 +9,11 @@ RUN dotnet restore "Arcus.Template.WebApi/Arcus.Template.WebApi.csproj"
 COPY . .
 WORKDIR "/src/Arcus.Template.WebApi"
 RUN dotnet build "Arcus.Template.WebApi.csproj" -c Release
-RUN dotnet new -i "bin/Release/Arcus.Template.WebApi.*.nupkg"
-RUN dotnet new arcus-webapi -n MyProject -o /output
-WORKDIR "/output"
-RUN dotnet build -c Release -o /app	
 
 FROM build AS publish
-RUN dotnet publish "MyProject.csproj" -c Release -o /app
+RUN dotnet publish "Arcus.Template.WebApi.csproj" -c Release -o /app
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
-ENTRYPOINT ["dotnet", "MyProject.dll"]
+ENTRYPOINT ["dotnet", "Arcus.Template.WebApi.dll"]

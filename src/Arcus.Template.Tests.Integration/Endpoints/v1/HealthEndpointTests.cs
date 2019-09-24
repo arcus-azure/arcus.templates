@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using Arcus.Template.Tests.Integration.Fixture;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -27,6 +28,9 @@ namespace Arcus.Template.Tests.Integration.Endpoints.v1
             {
                 // Assert
                 Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+                var healthReport = await response.Content.ReadAsAsync<HealthReport>();
+                Assert.NotNull(healthReport);
+                Assert.Equal(HealthStatus.Healthy, healthReport.Status);
             }
         }
     }

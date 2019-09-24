@@ -1,6 +1,10 @@
-﻿using Microsoft.AspNetCore.Builder;
+using System.Linq;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 #if Auth
 using Arcus.Security.Secrets.Core.Caching;
 using Arcus.Security.Secrets.Core.Interfaces;
@@ -22,10 +26,29 @@ namespace Arcus.Template.WebApi
             services.AddScoped<ICachedSecretProvider>(serviceProvider => new CachedSecretProvider(secretProvider: null));
 #endif
 
-#if SharedAccessKeyAuth
-            #warning "Please provide a valid request header name and secret name to the shared access filter"
-            services.AddMvc(options => options.Filters.Add(new SharedAccessKeyAuthenticationFilter("YOUR REQUEST HEADER NAME", "YOUR SECRET NAME")));
+            services.AddMvc(options => 
+            {
+                options.ReturnHttpNotAcceptable = true;
+                options.RespectBrowserAcceptHeader = true;
+                
+                RestrictToJsonContentType(options);
+
+#if SharedAccessKeyAuth                
+                #warning "Please provide a valid request header name and secret name to the shared access filter"    
+                options.Filters.Add(new SharedAccessKeyAuthenticationFilter("YOUR REQUEST HEADER NAME", "YOUR SECRET NAME"))
 #endif
+            });
+
+            services.AddHealthChecks();
+        }
+
+        private static void RestrictToJsonContentType(MvcOptions options)
+        {
+            var allButJsonInputFormatters = options.InputFormatters.Where(formatter => !(formatter is JsonInputFormatter));
+            foreach (IInputFormatter inputFormatter in allButJsonInputFormatters)
+            {
+                options.InputFormatters.Remove(inputFormatter);
+            }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -74,12 +74,14 @@ stages:
             displayName: 'Install template'
             inputs:
               command: 'custom'
-              custom: 'new -i "src/$(Project).WebApi/bin/$(Build.Configuration)/$(Project).WebApi.*.nupkg"'
+              custom: 'new'
+              arguments: '-i "src/$(Project).WebApi/bin/$(Build.Configuration)/$(Project).WebApi.*.nupkg"'
           - task: DotNetCoreCLI@2
             displayName: 'Create new project from template'
             inputs:
               command: 'custom'
-              custom: 'new arcus-webapi -n MyProject -o /output'
+              custom: 'new'
+              arguments: 'arcus-webapi -n MyProject -o /output'
           - task: Docker@1
             displayName: 'Build Docker image from newly created web API project from template'
             inputs:

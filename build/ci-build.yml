@@ -25,47 +25,14 @@ variables:
     value: 'http://localhost:5000/api/v1'
 
 stages:
-  - stage: Build
-    jobs:
-      - job: Compile
-        pool:
-          vmImage: 'ubuntu-16.04'
-        steps:
-          - task: DotNetCoreInstaller@0
-            displayName: 'Import .NET Core SDK ($(DotNet.Sdk.Version))'
-            inputs:
-              version: '$(DotNet.Sdk.Version)'
-          - task: DotNetCoreCLI@2
-            displayName: 'Compile'
-            inputs:
-              projects: 'src/*.sln'
-              arguments: '--configuration $(Build.Configuration)'
-          - task: CopyFiles@2
-            displayName: 'Copy build artifacts'
-            inputs:
-              contents: '**/?(bin|obj)/**'
-              targetFolder: '$(Pipeline.Workspace)/build'
-          - task: PublishPipelineArtifact@0
-            displayName: 'Publish build artifacts'
-            inputs:
-              targetPath: '$(Pipeline.Workspace)/build'
-              artifactName: Build
-
   - stage: IntegrationTests
     displayName: Integration Tests
-    dependsOn: Build
-    condition: succeeded()
     jobs:
       - job: RunIntegrationTests
         displayName: 'Run integration tests'
         pool:
           vmImage: 'ubuntu-16.04'
         steps:
-          - task: DownloadPipelineArtifact@2
-            displayName: 'Download build artifacts'
-            inputs:
-              artifact: 'Build'
-              path: '$(Build.SourcesDirectory)'
           - task: qetza.replacetokens.replacetokens-task.replacetokens@3
             displayName: 'Replace integration test tokens'
             inputs:

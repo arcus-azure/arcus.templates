@@ -17,16 +17,26 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
+  <!--#if (AuthoringMode)-->
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);NoneAuth;Auth;SharedAccessKeyAuth</DefineConstants>
+    <NoneAuth>false</NoneAuth>
+    <Auth>true</Auth>
+    <SharedAccessKeyAuth>true</SharedAccessKeyAuth>
+  </PropertyGroup>
+  
   <ItemGroup>
-    <Content Include=".template.config\template.json" />
+    <Content Include=".template.config\**\*" />
   </ItemGroup>
-
+  <!--#endif-->
+  
   <ItemGroup>
     <PackageReference Include="Guard.NET" Version="1.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.2.0" />
-    <PackageReference Include="Arcus.WebApi.Logging" Version="0.2"/>
+    <PackageReference Include="Arcus.WebApi.Logging" Version="0.2" />
+    <PackageReference Include="Arcus.WebApi.Security.Authentication" Version="0.2" Condition="'$(Auth)' == 'true'" />
   </ItemGroup>
 
 </Project>

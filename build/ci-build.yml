@@ -21,6 +21,8 @@ variables:
     value: '2.2.402'
   - name: 'Project'
     value: 'Arcus.Template'
+  - name: 'Http.Port'
+    value: '5000'
   - name: 'Arcus_Api_BaseUrl'
     value: 'http://localhost:5000/api/v1'
 
@@ -93,9 +95,9 @@ stages:
               command: 'Run an image'
               imageName: 'myproject:$(Build.BuildId)'
               containerName: 'myproject'
-              ports: '5000:5000'
+              ports: '$(Http.Port):$(Http.Port)'
               envVars: |
-                ARCUS_HTTP_PORT=5000
+                ARCUS_HTTP_PORT=$(Http.Port)
           - task: qetza.replacetokens.replacetokens-task.replacetokens@3
             displayName: 'Replace integration test tokens'
             inputs:

@@ -75,7 +75,7 @@ stages:
             inputs:
               command: 'custom'
               custom: 'new'
-              arguments: '-i "src/$(Project).WebApi/bin/$(Build.Configuration)/$(Project).WebApi.*.nupkg"'
+              arguments: '-i "src/$(Project).WebApi/bin/Release/*.nupkg"'
           - task: DotNetCoreCLI@2
             displayName: 'Create new project from template'
             inputs:

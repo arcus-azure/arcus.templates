@@ -34,6 +34,34 @@
       "parameters": {
         "value": false
       }
+    },
+    "Authentication": {
+      "type": "parameter",
+      "datatype": "choice",
+      "choices": [
+        {
+          "choice": "SharedAccessKey",
+          "description": "Adds a shared access key authentication mechanism to the web API project"
+        },
+        {
+          "choice": "None",
+          "description": "No authentication mechanism is added to the web API project"
+        }
+      ],
+      "defaultValue": "None",
+      "description": "Choose whether to use an authentication mechanism and which authentication to use"
+    },
+    "NoneAuth": {
+      "type": "computed",
+      "value": "(Authentication == \"None\")"
+    },
+    "Auth": {
+      "type": "computed",
+      "value": "(Authentication != \"None\")"
+    },
+    "SharedAccessKeyAuth": {
+      "type": "computed",
+      "value": "(Authentication == \"SharedAccessKey\")"
     }
   }
 }

@@ -18,7 +18,7 @@ variables:
   - group: 'Build Configuration'
   # Always use fixed version for .NET Core SDK
   - name: 'DotNet.Sdk.Version'
-    value: '2.2.206'
+    value: '2.2.402'
   - name: 'Project'
     value: 'Arcus.Template'
   - name: 'Arcus_Api_BaseUrl'

@@ -81,14 +81,11 @@ stages:
             inputs:
               command: 'custom'
               custom: 'new'
-              arguments: 'arcus-webapi -n MyProject -o /output'
-          - task: CmdLine@2
-            inputs:
-              script: 'ls /output'
+              arguments: 'arcus-webapi -n MyProject -o /MyProject'
           - task: Docker@1
             displayName: 'Build Docker image from newly created web API project from template'
             inputs:
-              dockerFile: /output/Dockerfile
+              dockerFile: /MyProject/Dockerfile
               imageName: 'myproject:$(Build.BuildId)'
           - task: Docker@1
             displayName: 'Run new web API project Docker image from template'

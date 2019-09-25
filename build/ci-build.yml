@@ -87,6 +87,8 @@ stages:
             inputs:
               dockerFile: /MyProject/Dockerfile
               imageName: 'myproject:$(Build.BuildId)'
+              useDefaultContext: false
+              buildContext: .
           - task: Docker@1
             displayName: 'Run new web API project Docker image from template'
             inputs:

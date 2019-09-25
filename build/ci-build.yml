@@ -85,7 +85,7 @@ stages:
           - task: Docker@1
             displayName: 'Build Docker image from newly created web API project from template'
             inputs:
-              dockerFile: Dockerfile
+              dockerFile: MyProject/Dockerfile
               imageName: 'myproject:$(Build.BuildId)'
               useDefaultContext: false
               buildContext: MyProject

@@ -2,7 +2,7 @@ FROM mcr.microsoft.com/dotnet/core/aspnet:2.2.7-alpine3.9 AS base
 WORKDIR /app
 EXPOSE 80
 
-FROM mcr.microsoft.com/dotnet/core/sdk:2.2-stretch AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:2.2.402-alpine3.9 AS build
 WORKDIR /src
 COPY ["Arcus.Template.WebApi.csproj", ""]
 RUN dotnet restore "./Arcus.Template.WebApi.csproj"

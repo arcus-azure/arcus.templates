@@ -47,6 +47,7 @@ stages:
             inputs:
               contents: '**/bin/**/*.nupkg'
               targetFolder: '$(Pipeline.Workspace)/templates'
+              flattenFolders: true
           - task: PublishPipelineArtifact@0
             displayName: 'Publish build artifacts'
             inputs:

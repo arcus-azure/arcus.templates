@@ -67,7 +67,7 @@ stages:
             displayName: 'Download build artifacts'
             inputs:
               artifact: 'Templates'
-              path: '$(Build.SourcesDirectory)'
+              path: '$(Build.SourcesDirectory)/templates'
           - task: DotNetCoreInstaller@0
             displayName: 'Import .NET Core SDK ($(DotNet.Sdk.Version)) in web API template'
             inputs:

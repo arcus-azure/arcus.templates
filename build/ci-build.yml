@@ -24,7 +24,7 @@ variables:
   - name: 'Http.Port'
     value: '5000'
   - name: 'Arcus_Api_BaseUrl'
-    value: 'http://localhost:5000/api/v1'
+    value: 'http://localhost:$(Http.Port)/api/v1'
 
 stages:
   - stage: Build

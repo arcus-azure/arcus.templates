@@ -6,7 +6,7 @@
     "API",
     "BoilerPlate"
   ],
-  "name": "Arcus WebAPI BoilerPlate",
+  "name": "Arcus WebAPI",
   "identity": "Arcus.Template.WebApi",
   "shortName": "arcus-webapi",
   "sourceName": "Arcus.Template.WebApi",
@@ -14,6 +14,19 @@
     "language": "C#",
     "type": "project"
   },
+  "sources": [
+    {
+      "exclude": [
+        "**/[Bb]in/**",
+        "**/[Oo]bj/**",
+        ".template.config/**/*",
+        "**/*.filelist",
+        "**/*.user",
+        "**/*.lock.json",
+        "**/launchSettings.json"
+      ]
+    }
+  ],
   "symbols": {
     "AuthoringMode": {
       "type": "generated",

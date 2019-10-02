@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  arcus.template.webapi:
+    image: arcusazure/arcus-template-webapi
+    build:
+      context: .
+      dockerfile: Arcus.Template.WebApi/Dockerfile

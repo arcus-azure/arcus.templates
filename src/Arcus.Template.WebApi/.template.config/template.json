@@ -6,7 +6,7 @@
     "API",
     "BoilerPlate"
   ],
-  "name": "Arcus WebAPI BoilerPlate",
+  "name": "Arcus WebAPI",
   "identity": "Arcus.Template.WebApi",
   "shortName": "arcus-webapi",
   "sourceName": "Arcus.Template.WebApi",
@@ -16,12 +16,15 @@
   },
   "sources": [
     {
-      "modifiers": [
-        {
-          "exclude": [
-            "*Open-Api.xml"
-          ]
-        }
+      "exclude": [
+        "**/[Bb]in/**",
+        "**/[Oo]bj/**",
+        ".template.config/**/*",
+        "**/*.filelist",
+        "**/*.user",
+        "**/*.lock.json",
+        "**/launchSettings.json",
+        "*Open-Api.xml"
       ]
     }
   ],
@@ -32,22 +35,6 @@
       "parameters": {
         "value": false
       }
-    },
-    "IfDebug": {
-      "type": "generated",
-      "generator": "constant",
-      "parameters": {
-        "value": "#if DEBUG"
-      },
-      "replaces": "//#if DEBUG"
-    },
-    "EndIf": {
-      "type": "generated",
-      "generator": "constant",
-      "parameters": {
-        "value": "#endif"
-      },
-      "replaces": "//#endif"
     },
     "Authentication": {
       "type": "parameter",

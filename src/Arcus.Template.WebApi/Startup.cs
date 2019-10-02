@@ -1,5 +1,3 @@
-using System;
-using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -13,7 +11,6 @@ using Arcus.Security.Secrets.Core.Interfaces;
 #if SharedAccessKeyAuth
 using Arcus.WebApi.Security.Authentication.SharedAccessKey;
 #endif
-using Swashbuckle.AspNetCore.Swagger;
 
 namespace Arcus.Template.WebApi
 {
@@ -42,20 +39,6 @@ namespace Arcus.Template.WebApi
             });
 
             services.AddHealthChecks();
-
-//#if DEBUG
-            var openApiInformation = new Info
-            {
-                Title = "Arcus.Template.WebApi",
-                Version = "v1"
-            };
-
-            services.AddSwaggerGen(swaggerGenerationOptions =>
-            {
-                swaggerGenerationOptions.SwaggerDoc("v1", openApiInformation);
-                swaggerGenerationOptions.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "Arcus.Template.WebApi.Open-Api.xml"));
-            });
-//#endif
         }
 
         private static void RestrictToJsonContentType(MvcOptions options)
@@ -78,15 +61,6 @@ namespace Arcus.Template.WebApi
             #warning Please configure application with authentication mechanism: https://webapi.arcus-azure.net/features/security/auth/shared-access-key
 #endif
             app.UseMvc();
-
-//#if DEBUG
-            app.UseSwagger();
-            app.UseSwaggerUI(swaggerUiOptions =>
-            {
-                swaggerUiOptions.SwaggerEndpoint("v1/swagger.json", "Arcus.Template.WebApi");
-                swaggerUiOptions.DocumentTitle = "Arcus.Template.WebApi";
-            });
-//#endif
         }
     }
 }

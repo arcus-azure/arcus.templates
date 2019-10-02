@@ -6,6 +6,10 @@
     <Company>Arcus</Company>
     <RepositoryType>Git</RepositoryType>
     <Description>Provide a template to easily build Web APIs running in Azure.</Description>
+    <IsPackable>true</IsPackable>
+    <PackageId>Arcus.Template.WebApi</PackageId>
+    <Title>Template for web API project</Title>
+    <PackageType>Template</PackageType>
     <PackageTags>Azure;WebAPI;App Services;Web App;Web;API</PackageTags>
     <Copyright>Copyright (c) Arcus</Copyright>
     <PackageLicenseUrl>https://github.com/arcus-azure/arcus.templates/blob/master/LICENSE</PackageLicenseUrl>
@@ -25,6 +29,10 @@
   </PropertyGroup>
 
   <!--#if (AuthoringMode)-->
+  <ItemGroup>
+    <Content Include="**\*" Exclude="**\bin\**\*;**\obj\**\*;**\.vs\**\*;**\launchSettings.json" />
+  </ItemGroup>
+
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);NoneAuth;Auth;SharedAccessKeyAuth</DefineConstants>
     <NoneAuth>false</NoneAuth>
@@ -33,7 +41,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include=".template.config\**\*" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.7.12" />
   </ItemGroup>
   <!--#endif-->
 
@@ -44,8 +52,6 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.2.0" />
     <PackageReference Include="Arcus.WebApi.Logging" Version="0.2" />
     <PackageReference Include="Arcus.WebApi.Security.Authentication" Version="0.2" Condition="'$(Auth)' == 'true'" />
-    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="4.0.1" />
-    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="4.0.1" />
   </ItemGroup>
 
 </Project>

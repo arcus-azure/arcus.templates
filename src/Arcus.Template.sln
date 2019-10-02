@@ -3,7 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29230.47
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arcus.Template.WebApi", "Arcus.Template.WebApi\Arcus.Template.WebApi.csproj", "{79A83256-D5AC-4080-9BCB-6208CA1B5777}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arcus.Template.WebApi", "Arcus.Template.WebApi\Arcus.Template.WebApi.csproj", "{79A83256-D5AC-4080-9BCB-6208CA1B5777}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arcus.Template.Tests.Integration", "Arcus.Template.Tests.Integration\Arcus.Template.Tests.Integration.csproj", "{5095CBCD-EB6D-49F0-8728-B30A2F5A618D}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "Arcus.Template.Orchestrator", "Arcus.Template.Orchestrator.dcproj", "{16683532-D428-4C18-A645-43594D91830D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{F6DBEE21-816E-434F-AEA3-9FD6C2261E85}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +21,20 @@ Global
 		{79A83256-D5AC-4080-9BCB-6208CA1B5777}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{79A83256-D5AC-4080-9BCB-6208CA1B5777}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{79A83256-D5AC-4080-9BCB-6208CA1B5777}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5095CBCD-EB6D-49F0-8728-B30A2F5A618D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5095CBCD-EB6D-49F0-8728-B30A2F5A618D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5095CBCD-EB6D-49F0-8728-B30A2F5A618D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5095CBCD-EB6D-49F0-8728-B30A2F5A618D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{16683532-D428-4C18-A645-43594D91830D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16683532-D428-4C18-A645-43594D91830D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16683532-D428-4C18-A645-43594D91830D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16683532-D428-4C18-A645-43594D91830D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5095CBCD-EB6D-49F0-8728-B30A2F5A618D} = {F6DBEE21-816E-434F-AEA3-9FD6C2261E85}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AFC1CB9E-4356-4868-B379-68904B89D8BC}

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace Arcus.Template.WebApi
@@ -15,9 +16,21 @@ namespace Arcus.Template.WebApi
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args)
         {
-            return WebHost.CreateDefaultBuilder(args)
-                          .ConfigureLogging(logging => logging.AddConsole())
-                          .UseStartup<Startup>();
+            IConfigurationRoot configuration =
+                new ConfigurationBuilder()
+                    .AddCommandLine(args)
+                    .AddEnvironmentVariables()
+                    .Build();
+
+            string httpEndpointUrl = "http://+:" + configuration["ARCUS_HTTP_PORT"];
+            IWebHostBuilder webHostBuilder =
+                WebHost.CreateDefaultBuilder(args)
+                       .UseConfiguration(configuration)
+                       .UseUrls(httpEndpointUrl)
+                       .ConfigureLogging(logging => logging.AddConsole())
+                       .UseStartup<Startup>();
+
+            return webHostBuilder;
         }
     }
 }

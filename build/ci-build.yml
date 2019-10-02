@@ -14,12 +14,12 @@ pr:
       - src/*
       - build/ci-build.yml
 
-resources:
-  repositories:
-    - repository: templates
-      type: github
-      name: arcus-azure/azure-devops-templates
-      endpoint: arcus-azure
+# resources:
+#   repositories:
+#     - repository: templates
+#       type: github
+#       name: arcus-azure/azure-devops-templates
+#       endpoint: arcus-azure
 
 variables:
   - group: 'Build Configuration'

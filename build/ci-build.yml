@@ -161,9 +161,16 @@ stages:
         pool:
           vmImage: 'ubuntu-16.04'
         steps:
-          - task: DownloadPipelineArtifact@2
-            displayName: 'Download build artifacts'
+          # - task: DownloadPipelineArtifact@2
+          #   displayName: 'Download build artifacts'
+          #   inputs:
+          #     artifact: 'Build'
+          #     path: '$(Build.SourcesDirectory)'
+          # - template: build/nuget/publish-preview-package.yml@templates
+          - task: NuGetCommand@2
+            displayName: 'Push to MyGet.org'
             inputs:
-              artifact: 'Build'
-              path: '$(Build.SourcesDirectory)'
-          - template: build/nuget/publish-preview-package.yml@templates
+              command: push
+              packagesToPush: 'src/**/*.nupkg'
+              nuGetFeedType: external
+              publishFeedCredentials: 'MyGet.org (Push)'

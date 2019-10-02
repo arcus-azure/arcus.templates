@@ -14,6 +14,17 @@
     "language": "C#",
     "type": "project"
   },
+  "sources": [
+    {
+      "modifiers": [
+        {
+          "exclude": [
+            "*Open-Api.xml"
+          ]
+        }
+      ]
+    }
+  ],
   "symbols": {
     "AuthoringMode": {
       "type": "generated",

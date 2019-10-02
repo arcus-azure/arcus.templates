@@ -17,6 +17,11 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <DocumentationFile>Arcus.Template.WebApi.Open-Api.xml</DocumentationFile>
+    <IncludeContentInPack>true</IncludeContentInPack>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <ContentTargetFolders>content</ContentTargetFolders>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerComposeProjectPath>..\Arcus.Template.Orchestrator.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 
   <!--#if (AuthoringMode)-->

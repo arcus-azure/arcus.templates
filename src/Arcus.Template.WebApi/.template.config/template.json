@@ -22,6 +22,22 @@
         "value": false
       }
     },
+    "IfDebug": {
+      "type": "generated",
+      "generator": "constant",
+      "parameters": {
+        "value": "#if DEBUG"
+      },
+      "replaces": "//#if DEBUG"
+    },
+    "EndIf": {
+      "type": "generated",
+      "generator": "constant",
+      "parameters": {
+        "value": "#endif"
+      },
+      "replaces": "//#endif"
+    },
     "Authentication": {
       "type": "parameter",
       "datatype": "choice",

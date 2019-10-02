@@ -15,6 +15,8 @@
     <PackageIconUrl>https://raw.githubusercontent.com/arcus-azure/arcus/master/media/arcus.png</PackageIconUrl>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <DocumentationFile>Arcus.Template.WebApi.Open-Api.xml</DocumentationFile>
   </PropertyGroup>
 
   <!--#if (AuthoringMode)-->
@@ -24,12 +26,12 @@
     <Auth>true</Auth>
     <SharedAccessKeyAuth>true</SharedAccessKeyAuth>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <Content Include=".template.config\**\*" />
   </ItemGroup>
   <!--#endif-->
-  
+
   <ItemGroup>
     <PackageReference Include="Guard.NET" Version="1.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
@@ -37,6 +39,8 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.2.0" />
     <PackageReference Include="Arcus.WebApi.Logging" Version="0.2" />
     <PackageReference Include="Arcus.WebApi.Security.Authentication" Version="0.2" Condition="'$(Auth)' == 'true'" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="4.0.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="4.0.1" />
   </ItemGroup>
 
 </Project>

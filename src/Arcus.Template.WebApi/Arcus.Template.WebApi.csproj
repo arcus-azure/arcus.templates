@@ -6,6 +6,10 @@
     <Company>Arcus</Company>
     <RepositoryType>Git</RepositoryType>
     <Description>Provide a template to easily build Web APIs running in Azure.</Description>
+    <IsPackable>true</IsPackable>
+    <PackageId>Arcus.Template.WebApi</PackageId>
+    <Title>Template for web API project</Title>
+    <PackageType>Template</PackageType>
     <PackageTags>Azure;WebAPI;App Services;Web App;Web;API</PackageTags>
     <Copyright>Copyright (c) Arcus</Copyright>
     <PackageLicenseUrl>https://github.com/arcus-azure/arcus.templates/blob/master/LICENSE</PackageLicenseUrl>
@@ -17,9 +21,18 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <DocumentationFile>Arcus.Template.WebApi.Open-Api.xml</DocumentationFile>
+    <IncludeContentInPack>true</IncludeContentInPack>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <ContentTargetFolders>content</ContentTargetFolders>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerComposeProjectPath>..\Arcus.Template.Orchestrator.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 
   <!--#if (AuthoringMode)-->
+  <ItemGroup>
+    <Content Include="**\*" Exclude="**\bin\**\*;**\obj\**\*;**\.vs\**\*;**\launchSettings.json" />
+  </ItemGroup>
+
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);NoneAuth;Auth;SharedAccessKeyAuth</DefineConstants>
     <NoneAuth>false</NoneAuth>
@@ -28,7 +41,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include=".template.config\**\*" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.7.12" />
   </ItemGroup>
   <!--#endif-->
 

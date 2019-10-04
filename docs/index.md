@@ -8,11 +8,13 @@ redirect_from:
 
 # Installation
 
-Coming soon!
+## Web API
 
-# Features
+```shell
+PM > dotnet new -i Arcus.Templates.WebApi
+```
 
-Coming soon!
+Read [here](features/web-api-template) for standard and configurable features.
 
 # License
 This is licensed under The MIT License (MIT). Which means that you can use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the web application. But you always need to state that Codit is the original author of this web application.

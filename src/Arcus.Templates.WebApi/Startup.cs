@@ -15,7 +15,7 @@ using Arcus.Security.Secrets.Core.Interfaces;
 using Arcus.WebApi.Security.Authentication.SharedAccessKey;
 #endif
 
-namespace Arcus.Template.WebApi
+namespace Arcus.Templates.WebApi
 {
     public class Startup
     {

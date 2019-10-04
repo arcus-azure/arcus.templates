@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace Arcus.Template.WebApi
+namespace Arcus.Templates.WebApi
 {
     public class Program
     {

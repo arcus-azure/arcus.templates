@@ -1,11 +1,11 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
-using Arcus.Template.Tests.Integration.Fixture;
+using Arcus.Templates.Tests.Integration.Fixture;
 using Flurl;
 using GuardNet;
 using Xunit.Abstractions;
 
-namespace Arcus.Template.Tests.Integration.Endpoints
+namespace Arcus.Templates.Tests.Integration.Endpoints
 {
     /// <summary>
     /// Service to collect operations on the health functionality of the API.

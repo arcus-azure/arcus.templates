@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29230.47
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arcus.Template.WebApi", "Arcus.Template.WebApi\Arcus.Template.WebApi.csproj", "{79A83256-D5AC-4080-9BCB-6208CA1B5777}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arcus.Templates.WebApi", "Arcus.Templates.WebApi\Arcus.Templates.WebApi.csproj", "{79A83256-D5AC-4080-9BCB-6208CA1B5777}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arcus.Template.Tests.Integration", "Arcus.Template.Tests.Integration\Arcus.Template.Tests.Integration.csproj", "{5095CBCD-EB6D-49F0-8728-B30A2F5A618D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arcus.Templates.Tests.Integration", "Arcus.Templates.Tests.Integration\Arcus.Templates.Tests.Integration.csproj", "{5095CBCD-EB6D-49F0-8728-B30A2F5A618D}"
 EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "Arcus.Template.Orchestrator", "Arcus.Template.Orchestrator.dcproj", "{16683532-D428-4C18-A645-43594D91830D}"
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "Arcus.Templates.Orchestrator", "Arcus.Templates.Orchestrator.dcproj", "{16683532-D428-4C18-A645-43594D91830D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{F6DBEE21-816E-434F-AEA3-9FD6C2261E85}"
 EndProject

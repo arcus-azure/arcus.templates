@@ -3,7 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Primitives;
 using GuardNet;
 
-namespace Arcus.Template.Tests.Integration.Fixture
+namespace Arcus.Templates.Tests.Integration.Fixture
 {
     /// <summary>
     /// Configuration implementation with test values used in test cases to simulate scenario's.

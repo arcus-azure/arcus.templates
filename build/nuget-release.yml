@@ -122,7 +122,7 @@ stages:
     condition: succeeded()
     jobs:
       - job: PushToNuGet
-        displayName: 'Push to NuGet'
+        displayName: 'Push to NuGet.org'
         pool:
           vmImage: 'ubuntu-16.04'
         steps:

@@ -16,7 +16,7 @@ First, install the template from NuGet:
 When installed, the template can be created with shortname: `arcus-webapi`:
 
 ```shell
-> dotnet new arcus-webapi -n MyProject -o C:\temp\myproject
+> dotnet new arcus-webapi -n Arcus.Demo.WebAPI
 ```
 
 

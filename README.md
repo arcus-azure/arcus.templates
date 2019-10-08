@@ -1,5 +1,6 @@
 # Arcus Templates
 [![Build Status](https://dev.azure.com/codit/Arcus/_apis/build/status/Commit%20builds/CI%20-%20Arcus.Templates?branchName=master)](https://dev.azure.com/codit/Arcus/_build/latest?definitionId=765&branchName=master)
+[![NuGet Badge](https://buildstats.info/nuget/Arcus.Templates.WebApi?includePreReleases=true)](https://www.nuget.org/packages/Arcus.Templates.WebApi/)
 
 Template repository for new components in Arcus ecosystem.
 

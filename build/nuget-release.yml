@@ -117,7 +117,7 @@ stages:
               publishTestResults: true
 
   - stage: Release
-    displayName: 'Release to MyGet'
+    displayName: 'Release to NuGet.org'
     dependsOn: IntegrationTests
     condition: succeeded()
     jobs:

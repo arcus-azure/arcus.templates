@@ -33,7 +33,7 @@ stages:
           - template: build/build-solution.yml@templates
             parameters:
               dotnetSdkVersion: '$(DotNet.Sdk.Version)'
-              versionSuffix: 'alpha-$(Build.BuildNumber)'
+              versionSuffix: '$(Build.BuildNumber)'
           - task: CopyFiles@2
             displayName: 'Copy build artifacts'
             inputs:

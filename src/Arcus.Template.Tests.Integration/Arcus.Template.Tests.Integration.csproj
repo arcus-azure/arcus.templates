@@ -24,12 +24,19 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="Arcus.EventGrid.Testing" Version="2.3.0" />
+    <PackageReference Include="Arcus.WebApi.Security.Authentication" Version="0.2" />
     <PackageReference Include="Flurl.Http" Version="2.4.2" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.5.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Polly" Version="7.1.1" />
     <PackageReference Include="xunit" Version="2.4.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Compile Update="Fixture\InMemorySecretProvider.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Primitives;
 using GuardNet;
@@ -34,16 +36,59 @@ namespace Arcus.Template.Tests.Integration.Fixture
         }
 
         /// <summary>
-        /// Gets the base URL of the to-be-tested API.
+        /// Gets the project file path of the web API project.
         /// </summary>
-        public string GetBaseUrl()
+        public DirectoryInfo GetWebApiProjectDirectory()
+        {
+            const string webApiProjectPath = "Arcus:Api:ProjectPath";
+
+            string projectPath = _configuration.GetValue<string>(webApiProjectPath);
+            Guard.NotNull(projectPath, nameof(projectPath), $"No project path configured for the web API project with the key: {webApiProjectPath}");
+            Guard.For<ArgumentException>(
+                () => !Directory.Exists(projectPath),
+                $"No project template directory exists at {projectPath}");
+
+            return new DirectoryInfo(projectPath);
+        }
+
+        /// <summary>
+        /// Gets the base URL of the to-be-created project from the web API template.
+        /// </summary>
+        /// <returns></returns>
+        public Uri GetDockerBaseUrl()
         {
             const string baseUrlKey = "Arcus:Api:BaseUrl";
 
             string baseUrl = _configuration.GetValue<string>(baseUrlKey);
             Guard.NotNull(baseUrl, nameof(baseUrl), $"No base URL configured with the key: {baseUrlKey}");
+            
+            if (!Uri.TryCreate(baseUrl, UriKind.RelativeOrAbsolute, out Uri result))
+            {
+                throw new InvalidOperationException($"Cannot create valid URI from configured base URL with the key: {baseUrlKey}");
+            }
 
-            return baseUrl;
+            return result;
+        }
+
+        private static readonly Random RandomPort = new Random();
+
+        /// <summary>
+        /// Gets the base URL of the to-be-created project from the web API template.
+        /// </summary>
+        public Uri CreateWebAPiBaseUrl()
+        {
+            const string baseUrlKey = "Arcus:Api:BaseUrl";
+
+            string baseUrl = _configuration.GetValue<string>(baseUrlKey);
+            Guard.NotNull(baseUrl, nameof(baseUrl), $"No base URL configured with the key: {baseUrlKey}");
+            
+            if (!Uri.TryCreate(baseUrl, UriKind.RelativeOrAbsolute, out Uri result))
+            {
+                throw new InvalidOperationException($"Cannot create valid URI from configured base URL with the key: {baseUrlKey}");
+            }
+
+            int port = RandomPort.Next(8080, 9000);
+            return new Uri($"http://localhost:{port}{result.AbsolutePath}");
         }
 
         /// <summary>

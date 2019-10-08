@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Arcus.Template.WebApi</name>
+    </assembly>
+    <members>
+        <member name="T:Arcus.Template.WebApi.Controllers.HealthController">
+            <summary>
+            API endpoint to check the health of the application.
+            </summary>
+        </member>
+        <member name="M:Arcus.Template.WebApi.Controllers.HealthController.#ctor(Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckService)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Arcus.Template.WebApi.Controllers.HealthController"/> class.
+            </summary>
+            <param name="healthCheckService">The service to provide the health of the API application.</param>
+        </member>
+        <member name="M:Arcus.Template.WebApi.Controllers.HealthController.Get">
+            <summary>
+                Get Health
+            </summary>
+            <remarks>Provides an indication about the health of the API.</remarks>
+            <response code="200">API is healthy</response>
+            <response code="503">API is unhealthy or in degraded state</response>
+        </member>
+    </members>
+</doc>

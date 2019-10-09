@@ -9,26 +9,32 @@ using Xunit.Abstractions;
 
 namespace Arcus.Templates.Tests.Integration.Health.v1
 {
-    [Collection("Integration")]
-    public class HealthEndpointTests
+    [Collection("Docker")]
+    public class HealthDockerEndpointTests
     {
         private readonly TestConfig _configuration;
         private readonly ITestOutputHelper _outputWriter;
 
-        public HealthEndpointTests(ITestOutputHelper outputWriter)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HealthDockerEndpointTests"/> class.
+        /// </summary>
+        public HealthDockerEndpointTests(ITestOutputHelper outputWriter)
         {
             _configuration = TestConfig.Create();
             _outputWriter = outputWriter;
         }
 
         [Fact]
-        public async Task Health_Get_Succeeds()
+        public async Task Health_Get_Docker_Succeeds()
         {
             // Arrange
-            using (WebApiProject project = await WebApiProject.StartNewAsync(_configuration, _outputWriter))
+            Uri dockerBaseUrl = _configuration.GetDockerBaseUrl();
+            var healthEndpointService = new HealthEndpointService(dockerBaseUrl, _outputWriter);
+
             // Act
-            using (HttpResponseMessage response = await project.Health.GetAsync())
+            using (HttpResponseMessage response = await healthEndpointService.GetAsync())
             {
+                // Assert
                 // Assert
                 Assert.Equal(HttpStatusCode.OK, response.StatusCode);
                 

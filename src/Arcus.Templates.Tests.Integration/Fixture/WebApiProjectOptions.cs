@@ -70,7 +70,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
 
             string startupContent = File.ReadAllText(startupFilePath);
             startupContent = 
-                startupContent.Replace("secretProvider: null", $"new {typeof(InMemorySecretProvider).FullName}(({secretName}, {secretValue}))")
+                startupContent.Replace("secretProvider: null", $"new {typeof(InMemorySecretProvider).FullName}((\"{secretName}\", \"{secretValue}\"))")
                               .Replace("YOUR REQUEST HEADER NAME", requestHeader)
                               .Replace("YOUR SECRET NAME", secretName);
 

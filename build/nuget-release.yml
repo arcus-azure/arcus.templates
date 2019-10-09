@@ -149,4 +149,4 @@ stages:
               command: push
               packagesToPush: 'templates/*.nupkg'
               nuGetFeedType: external
-              publishFeedCredentials: 'MyGet.org (Push)'
+              publishFeedCredentials: 'NuGet.org'

@@ -46,14 +46,14 @@ namespace Arcus.Templates.WebApi
 //#if DEBUG
             var openApiInformation = new Info
             {
-                Title = "Arcus.Template.WebApi",
+                Title = "Arcus.Templates.WebApi",
                 Version = "v1"
             };
 
             services.AddSwaggerGen(swaggerGenerationOptions =>
             {
                 swaggerGenerationOptions.SwaggerDoc("v1", openApiInformation);
-                swaggerGenerationOptions.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "Arcus.Template.WebApi.Open-Api.xml"));
+                swaggerGenerationOptions.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "Arcus.Templates.WebApi.Open-Api.xml"));
             });
 //#endif
         }
@@ -83,8 +83,8 @@ namespace Arcus.Templates.WebApi
             app.UseSwagger();
             app.UseSwaggerUI(swaggerUiOptions =>
             {
-                swaggerUiOptions.SwaggerEndpoint("v1/swagger.json", "Arcus.Template.WebApi");
-                swaggerUiOptions.DocumentTitle = "Arcus.Template.WebApi";
+                swaggerUiOptions.SwaggerEndpoint("v1/swagger.json", "Arcus.Templates.WebApi");
+                swaggerUiOptions.DocumentTitle = "Arcus.Templates.WebApi";
             });
 //#endif
         }

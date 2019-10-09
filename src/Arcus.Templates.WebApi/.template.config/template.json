@@ -7,9 +7,9 @@
     "BoilerPlate"
   ],
   "name": "Arcus WebAPI",
-  "identity": "Arcus.Template.WebApi",
+  "identity": "Arcus.Templates.WebApi",
   "shortName": "arcus-webapi",
-  "sourceName": "Arcus.Template.WebApi",
+  "sourceName": "Arcus.Templates.WebApi",
   "tags": {
     "language": "C#",
     "type": "project"

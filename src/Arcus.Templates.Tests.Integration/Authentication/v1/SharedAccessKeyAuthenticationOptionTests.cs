@@ -1,12 +1,13 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Arcus.Template.Tests.Integration.Fixture;
+using Arcus.Templates.Tests.Integration.Fixture;
 using Xunit;
 using Xunit.Abstractions;
-using static Arcus.Template.Tests.Integration.Fixture.InMemorySecretProvider;
+using static Arcus.Templates.Tests.Integration.Fixture.InMemorySecretProvider;
 
-namespace Arcus.Template.Tests.Integration.Authentication.v1
+namespace Arcus.Templates.Tests.Integration.Authentication.v1
 {
     [Collection("Integration")]
     public class SharedAccessKeyAuthenticationOptionTests
@@ -27,11 +28,13 @@ namespace Arcus.Template.Tests.Integration.Authentication.v1
         public async Task SharedAccessKeyAuthenticationOption_GetHealthUnauthenticated_ResultsUnauthorized()
         {
             // Arrange
-            const string requestHeader = "x-shared-access-key";
+            const string headerName = "x-shared-access-key";
+            const string secretKey = "MySecretKey";
+            string secretValue = Guid.NewGuid().ToString("N");
 
             var unauthenticatedArguments = 
                 new WebApiProjectOptions()
-                    .WithSharedAccessAuthentication(requestHeader, TestSecretKey);
+                    .WithSharedAccessAuthentication(headerName, secretKey, secretValue);
             
             using (var project = await WebApiProject.StartNewAsync(_configuration, unauthenticatedArguments, _outputWriter))
             {
@@ -48,17 +51,19 @@ namespace Arcus.Template.Tests.Integration.Authentication.v1
         public async Task SharedAccessKeyAuthenticationOption_GetHealthAuthenticated_ResultsOk()
         {
             // Arrange
-            const string requestHeader = "x-shared-access-key";
+            const string headerName = "x-shared-access-key";
+            const string secretKey = "MySecretKey";
+            string secretValue = Guid.NewGuid().ToString("N");
 
             var authenticatedArguments = 
                 new WebApiProjectOptions()
-                    .WithSharedAccessAuthentication(requestHeader, TestSecretKey);
+                    .WithSharedAccessAuthentication(headerName, secretKey, secretValue);
             
             using (var project = await WebApiProject.StartNewAsync(_configuration, authenticatedArguments, _outputWriter))
             {
                 // Act
                 using (HttpResponseMessage response = 
-                    await project.Health.GetAsync(request => request.Headers.Add(requestHeader, TestSecretValue)))
+                    await project.Health.GetAsync(request => request.Headers.Add(headerName, secretValue)))
                 {
                     // Assert
                     Assert.Equal(HttpStatusCode.OK, response.StatusCode);

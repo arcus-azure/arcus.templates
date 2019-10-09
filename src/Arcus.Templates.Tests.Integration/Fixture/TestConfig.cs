@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Primitives;
 using GuardNet;
 
-namespace Arcus.Template.Tests.Integration.Fixture
+namespace Arcus.Templates.Tests.Integration.Fixture
 {
     /// <summary>
     /// Configuration implementation with test values used in test cases to simulate scenario's.
@@ -14,17 +14,25 @@ namespace Arcus.Template.Tests.Integration.Fixture
     {
         private readonly IConfigurationRoot _configuration;
 
-        private TestConfig(IConfigurationRoot configuration)
+        private TestConfig(IConfigurationRoot configuration, string buildConfiguration)
         {
             Guard.NotNull(configuration, nameof(configuration));
+            Guard.NotNullOrWhitespace(buildConfiguration, nameof(buildConfiguration));
 
             _configuration = configuration;
+            BuildConfiguration = buildConfiguration;
         }
+
+        /// <summary>
+        /// Gets the build configuration for the project created from the template.
+        /// </summary>
+        public string BuildConfiguration { get; }
 
         /// <summary>
         /// Creates a new <see cref="IConfigurationRoot"/> with test values.
         /// </summary>
-        public static TestConfig Create()
+        /// <param name="buildConfiguration">The configuration in which the created project from the template should be build.</param>
+        public static TestConfig Create(string buildConfiguration = "Debug")
         {
             var configuration = new ConfigurationBuilder()
                 .AddJsonFile(path: "appsettings.json", optional: true)
@@ -32,7 +40,7 @@ namespace Arcus.Template.Tests.Integration.Fixture
                 .AddEnvironmentVariables()
                 .Build();
 
-            return new TestConfig(configuration);
+            return new TestConfig(configuration, buildConfiguration);
         }
 
         /// <summary>

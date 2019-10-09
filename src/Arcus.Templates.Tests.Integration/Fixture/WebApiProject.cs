@@ -3,12 +3,12 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Arcus.Template.Tests.Integration.Health;
+using Arcus.Templates.Tests.Integration.Health;
 using GuardNet;
 using Polly;
 using Xunit.Abstractions;
 
-namespace Arcus.Template.Tests.Integration.Fixture 
+namespace Arcus.Templates.Tests.Integration.Fixture 
 {
     /// <summary>
     /// Project template to create new web API projects.
@@ -64,7 +64,7 @@ namespace Arcus.Template.Tests.Integration.Fixture
             var project = new WebApiProject(baseUrl, templateDirectory, outputWriter);
             project.CreateNewProject(projectOptions);
             
-            project.Run($"--ARCUS_HTTP_PORT {baseUrl.Port}");
+            project.Run(configuration.BuildConfiguration, $"--ARCUS_HTTP_PORT {baseUrl.Port}");
             await WaitUntilWebProjectIsAvailable(baseUrl.Port);
 
             return project;

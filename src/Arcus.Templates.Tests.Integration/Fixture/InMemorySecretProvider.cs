@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Arcus.Security.Secrets.Core.Interfaces;
 using GuardNet;
 
-namespace Arcus.Template.Tests.Integration.Fixture
+namespace Arcus.Templates.Tests.Integration.Fixture
 {
     /// <summary>
     /// <see cref="ISecretProvider"/> implementation that provides an in-memory storage of secrets by name.
@@ -13,8 +13,6 @@ namespace Arcus.Template.Tests.Integration.Fixture
     public class InMemorySecretProvider : ICachedSecretProvider
     {
         private readonly IDictionary<string, string> _secretValueByName;
-
-        public const string TestSecretKey = "TEST-SECRET-KEY", TestSecretValue = "TEST-SECRET-VALUE";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="InMemorySecretProvider"/> class.
@@ -24,9 +22,7 @@ namespace Arcus.Template.Tests.Integration.Fixture
         {
             Guard.NotNull(secretValueByName, "Secret name/value combinations cannot be 'null'");
 
-            _secretValueByName = 
-                secretValueByName.Append((name: TestSecretKey, value: TestSecretValue))
-                                 .ToDictionary(t => t.name, t => t.value);
+            _secretValueByName = secretValueByName.ToDictionary(t => t.name, t => t.value);
         }
 
         /// <summary>

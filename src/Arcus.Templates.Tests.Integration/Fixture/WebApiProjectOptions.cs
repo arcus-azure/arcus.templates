@@ -2,7 +2,7 @@
 using Arcus.Security.Secrets.Core.Interfaces;
 using GuardNet;
 
-namespace Arcus.Template.Tests.Integration.Fixture
+namespace Arcus.Templates.Tests.Integration.Fixture
 {
     /// <summary>
     /// Represents all the available project options on the web API template project.
@@ -33,19 +33,21 @@ namespace Arcus.Template.Tests.Integration.Fixture
         /// </summary>
         /// <param name="headerName">The name of the request header which value must match the stored secret.</param>
         /// <param name="secretName">The name of the secret that's being retrieved using the <see cref="ISecretProvider.Get"/> call.</param>
-        public WebApiProjectOptions WithSharedAccessAuthentication(string headerName, string secretName)
+        /// <param name="secretValue">The value of the secret that should be retrieved using the <see cref="ISecretProvider.Get"/> call.</param>
+        public WebApiProjectOptions WithSharedAccessAuthentication(string headerName, string secretName, string secretValue)
         {
-            Guard.NotNull(headerName, nameof(headerName), "Cannot add shared access key authentication project option without a HTTP request header name containing the secret name");
-            Guard.NotNull(secretName, nameof(secretName), "Cannot add shared access key authentication project option without a secret name");
+            Guard.NotNullOrWhitespace(headerName, nameof(headerName), "Cannot add shared access key authentication project option without a HTTP request header name containing the secret name");
+            Guard.NotNullOrWhitespace(secretName, nameof(secretName), "Cannot add shared access key authentication project option without a secret name");
+            Guard.NotNullOrWhitespace(secretValue, nameof(secretValue), "Cannot add shared access key authentication project option without a secret value");
 
             ProjectOptions optionsWithSharedAccessAuthentication = AddOption(
                 "--Authentication SharedAccessKey",
-                projectDirectory => ConfigureSharedAccessAuthentication(projectDirectory, headerName, secretName));
+                projectDirectory => ConfigureSharedAccessAuthentication(projectDirectory, headerName, secretName, secretValue));
 
             return new WebApiProjectOptions(optionsWithSharedAccessAuthentication);
         }
 
-        private void ConfigureSharedAccessAuthentication(DirectoryInfo projectDirectory, string requestHeader, string secretName)
+        private void ConfigureSharedAccessAuthentication(DirectoryInfo projectDirectory, string requestHeader, string secretName, string secretValue)
         {
             string srcInMemorySecretProviderFilePath = Path.Combine("Fixture", nameof(InMemorySecretProvider) + ".cs");
             if (!File.Exists(srcInMemorySecretProviderFilePath))
@@ -68,7 +70,7 @@ namespace Arcus.Template.Tests.Integration.Fixture
 
             string startupContent = File.ReadAllText(startupFilePath);
             startupContent = 
-                startupContent.Replace("secretProvider: null", $"new {typeof(InMemorySecretProvider).FullName}()")
+                startupContent.Replace("secretProvider: null", $"new {typeof(InMemorySecretProvider).FullName}(({secretName}, {secretValue}))")
                               .Replace("YOUR REQUEST HEADER NAME", requestHeader)
                               .Replace("YOUR SECRET NAME", secretName);
 

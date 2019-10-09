@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using GuardNet;
 
-namespace Arcus.Template.Tests.Integration.Fixture 
+namespace Arcus.Templates.Tests.Integration.Fixture 
 {
     /// <summary>
     /// Represents all the available project options on the a template project.
@@ -27,7 +27,8 @@ namespace Arcus.Template.Tests.Integration.Fixture
         /// Initializes a new instance of the <see cref="ProjectOptions"/> class.
         /// </summary>
         public ProjectOptions(ProjectOptions options) 
-            : this(options?._arguments, options?._updateProject)
+            : this(options?._arguments, 
+                  options?._updateProject)
         {
         }
 

@@ -8,7 +8,7 @@ using Newtonsoft.Json.Linq;
 using Polly;
 using Xunit.Abstractions;
 
-namespace Arcus.Template.Tests.Integration.Fixture
+namespace Arcus.Templates.Tests.Integration.Fixture
 {
     /// <summary>
     /// Skeleton implementation of a project template from which new projects can be created.
@@ -88,18 +88,20 @@ namespace Arcus.Template.Tests.Integration.Fixture
         /// <summary>
         /// Run the created project from the template with a given set of <paramref name="commandArguments"/>.
         /// </summary>
+        /// <param name="buildConfiguration">The build configuration on which the project should be build.</param>
         /// <param name="commandArguments">The command line arguments that control the startup of the project.</param>
-        protected void Run(string commandArguments)
+        protected void Run(string buildConfiguration, string commandArguments)
         {
             if (_started)
             {
                 throw new InvalidOperationException("Test demo project from template is already started");
             }
-            
-            _outputWriter.WriteLine("> dotnet run {0}", commandArguments ?? String.Empty);
 
-            RunDotNet($"build {WorkingDirectory.FullName}", "Cannot build created project from template");
-            var processInfo = new ProcessStartInfo("dotnet", $"exec {Path.Combine(WorkingDirectory.FullName, $"bin/Debug/netcoreapp2.2/{ProjectName}.dll")} {commandArguments}")
+            RunDotNet($"build -c {buildConfiguration} {WorkingDirectory.FullName}", "Cannot build created project from template");
+            
+            string runCommand = $"exec {Path.Combine(WorkingDirectory.FullName, $"bin/{buildConfiguration}/netcoreapp2.2/{ProjectName}.dll")} {commandArguments ?? String.Empty}";
+            _outputWriter.WriteLine("> dotnet {0}", runCommand);
+            var processInfo = new ProcessStartInfo("dotnet", runCommand)
             {
                 UseShellExecute = false,
                 CreateNoWindow = true,

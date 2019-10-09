@@ -1,12 +1,12 @@
 ﻿using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Arcus.Template.Tests.Integration.Fixture;
+using Arcus.Templates.Tests.Integration.Fixture;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Arcus.Template.Tests.Integration.Health.v1
+namespace Arcus.Templates.Tests.Integration.Health.v1
 {
     [Collection("Integration")]
     public class HealthEndpointTests

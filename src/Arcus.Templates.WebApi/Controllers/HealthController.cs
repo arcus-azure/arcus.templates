@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using GuardNet;
 
-namespace Arcus.Template.WebApi.Controllers
+namespace Arcus.Templates.WebApi.Controllers
 {
     /// <summary>
     /// API endpoint to check the health of the application.

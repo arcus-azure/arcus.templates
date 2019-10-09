@@ -3,14 +3,14 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <DocumentationFile>Arcus.Template.WebApi.Open-Api.xml</DocumentationFile>
+    <DocumentationFile>Arcus.Templates.WebApi.Open-Api.xml</DocumentationFile>
     <!--#if (AuthoringMode)-->
     <Authors>Arcus</Authors>
     <Company>Arcus</Company>
     <RepositoryType>Git</RepositoryType>
     <Description>Provide a template to easily build Web APIs running in Azure.</Description>
     <IsPackable>true</IsPackable>
-    <PackageId>Arcus.Template.WebApi</PackageId>
+    <PackageId>Arcus.Templates.WebApi</PackageId>
     <Title>Template for web API project</Title>
     <PackageType>Template</PackageType>
     <PackageTags>Azure;WebAPI;App Services;Web App;Web;API</PackageTags>
@@ -26,7 +26,7 @@
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <ContentTargetFolders>content</ContentTargetFolders>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-    <DockerComposeProjectPath>..\Arcus.Template.Orchestrator.dcproj</DockerComposeProjectPath>
+    <DockerComposeProjectPath>..\Arcus.Templates.Orchestrator.dcproj</DockerComposeProjectPath>
     <!--#endif-->
   </PropertyGroup>
 

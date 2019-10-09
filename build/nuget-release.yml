@@ -1,0 +1,152 @@
+name: $(Package.Version)
+
+trigger: none
+pr: none
+
+resources:
+  repositories:
+    - repository: templates
+      type: github
+      name: arcus-azure/azure-devops-templates
+      endpoint: arcus-azure
+
+variables:
+  - group: 'Build Configuration'
+  # Always use fixed version for .NET Core SDK
+  - name: 'DotNet.Sdk.Version'
+    value: '2.2.402'
+  - name: 'Project'
+    value: 'Arcus.Template'
+  - name: 'Http.Port'
+    value: '5000'
+  - name: 'Arcus_Api_BaseUrl'
+    value: 'http://localhost:$(Http.Port)/api/v1'
+  # 'Package.Version.ManualTrigger' is added as queue-time variable on build in Azure DevOps
+
+stages:
+  - stage: Build
+    jobs:
+      - job: Compile
+        pool:
+          vmImage: 'ubuntu-16.04'
+        steps:
+          - template: build/build-solution.yml@templates
+            parameters:
+              dotnetSdkVersion: '$(DotNet.Sdk.Version)'
+              versionSuffix: '$(Build.BuildNumber)'
+          - task: CopyFiles@2
+            displayName: 'Copy build artifacts'
+            inputs:
+              contents: '**/bin/**/*.nupkg'
+              targetFolder: '$(Pipeline.Workspace)/templates'
+              flattenFolders: true
+          - task: PublishPipelineArtifact@0
+            displayName: 'Publish build artifacts'
+            inputs:
+              targetPath: '$(Pipeline.Workspace)/templates'
+              artifactName: Templates
+
+  - stage: IntegrationTests
+    displayName: Integration Tests
+    dependsOn: Build
+    condition: succeeded()
+    jobs:
+      - job: RunIntegrationTests
+        displayName: 'Run integration tests'
+        pool:
+          vmImage: 'ubuntu-16.04'
+        steps:
+          - task: DownloadPipelineArtifact@2
+            displayName: 'Download build artifacts'
+            inputs:
+              artifact: 'Templates'
+              path: '$(Build.SourcesDirectory)/templates'
+          - task: DotNetCoreInstaller@0
+            displayName: 'Import .NET Core SDK ($(DotNet.Sdk.Version)) in web API template'
+            inputs:
+              version: '$(DotNet.Sdk.Version)'
+          - task: DotNetCoreCLI@2
+            displayName: 'Install template'
+            inputs:
+              command: 'custom'
+              custom: 'new'
+              arguments: '-i "templates/*.nupkg"'
+          - task: DotNetCoreCLI@2
+            displayName: 'Create new project from template'
+            inputs:
+              command: 'custom'
+              custom: 'new'
+              arguments: 'arcus-webapi -n MyProject -o /MyProject'
+          - task: Docker@1
+            displayName: 'Build Docker image from newly created web API project from template'
+            inputs:
+              dockerFile: /MyProject/Dockerfile
+              imageName: 'myproject:$(Build.BuildId)'
+          - task: Docker@1
+            displayName: 'Run new web API project Docker image from template'
+            inputs:
+              command: 'Run an image'
+              imageName: 'myproject:$(Build.BuildId)'
+              containerName: 'myproject'
+              ports: '$(Http.Port):$(Http.Port)'
+              envVars: |
+                ARCUS_HTTP_PORT=$(Http.Port)
+          - template: test/run-integration-tests.yml@templates
+            parameters:
+              dotnetSdkVersion: '$(DotNet.Sdk.Version)'
+              projectName: '$(Project).Tests.Integration'
+
+  - stage: Release
+    displayName: 'Release to NuGet.org'
+    dependsOn: IntegrationTests
+    condition: succeeded()
+    jobs:
+      - job: PushToNuGet
+        displayName: 'Push to NuGet.org'
+        pool:
+          vmImage: 'ubuntu-16.04'
+        steps:
+          - task: DownloadPipelineArtifact@2
+            displayName: 'Download build artifacts'
+            inputs:
+              artifact: 'Templates'
+              path: '$(Build.SourcesDirectory)/templates'
+          - task: GitHubRelease@0
+            displayName: 'Create GitHub Release (Conditional Step)'
+            inputs:
+              gitHubConnection: 'GitHub (arcus-automation - OAuth)'
+              repositoryName: 'arcus-azure/arcus.templates'
+              tagSource: manual
+              tag: 'v$(Build.BuildNumber)'
+              title: 'v$(Build.BuildNumber)'
+              releaseNotesSource: input
+              releaseNotes: |
+                Install new version via [NuGet](https://www.nuget.org/packages/Arcus.Template.WebApi/$(Build.BuildNumber))
+                ```shell
+                > Install-Package Arcus.Template.WebApi -Version $(Build.BuildNumber)
+                ```
+            condition: not(contains(variables['Build.BuildNumber'], '-'))
+          - task: GitHubRelease@0
+            displayName: 'Create GitHub Pre-Release (Conditional Step)'
+            inputs:
+              gitHubConnection: 'GitHub (arcus-automation - OAuth)'
+              repositoryName: 'azure-arcus/arcus.templates'
+              tagSource: manual
+              tag: 'v$(Build.BuildNumber)'
+              title: 'v$(Build.BuildNumber)'
+              releaseNotesSource: input
+              releaseNotes: |
+                Install new version via [NuGet](https://www.nuget.org/packages/Arcus.Template.WebApi/$(Build.BuildNumber))
+                ```shell
+                > Install-Package Arcus.Template.WebApi -Version $(Build.BuildNumber)
+                ```
+              isPreRelease: true
+              compareWith: 'lastRelease'
+            condition: contains(variables['Build.BuildNumber'], '-')
+          - task: NuGetCommand@2
+            displayName: 'Push to NuGet.org'
+            inputs:
+              command: push
+              packagesToPush: 'templates/*.nupkg'
+              nuGetFeedType: external
+              publishFeedCredentials: 'NuGet.org'

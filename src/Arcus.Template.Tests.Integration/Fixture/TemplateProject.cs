@@ -15,6 +15,8 @@ namespace Arcus.Template.Tests.Integration.Fixture
     /// </summary>
     public abstract class TemplateProject : IDisposable
     {
+        private const string ProjectName = "Arcus.Demo.Project";
+
         private readonly Process _process;
         private readonly DirectoryInfo _templateDirectory;
         private readonly ITestOutputHelper _outputWriter;
@@ -96,8 +98,8 @@ namespace Arcus.Template.Tests.Integration.Fixture
             
             _outputWriter.WriteLine("> dotnet run {0}", commandArguments ?? String.Empty);
 
-            RunDotNet($"build {WorkingDirectory.FullName}", "");
-            var processInfo = new ProcessStartInfo("dotnet", $"exec {Path.Combine(WorkingDirectory.FullName, "bin/Debug/netcoreapp2.2/Arcus.Demo.Project.dll")} {commandArguments}")
+            RunDotNet($"build {WorkingDirectory.FullName}", "Cannot build created project from template");
+            var processInfo = new ProcessStartInfo("dotnet", $"exec {Path.Combine(WorkingDirectory.FullName, $"bin/Debug/netcoreapp2.2/{ProjectName}.dll")} {commandArguments}")
             {
                 UseShellExecute = false,
                 CreateNoWindow = true,

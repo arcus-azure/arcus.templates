@@ -11,7 +11,7 @@ redirect_from:
 ## Web API
 
 ```shell
-PM > dotnet new -i Arcus.Templates.WebApi
+PM > dotnet new --install Arcus.Templates.WebApi
 ```
 
 Read [here](features/web-api-template) for standard and configurable features.

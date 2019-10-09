@@ -13,7 +13,7 @@ We provide a template to build Web APIs. ([docs](https://templates.arcus-azure.n
 
 First, install the template:
 ```shell
-> dotnet new -i Arcus.Templates.WebApi
+> dotnet new --install Arcus.Templates.WebApi
 ```
 
 When installed, the template can be created with shortname: arcus-webapi:

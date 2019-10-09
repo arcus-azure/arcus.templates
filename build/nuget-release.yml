@@ -128,7 +128,7 @@ stages:
               releaseNotes: |
                 Install new version via [NuGet](https://www.nuget.org/packages/Arcus.Template.WebApi/$(Build.BuildNumber))
                 ```shell
-                > dotnet new --install Arcus.Templates.WebApi:$(Build.BuildNumber)
+                > dotnet new --install Arcus.Templates.WebApi::$(Build.BuildNumber)
                 ```
             condition: not(contains(variables['Build.BuildNumber'], '-'))
           - task: GitHubRelease@0
@@ -143,7 +143,7 @@ stages:
               releaseNotes: |
                 Install new version via [NuGet](https://www.nuget.org/packages/Arcus.Template.WebApi/$(Build.BuildNumber))
                 ```shell
-                > dotnet new --install Arcus.Templates.WebApi:$(Build.BuildNumber)
+                > dotnet new --install Arcus.Templates.WebApi::$(Build.BuildNumber)
                 ```
               isPreRelease: true
               compareWith: 'lastRelease'

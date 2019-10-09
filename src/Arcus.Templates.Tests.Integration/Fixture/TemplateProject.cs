@@ -29,7 +29,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             _templateDirectory = templateDirectory;
             _outputWriter = outputWriter;
 
-            WorkingDirectory = new DirectoryInfo(Path.Combine(Path.GetTempPath(), "Arcus.Demo.Project-" + Guid.NewGuid()));;
+            WorkingDirectory = new DirectoryInfo(Path.Combine(Path.GetTempPath(), $"{ProjectName}-{Guid.NewGuid()}"));;
         }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
 
             string commandArguments = projectOptions.ToCommandLineArguments();
             RunDotNet(
-                $"new {shortName} {commandArguments ?? String.Empty} -n Arcus.Demo.Project -o {WorkingDirectory.FullName}", 
+                $"new {shortName} {commandArguments ?? String.Empty} -n {ProjectName} -o {WorkingDirectory.FullName}", 
                 $"Cannot create an project from the custom {shortName} project template");
 
             projectOptions.UpdateProjectToCorrectlyUseOptions(WorkingDirectory);

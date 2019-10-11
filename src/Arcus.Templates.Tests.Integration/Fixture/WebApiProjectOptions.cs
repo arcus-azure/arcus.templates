@@ -72,8 +72,12 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             }
 
             string startupContent = File.ReadAllText(startupFilePath);
+            string newSecretProviderWithSecret = 
+                $"new {typeof(InMemorySecretProvider).FullName}("
+                + $"new {typeof(Dictionary<string, string>).Namespace}.{nameof(Dictionary<string, string>)}<string, string> {{ [\"{secretName}\"] = \"{secretValue}\" }})";
+
             startupContent = 
-                startupContent.Replace("secretProvider: null", $"new {typeof(InMemorySecretProvider).FullName}((\"{secretName}\", \"{secretValue}\"))")
+                startupContent.Replace("secretProvider: null", newSecretProviderWithSecret)
                               .Replace("YOUR REQUEST HEADER NAME", requestHeader)
                               .Replace("YOUR SECRET NAME", secretName);
 

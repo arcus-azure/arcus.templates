@@ -18,11 +18,11 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         /// Initializes a new instance of the <see cref="InMemorySecretProvider"/> class.
         /// </summary>
         /// <param name="secretValueByName">The sequence of combinations of secret names and values.</param>
-        public InMemorySecretProvider(params (string name, string value)[] secretValueByName)
+        public InMemorySecretProvider(IDictionary<string, string> secretValueByName)
         {
             Guard.NotNull(secretValueByName, "Secret name/value combinations cannot be 'null'");
 
-            _secretValueByName = secretValueByName.ToDictionary(t => t.name, t => t.value);
+            _secretValueByName = secretValueByName;
         }
 
         /// <summary>

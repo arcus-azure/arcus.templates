@@ -79,17 +79,17 @@ namespace Arcus.Templates.Tests.Integration.Fixture
                       .Or<Exception>()
                       .WaitAndRetryForeverAsync(_ => TimeSpan.FromSeconds(1));
 
-            async Task<HttpStatusCode> GetNonExistingEndpoint()
-            {
-                using (HttpResponseMessage response = await HttpClient.GetAsync($"http://localhost:{httpPort}/not-exist"))
-                {
-                    return response.StatusCode;
-                }
-            }
-
             await Policy.TimeoutAsync(TimeSpan.FromSeconds(10))
                         .WrapAsync(waitAndRetryForeverAsync)
-                        .ExecuteAndCaptureAsync(GetNonExistingEndpoint);
+                        .ExecuteAndCaptureAsync(() => GetNonExistingEndpoint(httpPort));
+        }
+
+        private static async Task<HttpStatusCode> GetNonExistingEndpoint(int httpPort)
+        {
+            using (HttpResponseMessage response = await HttpClient.GetAsync($"http://localhost:{httpPort}/not-exist"))
+            {
+                return response.StatusCode;
+            }
         }
 
         /// <summary>

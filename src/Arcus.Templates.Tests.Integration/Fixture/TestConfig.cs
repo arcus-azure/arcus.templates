@@ -83,7 +83,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         /// <summary>
         /// Gets the base URL of the to-be-created project from the web API template.
         /// </summary>
-        public Uri CreateWebAPiBaseUrl()
+        public Uri CreateWebApiBaseUrl()
         {
             const string baseUrlKey = "Arcus:Api:BaseUrl";
 

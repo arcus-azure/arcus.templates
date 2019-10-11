@@ -56,13 +56,11 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             _outputWriter.WriteLine($"Creates new project from template {shortName} at {_projectDirectory.FullName}");
             
             RunDotNet(
-                $"new -i {_templateDirectory.FullName}", 
-                $"Cannot install custom project template at: {_templateDirectory.FullName}");
+                $"new -i {_templateDirectory.FullName}");
 
             string commandArguments = projectOptions.ToCommandLineArguments();
             RunDotNet(
-                $"new {shortName} {commandArguments ?? String.Empty} -n {ProjectName} -o {_projectDirectory.FullName}", 
-                $"Cannot create an project from the custom {shortName} project template");
+                $"new {shortName} {commandArguments ?? String.Empty} -n {ProjectName} -o {_projectDirectory.FullName}");
 
             projectOptions.UpdateProjectToCorrectlyUseOptions(_fixtureDirectory, _projectDirectory);
         }
@@ -99,7 +97,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
                 throw new InvalidOperationException("Test demo project from template is already started");
             }
 
-            RunDotNet($"build -c {buildConfiguration} {_projectDirectory.FullName}", "Cannot build created project from template");
+            RunDotNet($"build -c {buildConfiguration} {_projectDirectory.FullName}");
             
             string runCommand = $"exec {Path.Combine(_projectDirectory.FullName, $"bin/{buildConfiguration}/netcoreapp2.2/{ProjectName}.dll")} {commandArguments ?? String.Empty}";
             _outputWriter.WriteLine("> dotnet {0}", runCommand);
@@ -158,24 +156,15 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             }
             
             _process.Dispose();
-
-            foreach (Process process in Process.GetProcessesByName(".NET Core Host"))
-            {
-                if (!process.HasExited)
-                {
-                    process.Kill();
-                }
-            }
         }
 
         private void UninstallTemplate()
         {
             RunDotNet(
-                $"new -u {_templateDirectory.FullName}", 
-                $"Cannot uninstall custom project template at: {_templateDirectory.FullName}");
+                $"new -u {_templateDirectory.FullName}");
         }
 
-        private void RunDotNet(string command, string exceptionMessage)
+        private void RunDotNet(string command)
         {
             try
             {

@@ -96,17 +96,8 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         /// <returns></returns>
         public Uri GetDockerBaseUrl()
         {
-            const string baseUrlKey = "Arcus:Api:BaseUrl";
-
-            string baseUrl = _configuration.GetValue<string>(baseUrlKey);
-            Guard.NotNull(baseUrl, nameof(baseUrl), $"No base URL configured with the key: {baseUrlKey}");
-            
-            if (!Uri.TryCreate(baseUrl, UriKind.RelativeOrAbsolute, out Uri result))
-            {
-                throw new InvalidOperationException($"Cannot create valid URI from configured base URL with the key: {baseUrlKey}");
-            }
-
-            return result;
+            Uri baseUrl = GetBaseUrl();
+            return baseUrl;
         }
 
         private static readonly Random RandomPort = new Random();
@@ -116,18 +107,26 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         /// </summary>
         public Uri CreateWebApiBaseUrl()
         {
-            const string baseUrlKey = "Arcus:Api:BaseUrl";
-
-            string baseUrl = _configuration.GetValue<string>(baseUrlKey);
-            Guard.NotNull(baseUrl, nameof(baseUrl), $"No base URL configured with the key: {baseUrlKey}");
-            
-            if (!Uri.TryCreate(baseUrl, UriKind.RelativeOrAbsolute, out Uri result))
-            {
-                throw new InvalidOperationException($"Cannot create valid URI from configured base URL with the key: {baseUrlKey}");
-            }
+            Uri baseUrl = GetBaseUrl();
 
             int port = RandomPort.Next(8080, 9000);
-            return new Uri($"http://localhost:{port}{result.AbsolutePath}");
+            return new Uri($"http://localhost:{port}{baseUrl.AbsolutePath}");
+        }
+
+        private Uri GetBaseUrl()
+        {
+            const string baseUrlKey = "Arcus:Api:BaseUrl";
+
+            var baseUrl = _configuration.GetValue<string>(baseUrlKey);
+            Guard.NotNull(baseUrl, nameof(baseUrl), $"No base URL configured with the key: {baseUrlKey}");
+
+            if (!Uri.TryCreate(baseUrl, UriKind.RelativeOrAbsolute, out Uri result))
+            {
+                throw new InvalidOperationException(
+                    $"Cannot create valid URI from configured base URL with the key: {baseUrlKey}");
+            }
+
+            return result;
         }
 
         /// <summary>

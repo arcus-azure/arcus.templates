@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json.Converters;
 using Swashbuckle.AspNetCore.Swagger;
 #if Auth
 using Arcus.Security.Secrets.Core.Caching;
@@ -34,8 +35,9 @@ namespace Arcus.Templates.WebApi
                 options.RespectBrowserAcceptHeader = true;
                 
                 RestrictToJsonContentType(options);
+                AddEnumAsStringRepresentation(options);
 
-#if SharedAccessKeyAuth                
+#if SharedAccessKeyAuth
                 #warning Please provide a valid request header name and secret name to the shared access filter
                 options.Filters.Add(new SharedAccessKeyAuthenticationFilter("YOUR REQUEST HEADER NAME", "YOUR SECRET NAME"));
 #endif
@@ -64,6 +66,15 @@ namespace Arcus.Templates.WebApi
             foreach (IInputFormatter inputFormatter in allButJsonInputFormatters)
             {
                 options.InputFormatters.Remove(inputFormatter);
+            }
+        }
+
+        private static void AddEnumAsStringRepresentation(MvcOptions options)
+        {
+            var onlyJsonOutputFormatters = options.OutputFormatters.OfType<JsonOutputFormatter>();
+            foreach (JsonOutputFormatter outputFormatter in onlyJsonOutputFormatters)
+            {
+                outputFormatter.PublicSerializerSettings.Converters.Add(new StringEnumConverter());
             }
         }
 

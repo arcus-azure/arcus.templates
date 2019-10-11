@@ -79,7 +79,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
 
         private DirectoryInfo GetBuildSourcesDirectory()
         {
-            const string buildSourcesDirectory = "Build:SourcesDirectory";
+            const string buildSourcesDirectory = "Build.SourcesDirectory";
 
             string sourcesDirectory = _configuration.GetValue<string>(buildSourcesDirectory);
             Guard.NotNull(sourcesDirectory, nameof(sourcesDirectory), $"No build sources directory configured with the key: {buildSourcesDirectory}");

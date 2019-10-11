@@ -21,6 +21,8 @@ variables:
     value: '5000'
   - name: 'Arcus_Api_BaseUrl'
     value: 'http://localhost:$(Http.Port)/api/v1'
+  - name: 'Build_SourcesDirectory'
+    value: '$(Build.SourcesDirectory)'
   # 'Package.Version' is added as queue-time variable on build in Azure DevOps
 
 stages:
@@ -34,10 +36,10 @@ stages:
             displayName: 'Import .NET Core SDK ($(DotNet.Sdk.Version))'
             inputs:
               version: '$(DotNet.Sdk.Version)'
-          - task: DotNetCoreCLI@2	
-            displayName: 'Compile'	
-            inputs:	
-              projects: 'src/*.sln'	
+          - task: DotNetCoreCLI@2
+            displayName: 'Compile'
+            inputs:
+              projects: 'src/*.sln'
               arguments: '--configuration release /property:Version=$(Build.BuildNumber)'
           - task: CopyFiles@2
             displayName: 'Copy build artifacts'

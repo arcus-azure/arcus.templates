@@ -32,6 +32,8 @@ variables:
     value: '5000'
   - name: 'Arcus_Api_BaseUrl'
     value: 'http://localhost:$(Http.Port)/api/v1'
+  - name: 'Build_SourcesDirectory'
+    value: '$(Build.SourcesDirectory)'
   # 'Package.Version.ManualTrigger' is added as queue-time variable on build in Azure DevOps
 
 stages:

@@ -1,4 +1,7 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using Arcus.Security.Secrets.Core.Interfaces;
 using GuardNet;
 
@@ -42,14 +45,14 @@ namespace Arcus.Templates.Tests.Integration.Fixture
 
             ProjectOptions optionsWithSharedAccessAuthentication = AddOption(
                 "--Authentication SharedAccessKey",
-                projectDirectory => ConfigureSharedAccessAuthentication(projectDirectory, headerName, secretName, secretValue));
+                (fixtureDirectory, projectDirectory) => ConfigureSharedAccessAuthentication(fixtureDirectory, projectDirectory, headerName, secretName, secretValue));
 
             return new WebApiProjectOptions(optionsWithSharedAccessAuthentication);
         }
 
-        private void ConfigureSharedAccessAuthentication(DirectoryInfo projectDirectory, string requestHeader, string secretName, string secretValue)
+        private void ConfigureSharedAccessAuthentication(DirectoryInfo fixtureDirectory, DirectoryInfo projectDirectory, string requestHeader, string secretName, string secretValue)
         {
-            string srcInMemorySecretProviderFilePath = Path.Combine("Fixture", nameof(InMemorySecretProvider) + ".cs");
+            string srcInMemorySecretProviderFilePath = FindFixtureTypeInDirectory(fixtureDirectory, typeof(InMemorySecretProvider));
             if (!File.Exists(srcInMemorySecretProviderFilePath))
             {
                 throw new FileNotFoundException(
@@ -75,6 +78,28 @@ namespace Arcus.Templates.Tests.Integration.Fixture
                               .Replace("YOUR SECRET NAME", secretName);
 
             File.WriteAllText(startupFilePath, startupContent);
+        }
+
+        private static string FindFixtureTypeInDirectory(DirectoryInfo fixtureDirectory, Type fixtureType)
+        {
+            string fixtureFileName = fixtureType.Name + ".cs";
+            IEnumerable<FileInfo> files = 
+                fixtureDirectory.EnumerateFiles(fixtureFileName, SearchOption.AllDirectories);
+
+            if (!files.Any())
+            {
+                throw new FileNotFoundException(
+                    $"Cannot find fixture with file name: {fixtureFileName} in directory: {fixtureDirectory.FullName}", 
+                    fixtureFileName);
+            }
+
+            if (files.Count() > 1)
+            {
+                throw new IOException(
+                    $"More than a single fixture matches the file name: {fixtureFileName} in directory: {fixtureDirectory.FullName}");
+            }
+
+            return files.First().FullName;
         }
     }
 }

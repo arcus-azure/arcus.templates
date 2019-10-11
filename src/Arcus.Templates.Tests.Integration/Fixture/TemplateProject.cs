@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using GuardNet;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Polly;
@@ -18,27 +19,28 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         private const string ProjectName = "Arcus.Demo.Project";
 
         private readonly Process _process;
-        private readonly DirectoryInfo _templateDirectory;
+        private readonly DirectoryInfo _templateDirectory, _fixtureDirectory, _projectDirectory;
         private readonly ITestOutputHelper _outputWriter;
 
         private bool _created, _started, _disposed;
 
-        protected TemplateProject(DirectoryInfo templateDirectory, ITestOutputHelper outputWriter)
+        protected TemplateProject(DirectoryInfo templateDirectory, DirectoryInfo fixtureDirectory, ITestOutputHelper outputWriter)
         {
+            Guard.NotNull(templateDirectory, nameof(templateDirectory));
+            Guard.NotNull(fixtureDirectory, nameof(fixtureDirectory));
+            Guard.NotNull(outputWriter, nameof(outputWriter));
+
             _process = new Process();
+
             _templateDirectory = templateDirectory;
+            _fixtureDirectory = fixtureDirectory;
             _outputWriter = outputWriter;
 
-            WorkingDirectory = new DirectoryInfo(Path.Combine(Path.GetTempPath(), $"{ProjectName}-{Guid.NewGuid()}"));;
+            _projectDirectory = new DirectoryInfo(Path.Combine(Path.GetTempPath(), $"{ProjectName}-{Guid.NewGuid()}"));;
         }
 
         /// <summary>
-        /// Gets the directory where the project from this template will be created.
-        /// </summary>
-        public DirectoryInfo WorkingDirectory { get; }
-
-        /// <summary>
-        /// Creates a new project from this template at the <see cref="WorkingDirectory"/> with a given set of <paramref name="projectOptions"/>.
+        /// Creates a new project from this template at the project directory with a given set of <paramref name="projectOptions"/>.
         /// </summary>
         /// <param name="projectOptions">The console arguments that controls the creation process of the to-be-created project.</param>
         public void CreateNewProject(ProjectOptions projectOptions)
@@ -51,7 +53,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             _created = true;
 
             string shortName = GetTemplateShortNameAtTemplateFolder(_templateDirectory);
-            _outputWriter.WriteLine($"Creates new project from template {shortName} at {WorkingDirectory.FullName}");
+            _outputWriter.WriteLine($"Creates new project from template {shortName} at {_projectDirectory.FullName}");
             
             RunDotNet(
                 $"new -i {_templateDirectory.FullName}", 
@@ -59,10 +61,10 @@ namespace Arcus.Templates.Tests.Integration.Fixture
 
             string commandArguments = projectOptions.ToCommandLineArguments();
             RunDotNet(
-                $"new {shortName} {commandArguments ?? String.Empty} -n {ProjectName} -o {WorkingDirectory.FullName}", 
+                $"new {shortName} {commandArguments ?? String.Empty} -n {ProjectName} -o {_projectDirectory.FullName}", 
                 $"Cannot create an project from the custom {shortName} project template");
 
-            projectOptions.UpdateProjectToCorrectlyUseOptions(WorkingDirectory);
+            projectOptions.UpdateProjectToCorrectlyUseOptions(_fixtureDirectory, _projectDirectory);
         }
 
         private static string GetTemplateShortNameAtTemplateFolder(DirectoryInfo templateDir)
@@ -90,22 +92,22 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         /// </summary>
         /// <param name="buildConfiguration">The build configuration on which the project should be build.</param>
         /// <param name="commandArguments">The command line arguments that control the startup of the project.</param>
-        protected void Run(string buildConfiguration, string commandArguments)
+        protected void Run(BuildConfiguration buildConfiguration, string commandArguments)
         {
             if (_started)
             {
                 throw new InvalidOperationException("Test demo project from template is already started");
             }
 
-            RunDotNet($"build -c {buildConfiguration} {WorkingDirectory.FullName}", "Cannot build created project from template");
+            RunDotNet($"build -c {buildConfiguration} {_projectDirectory.FullName}", "Cannot build created project from template");
             
-            string runCommand = $"exec {Path.Combine(WorkingDirectory.FullName, $"bin/{buildConfiguration}/netcoreapp2.2/{ProjectName}.dll")} {commandArguments ?? String.Empty}";
+            string runCommand = $"exec {Path.Combine(_projectDirectory.FullName, $"bin/{buildConfiguration}/netcoreapp2.2/{ProjectName}.dll")} {commandArguments ?? String.Empty}";
             _outputWriter.WriteLine("> dotnet {0}", runCommand);
             var processInfo = new ProcessStartInfo("dotnet", runCommand)
             {
                 UseShellExecute = false,
                 CreateNoWindow = true,
-                WorkingDirectory = WorkingDirectory.FullName,
+                WorkingDirectory = _projectDirectory.FullName,
             };
 
             _process.StartInfo = processInfo;
@@ -202,7 +204,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
 
         private void DeleteProjectDirectory()
         {
-            Directory.Delete(WorkingDirectory.FullName, recursive: true);
+            Directory.Delete(_projectDirectory.FullName, recursive: true);
         }
 
         private static PolicyResult RetryAction(Action action)

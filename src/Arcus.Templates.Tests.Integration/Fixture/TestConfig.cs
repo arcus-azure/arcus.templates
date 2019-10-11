@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Arcus.Templates.WebApi;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Primitives;
 using GuardNet;
@@ -14,10 +15,9 @@ namespace Arcus.Templates.Tests.Integration.Fixture
     {
         private readonly IConfigurationRoot _configuration;
 
-        private TestConfig(IConfigurationRoot configuration, string buildConfiguration)
+        private TestConfig(IConfigurationRoot configuration, BuildConfiguration buildConfiguration)
         {
             Guard.NotNull(configuration, nameof(configuration));
-            Guard.NotNullOrWhitespace(buildConfiguration, nameof(buildConfiguration));
 
             _configuration = configuration;
             BuildConfiguration = buildConfiguration;
@@ -26,13 +26,13 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         /// <summary>
         /// Gets the build configuration for the project created from the template.
         /// </summary>
-        public string BuildConfiguration { get; }
+        public BuildConfiguration BuildConfiguration { get; }
 
         /// <summary>
         /// Creates a new <see cref="IConfigurationRoot"/> with test values.
         /// </summary>
         /// <param name="buildConfiguration">The configuration in which the created project from the template should be build.</param>
-        public static TestConfig Create(string buildConfiguration = "Debug")
+        public static TestConfig Create(BuildConfiguration buildConfiguration = BuildConfiguration.Debug)
         {
             var configuration = new ConfigurationBuilder()
                 .AddJsonFile(path: "appsettings.json", optional: true)
@@ -44,19 +44,50 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         }
 
         /// <summary>
-        /// Gets the project file path of the web API project.
+        /// Gets the project directory of the web API project.
         /// </summary>
         public DirectoryInfo GetWebApiProjectDirectory()
         {
-            const string webApiProjectPath = "Arcus:Api:ProjectPath";
+            DirectoryInfo sourcesDirectory = GetBuildSourcesDirectory();
 
-            string projectPath = _configuration.GetValue<string>(webApiProjectPath);
-            Guard.NotNull(projectPath, nameof(projectPath), $"No project path configured for the web API project with the key: {webApiProjectPath}");
+            string webApiProjectPath = Path.Combine(sourcesDirectory.FullName, "src", typeof(Startup).Namespace);
+            if (!Directory.Exists(webApiProjectPath))
+            {
+                throw new DirectoryNotFoundException(
+                    $"Cannot find web API project directory at: {Path.GetFullPath(webApiProjectPath)}");
+            }
+
+            return new DirectoryInfo(webApiProjectPath);
+        }
+
+        /// <summary>
+        /// Gets the project directory where the fixtures are located.
+        /// </summary>
+        public DirectoryInfo GetFixtureProjectDirectory()
+        {
+            DirectoryInfo sourcesDirectory = GetBuildSourcesDirectory();
+
+            string fixtureProjectPath = Path.Combine(sourcesDirectory.FullName, "src", typeof(TestConfig).Assembly.GetName().Name);
+            if (!Directory.Exists(fixtureProjectPath))
+            {
+                throw new DirectoryNotFoundException(
+                    $"Cannot find fixture project directory at: {Path.GetFullPath(fixtureProjectPath)}");
+            }
+
+            return new DirectoryInfo(fixtureProjectPath);
+        }
+
+        private DirectoryInfo GetBuildSourcesDirectory()
+        {
+            const string buildSourcesDirectory = "Build.SourcesDirectory";
+
+            string sourcesDirectory = _configuration.GetValue<string>(buildSourcesDirectory);
+            Guard.NotNull(sourcesDirectory, nameof(sourcesDirectory), $"No build sources directory configured with the key: {buildSourcesDirectory}");
             Guard.For<ArgumentException>(
-                () => !Directory.Exists(projectPath),
-                $"No project template directory exists at {projectPath}");
+                () => !Directory.Exists(sourcesDirectory),
+                $"No directory exists at {Path.GetFullPath(sourcesDirectory)}");
 
-            return new DirectoryInfo(projectPath);
+            return new DirectoryInfo(sourcesDirectory);
         }
 
         /// <summary>

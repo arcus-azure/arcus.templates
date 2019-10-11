@@ -12,14 +12,14 @@ namespace Arcus.Templates.Tests.Integration.Fixture
     public class ProjectOptions
     {
         private readonly IEnumerable<string> _arguments;
-        private readonly  IEnumerable<Action<DirectoryInfo>> _updateProject;
+        private readonly  IEnumerable<Action<DirectoryInfo, DirectoryInfo>> _updateProject;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WebApiProjectOptions"/> class.
         /// </summary>
         public ProjectOptions() 
             : this(Enumerable.Empty<string>(),
-                   Enumerable.Empty<Action<DirectoryInfo>>())
+                   Enumerable.Empty<Action<DirectoryInfo, DirectoryInfo>>())
         {
         }
 
@@ -34,7 +34,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
 
         private ProjectOptions(
             IEnumerable<string> arguments,
-            IEnumerable<Action<DirectoryInfo>> updateProject)
+            IEnumerable<Action<DirectoryInfo, DirectoryInfo>> updateProject)
         {
             Guard.NotNull(arguments, nameof(arguments), "Cannot create web API project without project options");
             Guard.NotNull(updateProject, nameof(updateProject), "Cannot create web API project without post-project-created actions");
@@ -48,7 +48,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         /// </summary>
         /// <param name="argument">The console argument to pass along the 'dotnet new' command.</param>
         /// <param name="updateProject">The custom action to be executed in order that the created project uses the project option correctly.</param>
-        protected ProjectOptions AddOption(string argument, Action<DirectoryInfo> updateProject)
+        protected ProjectOptions AddOption(string argument, Action<DirectoryInfo, DirectoryInfo> updateProject)
         {
             return new ProjectOptions(
                 _arguments.Append(argument),
@@ -67,15 +67,16 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         /// Update the created project at the given <paramref name="projectDirectory"/> with a set of custom action in order that the created project is using the options correctly.
         /// After this update the project is ready to start.
         /// </summary>
-        /// <param name="projectDirectory">The project directory the project is located.</param>
-        internal void UpdateProjectToCorrectlyUseOptions(DirectoryInfo projectDirectory)
+        /// <param name="fixtureDirectory">The project directory where the fixtures for the newly created project is located.</param>
+        /// <param name="projectDirectory">The project directory where the newly project from a template is located.</param>
+        internal void UpdateProjectToCorrectlyUseOptions(DirectoryInfo fixtureDirectory, DirectoryInfo projectDirectory)
         {
             Guard.NotNull(projectDirectory, nameof(projectDirectory), "Cannot execute any post-create custom actions without a project directory");
             Guard.For<ArgumentException>(() => !projectDirectory.Exists, "Cannot execute any post-create custom action on a project directory that doesn't exists on disk");
 
-            foreach (Action<DirectoryInfo> postBuildAction in _updateProject)
+            foreach (Action<DirectoryInfo, DirectoryInfo> postBuildAction in _updateProject)
             {
-                postBuildAction(projectDirectory);
+                postBuildAction(fixtureDirectory, projectDirectory);
             }
         }
     }

@@ -20,8 +20,9 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         private WebApiProject(
             Uri baseUrl, 
             DirectoryInfo templateDirectory,
+            DirectoryInfo fixturesDirectory,
             ITestOutputHelper outputWriter)
-            : base(templateDirectory, outputWriter)
+            : base(templateDirectory, fixturesDirectory, outputWriter)
         {
             Guard.NotNull(baseUrl, nameof(baseUrl), "Cannot create a web API services without a test configuration");
 
@@ -60,8 +61,9 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             Guard.NotNull(outputWriter, nameof(outputWriter), "Cannot create web API services without a test output logger");
 
             DirectoryInfo templateDirectory = configuration.GetWebApiProjectDirectory();
+            DirectoryInfo fixtureDirectory = configuration.GetFixtureProjectDirectory();
             Uri baseUrl = configuration.CreateWebAPiBaseUrl();
-            var project = new WebApiProject(baseUrl, templateDirectory, outputWriter);
+            var project = new WebApiProject(baseUrl, templateDirectory, fixtureDirectory, outputWriter);
             project.CreateNewProject(projectOptions);
             
             project.Run(configuration.BuildConfiguration, $"--ARCUS_HTTP_PORT {baseUrl.Port}");

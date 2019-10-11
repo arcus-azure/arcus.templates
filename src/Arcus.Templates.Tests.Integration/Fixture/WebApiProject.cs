@@ -62,7 +62,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
 
             DirectoryInfo templateDirectory = configuration.GetWebApiProjectDirectory();
             DirectoryInfo fixtureDirectory = configuration.GetFixtureProjectDirectory();
-            Uri baseUrl = configuration.CreateWebAPiBaseUrl();
+            Uri baseUrl = configuration.CreateWebApiBaseUrl();
             var project = new WebApiProject(baseUrl, templateDirectory, fixtureDirectory, outputWriter);
             project.CreateNewProject(projectOptions);
             

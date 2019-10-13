@@ -18,7 +18,7 @@ First, install the template:
 
 When installed, the template can be created with shortname: arcus-webapi:
 ```shell
-> dotnet new arcus-webapi -n Arcus.Demo.WebAPI
+> dotnet new arcus-webapi --name Arcus.Demo.WebAPI
 ```
 
 # Documentation

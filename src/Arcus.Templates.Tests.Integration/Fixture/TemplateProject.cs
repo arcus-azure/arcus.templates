@@ -36,7 +36,8 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             _fixtureDirectory = fixtureDirectory;
             _outputWriter = outputWriter;
 
-            _projectDirectory = new DirectoryInfo(Path.Combine(Path.GetTempPath(), $"{ProjectName}-{Guid.NewGuid()}"));;
+            string tempDirectoryPath = Path.Combine(Path.GetTempPath(), $"{ProjectName}-{Guid.NewGuid()}");
+            _projectDirectory = new DirectoryInfo(tempDirectoryPath);;
         }
 
         /// <summary>
@@ -52,7 +53,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
 
             _created = true;
 
-            string shortName = GetTemplateShortNameAtTemplateFolder(_templateDirectory);
+            string shortName = GetTemplateShortNameAtTemplateFolder();
             _outputWriter.WriteLine($"Creates new project from template {shortName} at {_projectDirectory.FullName}");
             
             RunDotNet($"new -i {_templateDirectory.FullName}");
@@ -63,13 +64,13 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             projectOptions.UpdateProjectToCorrectlyUseOptions(_fixtureDirectory, _projectDirectory);
         }
 
-        private static string GetTemplateShortNameAtTemplateFolder(DirectoryInfo templateDir)
+        private string GetTemplateShortNameAtTemplateFolder()
         {
-            var templateFile = new FileInfo(Path.Combine(templateDir.FullName, ".template.config", "template.json"));
+            var templateFile = new FileInfo(Path.Combine(_templateDirectory.FullName, ".template.config", "template.json"));
             if (!templateFile.Exists)
             {
                 throw new FileNotFoundException(
-                    $"Cannot find a correct template project at: {templateDir.FullName} because no './.template.config/template.json' was found");
+                    $"Cannot find a correct template project at: {_templateDirectory.FullName} because no './.template.config/template.json' was found");
             }
 
             string json = File.ReadAllText(templateFile.FullName);
@@ -96,8 +97,10 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             }
 
             RunDotNet($"build -c {buildConfiguration} {_projectDirectory.FullName}");
+
+            string targetAssembly = Path.Combine(_projectDirectory.FullName, $"bin/{buildConfiguration}/netcoreapp2.2/{ProjectName}.dll");
+            string runCommand = $"exec {targetAssembly} {commandArguments ?? String.Empty}";
             
-            string runCommand = $"exec {Path.Combine(_projectDirectory.FullName, $"bin/{buildConfiguration}/netcoreapp2.2/{ProjectName}.dll")} {commandArguments ?? String.Empty}";
             _outputWriter.WriteLine("> dotnet {0}", runCommand);
             var processInfo = new ProcessStartInfo("dotnet", runCommand)
             {
@@ -190,7 +193,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
 
         private void DeleteProjectDirectory()
         {
-            Directory.Delete(_projectDirectory.FullName, recursive: true);
+            _projectDirectory.Delete(recursive: true);
         }
 
         private static PolicyResult RetryAction(Action action)

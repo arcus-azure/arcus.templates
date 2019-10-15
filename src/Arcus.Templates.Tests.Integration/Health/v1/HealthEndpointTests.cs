@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.Fixture;
@@ -6,29 +7,32 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Arcus.Templates.Tests.Integration.Endpoints.v1
+namespace Arcus.Templates.Tests.Integration.Health.v1
 {
     [Collection("Integration")]
     public class HealthEndpointTests
     {
         private readonly TestConfig _configuration;
-        private readonly HealthEndpointService _healthService;
+        private readonly ITestOutputHelper _outputWriter;
 
         public HealthEndpointTests(ITestOutputHelper outputWriter)
         {
             _configuration = TestConfig.Create();
-            _healthService = new HealthEndpointService(_configuration, outputWriter);
+            _outputWriter = outputWriter;
         }
 
         [Fact]
         public async Task Health_Get_Succeeds()
         {
+            // Arrange
+            using (WebApiProject project = await WebApiProject.StartNewAsync(_configuration, _outputWriter))
             // Act
-            using (HttpResponseMessage response = await _healthService.GetAsync())
+            using (HttpResponseMessage response = await project.Health.GetAsync())
             {
                 // Assert
                 Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-                var healthReport = await response.Content.ReadAsAsync<HealthReport>();
+                
+                HealthReport healthReport = await response.Content.ReadAsAsync<HealthReport>();
                 Assert.NotNull(healthReport);
                 Assert.Equal(HealthStatus.Healthy, healthReport.Status);
             }

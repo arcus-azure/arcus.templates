@@ -36,10 +36,12 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <DefineConstants>$(DefineConstants);NoneAuth;Auth;SharedAccessKeyAuth</DefineConstants>
+    <DefineConstants>$(DefineConstants);NoneAuth;Auth;SharedAccessKeyAuth;DefaultLog;Serilog</DefineConstants>
     <NoneAuth>false</NoneAuth>
     <Auth>true</Auth>
     <SharedAccessKeyAuth>true</SharedAccessKeyAuth>
+    <DefaultLog>false</DefaultLog>
+    <Serilog>true</Serilog>
   </PropertyGroup>
 
   <ItemGroup>
@@ -54,6 +56,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.2.0" />
     <PackageReference Include="Arcus.WebApi.Logging" Version="0.2" />
     <PackageReference Include="Arcus.WebApi.Security.Authentication" Version="0.2" Condition="'$(Auth)' == 'true'" />
+    <PackageReference Include="Serilog.AspNetCore" Version="3.0.0" Condition="'$(Serilog)' == 'true'" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="4.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="4.0.1" />
   </ItemGroup>

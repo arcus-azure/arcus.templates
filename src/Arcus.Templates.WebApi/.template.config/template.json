@@ -79,6 +79,30 @@
     "SharedAccessKeyAuth": {
       "type": "computed",
       "value": "(Authentication == \"SharedAccessKey\")"
-    }
+    },
+    "Logging": {
+      "type": "parameter",
+      "datatype": "choice",
+      "choices": [
+        {
+          "choice": "Serilog",
+          "description": "Adds Serilog as logging mechanism with request logging to the web API project"
+        },
+        {
+          "choice": "Default",
+          "description": "No extra logging mechanism except for the default console logging will be added to the web API project"
+        }
+      ],
+      "defaultValue": "Default",
+      "description": "Choose whether to use the default console logging or a third-party logging mechanism"
+    },
+    "DefaultLog": {
+      "type": "computed",
+      "value": "(Logging == \"Default\")"
+    },
+    "Serilog": {
+      "type": "computed",
+      "value": "(Logging == \"Serilog\")"
+    } 
   }
 }

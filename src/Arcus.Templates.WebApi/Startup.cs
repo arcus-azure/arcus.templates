@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.DependencyInjection;
+#if Serilog
+using Serilog;
+#endif
 using Swashbuckle.AspNetCore.Swagger;
 #if Auth
 using Arcus.Security.Secrets.Core.Caching;
@@ -26,8 +29,8 @@ namespace Arcus.Templates.WebApi
 #if Auth
             #warning Please provide a valid secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secrets/consume-from-key-vault
             services.AddScoped<ICachedSecretProvider>(serviceProvider => new CachedSecretProvider(secretProvider: null));
-#endif
 
+#endif
             services.AddMvc(options => 
             {
                 options.ReturnHttpNotAcceptable = true;
@@ -71,10 +74,14 @@ namespace Arcus.Templates.WebApi
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             app.UseMiddleware<Arcus.WebApi.Logging.ExceptionHandlingMiddleware>();
+#if Serilog
+
+            app.UseSerilogRequestLogging();
+#endif
 
             #warning Please configure application with HTTPS transport layer security
-
 #if NoneAuth
+
             #warning Please configure application with authentication mechanism: https://webapi.arcus-azure.net/features/security/auth/shared-access-key
 #endif
             app.UseMvc();

@@ -26,7 +26,7 @@ Creates a starter web API project with by default configured:
 * [Exception middleware](https://webapi.arcus-azure.net/features/logging) to log unhandled exceptions thrown during request processing.
 * Content negotiation that only supports `application/json`.
 * Swagger docs generation and UI (only available locally).
-* [Health checks](https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-2.2) (_middleware only_) and health endpoint (_based on _[info gained via health checks](https://www.codit.eu/blog/documenting-asp-net-core-health-checks-with-openapi/)_).
+* Provides basic health endpoint with [ASP.NET Core health checks](https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-2.2) with [OpenAPI support](https://www.codit.eu/blog/documenting-asp-net-core-health-checks-with-openapi/).
 * Docker building file.
 * Default console logger.
 

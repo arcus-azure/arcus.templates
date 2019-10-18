@@ -26,7 +26,8 @@ namespace Arcus.Templates.WebApi
         {
 #if Auth
             #warning Please provide a valid secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secrets/consume-from-key-vault
-            services.AddScoped<ICachedSecretProvider>(serviceProvider => new CachedSecretProvider(secretProvider: null));
+            var cachedSecretProvider = new CachedSecretProvider(secretProvider: null);
+            services.AddScoped<ICachedSecretProvider>(serviceProvider => cachedSecretProvider);
 #endif
 
             services.AddMvc(options => 

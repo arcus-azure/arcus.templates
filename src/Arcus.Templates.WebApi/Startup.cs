@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Converters;
 using Swashbuckle.AspNetCore.Swagger;
-#if Auth
+#if !NoneAuth
 using Arcus.Security.Secrets.Core.Caching;
 using Arcus.Security.Secrets.Core.Interfaces;
 #endif
@@ -24,9 +24,9 @@ namespace Arcus.Templates.WebApi
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-#if Auth
+#if !NoneAuth
             #warning Please provide a valid secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secrets/consume-from-key-vault
-            var cachedSecretProvider = new CachedSecretProvider(secretProvider: null);
+            var cachedSecretProvider = new CachedSecretProvider();
             services.AddScoped<ICachedSecretProvider>(serviceProvider => cachedSecretProvider);
 #endif
 

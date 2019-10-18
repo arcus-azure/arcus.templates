@@ -77,7 +77,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
                 + $"new {typeof(Dictionary<string, string>).Namespace}.{nameof(Dictionary<string, string>)}<string, string> {{ [\"{secretName}\"] = \"{secretValue}\" }})";
 
             startupContent = 
-                startupContent.Replace("secretProvider: null", newSecretProviderWithSecret)
+                startupContent.Replace("CachedSecretProvider()", $"CachedSecretProvider({newSecretProviderWithSecret})")
                               .Replace("YOUR REQUEST HEADER NAME", requestHeader)
                               .Replace("YOUR SECRET NAME", secretName);
 

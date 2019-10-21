@@ -36,3 +36,7 @@ And additional features available with options:
 * `-A|--Authentication` (default `None`)
   * `SharedAccessKey`: adds [shared access key authentication](https://webapi.arcus-azure.net/features/security/auth/shared-access-key) mechanism to the API project
   * `None`: no authentication configured on the API project.
+
+## Security
+As part of this template the following HTTP header(s) are removed for security sake:
+* `Server` header * Provides information concerning the Web API runtime

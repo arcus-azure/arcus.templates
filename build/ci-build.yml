@@ -3,16 +3,16 @@ name: $(date:yyyyMMdd)$(rev:.r)
 trigger:
   branches:
     include:
-      - master
+    - master
   paths:
     include:
-      - src/*
+    - src/*
 
 pr:
   paths:
     include:
-      - src/*
-      - build/ci-build.yml
+    - src/*
+    - build/ci-build.yml
 
 resources:
   repositories:

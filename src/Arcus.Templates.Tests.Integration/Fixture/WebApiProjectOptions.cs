@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Arcus.Security.Secrets.Core.Caching;
 using Arcus.Security.Secrets.Core.Interfaces;
 using GuardNet;
 
@@ -78,9 +77,14 @@ namespace Arcus.Templates.Tests.Integration.Fixture
                 + $"new {typeof(Dictionary<string, string>).Namespace}.{nameof(Dictionary<string, string>)}<string, string> {{ [\"{secretName}\"] = \"{secretValue}\" }})";
 
             startupContent = 
-                startupContent.Replace($"new {nameof(CachedSecretProvider)}()", $"new {nameof(CachedSecretProvider)}({newSecretProviderWithSecret})")
+                startupContent.Replace("secretProvider: null", newSecretProviderWithSecret)
                               .Replace("YOUR REQUEST HEADER NAME", requestHeader)
                               .Replace("YOUR SECRET NAME", secretName);
+
+            startupContent = 
+                startupContent.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
+                              .Where(line => !line.Contains("#error"))
+                              .Aggregate((line1, line2) => line1 + Environment.NewLine + line2);
 
             File.WriteAllText(startupFilePath, startupContent);
         }

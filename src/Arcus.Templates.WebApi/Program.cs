@@ -25,6 +25,7 @@ namespace Arcus.Templates.WebApi
             string httpEndpointUrl = "http://+:" + configuration["ARCUS_HTTP_PORT"];
             IWebHostBuilder webHostBuilder =
                 WebHost.CreateDefaultBuilder(args)
+                       .ConfigureKestrel(kestrelServerOptions => kestrelServerOptions.AddServerHeader = false)
                        .UseConfiguration(configuration)
                        .UseUrls(httpEndpointUrl)
                        .ConfigureLogging(logging => logging.AddConsole())

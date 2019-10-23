@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Arcus.Security.Secrets.Core.Caching;
 using Arcus.Security.Secrets.Core.Interfaces;
 using GuardNet;
 
@@ -77,7 +78,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
                 + $"new {typeof(Dictionary<string, string>).Namespace}.{nameof(Dictionary<string, string>)}<string, string> {{ [\"{secretName}\"] = \"{secretValue}\" }})";
 
             startupContent = 
-                startupContent.Replace("secretProvider: null", newSecretProviderWithSecret)
+                startupContent.Replace($"new {nameof(CachedSecretProvider)}()", $"new {nameof(CachedSecretProvider)}({newSecretProviderWithSecret})")
                               .Replace("YOUR REQUEST HEADER NAME", requestHeader)
                               .Replace("YOUR SECRET NAME", secretName);
 

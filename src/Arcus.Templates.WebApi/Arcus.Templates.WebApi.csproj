@@ -36,10 +36,7 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <DefineConstants>$(DefineConstants);NoneAuth;Auth;SharedAccessKeyAuth</DefineConstants>
-    <NoneAuth>false</NoneAuth>
-    <Auth>true</Auth>
-    <SharedAccessKeyAuth>true</SharedAccessKeyAuth>
+    <DefineConstants>$(DefineConstants);</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

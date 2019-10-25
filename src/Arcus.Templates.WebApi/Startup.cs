@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +16,7 @@ using Arcus.Security.Secrets.Core.Interfaces;
 using Arcus.WebApi.Security.Authentication.SharedAccessKey;
 #endif
 #if CertificateAuth
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Arcus.WebApi.Security.Authentication.Certificates;
 using Microsoft.AspNetCore.Http;

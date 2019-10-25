@@ -141,6 +141,11 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             string startupContent = File.ReadAllText(startupFilePath);
             startupContent = replacements(startupContent);
 
+            startupContent = 
+                startupContent.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
+                              .Where(line => !line.Contains("#error"))
+                              .Aggregate((line1, line2) => line1 + Environment.NewLine + line2);
+
             File.WriteAllText(startupFilePath, startupContent);
         }
 

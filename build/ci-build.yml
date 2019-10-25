@@ -166,6 +166,6 @@ stages:
             inputs:
               artifact: 'Templates'
               path: '$(Build.SourcesDirectory)/templates'
-          - template: build/nuget/publish-preview-package.yml@templates
+          - template: nuget/publish-preview-package.yml@templates
             parameters:
               packagesToPush: 'templates/*.nupkg'

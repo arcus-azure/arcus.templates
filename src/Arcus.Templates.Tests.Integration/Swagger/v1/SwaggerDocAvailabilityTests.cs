@@ -8,6 +8,7 @@ using Xunit.Abstractions;
 namespace Arcus.Templates.Tests.Integration.Swagger.v1
 {
     [Collection(TestCollections.Integration)]
+    [Trait("Category", TestTraits.Integration)]
     public class SwaggerDocAvailabilityTests
     {
         private readonly ITestOutputHelper _outputWriter;

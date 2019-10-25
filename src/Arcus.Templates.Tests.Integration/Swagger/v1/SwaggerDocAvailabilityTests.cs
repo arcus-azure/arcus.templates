@@ -24,7 +24,7 @@ namespace Arcus.Templates.Tests.Integration.Swagger.v1
         [Theory]
         [InlineData(BuildConfiguration.Debug, HttpStatusCode.OK)]
         [InlineData(BuildConfiguration.Release, HttpStatusCode.NotFound)]
-        public async Task GetSwaggerUI_OnlyForDebugConfiguration_ReturnsOK(BuildConfiguration buildConfiguration, HttpStatusCode expectedStatusCode)
+        public async Task GetSwaggerUI_WithBuildConfiguration_Returns(BuildConfiguration buildConfiguration, HttpStatusCode expectedStatusCode)
         {
             // Arrange
             var configuration = TestConfig.Create(buildConfiguration);
@@ -41,7 +41,7 @@ namespace Arcus.Templates.Tests.Integration.Swagger.v1
         [Theory]
         [InlineData(BuildConfiguration.Debug, HttpStatusCode.OK)]
         [InlineData(BuildConfiguration.Release, HttpStatusCode.NotFound)]
-        public async Task GetSwaggerDocs_OnlyForDebugConfiguration_ReturnsOK(BuildConfiguration buildConfiguration, HttpStatusCode expectedStatusCode)
+        public async Task GetSwaggerDocs_WithBuildConfiguration_Returns(BuildConfiguration buildConfiguration, HttpStatusCode expectedStatusCode)
         {
             // Arrange
             var configuration = TestConfig.Create(buildConfiguration);

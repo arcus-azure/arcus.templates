@@ -125,7 +125,8 @@ namespace Arcus.Templates.WebApi
 //#endif
         }
 #if CertificateAuth
-        // TODO: remove this middleware method when the web API authentication NuGet package gets updated and the client certificate gets loaded in the CertificateAuthenticationFilter.
+        // Remove this middleware method when the web API authentication NuGet package gets updated and the client certificate gets loaded in the CertificateAuthenticationFilter.
+        // For more information when to remove this, see issue: https://github.com/arcus-azure/arcus.templates/issues/58.
         private static Task LoadClientCertificateFromHeader(HttpContext context, Func<Task> next)
         {
             if (context.Connection.ClientCertificate is null)

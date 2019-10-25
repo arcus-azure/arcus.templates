@@ -22,7 +22,7 @@ namespace Arcus.Templates.WebApi
                     .AddEnvironmentVariables()
                     .Build();
 
-            string httpEndpointUrl = "http://+:" + 8080;
+            string httpEndpointUrl = "http://+:" + configuration["ARCUS_HTTP_PORT"];
             IWebHostBuilder webHostBuilder =
                 WebHost.CreateDefaultBuilder(args)
                        .ConfigureKestrel(kestrelServerOptions => kestrelServerOptions.AddServerHeader = false)

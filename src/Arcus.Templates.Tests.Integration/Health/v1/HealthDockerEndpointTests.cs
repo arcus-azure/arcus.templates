@@ -9,7 +9,8 @@ using Xunit.Abstractions;
 
 namespace Arcus.Templates.Tests.Integration.Health.v1
 {
-    [Collection("Docker")]
+    [Collection(TestCollections.Docker)]
+    [Trait("Category", TestTraits.Docker)]
     public class HealthDockerEndpointTests
     {
         private readonly TestConfig _configuration;

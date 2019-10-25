@@ -9,7 +9,8 @@ using Xunit.Abstractions;
 
 namespace Arcus.Templates.Tests.Integration.Health.v1
 {
-    [Collection("Integration")]
+    [Collection(TestCollections.Integration)]
+    [Trait("Category", TestTraits.Integration)]
     public class HealthEndpointTests
     {
         private readonly TestConfig _configuration;

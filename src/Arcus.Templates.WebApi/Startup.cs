@@ -39,7 +39,7 @@ namespace Arcus.Templates.WebApi
 #endif
 
 #if CertificateAuth
-            #warning Please provide a valid certificate issuer name for the client certificate authentication
+            #error Please provide a valid certificate issuer name for the client certificate authentication
             var certificateAuthenticationConfig = 
                 new CertificateAuthenticationConfigBuilder()
                     .WithSubject(X509ValidationLocation.SecretProvider, "YOUR KEY TO CERTIFICATE SUBJECT NAME")

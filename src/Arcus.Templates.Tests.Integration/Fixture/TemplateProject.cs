@@ -50,6 +50,11 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         protected DirectoryInfo ProjectDirectory { get; }
 
         /// <summary>
+        /// Sets the options to control how the template project should be tear down during the <see cref="Dispose"/>.
+        /// </summary>
+        public TearDownOptions TearDownOptions { private get; set; } = TearDownOptions.None;
+
+        /// <summary>
         /// Creates a new project from this template at the project directory with a given set of <paramref name="projectOptions"/>.
         /// </summary>
         /// <param name="projectOptions">The console arguments that controls the creation process of the to-be-created project.</param>
@@ -135,13 +140,14 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             }
 
             _disposed = true;
+            LogTearDownAction();
 
             PolicyResult[] results = 
             {
                 Policy.NoOp().ExecuteAndCapture(() => Disposing(true)),
-                RetryAction(StopProject),
-                RetryAction(UninstallTemplate),
-                RetryAction(DeleteProjectDirectory),
+                RetryActionExceptWhen(TearDownOptions.KeepProjectRunning, StopProject),
+                RetryActionExceptWhen(TearDownOptions.KeepProjectTemplateInstalled, UninstallTemplate),
+                RetryActionExceptWhen(TearDownOptions.KeepProjectDirectory, DeleteProjectDirectory), 
             };
 
             IEnumerable<Exception> exceptions = 
@@ -151,6 +157,24 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             if (exceptions.Any())
             {
                 throw new AggregateException(exceptions);
+            }
+        }
+
+        private void LogTearDownAction()
+        {
+            if ((TearDownOptions & TearDownOptions.KeepProjectDirectory) == TearDownOptions.KeepProjectDirectory)
+            {
+                _outputWriter.WriteLine("Keep project directory at: {0}", ProjectDirectory.FullName);
+            }
+
+            if ((TearDownOptions & TearDownOptions.KeepProjectRunning) == TearDownOptions.KeepProjectRunning)
+            {
+                _outputWriter.WriteLine("Keep project running");
+            }
+
+            if ((TearDownOptions & TearDownOptions.KeepProjectTemplateInstalled) == TearDownOptions.KeepProjectTemplateInstalled)
+            {
+                _outputWriter.WriteLine("Keep project template template installed");
             }
         }
 
@@ -205,8 +229,13 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             ProjectDirectory.Delete(recursive: true);
         }
 
-        private static PolicyResult RetryAction(Action action)
+        private PolicyResult RetryActionExceptWhen(TearDownOptions tearDownOptions, Action action)
         {
+            if ((TearDownOptions & tearDownOptions) == tearDownOptions)
+            {
+                return Policy.NoOp().ExecuteAndCapture(() => { });
+            }
+
             return Policy.Timeout(TimeSpan.FromSeconds(30))
                          .Wrap(Policy.Handle<IOException>()
                                      .WaitAndRetryForever(_ => TimeSpan.FromSeconds(1)))

@@ -33,6 +33,7 @@ namespace Arcus.Templates.WebApi.Controllers
         /// <response code="200">API is healthy</response>
         /// <response code="503">API is unhealthy or in degraded state</response>
         [HttpGet(Name = "Health_Get")]
+        [Produces("application/json")]
         [ProducesResponseType(typeof(HealthReport), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(HealthReport), StatusCodes.Status503ServiceUnavailable)]
         public async Task<IActionResult> Get()

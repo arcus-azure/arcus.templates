@@ -61,6 +61,10 @@
           "description": "Adds a shared access key authentication mechanism to the web API project"
         },
         {
+          "choice": "Certificate",
+          "description": "Adds a client certificate authentication mechanism to the web API project"
+        },
+        {
           "choice": "None",
           "description": "No authentication mechanism is added to the web API project"
         }
@@ -79,6 +83,10 @@
     "SharedAccessKeyAuth": {
       "type": "computed",
       "value": "(Authentication == \"SharedAccessKey\")"
-    }
+    },
+    "CertificateAuth": {
+      "type": "computed",
+      "value": "(Authentication == \"Certificate\")"
+    } 
   }
 }

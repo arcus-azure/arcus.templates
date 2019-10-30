@@ -33,7 +33,7 @@ Creates a starter web API project with by default configured:
 ## Configuration
 
 And additional features available with options:
-* `-A|--Authentication` (default `None`)
+* `-au|--authentication` (default `None`)
   * `SharedAccessKey`: adds [shared access key authentication](https://webapi.arcus-azure.net/features/security/auth/shared-access-key) mechanism to the API project
   * `Certificate`: adds [client certificate authentication](https://webapi.arcus-azure.net/features/security/auth/certificate) mechanism to the API project
   * `None`: no authentication configured on the API project.

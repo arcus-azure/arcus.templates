@@ -45,7 +45,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             Guard.NotNullOrWhitespace(secretValue, nameof(secretValue), "Cannot add shared access key authentication project option without a secret value");
 
             ProjectOptions optionsWithSharedAccessAuthentication = AddOption(
-                "--Authentication SharedAccessKey",
+                "--authentication SharedAccessKey",
                 (fixtureDirectory, projectDirectory) => ConfigureSharedAccessAuthentication(fixtureDirectory, projectDirectory, headerName, secretName, secretValue));
 
             return new WebApiProjectOptions(optionsWithSharedAccessAuthentication);
@@ -81,7 +81,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             Guard.NotNullOrWhitespace(subject, nameof(subject), "Cannot add certificate authentication project option based on subject without a subject value");
 
            ProjectOptions optionsWithCertificateAuthentication = AddOption(
-               "--Authentication Certificate",
+               "--authentication Certificate",
                (fixtureDirectory, projectDirectory) => ConfigureCertificateSubjectAuthentication(fixtureDirectory, projectDirectory, secretName, subject));
 
            return new WebApiProjectOptions(optionsWithCertificateAuthentication);

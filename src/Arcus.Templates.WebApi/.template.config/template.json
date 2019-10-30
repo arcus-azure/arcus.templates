@@ -52,7 +52,7 @@
       },
       "replaces": "//#endif"
     },
-    "Authentication": {
+    "authentication": {
       "type": "parameter",
       "datatype": "choice",
       "choices": [
@@ -74,19 +74,19 @@
     },
     "NoneAuth": {
       "type": "computed",
-      "value": "(Authentication == \"None\")"
+      "value": "(authentication == \"None\")"
     },
     "Auth": {
       "type": "computed",
-      "value": "(Authentication != \"None\")"
+      "value": "(authentication != \"None\")"
     },
     "SharedAccessKeyAuth": {
       "type": "computed",
-      "value": "(Authentication == \"SharedAccessKey\")"
+      "value": "(authentication == \"SharedAccessKey\")"
     },
     "CertificateAuth": {
       "type": "computed",
-      "value": "(Authentication == \"Certificate\")"
+      "value": "(authentication == \"Certificate\")"
     } 
   }
 }

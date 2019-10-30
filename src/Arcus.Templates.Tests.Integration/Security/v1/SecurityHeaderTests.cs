@@ -8,7 +8,8 @@ using Xunit.Abstractions;
 
 namespace Arcus.Templates.Tests.Integration.Security.v1
 {
-    [Collection("Integration")]
+    [Collection(TestCollections.Integration)]
+    [Trait("Category", TestTraits.Integration)]
     public class SecurityHeaderTests
     {
         private readonly TestConfig _configuration;

@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.Health;
+using Arcus.Templates.Tests.Integration.Swagger;
 using GuardNet;
 using Polly;
 using Xunit.Abstractions;
@@ -27,6 +28,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             Guard.NotNull(baseUrl, nameof(baseUrl), "Cannot create a web API services without a test configuration");
 
             Health = new HealthEndpointService(baseUrl, outputWriter);
+            Swagger = new SwaggerEndpointService(baseUrl, outputWriter);
         }
 
         /// <summary>
@@ -96,5 +98,10 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         /// Gets the service controlling the health information of the created web API project.
         /// </summary>
         public HealthEndpointService Health { get; }
+
+        /// <summary>
+        /// Gets the service controlling the Swagger information of the created web API project.
+        /// </summary>
+        public SwaggerEndpointService Swagger { get; }
     }
 }

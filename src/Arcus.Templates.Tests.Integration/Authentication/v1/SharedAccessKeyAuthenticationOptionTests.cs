@@ -10,6 +10,7 @@ using static Arcus.Templates.Tests.Integration.Fixture.InMemorySecretProvider;
 namespace Arcus.Templates.Tests.Integration.Authentication.v1
 {
     [Collection("Integration")]
+    [Trait("Category", TestTraits.Integration)]
     public class SharedAccessKeyAuthenticationOptionTests
     {
         private readonly TestConfig _configuration;

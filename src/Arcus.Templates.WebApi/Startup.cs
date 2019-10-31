@@ -67,6 +67,9 @@ namespace Arcus.Templates.WebApi
             {
                 options.InputFormatters.Remove(inputFormatter);
             }
+
+            // Removing for text/plain, see https://docs.microsoft.com/en-us/aspnet/core/web-api/advanced/formatting?view=aspnetcore-3.0#special-case-formatters
+            options.OutputFormatters.RemoveType<StringOutputFormatter>();
         }
 
         private static void AddEnumAsStringRepresentation(MvcOptions options)

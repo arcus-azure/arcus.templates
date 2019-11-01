@@ -150,16 +150,6 @@ stages:
               arguments: '--configuration $(Build.Configuration)'
               nobuild: true
               publishTestResults: true
-          - task: CopyFiles@2
-            displayName: 'Copy build artifacts'
-            inputs:
-              contents: '**/projects/**'
-              targetFolder: '$(Pipeline.Workspace)/projects'
-          - task: PublishPipelineArtifact@0
-            displayName: 'Publish build artifacts'
-            inputs:
-              targetPath: '$(Pipeline.Workspace)/projects'
-              artifactName: Projects
 
   - stage: ReleaseToMyget
     displayName: 'Release to MyGet'

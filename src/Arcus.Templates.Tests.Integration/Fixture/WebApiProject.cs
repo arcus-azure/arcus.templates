@@ -7,6 +7,7 @@ using Arcus.Templates.Tests.Integration.Health;
 using Arcus.Templates.Tests.Integration.Swagger;
 using GuardNet;
 using Polly;
+using Polly.Retry;
 using Xunit.Abstractions;
 
 namespace Arcus.Templates.Tests.Integration.Fixture 
@@ -69,21 +70,33 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             project.CreateNewProject(projectOptions);
             
             project.Run(configuration.BuildConfiguration, $"--ARCUS_HTTP_PORT {baseUrl.Port}");
-            await WaitUntilWebProjectIsAvailable(baseUrl.Port);
+            await WaitUntilWebProjectIsAvailable(baseUrl.Port, outputWriter);
 
             return project;
         }
 
-        private static async Task WaitUntilWebProjectIsAvailable(int httpPort)
+        private static async Task WaitUntilWebProjectIsAvailable(int httpPort, ITestOutputHelper outputWriter)
         {
-            var waitAndRetryForeverAsync =
+            AsyncRetryPolicy<HttpStatusCode> waitAndRetryForeverAsync =
                 Policy.HandleResult((HttpStatusCode code) => code == HttpStatusCode.NotFound)
                       .Or<Exception>()
                       .WaitAndRetryForeverAsync(_ => TimeSpan.FromSeconds(1));
 
-            await Policy.TimeoutAsync(TimeSpan.FromSeconds(10))
-                        .WrapAsync(waitAndRetryForeverAsync)
-                        .ExecuteAndCaptureAsync(() => GetNonExistingEndpoint(httpPort));
+            PolicyResult<HttpStatusCode> result = 
+                await Policy.TimeoutAsync(TimeSpan.FromSeconds(10))
+                            .WrapAsync(waitAndRetryForeverAsync)
+                            .ExecuteAndCaptureAsync(() => GetNonExistingEndpoint(httpPort));
+
+            if (result.Outcome == OutcomeType.Successful)
+            {
+                outputWriter.WriteLine("Test template web API project fully started at: localhost:{0}", httpPort);
+            }
+            else
+            {
+                outputWriter.WriteLine("Test template web API project could not be started");
+                throw new CannotStartWebApiTemplateProjectException(
+                    "Test template web API project could not be started correctly");
+            }
         }
 
         private static async Task<HttpStatusCode> GetNonExistingEndpoint(int httpPort)

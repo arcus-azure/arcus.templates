@@ -8,11 +8,9 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Converters;
 using Swashbuckle.AspNetCore.Swagger;
-#if Auth
+#if SharedAccessKeyAuth
 using Arcus.Security.Secrets.Core.Caching;
 using Arcus.Security.Secrets.Core.Interfaces;
-#endif
-#if SharedAccessKeyAuth
 using Arcus.WebApi.Security.Authentication.SharedAccessKey;
 #endif
 #if CertificateAuth

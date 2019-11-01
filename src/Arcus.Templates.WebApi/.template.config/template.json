@@ -99,6 +99,6 @@
     "AppSettings": {
       "type": "computed",
       "value": "CertificateAuth"
-    } 
+    }
   }
 }

@@ -144,7 +144,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         {
             Console.WriteLine("Startup: " + File.ReadAllText(Path.Combine(projectDirectory.FullName, "Startup.cs")));
             Console.WriteLine("Program: " + File.ReadAllText(Path.Combine(projectDirectory.FullName, "Program.cs")));
-            Console.WriteLine("Files: " + String.Join(", ", projectDirectory.GetFiles().Select(f => f.Name)));
+            Console.WriteLine("Files: " + String.Join(", ", projectDirectory.GetFiles("*.*", SearchOption.AllDirectories).Select(f => f.Directory?.Name + "/" + f.Name)));
 
             ReplaceProjectFileContent(
                 projectDirectory,

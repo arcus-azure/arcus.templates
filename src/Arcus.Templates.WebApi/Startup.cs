@@ -38,7 +38,7 @@ namespace Arcus.Templates.WebApi
 #if CertificateAuth
             var certificateAuthenticationConfig = 
                 new CertificateAuthenticationConfigBuilder()
-                    .WithSubject(X509ValidationLocation.Configuration, "Authentication:CertificateSubject")
+                    .WithSubject(X509ValidationLocation.Configuration, "CertificateSubject")
                     .Build();
     
             services.AddScoped(serviceProvider => new CertificateAuthenticationValidator(certificateAuthenticationConfig));

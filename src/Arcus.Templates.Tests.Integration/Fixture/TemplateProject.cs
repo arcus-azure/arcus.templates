@@ -134,8 +134,11 @@ namespace Arcus.Templates.Tests.Integration.Fixture
                 RetryAction(UninstallTemplate),
                 RetryAction(() =>
                 {
-                    DirectoryInfo projectsDirectory = Directory.CreateDirectory(Path.Combine(_fixtureDirectory.FullName, "projects"));
-                    _projectDirectory.MoveTo(Path.Combine(projectsDirectory.FullName, _projectDirectory.Name));
+                    DirectoryInfo projectsDirectory = Directory.CreateDirectory(Path.Combine(_fixtureDirectory.FullName, "projects", _projectDirectory.Name));
+                    foreach (FileInfo fileInfo in _projectDirectory.GetFiles())
+                    {
+                        fileInfo.CopyTo(Path.Combine(projectsDirectory.FullName, fileInfo.Name));
+                    }
                 }),
                 RetryAction(DeleteProjectDirectory),
             };

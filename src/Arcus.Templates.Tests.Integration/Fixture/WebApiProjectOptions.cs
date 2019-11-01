@@ -144,7 +144,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         {
             ReplaceProjectFileContent(
                 projectDirectory,
-                "Program.cs",
+                "appsettings.json",
                 appSettingsContent => appSettingsContent.Replace("YOUR KEY TO CERTIFICATE SUBJECT NAME", subject));
         }
 

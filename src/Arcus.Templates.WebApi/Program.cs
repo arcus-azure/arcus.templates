@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -20,7 +21,7 @@ namespace Arcus.Templates.WebApi
             IConfigurationRoot configuration =
                 new ConfigurationBuilder()
                     .AddCommandLine(args)
-                    .AddInMemoryCollection(new []{new KeyValuePair<string, string>("CertificateSubject", "YOUR KEY TO CERTIFICATE SUBJECT NAME") })
+                    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                     .AddEnvironmentVariables()
                     .Build();
 

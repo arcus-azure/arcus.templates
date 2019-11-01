@@ -77,12 +77,11 @@ namespace Arcus.Templates.Tests.Integration.Fixture
 
         private static async Task WaitUntilWebProjectIsAvailable(int httpPort, ITestOutputHelper outputWriter)
         {
-            AsyncRetryPolicy<HttpStatusCode> waitAndRetryForeverAsync =
-                Policy.HandleResult((HttpStatusCode code) => code == HttpStatusCode.NotFound)
-                      .Or<Exception>()
+            var waitAndRetryForeverAsync =
+                Policy.Handle<Exception>()
                       .WaitAndRetryForeverAsync(_ => TimeSpan.FromSeconds(1));
 
-            PolicyResult<HttpStatusCode> result = 
+            var result = 
                 await Policy.TimeoutAsync(TimeSpan.FromSeconds(10))
                             .WrapAsync(waitAndRetryForeverAsync)
                             .ExecuteAndCaptureAsync(() => GetNonExistingEndpoint(httpPort));

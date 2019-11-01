@@ -135,7 +135,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
 
            ProjectOptions optionsWithCertificateAuthentication = AddOption(
                "--authentication Certificate",
-               (fixtureDirectory, projectDirectory) => { });
+               (fixtureDirectory, projectDirectory) => ConfigureCertificateSubjectAuthentication(projectDirectory, subject));
 
            return new WebApiProjectOptions(optionsWithCertificateAuthentication);
         }
@@ -144,7 +144,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         {
             ReplaceProjectFileContent(
                 projectDirectory,
-                "appsettings.json",
+                "Program.cs",
                 appSettingsContent => appSettingsContent.Replace("YOUR KEY TO CERTIFICATE SUBJECT NAME", subject));
         }
 

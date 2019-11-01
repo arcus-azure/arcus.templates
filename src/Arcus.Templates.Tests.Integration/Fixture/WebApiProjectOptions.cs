@@ -55,54 +55,16 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         {
             AddInMemorySecretProviderFixtureFileToProject(fixtureDirectory, projectDirectory);
 
-            ReplaceProjectsStartupFileContent(
-                projectDirectory, 
+            ReplaceProjectFileContent(
+                projectDirectory,
+                "Startup.cs",
                 startupContent =>
                 {
                     startupContent = InsertInMemorySecretProviderCode(startupContent, secretName, secretValue);
-                    return InsertSharedAccessAuthenticationHeaderSecretPair(startupContent, requestHeader, secretName);
+                    startupContent = InsertSharedAccessAuthenticationHeaderSecretPair(startupContent, requestHeader, secretName);
+
+                    return RemoveCustomUserErrors(startupContent);
                 });
-        }
-
-        private static string InsertSharedAccessAuthenticationHeaderSecretPair(string startupContent, string requestHeader, string secretName)
-        {
-            return startupContent.Replace("YOUR REQUEST HEADER NAME", requestHeader)
-                                 .Replace("YOUR SECRET NAME", secretName);
-        }
-
-        /// <summary>
-        /// Adds a certificate authentication on the issuer name to the web API project.
-        /// </summary>
-        /// <param name="secretName">The name of the secret that's being retrieved.</param>
-        /// <param name="subject">The subject name of the certificate that is allowed by the web API project.</param>
-        public WebApiProjectOptions WithCertificateSubjectAuthentication(string secretName, string subject)
-        {
-            Guard.NotNullOrWhitespace(secretName, nameof(secretName), "Cannot add certificate authentication project option based on issuer without a secret name");
-            Guard.NotNullOrWhitespace(subject, nameof(subject), "Cannot add certificate authentication project option based on subject without a subject value");
-
-           ProjectOptions optionsWithCertificateAuthentication = AddOption(
-               "--authentication Certificate",
-               (fixtureDirectory, projectDirectory) => ConfigureCertificateSubjectAuthentication(fixtureDirectory, projectDirectory, secretName, subject));
-
-           return new WebApiProjectOptions(optionsWithCertificateAuthentication);
-        }
-
-        private static void ConfigureCertificateSubjectAuthentication(DirectoryInfo fixtureDirectory, DirectoryInfo projectDirectory, string secretName, string issuer)
-        {
-            AddInMemorySecretProviderFixtureFileToProject(fixtureDirectory, projectDirectory);
-
-            ReplaceProjectsStartupFileContent(
-                projectDirectory,
-                startupContent =>
-                {
-                    startupContent = InsertInMemorySecretProviderCode(startupContent, secretName, issuer);
-                    return InsertCertificateSubject(startupContent, secretName);
-                });
-        }
-
-        private static string InsertCertificateSubject(string startupContent, string issuer)
-        {
-            return startupContent.Replace("YOUR KEY TO CERTIFICATE SUBJECT NAME", issuer);
         }
 
         private static void AddInMemorySecretProviderFixtureFileToProject(DirectoryInfo fixtureDirectory, DirectoryInfo projectDirectory)
@@ -117,36 +79,6 @@ namespace Arcus.Templates.Tests.Integration.Fixture
 
             string destInMemorySecretProviderFilePath = Path.Combine(projectDirectory.FullName, nameof(InMemorySecretProvider) + ".cs");
             File.Copy(srcInMemorySecretProviderFilePath, destInMemorySecretProviderFilePath);
-        }
-
-        private static string InsertInMemorySecretProviderCode(string startupContent, string secretName, string secretValue)
-        {
-            string newSecretProviderWithSecret = 
-                $"new {typeof(InMemorySecretProvider).FullName}("
-                + $"new {typeof(Dictionary<string, string>).Namespace}.{nameof(Dictionary<string, string>)}<string, string> {{ [\"{secretName}\"] = \"{secretValue}\" }})";
-
-            return startupContent.Replace("secretProvider: null", newSecretProviderWithSecret);
-        }
-
-        private static void ReplaceProjectsStartupFileContent(DirectoryInfo projectDirectory, Func<string, string> replacements)
-        {
-            string startupFilePath = Path.Combine(projectDirectory.FullName, "Startup.cs");
-            if (!File.Exists(startupFilePath))
-            {
-                throw new FileNotFoundException(
-                    $"Cannot find Startup.cs to replace the secret provider with a {nameof(InMemorySecretProvider)}",
-                    startupFilePath);
-            }
-
-            string startupContent = File.ReadAllText(startupFilePath);
-            startupContent = replacements(startupContent);
-
-            startupContent = 
-                startupContent.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
-                              .Where(line => !line.Contains("#error"))
-                              .Aggregate((line1, line2) => line1 + Environment.NewLine + line2);
-
-            File.WriteAllText(startupFilePath, startupContent);
         }
 
         private static string FindFixtureTypeInDirectory(DirectoryInfo fixtureDirectory, Type fixtureType)
@@ -169,6 +101,65 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             }
 
             return files.First().FullName;
+        }
+
+        private static string InsertInMemorySecretProviderCode(string startupContent, string secretName, string secretValue)
+        {
+            string newSecretProviderWithSecret = 
+                $"new {typeof(InMemorySecretProvider).FullName}("
+                + $"new {typeof(Dictionary<string, string>).Namespace}.{nameof(Dictionary<string, string>)}<string, string> {{ [\"{secretName}\"] = \"{secretValue}\" }})";
+
+            return startupContent.Replace("secretProvider: null", newSecretProviderWithSecret);
+        }
+
+        private static string InsertSharedAccessAuthenticationHeaderSecretPair(string startupContent, string requestHeader, string secretName)
+        {
+            return startupContent.Replace("YOUR REQUEST HEADER NAME", requestHeader)
+                                 .Replace("YOUR SECRET NAME", secretName);
+        }
+
+        private static string RemoveCustomUserErrors(string content)
+        {
+            return content.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
+                          .Where(line => !line.Contains("#error"))
+                          .Aggregate((line1, line2) => line1 + Environment.NewLine + line2);
+        }
+
+        /// <summary>
+        /// Adds a certificate authentication on the issuer name to the web API project.
+        /// </summary>
+        /// <param name="subject">The subject name of the certificate that is allowed by the web API project.</param>
+        public WebApiProjectOptions WithCertificateSubjectAuthentication(string subject)
+        {
+            Guard.NotNullOrWhitespace(subject, nameof(subject), "Cannot add certificate authentication project option based on subject without a subject value");
+
+           ProjectOptions optionsWithCertificateAuthentication = AddOption(
+               "--authentication Certificate",
+               (fixtureDirectory, projectDirectory) => ConfigureCertificateSubjectAuthentication(projectDirectory, subject));
+
+           return new WebApiProjectOptions(optionsWithCertificateAuthentication);
+        }
+
+        private static void ConfigureCertificateSubjectAuthentication(DirectoryInfo projectDirectory, string subject)
+        {
+            ReplaceProjectFileContent(
+                projectDirectory,
+                "appsettings.json",
+                appSettingsContent => appSettingsContent.Replace("YOUR KEY TO CERTIFICATE SUBJECT NAME", subject));
+        }
+
+        private static void ReplaceProjectFileContent(DirectoryInfo projectDirectory, string fileName, Func<string, string> replacements)
+        {
+            string filePath = Path.Combine(projectDirectory.FullName, fileName);
+            if (!File.Exists(filePath))
+            {
+                throw new FileNotFoundException($"Cannot find {filePath} to replace content", filePath);
+            }
+
+            string content = File.ReadAllText(filePath);
+            content = replacements(content);
+
+            File.WriteAllText(filePath, content);
         }
     }
 }

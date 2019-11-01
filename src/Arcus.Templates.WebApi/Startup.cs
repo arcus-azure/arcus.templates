@@ -33,16 +33,15 @@ namespace Arcus.Templates.WebApi
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-#if Auth
+#if SharedAccessKeyAuth
             #error Please provide a valid secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secrets/consume-from-key-vault
             services.AddSingleton<ICachedSecretProvider>(serviceProvider => new CachedSecretProvider(secretProvider: null));
 #endif
 
 #if CertificateAuth
-            #error Please provide a valid certificate issuer name for the client certificate authentication
             var certificateAuthenticationConfig = 
                 new CertificateAuthenticationConfigBuilder()
-                    .WithSubject(X509ValidationLocation.SecretProvider, "YOUR KEY TO CERTIFICATE SUBJECT NAME")
+                    .WithSubject(X509ValidationLocation.Configuration, "Authentication:CertificateSubject")
                     .Build();
     
             services.AddScoped(serviceProvider => new CertificateAuthenticationValidator(certificateAuthenticationConfig));

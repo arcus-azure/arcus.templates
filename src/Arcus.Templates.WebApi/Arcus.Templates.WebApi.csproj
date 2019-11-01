@@ -31,10 +31,6 @@
   </PropertyGroup>
 
   <!--#if (AuthoringMode)-->
-  <ItemGroup>
-    <Content Include="**\*" Exclude="**\bin\**\*;**\obj\**\*;**\.vs\**\*;**\launchSettings.json" />
-  </ItemGroup>
-
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);</DefineConstants>
   </PropertyGroup>

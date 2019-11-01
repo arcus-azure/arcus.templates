@@ -107,12 +107,18 @@ namespace Arcus.Templates.Tests.Integration.Fixture
                 UseShellExecute = false,
                 CreateNoWindow = true,
                 WorkingDirectory = _projectDirectory.FullName,
+                RedirectStandardOutput = true
             };
 
             _process.StartInfo = processInfo;
 
             _started = true;
-            _process.Start();
+            if (!_process.Start())
+            {
+                Console.WriteLine("Could not start template project");
+            }
+
+            _process.OutputDataReceived += (sender, args) => Console.WriteLine("stdout:" + args.Data);
         }
 
         /// <summary>

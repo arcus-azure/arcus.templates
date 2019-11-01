@@ -142,10 +142,6 @@ namespace Arcus.Templates.Tests.Integration.Fixture
 
         private static void ConfigureCertificateSubjectAuthentication(DirectoryInfo projectDirectory, string subject)
         {
-            Console.WriteLine("Startup: " + File.ReadAllText(Path.Combine(projectDirectory.FullName, "Startup.cs")));
-            Console.WriteLine("Program: " + File.ReadAllText(Path.Combine(projectDirectory.FullName, "Program.cs")));
-            Console.WriteLine("Files: " + String.Join(", ", projectDirectory.GetFiles("*.*", SearchOption.AllDirectories).Select(f => f.Directory?.Name + "/" + f.Name)));
-
             ReplaceProjectFileContent(
                 projectDirectory,
                 "appsettings.json",
@@ -161,11 +157,8 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             }
 
             string content = File.ReadAllText(filePath);
-            Console.WriteLine("Before: " + content);
-
             content = replacements(content);
 
-            Console.WriteLine("After: " + content);
             File.WriteAllText(filePath, content);
         }
     }

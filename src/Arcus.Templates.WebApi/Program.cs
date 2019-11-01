@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -20,6 +21,7 @@ namespace Arcus.Templates.WebApi
         {
             IConfigurationRoot configuration =
                 new ConfigurationBuilder()
+                    .SetBasePath(Directory.GetCurrentDirectory())
                     .AddCommandLine(args)
                     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                     .AddEnvironmentVariables()

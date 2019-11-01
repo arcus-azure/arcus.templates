@@ -117,8 +117,6 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             {
                 Console.WriteLine("Could not start template project");
             }
-
-            Console.WriteLine("stdout: " + _process.StandardOutput.ReadToEnd());
         }
 
         /// <summary>
@@ -162,6 +160,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
                 _process.Kill();
             }
             
+            Console.WriteLine("stdout: " + _process.StandardOutput.ReadToEnd());
             _process.Dispose();
         }
 

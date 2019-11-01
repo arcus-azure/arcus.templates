@@ -155,6 +155,11 @@ stages:
             inputs:
               contents: '**/projects/**'
               targetFolder: '$(Pipeline.Workspace)/projects'
+          - task: PublishPipelineArtifact@0
+            displayName: 'Publish build artifacts'
+            inputs:
+              targetPath: '$(Pipeline.Workspace)/projects'
+              artifactName: Projects
 
   - stage: ReleaseToMyget
     displayName: 'Release to MyGet'

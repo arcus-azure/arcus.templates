@@ -132,7 +132,12 @@ namespace Arcus.Templates.Tests.Integration.Fixture
                 Policy.NoOp().ExecuteAndCapture(() => Disposing(true)),
                 RetryAction(StopProject),
                 RetryAction(UninstallTemplate),
-                RetryAction(DeleteProjectDirectory), 
+                RetryAction(() =>
+                {
+                    DirectoryInfo projectsDirectory = Directory.CreateDirectory(Path.Combine(_fixtureDirectory.FullName, "projects"));
+                    _projectDirectory.MoveTo(Path.Combine(projectsDirectory.FullName, _projectDirectory.Name));
+                }),
+                RetryAction(DeleteProjectDirectory),
             };
 
             IEnumerable<Exception> exceptions = 

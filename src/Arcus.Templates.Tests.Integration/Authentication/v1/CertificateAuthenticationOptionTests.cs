@@ -30,8 +30,8 @@ namespace Arcus.Templates.Tests.Integration.Authentication.v1
             string subject = $"subject-{Guid.NewGuid()}";
 
             var authenticatedProjectArguments =
-                new WebApiProjectOptions();
-                    //.WithCertificateSubjectAuthentication($"CN={subject}");
+                new WebApiProjectOptions()
+                    .WithCertificateSubjectAuthentication($"CN={subject}");
 
             using (var project = await WebApiProject.StartNewAsync(_configuration, authenticatedProjectArguments, _outputWriter))
             {
@@ -52,9 +52,9 @@ namespace Arcus.Templates.Tests.Integration.Authentication.v1
             string subject = $"subject-{Guid.NewGuid()}";
 
             var authenticatedProjectArguments =
-                new WebApiProjectOptions();
-                    //.WithCertificateSubjectAuthentication($"CN={subject}");
-            
+                new WebApiProjectOptions()
+                    .WithCertificateSubjectAuthentication($"CN={subject}");
+
             using (var project = await WebApiProject.StartNewAsync(_configuration, authenticatedProjectArguments, _outputWriter))
             using (var certificate = SelfSignedCertificate.CreateWithSubject(subject))
             {

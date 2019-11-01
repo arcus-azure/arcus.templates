@@ -25,12 +25,17 @@
     <IncludeContentInPack>true</IncludeContentInPack>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <ContentTargetFolders>content</ContentTargetFolders>
-    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <EnableDefaultContentItems>false</EnableDefaultContentItems>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>    
     <DockerComposeProjectPath>..\Arcus.Templates.Orchestrator.dcproj</DockerComposeProjectPath>
     <!--#endif-->
   </PropertyGroup>
 
   <!--#if (AuthoringMode)-->
+  <ItemGroup>
+    <Content Include="**\*" Exclude="**\bin\**\*;**\obj\**\*;**\.vs\**\*;**\launchSettings.json" />
+  </ItemGroup>
+  
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);</DefineConstants>
   </PropertyGroup>

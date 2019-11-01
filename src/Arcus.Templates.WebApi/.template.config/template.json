@@ -25,14 +25,6 @@
         "**/*.lock.json",
         "**/launchSettings.json",
         "*Open-Api.xml"
-      ],
-      "modifiers": [
-        {
-          "condition": "!(AppSettings)",
-          "exclude": [
-            "appsettings.json"
-          ]
-        }
       ]
     }
   ],

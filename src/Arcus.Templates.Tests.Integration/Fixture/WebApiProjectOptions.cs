@@ -135,7 +135,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
 
            ProjectOptions optionsWithCertificateAuthentication = AddOption(
                "--authentication Certificate",
-               (fixtureDirectory, projectDirectory) => ConfigureCertificateSubjectAuthentication(projectDirectory, subject));
+               (fixtureDirectory, projectDirectory) => { });
 
            return new WebApiProjectOptions(optionsWithCertificateAuthentication);
         }

@@ -118,7 +118,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
                 Console.WriteLine("Could not start template project");
             }
 
-            _process.OutputDataReceived += (sender, args) => Console.WriteLine("stdout:" + args.Data);
+            Console.WriteLine("stdout: " + _process.StandardOutput.ReadToEnd());
         }
 
         /// <summary>

@@ -31,7 +31,7 @@ namespace Arcus.Templates.Tests.Integration.Authentication.v1
 
             var authenticatedProjectArguments =
                 new WebApiProjectOptions()
-                    .WithCertificateSubjectAuthentication($"CN={subject}");
+                    .WithCertificateSubjectAuthentication(/*$"CN={subject}"*/"YOUR KEY TO CERTIFICATE SUBJECT NAME");
 
             using (var project = await WebApiProject.StartNewAsync(_configuration, authenticatedProjectArguments, _outputWriter))
             {
@@ -53,7 +53,7 @@ namespace Arcus.Templates.Tests.Integration.Authentication.v1
 
             var authenticatedProjectArguments =
                 new WebApiProjectOptions()
-                    .WithCertificateSubjectAuthentication($"CN={subject}");
+                    .WithCertificateSubjectAuthentication(/*$"CN={subject}"*/"YOUR KEY TO CERTIFICATE SUBJECT NAME");
 
             using (var project = await WebApiProject.StartNewAsync(_configuration, authenticatedProjectArguments, _outputWriter))
             using (var certificate = SelfSignedCertificate.CreateWithSubject(subject))

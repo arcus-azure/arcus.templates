@@ -30,7 +30,7 @@
         {
           "condition": "!(AppSettings)",
           "exclude": [
-            "appsettings.json"
+            
           ]
         }
       ]

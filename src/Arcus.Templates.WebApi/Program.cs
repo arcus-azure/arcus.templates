@@ -22,9 +22,9 @@ namespace Arcus.Templates.WebApi
         {
             IConfigurationRoot configuration =
                 new ConfigurationBuilder()
-                    .SetBasePath(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location))
                     .AddCommandLine(args)
                     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                    .AddJsonFile("appsettings.Development.json", optional: false, reloadOnChange: true)
                     .AddEnvironmentVariables()
                     .Build();
 

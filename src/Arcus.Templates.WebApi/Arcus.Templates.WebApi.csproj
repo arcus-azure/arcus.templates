@@ -43,7 +43,7 @@
   </ItemGroup>
   <!--#endif-->
   
-   <ItemGroup>
+   <ItemGroup Condition="'$(AppSettings)' == 'true'">
     <Content Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>

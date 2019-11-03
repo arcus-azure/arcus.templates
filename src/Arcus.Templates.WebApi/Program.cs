@@ -23,7 +23,9 @@ namespace Arcus.Templates.WebApi
             IConfigurationRoot configuration =
                 new ConfigurationBuilder()
                     .AddCommandLine(args)
+#if AppSettings
                     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+#endif
                     .AddEnvironmentVariables()
                     .Build();
 

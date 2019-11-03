@@ -142,15 +142,10 @@ namespace Arcus.Templates.Tests.Integration.Fixture
 
         private static void ConfigureCertificateSubjectAuthentication(DirectoryInfo projectDirectory, string subject)
         {
-            //ReplaceProjectFileContent(
-            //    projectDirectory,
-            //    "appsettings.Development.json",
-            //    appSettingsContent => appSettingsContent.Replace("YOUR KEY TO CERTIFICATE SUBJECT NAME", subject));
-
             ReplaceProjectFileContent(
                 projectDirectory,
                 "appsettings.json",
-                appSettingsContent => appSettingsContent.Replace("#{CertificateSubject}#", subject));
+                appSettingsContent => appSettingsContent.Replace("YOUR CERTIFICATE SUBJECT NAME", subject));
         }
 
         private static void ReplaceProjectFileContent(DirectoryInfo projectDirectory, string fileName, Func<string, string> replacements)

@@ -113,10 +113,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             _process.StartInfo = processInfo;
 
             _started = true;
-            if (!_process.Start())
-            {
-                Console.WriteLine("Could not start template project");
-            }
+            _process.Start();
         }
 
         /// <summary>

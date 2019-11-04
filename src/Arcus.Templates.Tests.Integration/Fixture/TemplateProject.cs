@@ -106,8 +106,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             {
                 UseShellExecute = false,
                 CreateNoWindow = true,
-                WorkingDirectory = _projectDirectory.FullName,
-                RedirectStandardOutput = true
+                WorkingDirectory = _projectDirectory.FullName
             };
 
             _process.StartInfo = processInfo;

@@ -7,7 +7,6 @@ using Arcus.Templates.Tests.Integration.Health;
 using Arcus.Templates.Tests.Integration.Swagger;
 using GuardNet;
 using Polly;
-using Polly.Retry;
 using Xunit.Abstractions;
 
 namespace Arcus.Templates.Tests.Integration.Fixture 
@@ -93,8 +92,9 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             else
             {
                 outputWriter.WriteLine("Test template web API project could not be started");
-                throw new CannotStartWebApiTemplateProjectException(
-                    "Test template web API project could not be started correctly");
+                throw new CannotStartTemplateProject(
+                    "The test project created from the web API project template doesn't seem to be running, "
+                    + "please check any build or runtime errors that could occur when the test project was created");
             }
         }
 

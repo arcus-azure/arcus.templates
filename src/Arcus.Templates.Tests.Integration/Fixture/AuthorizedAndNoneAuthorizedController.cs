@@ -27,4 +27,3 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         }
     }
 }
-`

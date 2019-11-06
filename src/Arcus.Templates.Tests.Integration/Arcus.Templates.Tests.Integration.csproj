@@ -32,6 +32,7 @@
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Polly" Version="7.1.1" />
     <PackageReference Include="System.Web.Http" Version="4.0.0" />
+    <PackageReference Include="Microsoft.OpenApi" Version="1.1.1" />
     <PackageReference Include="xunit" Version="2.4.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
   </ItemGroup>

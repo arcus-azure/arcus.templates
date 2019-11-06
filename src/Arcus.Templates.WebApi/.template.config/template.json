@@ -87,6 +87,16 @@
     "CertificateAuth": {
       "type": "computed",
       "value": "(authentication == \"Certificate\")"
+    },
+    "openapi-security-definitions": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false",
+      "description": "Adds OAuth security definitions to authorized API operations in the Open API specification file"
+    },
+    "OpenApiSecurityDefinitions": {
+      "type": "computed",
+      "value": "(openapi-security-definitions == \"true\")"
     } 
   }
 }

@@ -24,6 +24,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Primitives;
 #endif
+#if OpenApiSecurityDefinitions
+using Arcus.WebApi.OpenApi.Extensions;
+#endif
 
 namespace Arcus.Templates.WebApi
 {
@@ -78,6 +81,9 @@ namespace Arcus.Templates.WebApi
             {
                 swaggerGenerationOptions.SwaggerDoc("v1", openApiInformation);
                 swaggerGenerationOptions.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "Arcus.Templates.WebApi.Open-Api.xml"));
+#if OpenApiSecurityDefinitions
+                swaggerGenerationOptions.OperationFilter<OAuthAuthorizeOperationFilter>();
+#endif
             });
 //#endif
         }

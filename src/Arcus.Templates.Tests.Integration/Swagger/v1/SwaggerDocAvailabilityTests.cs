@@ -30,7 +30,7 @@ namespace Arcus.Templates.Tests.Integration.Swagger.v1
             var configuration = TestConfig.Create(buildConfiguration);
             using (var project = await WebApiProject.StartNewAsync(configuration, _outputWriter)) 
             // Act
-            using (HttpResponseMessage response = await project.Swagger.GetSwaggerUI())
+            using (HttpResponseMessage response = await project.Swagger.GetSwaggerUIAsync())
             {
                 // Assert
                 Assert.NotNull(response);
@@ -47,7 +47,7 @@ namespace Arcus.Templates.Tests.Integration.Swagger.v1
             var configuration = TestConfig.Create(buildConfiguration);
             using (var project = await WebApiProject.StartNewAsync(configuration, _outputWriter))
             // Act
-            using (var response = await project.Swagger.GetSwaggerDocs())
+            using (var response = await project.Swagger.GetSwaggerDocsAsync())
             {
                 // Assert
                 Assert.NotNull(response);

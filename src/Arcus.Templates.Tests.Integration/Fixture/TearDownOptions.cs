@@ -12,7 +12,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         /// <summary>
         /// Default, removes all resources created for the <see cref="TemplateProject"/> so the environment is back to it's original state.
         /// </summary>
-        None = 0,
+        All = 0,
 
         /// <summary>
         /// Keep the temporary created project directory on disk after the <see cref="TemplateProject"/> is disposed.

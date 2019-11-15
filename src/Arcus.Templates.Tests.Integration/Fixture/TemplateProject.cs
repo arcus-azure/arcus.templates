@@ -106,7 +106,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             {
                 UseShellExecute = false,
                 CreateNoWindow = true,
-                WorkingDirectory = _projectDirectory.FullName,
+                WorkingDirectory = _projectDirectory.FullName
             };
 
             _process.StartInfo = processInfo;
@@ -132,7 +132,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
                 Policy.NoOp().ExecuteAndCapture(() => Disposing(true)),
                 RetryAction(StopProject),
                 RetryAction(UninstallTemplate),
-                RetryAction(DeleteProjectDirectory), 
+                RetryAction(DeleteProjectDirectory),
             };
 
             IEnumerable<Exception> exceptions = 

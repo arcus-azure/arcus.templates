@@ -69,21 +69,33 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             project.CreateNewProject(projectOptions);
             
             project.Run(configuration.BuildConfiguration, $"--ARCUS_HTTP_PORT {baseUrl.Port}");
-            await WaitUntilWebProjectIsAvailable(baseUrl.Port);
+            await WaitUntilWebProjectIsAvailable(baseUrl.Port, outputWriter);
 
             return project;
         }
 
-        private static async Task WaitUntilWebProjectIsAvailable(int httpPort)
+        private static async Task WaitUntilWebProjectIsAvailable(int httpPort, ITestOutputHelper outputWriter)
         {
             var waitAndRetryForeverAsync =
-                Policy.HandleResult((HttpStatusCode code) => code == HttpStatusCode.NotFound)
-                      .Or<Exception>()
+                Policy.Handle<Exception>()
                       .WaitAndRetryForeverAsync(_ => TimeSpan.FromSeconds(1));
 
-            await Policy.TimeoutAsync(TimeSpan.FromSeconds(10))
-                        .WrapAsync(waitAndRetryForeverAsync)
-                        .ExecuteAndCaptureAsync(() => GetNonExistingEndpoint(httpPort));
+            var result = 
+                await Policy.TimeoutAsync(TimeSpan.FromSeconds(10))
+                            .WrapAsync(waitAndRetryForeverAsync)
+                            .ExecuteAndCaptureAsync(() => GetNonExistingEndpoint(httpPort));
+
+            if (result.Outcome == OutcomeType.Successful)
+            {
+                outputWriter.WriteLine("Test template web API project fully started at: localhost:{0}", httpPort);
+            }
+            else
+            {
+                outputWriter.WriteLine("Test template web API project could not be started");
+                throw new CannotStartTemplateProjectException(
+                    "The test project created from the web API project template doesn't seem to be running, "
+                    + "please check any build or runtime errors that could occur when the test project was created");
+            }
         }
 
         private static async Task<HttpStatusCode> GetNonExistingEndpoint(int httpPort)

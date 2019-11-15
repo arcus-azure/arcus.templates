@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Arcus.Templates.WebApi;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Primitives;
 using GuardNet;
@@ -50,7 +49,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         {
             DirectoryInfo sourcesDirectory = GetBuildSourcesDirectory();
 
-            string webApiProjectPath = Path.Combine(sourcesDirectory.FullName, "src", typeof(Startup).Namespace);
+            string webApiProjectPath = Path.Combine(sourcesDirectory.FullName, "src", "Arcus.Templates.WebApi");
             if (!Directory.Exists(webApiProjectPath))
             {
                 throw new DirectoryNotFoundException(

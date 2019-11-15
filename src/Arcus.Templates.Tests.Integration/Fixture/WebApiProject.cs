@@ -92,7 +92,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             else
             {
                 outputWriter.WriteLine("Test template web API project could not be started");
-                throw new CannotStartTemplateProject(
+                throw new CannotStartTemplateProjectException(
                     "The test project created from the web API project template doesn't seem to be running, "
                     + "please check any build or runtime errors that could occur when the test project was created");
             }

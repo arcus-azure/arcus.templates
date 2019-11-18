@@ -1,5 +1,4 @@
 ﻿using System.Net.Http;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,16 +13,16 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         [HttpGet]
         [Route(AuthorizedRoute)]
         [Authorize]
-        public Task<IActionResult> GetAuthorizedRoute(HttpRequestMessage request)
+        public IActionResult GetAuthorizedRoute(HttpRequestMessage request)
         {
-            return Task.FromResult<IActionResult>(Ok());
+            return Ok();
         }
 
         [HttpGet]
         [Route(NoneAuthorizedRoute)]
-        public Task<IActionResult> GetNoneAuthorizedRoute(HttpRequestMessage request)
+        public IActionResult GetNoneAuthorizedRoute(HttpRequestMessage request)
         {
-            return Task.FromResult<IActionResult>(Ok());
+            return Ok();
         }
     }
 }

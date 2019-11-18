@@ -33,6 +33,16 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         public static readonly WebApiProjectOptions Empty = new WebApiProjectOptions();
 
         /// <summary>
+        /// Adds the project option to include an 'appsettings.json' file to the web API project.
+        /// </summary>
+        public WebApiProjectOptions WithIncludeAppSettings()
+        {
+            ProjectOptions optionsWithIncludeAppSettings = AddOption("--include-appsettings true");
+
+            return new WebApiProjectOptions(optionsWithIncludeAppSettings);
+        }
+
+        /// <summary>
         /// Adds a shared access key authentication to the web API project.
         /// </summary>
         /// <param name="headerName">The name of the request header which value must match the stored secret.</param>

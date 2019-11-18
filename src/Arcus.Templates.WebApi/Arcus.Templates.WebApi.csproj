@@ -26,7 +26,7 @@
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <ContentTargetFolders>content</ContentTargetFolders>
     <EnableDefaultContentItems>false</EnableDefaultContentItems>
-    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>    
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerComposeProjectPath>..\Arcus.Templates.Orchestrator.dcproj</DockerComposeProjectPath>
     <!--#endif-->
   </PropertyGroup>
@@ -38,12 +38,13 @@
 
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);</DefineConstants>
-  </PropertyGroup>  <ItemGroup>
+  </PropertyGroup>
+  <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.7.12" />
   </ItemGroup>
   <!--#endif-->
-  
-   <ItemGroup Condition="'$(AppSettings)' == 'true'">
+
+  <ItemGroup Condition="'$(AppSettings)' == 'true'">
     <Content Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>

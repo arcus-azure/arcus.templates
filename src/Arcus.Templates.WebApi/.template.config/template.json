@@ -50,7 +50,7 @@
       "parameters": {
         "value": "#if DEBUG"
       },
-      "replaces": "//#if DEBUG"
+      "replaces": "//[#if DEBUG]"
     },
     "EndIf": {
       "type": "generated",
@@ -58,7 +58,7 @@
       "parameters": {
         "value": "#endif"
       },
-      "replaces": "//#endif"
+      "replaces": "//[#endif]"
     },
     "authentication": {
       "type": "parameter",
@@ -98,7 +98,12 @@
     },
     "AppSettings": {
       "type": "computed",
-      "value": "CertificateAuth"
+      "value": "(include-appsettings == \"true\") || CertificateAuth"
+    },
+    "include-appsettings": {
+      "type": "parameter",
+      "defaultValue": "false",
+      "description": "Include a 'appsettings.json' file to the web API project"
     }
   }
 }

@@ -114,14 +114,14 @@ namespace Arcus.Templates.WebApi
 #endif
             app.UseMvc();
 
-//#if DEBUG
+//[#if DEBUG]
             app.UseSwagger();
             app.UseSwaggerUI(swaggerUiOptions =>
             {
                 swaggerUiOptions.SwaggerEndpoint("v1/swagger.json", "Arcus.Templates.WebApi");
                 swaggerUiOptions.DocumentTitle = "Arcus.Templates.WebApi";
             });
-//#endif
+//[#endif]
         }
 #if CertificateAuth
         // Remove this middleware method when the web API authentication NuGet package gets updated and the client certificate gets loaded in the CertificateAuthenticationFilter.

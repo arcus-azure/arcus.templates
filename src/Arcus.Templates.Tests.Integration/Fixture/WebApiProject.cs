@@ -34,10 +34,11 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         {
             Guard.NotNull(baseUrl, nameof(baseUrl), "Cannot create a web API services without a test configuration");
             Guard.NotNull(configuration, nameof(configuration), "Cannot create a web API project without a configuration that describes startup settings");
+            Guard.NotNull(outputWriter, nameof(outputWriter), "Cannot create a web API project without a test logger that sends diagnostic messages during the creation of the project");
 
             _baseUrl = baseUrl;
             _configuration = configuration;
-            _outputWriter = outputWriter;
+            _outputWriter = outputWriter; 
 
             Health = new HealthEndpointService(baseUrl, outputWriter);
             Swagger = new SwaggerEndpointService(baseUrl, outputWriter);

@@ -25,6 +25,14 @@
         "**/*.lock.json",
         "**/launchSettings.json",
         "*Open-Api.xml"
+      ],
+      "modifiers": [
+        {
+          "condition": "!(AppSettings)",
+          "exclude": [
+            "appsettings*.json"
+          ]
+        }
       ]
     }
   ],
@@ -97,6 +105,10 @@
     "OpenApiSecurityDefinitions": {
       "type": "computed",
       "value": "(openapi-security-definitions == \"true\")"
-    } 
+    },
+    "AppSettings": {
+      "type": "computed",
+      "value": "CertificateAuth"
+    }
   }
 }

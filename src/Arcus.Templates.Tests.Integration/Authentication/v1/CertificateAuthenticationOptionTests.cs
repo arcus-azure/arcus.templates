@@ -27,12 +27,11 @@ namespace Arcus.Templates.Tests.Integration.Authentication.v1
         public async Task CertificateAuthenticationOption_GetHealthUnauthenticated_ResultsUnauthorized()
         {
             // Arrange
-            string secretName = $"secret-name-{Guid.NewGuid()}";
             string subject = $"subject-{Guid.NewGuid()}";
 
             var authenticatedProjectArguments =
                 new WebApiProjectOptions()
-                    .WithCertificateSubjectAuthentication(secretName, $"CN={subject}");
+                    .WithCertificateSubjectAuthentication($"CN={subject}");
 
             using (var project = await WebApiProject.StartNewAsync(_configuration, authenticatedProjectArguments, _outputWriter))
             {
@@ -50,13 +49,12 @@ namespace Arcus.Templates.Tests.Integration.Authentication.v1
         public async Task CertificateAuthenticationOption_GetHealthAuthenticated_ResultsOk()
         {
             // Arrange
-            const string secretName = "subject";
             string subject = $"subject-{Guid.NewGuid()}";
 
             var authenticatedProjectArguments =
                 new WebApiProjectOptions()
-                    .WithCertificateSubjectAuthentication(secretName, $"CN={subject}");
-            
+                    .WithCertificateSubjectAuthentication($"CN={subject}");
+
             using (var project = await WebApiProject.StartNewAsync(_configuration, authenticatedProjectArguments, _outputWriter))
             using (var certificate = SelfSignedCertificate.CreateWithSubject(subject))
             {

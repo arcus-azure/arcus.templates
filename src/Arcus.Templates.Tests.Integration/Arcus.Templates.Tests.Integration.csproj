@@ -37,8 +37,4 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="../Arcus.Templates.WebApi/Arcus.Templates.WebApi.csproj" />
-  </ItemGroup>
-
 </Project>

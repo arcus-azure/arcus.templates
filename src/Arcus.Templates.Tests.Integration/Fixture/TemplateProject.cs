@@ -141,7 +141,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
                 Policy.NoOp().ExecuteAndCapture(() => Disposing(true)),
                 RetryAction(StopProject),
                 RetryAction(UninstallTemplate),
-                RetryAction(DeleteProjectDirectory), 
+                RetryAction(DeleteProjectDirectory),
             };
 
             IEnumerable<Exception> exceptions = 

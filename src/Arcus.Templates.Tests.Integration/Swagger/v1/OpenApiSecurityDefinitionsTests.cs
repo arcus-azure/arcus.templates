@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.Fixture;
-using Newtonsoft.Json.Linq;
+using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Readers;
 using Xunit;
 using Xunit.Abstractions;
+using static Arcus.Templates.Tests.Integration.Fixture.AuthorizedAndNoneAuthorizedController;
 
 namespace Arcus.Templates.Tests.Integration.Swagger.v1
 {
@@ -43,12 +47,24 @@ namespace Arcus.Templates.Tests.Integration.Swagger.v1
                     // Assert
                     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-                    string swaggerJson = await response.Content.ReadAsStringAsync();
-                    JObject swagger = JObject.Parse(swaggerJson);
-                    var responses = swagger["paths"][$"/{AuthorizedAndNoneAuthorizedController.AuthorizedRoute}"]["get"]["responses"].Children<JProperty>();
-                
-                    Assert.Contains(responses, r => r.Name == "401");
-                    Assert.Contains(responses, r => r.Name == "403");
+                    using (Stream swaggerJson = await response.Content.ReadAsStreamAsync())
+                    {
+                        var streamReader = new OpenApiStreamReader();
+                        OpenApiDocument openApiDoc = streamReader.Read(swaggerJson, out OpenApiDiagnostic diagnostic);
+                        IEnumerable<string> errors = diagnostic.Errors.Select(err => err.Message);
+                        _outputWriter.WriteLine(String.Join(", ", errors));
+
+                        Assert.NotNull(openApiDoc);
+                        Assert.NotNull(openApiDoc.Paths);
+                        Assert.True(openApiDoc.Paths.TryGetValue($"/{AuthorizedRoute}", out OpenApiPathItem path));
+                        Assert.NotNull(path);
+                        Assert.NotNull(path.Operations);
+                        Assert.True(path.Operations.TryGetValue(OperationType.Get, out OpenApiOperation operation));
+                        Assert.NotNull(operation);
+                        Assert.NotNull(operation.Responses);
+                        Assert.Contains(operation.Responses, r => r.Key == "401");
+                        Assert.Contains(operation.Responses, r => r.Key == "403");
+                    }
                 }
             }
         }
@@ -72,12 +88,24 @@ namespace Arcus.Templates.Tests.Integration.Swagger.v1
                     // Assert
                     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-                    string swaggerJson = await response.Content.ReadAsStringAsync();
-                    JObject swagger = JObject.Parse(swaggerJson);
-                    var responses = swagger["paths"][$"/{AuthorizedAndNoneAuthorizedController.NoneAuthorizedRoute}"]["get"]["responses"].Children<JProperty>();
-                
-                    Assert.DoesNotContain(responses, r => r.Name == "401");
-                    Assert.DoesNotContain(responses, r => r.Name == "403");
+                    using (Stream swaggerJson = await response.Content.ReadAsStreamAsync())
+                    {
+                        var streamReader = new OpenApiStreamReader();
+                        OpenApiDocument openApiDoc = streamReader.Read(swaggerJson, out OpenApiDiagnostic diagnostic);
+                        IEnumerable<string> errors = diagnostic.Errors.Select(err => err.Message);
+                        _outputWriter.WriteLine(String.Join(", ", errors));
+
+                        Assert.NotNull(openApiDoc);
+                        Assert.NotNull(openApiDoc.Paths);
+                        Assert.True(openApiDoc.Paths.TryGetValue($"/{NoneAuthorizedRoute}", out OpenApiPathItem path));
+                        Assert.NotNull(path);
+                        Assert.NotNull(path.Operations);
+                        Assert.True(path.Operations.TryGetValue(OperationType.Get, out OpenApiOperation operation));
+                        Assert.NotNull(operation);
+                        Assert.NotNull(operation.Responses);
+                        Assert.DoesNotContain(operation.Responses, r => r.Key == "401");
+                        Assert.DoesNotContain(operation.Responses, r => r.Key == "403");
+                    }
                 }
             }
         }
@@ -97,12 +125,24 @@ namespace Arcus.Templates.Tests.Integration.Swagger.v1
                     // Assert
                     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-                    string swaggerJson = await response.Content.ReadAsStringAsync();
-                    JObject swagger = JObject.Parse(swaggerJson);
-                    var responses = swagger["paths"][$"/{AuthorizedAndNoneAuthorizedController.AuthorizedRoute}"]["get"]["responses"].Children<JProperty>();
+                    using (Stream swaggerJson = await response.Content.ReadAsStreamAsync())
+                    {
+                        var streamReader = new OpenApiStreamReader();
+                        OpenApiDocument openApiDoc = streamReader.Read(swaggerJson, out OpenApiDiagnostic diagnostic);
+                        IEnumerable<string> errors = diagnostic.Errors.Select(err => err.Message);
+                        _outputWriter.WriteLine(String.Join(", ", errors));
 
-                    Assert.DoesNotContain(responses, r => r.Name == "401");
-                    Assert.DoesNotContain(responses, r => r.Name == "403");
+                        Assert.NotNull(openApiDoc);
+                        Assert.NotNull(openApiDoc.Paths);
+                        Assert.True(openApiDoc.Paths.TryGetValue($"/{AuthorizedRoute}", out OpenApiPathItem path));
+                        Assert.NotNull(path);
+                        Assert.NotNull(path.Operations);
+                        Assert.True(path.Operations.TryGetValue(OperationType.Get, out OpenApiOperation operation));
+                        Assert.NotNull(operation);
+                        Assert.NotNull(operation.Responses);
+                        Assert.DoesNotContain(operation.Responses, r => r.Key == "401");
+                        Assert.DoesNotContain(operation.Responses, r => r.Key == "403");
+                    }
                 }
             }
         }

@@ -20,6 +20,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
     {
         private readonly Uri _baseUrl;
         private readonly TestConfig _configuration;
+        private readonly ITestOutputHelper _outputWriter;
 
         private static readonly HttpClient HttpClient = new HttpClient();
 
@@ -36,6 +37,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
 
             _baseUrl = baseUrl;
             _configuration = configuration;
+            _outputWriter = outputWriter;
 
             Health = new HealthEndpointService(baseUrl, outputWriter);
             Swagger = new SwaggerEndpointService(baseUrl, outputWriter);
@@ -199,7 +201,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             await WaitUntilWebProjectIsAvailable(_baseUrl.Port);
         }
 
-        private static async Task WaitUntilWebProjectIsAvailable(int httpPort)
+        private async Task WaitUntilWebProjectIsAvailable(int httpPort)
         {
             var waitAndRetryForeverAsync =
                 Policy.Handle<Exception>()
@@ -212,11 +214,11 @@ namespace Arcus.Templates.Tests.Integration.Fixture
 
             if (result.Outcome == OutcomeType.Successful)
             {
-                outputWriter.WriteLine("Test template web API project fully started at: localhost:{0}", httpPort);
+                _outputWriter.WriteLine("Test template web API project fully started at: localhost:{0}", httpPort);
             }
             else
             {
-                outputWriter.WriteLine("Test template web API project could not be started");
+                _outputWriter.WriteLine("Test template web API project could not be started");
                 throw new CannotStartTemplateProjectException(
                     "The test project created from the web API project template doesn't seem to be running, "
                     + "please check any build or runtime errors that could occur when the test project was created");
@@ -260,7 +262,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             else
             {
                 string content = File.ReadAllText(destControllerPath);
-                content = replacements?.Aggregate(content, (txt, kv) => txt.Replace(kv.Key, kv.Value));
+                content = replacements.Aggregate(content, (txt, kv) => txt.Replace(kv.Key, kv.Value));
             
                 File.WriteAllText(destControllerPath, content);
             }

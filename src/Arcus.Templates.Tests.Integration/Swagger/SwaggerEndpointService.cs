@@ -34,7 +34,7 @@ namespace Arcus.Templates.Tests.Integration.Swagger
         /// <summary>
         /// Sends a GET request to the Swagger UI help page.
         /// </summary>
-        public async Task<HttpResponseMessage> GetSwaggerUI()
+        public async Task<HttpResponseMessage> GetSwaggerUIAsync()
         {
             return await GetAsync(_swaggerUIEndpoint);
         }
@@ -42,7 +42,7 @@ namespace Arcus.Templates.Tests.Integration.Swagger
         /// <summary>
         /// Sends a GET request to the Swagger JSON docs page.
         /// </summary>
-        public async Task<HttpResponseMessage> GetSwaggerDocs()
+        public async Task<HttpResponseMessage> GetSwaggerDocsAsync()
         {
             return await GetAsync(_swaggerDocsEndpoint);
         }

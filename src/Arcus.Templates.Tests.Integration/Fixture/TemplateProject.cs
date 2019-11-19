@@ -19,7 +19,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         private const string ProjectName = "Arcus.Demo.Project";
 
         private readonly Process _process;
-        private readonly DirectoryInfo _templateDirectory, _fixtureDirectory, _projectDirectory;
+        private readonly DirectoryInfo _templateDirectory;
         private readonly ITestOutputHelper _outputWriter;
 
         private bool _created, _started, _disposed;
@@ -31,14 +31,23 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             Guard.NotNull(outputWriter, nameof(outputWriter));
 
             _process = new Process();
-
             _templateDirectory = templateDirectory;
-            _fixtureDirectory = fixtureDirectory;
             _outputWriter = outputWriter;
 
             string tempDirectoryPath = Path.Combine(Path.GetTempPath(), $"{ProjectName}-{Guid.NewGuid()}");
-            _projectDirectory = new DirectoryInfo(tempDirectoryPath);;
+            ProjectDirectory = new DirectoryInfo(tempDirectoryPath);;
+            FixtureDirectory = fixtureDirectory;
         }
+
+        /// <summary>
+        /// Gets the directory where the fixtures are located that are used when a project requires additional functionality.
+        /// </summary>
+        protected DirectoryInfo FixtureDirectory { get; }
+        
+        /// <summary>
+        /// Gets the directory where a new project is created from the template.
+        /// </summary>
+        protected DirectoryInfo ProjectDirectory { get; }
 
         /// <summary>
         /// Creates a new project from this template at the project directory with a given set of <paramref name="projectOptions"/>.
@@ -54,14 +63,14 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             _created = true;
 
             string shortName = GetTemplateShortNameAtTemplateFolder();
-            _outputWriter.WriteLine($"Creates new project from template {shortName} at {_projectDirectory.FullName}");
+            _outputWriter.WriteLine($"Creates new project from template {shortName} at {ProjectDirectory.FullName}");
             
             RunDotNet($"new -i {_templateDirectory.FullName}");
 
             string commandArguments = projectOptions.ToCommandLineArguments();
-            RunDotNet($"new {shortName} {commandArguments ?? String.Empty} -n {ProjectName} -o {_projectDirectory.FullName}");
+            RunDotNet($"new {shortName} {commandArguments ?? String.Empty} -n {ProjectName} -o {ProjectDirectory.FullName}");
 
-            projectOptions.UpdateProjectToCorrectlyUseOptions(_fixtureDirectory, _projectDirectory);
+            projectOptions.UpdateProjectToCorrectlyUseOptions(FixtureDirectory, ProjectDirectory);
         }
 
         private string GetTemplateShortNameAtTemplateFolder()
@@ -96,9 +105,9 @@ namespace Arcus.Templates.Tests.Integration.Fixture
                 throw new InvalidOperationException("Test demo project from template is already started");
             }
 
-            RunDotNet($"build -c {buildConfiguration} {_projectDirectory.FullName}");
+            RunDotNet($"build -c {buildConfiguration} {ProjectDirectory.FullName}");
 
-            string targetAssembly = Path.Combine(_projectDirectory.FullName, $"bin/{buildConfiguration}/netcoreapp2.2/{ProjectName}.dll");
+            string targetAssembly = Path.Combine(ProjectDirectory.FullName, $"bin/{buildConfiguration}/netcoreapp2.2/{ProjectName}.dll");
             string runCommand = $"exec {targetAssembly} {commandArguments ?? String.Empty}";
             
             _outputWriter.WriteLine("> dotnet {0}", runCommand);
@@ -106,7 +115,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             {
                 UseShellExecute = false,
                 CreateNoWindow = true,
-                WorkingDirectory = _projectDirectory.FullName
+                WorkingDirectory = ProjectDirectory.FullName,
             };
 
             _process.StartInfo = processInfo;
@@ -193,7 +202,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
 
         private void DeleteProjectDirectory()
         {
-            _projectDirectory.Delete(recursive: true);
+            ProjectDirectory.Delete(recursive: true);
         }
 
         private static PolicyResult RetryAction(Action action)

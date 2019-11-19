@@ -148,7 +148,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         }
 
         /// <summary>
-        /// Creates a project from the web API project template without a set of project options.
+        /// Creates a project from the web API project template with a set of <paramref name="projectOptions"/>.
         /// </summary>
         /// <param name="projectOptions">The project options to control the functionality of the to-be-created project from this template.</param>
         /// <param name="outputWriter">The output logger to add telemetry information during the creation and startup process.</param>

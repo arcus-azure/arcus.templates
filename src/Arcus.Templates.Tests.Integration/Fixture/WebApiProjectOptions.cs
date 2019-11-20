@@ -36,7 +36,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         /// </summary>
         public WebApiProjectOptions WithIncludeAppSettings()
         {
-            ProjectOptions optionsWithIncludeAppSettings = AddOption("--include-appsettings true");
+            ProjectOptions optionsWithIncludeAppSettings = AddOption("--include-appsettings");
 
             return new WebApiProjectOptions(optionsWithIncludeAppSettings);
         }

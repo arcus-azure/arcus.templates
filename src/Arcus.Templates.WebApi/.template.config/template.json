@@ -102,6 +102,7 @@
     },
     "include-appsettings": {
       "type": "parameter",
+      "datatype": "bool",
       "defaultValue": "false",
       "description": "Include a 'appsettings.json' file to the web API project"
     }

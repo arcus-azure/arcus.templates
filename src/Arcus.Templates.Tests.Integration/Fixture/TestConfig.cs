@@ -19,6 +19,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             Guard.NotNull(configuration, nameof(configuration));
 
             _configuration = configuration;
+
             BuildConfiguration = buildConfiguration;
         }
 

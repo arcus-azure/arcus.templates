@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -7,6 +8,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.Health;
 using Arcus.Templates.Tests.Integration.Swagger;
+using Flurl;
 using GuardNet;
 using Polly;
 using Xunit.Abstractions;
@@ -16,6 +18,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
     /// <summary>
     /// Project template to create new web API projects.
     /// </summary>
+    [DebuggerDisplay("Project = {ProjectDirectory.FullName}, URL = {_baseUrl}")]
     public class WebApiProject : TemplateProject
     {
         private readonly Uri _baseUrl;
@@ -317,6 +320,15 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             }
 
             return files.First().FullName;
+        }
+
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>A string that represents the current object.</returns>
+        public override string ToString()
+        {
+            return $"Project: {ProjectDirectory.FullName}, running at: {_baseUrl.OriginalString.ResetToRoot()}";
         }
     }
 }

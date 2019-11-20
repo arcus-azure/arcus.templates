@@ -14,14 +14,13 @@ namespace Arcus.Templates.Tests.Integration.Fixture
     {
         private readonly IConfigurationRoot _configuration;
 
-        private TestConfig(IConfigurationRoot configuration, BuildConfiguration buildConfiguration, TearDownOptions tearDownOptions)
+        private TestConfig(IConfigurationRoot configuration, BuildConfiguration buildConfiguration)
         {
             Guard.NotNull(configuration, nameof(configuration));
 
             _configuration = configuration;
 
             BuildConfiguration = buildConfiguration;
-            TearDownOptions = tearDownOptions;
         }
 
         /// <summary>
@@ -30,18 +29,10 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         public BuildConfiguration BuildConfiguration { get; }
 
         /// <summary>
-        /// Gets the tear down options for the project created from the template.
-        /// </summary>
-        public TearDownOptions TearDownOptions { get; }
-
-        /// <summary>
         /// Creates a new <see cref="IConfigurationRoot"/> with test values.
         /// </summary>
         /// <param name="buildConfiguration">The configuration in which the created project from the template should be build.</param>
-        /// <param name="tearDownOptions">The options to control the tear down process for the created project from the template.</param>
-        public static TestConfig Create(
-            BuildConfiguration buildConfiguration = BuildConfiguration.Debug, 
-            TearDownOptions tearDownOptions = TearDownOptions.All)
+        public static TestConfig Create(BuildConfiguration buildConfiguration = BuildConfiguration.Debug)
         {
             var configuration = new ConfigurationBuilder()
                 .AddJsonFile(path: "appsettings.json", optional: true)
@@ -49,7 +40,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
                 .AddEnvironmentVariables()
                 .Build();
 
-            return new TestConfig(configuration, buildConfiguration, tearDownOptions);
+            return new TestConfig(configuration, buildConfiguration);
         }
 
         /// <summary>

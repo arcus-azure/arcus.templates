@@ -146,8 +146,8 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             {
                 Policy.NoOp().ExecuteAndCapture(() => Disposing(true)),
                 RetryActionExceptWhen(TearDownOptions.KeepProjectRunning, StopProject),
-                RetryActionExceptWhen(TearDownOptions.KeepProjectTemplateInstalled, UninstallTemplate),
                 RetryActionExceptWhen(TearDownOptions.KeepProjectDirectory, DeleteProjectDirectory), 
+                RetryActionExceptWhen(TearDownOptions.KeepProjectTemplateInstalled, UninstallTemplate),
             };
 
             IEnumerable<Exception> exceptions = 
@@ -237,7 +237,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             }
 
             return Policy.Timeout(TimeSpan.FromSeconds(30))
-                         .Wrap(Policy.Handle<IOException>()
+                         .Wrap(Policy.Handle<Exception>()
                                      .WaitAndRetryForever(_ => TimeSpan.FromSeconds(1)))
                          .ExecuteAndCapture(action);
         }

@@ -16,7 +16,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
     /// </summary>
     public abstract class TemplateProject : IDisposable
     {
-        private const string ProjectName = "Arcus.Demo.Project";
+        protected const string ProjectName = "Arcus.Demo.Project";
 
         private readonly Process _process;
         private readonly DirectoryInfo _templateDirectory;

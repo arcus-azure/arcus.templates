@@ -66,7 +66,7 @@ namespace Arcus.Templates.WebApi
 
             services.AddHealthChecks();
             
-//#if DEBUG
+//[#if DEBUG]
             var openApiInformation = new Info
             {
                 Title = "Arcus.Templates.WebApi",
@@ -77,11 +77,8 @@ namespace Arcus.Templates.WebApi
             {
                 swaggerGenerationOptions.SwaggerDoc("v1", openApiInformation);
                 swaggerGenerationOptions.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "Arcus.Templates.WebApi.Open-Api.xml"));
-#if OpenApiSecurityDefinitions
-                swaggerGenerationOptions.OperationFilter<OAuthAuthorizeOperationFilter>();
-#endif
             });
-//#endif
+//[#endif]
         }
 
         private static void RestrictToJsonContentType(MvcOptions options)

@@ -42,6 +42,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
 
             Health = new HealthEndpointService(baseUrl, outputWriter);
             Swagger = new SwaggerEndpointService(baseUrl, outputWriter);
+            Root = new RootEndpointService(baseUrl, outputWriter);
         }
 
         /// <summary>
@@ -235,6 +236,11 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         }
 
         /// <summary>
+        /// Gets the service that exposes default HTTP operations to interact on a lower level with the created web API project.
+        /// </summary>
+        public RootEndpointService Root { get; }
+
+        /// <summary>
         /// Gets the service controlling the health information of the created web API project.
         /// </summary>
         public HealthEndpointService Health { get; }
@@ -245,28 +251,50 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         public SwaggerEndpointService Swagger { get; }
 
         /// <summary>
+        /// Updates a file in the target project folder, using the given <paramref name="updateContents"/> function.
+        /// </summary>
+        /// <param name="fileName">The target file name to change it's contents.</param>
+        /// <param name="updateContents">The function that changes the contents of the file.</param>
+        public void UpdateFileInProject(string fileName, Func<string, string> updateContents)
+        {
+            Guard.NotNull(fileName, nameof(fileName), "Requires a file name (no file path) to update the contents");
+            Guard.NotNull(updateContents, nameof(updateContents), "Requires a function to update the project file contents");
+
+            string destPath = Path.Combine(ProjectDirectory.FullName, fileName);
+            if (!File.Exists(destPath))
+            {
+                throw new FileNotFoundException($"No project file with the file name: '{fileName}' was found in the target project folder");
+            }
+
+            string content = File.ReadAllText(destPath);
+            content = updateContents(content);
+            File.WriteAllText(destPath, content);
+        }
+
+        /// <summary>
         /// Adds a fixture file to the web API project by its type: <typeparamref name="TFixture"/>,
         /// and replace tokens with values via the given <paramref name="replacements"/> dictionary.
         /// </summary>
         /// <typeparam name="TFixture">The fixture type to include in the web API project.</typeparam>
         /// <param name="replacements">The tokens and their corresponding values to replace in the fixture file.</param>
-        public void AddFixture<TFixture>(IDictionary<string, string> replacements = null)
+        /// <param name="namespaces">The additional namespace the fixture file should be placed in.</param>
+        public void AddFixture<TFixture>(IDictionary<string, string> replacements = null, params string[] namespaces)
         {
-            string srcControllerPath = FindFixtureTypeInDirectory(FixtureDirectory, typeof(TFixture));
-            string destControllerPath = Path.Combine(ProjectDirectory.FullName, nameof(TFixture) + ".cs");
-            File.Copy(srcControllerPath, destControllerPath);
+            replacements = replacements ?? new Dictionary<string, string>();
+            namespaces = namespaces ?? new string[0];
 
-            if (replacements is null)
-            {
-                return;
-            }
-            else
-            {
-                string content = File.ReadAllText(destControllerPath);
-                content = replacements.Aggregate(content, (txt, kv) => txt.Replace(kv.Key, kv.Value));
+            string srcPath = FindFixtureTypeInDirectory(FixtureDirectory, typeof(TFixture));
+            string destPath = Path.Combine(ProjectDirectory.FullName, Path.Combine(namespaces), typeof(TFixture).Name + ".cs");
+            File.Copy(srcPath, destPath);
+
+            string key = typeof(TFixture).Namespace ?? throw new InvalidOperationException("Generic fixture requires a namespace");
+            string value = $"{ProjectName}.{String.Join(".", namespaces)}";
+            replacements[key] = value;
+
+            string content = File.ReadAllText(destPath);
+            content = replacements.Aggregate(content, (txt, kv) => txt.Replace(kv.Key, kv.Value));
             
-                File.WriteAllText(destControllerPath, content);
-            }
+            File.WriteAllText(destPath, content);
         }
 
         private static string FindFixtureTypeInDirectory(DirectoryInfo fixtureDirectory, Type fixtureType)

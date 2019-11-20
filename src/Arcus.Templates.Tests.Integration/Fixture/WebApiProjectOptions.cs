@@ -32,18 +32,6 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         public static WebApiProjectOptions Empty { get; } = new WebApiProjectOptions();
 
         /// <summary>
-        /// Adds Open API security definitions on authorized API endpoints of the web API project.
-        /// </summary>
-        public WebApiProjectOptions WithOpenApiSecurityDefinitions()
-        {
-            ProjectOptions optionsWithOpenApiSecurityDefinitions = AddOption(
-                "--openapi-security-definitions", 
-                (fixtureDirectory, projectDirectory) => { });
-
-            return new WebApiProjectOptions(optionsWithOpenApiSecurityDefinitions);
-        }
-
-        /// <summary>
         /// Adds the project option to include an 'appsettings.json' file to the web API project.
         /// </summary>
         public WebApiProjectOptions WithIncludeAppSettings()

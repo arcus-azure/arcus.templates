@@ -98,7 +98,7 @@
     },
     "AppSettings": {
       "type": "computed",
-      "value": "(include-appsettings == \"true\") || CertificateAuth"
+      "value": "include-appsettings || CertificateAuth"
     },
     "include-appsettings": {
       "type": "parameter",

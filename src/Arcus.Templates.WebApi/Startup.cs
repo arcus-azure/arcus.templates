@@ -22,9 +22,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Primitives;
 #endif
-#if OpenApiSecurityDefinitions
-using Arcus.WebApi.OpenApi.Extensions;
-#endif
 
 namespace Arcus.Templates.WebApi
 {

@@ -44,12 +44,25 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         }
 
         /// <summary>
-        /// Adds an option to the project that should be created for a project template.
+        /// Adds an option to the project that should be added for a project template.
+        /// </summary>
+        /// <param name="argument">The console argument to pass along the 'dotnet new' command.</param>
+        protected ProjectOptions AddOption(string argument)
+        {
+            Guard.NotNullOrWhitespace(argument, nameof(argument));
+
+            return new ProjectOptions(_arguments.Append(argument), _updateProject);
+        }
+
+        /// <summary>
+        /// Adds an option to the project that should be added for a project template.
         /// </summary>
         /// <param name="argument">The console argument to pass along the 'dotnet new' command.</param>
         /// <param name="updateProject">The custom action to be executed in order that the created project uses the project option correctly.</param>
         protected ProjectOptions AddOption(string argument, Action<DirectoryInfo, DirectoryInfo> updateProject)
         {
+            Guard.NotNullOrWhitespace(argument, nameof(argument));
+
             return new ProjectOptions(
                 _arguments.Append(argument),
                 _updateProject.Append(updateProject));

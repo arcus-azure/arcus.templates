@@ -37,6 +37,7 @@ And additional features available with options:
   * `SharedAccessKey`: adds [shared access key authentication](https://webapi.arcus-azure.net/features/security/auth/shared-access-key) mechanism to the API project
   * `Certificate`: adds [client certificate authentication](https://webapi.arcus-azure.net/features/security/auth/certificate) mechanism to the API project
   * `None`: no authentication configured on the API project.
+* `-ia|--include-appsettings` (default `false`): includes a `appsettings.json` file to the web API project.
 
 ## Security
 As part of this template the following HTTP header(s) are removed for security sake:

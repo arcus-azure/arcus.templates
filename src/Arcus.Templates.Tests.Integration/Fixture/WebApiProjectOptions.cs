@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Arcus.Security.Secrets.Core.Interfaces;
-using Arcus.WebApi.Security.Authentication.Certificates;
 using GuardNet;
 
 namespace Arcus.Templates.Tests.Integration.Fixture
@@ -30,7 +29,17 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         /// <summary>
         /// Creates a set of empty project options for the web API project; resulting in a default web API project when a project is created from these options.
         /// </summary>
-        public static readonly WebApiProjectOptions Empty = new WebApiProjectOptions();
+        public static WebApiProjectOptions Empty { get; } = new WebApiProjectOptions();
+
+        /// <summary>
+        /// Adds the project option to include an 'appsettings.json' file to the web API project.
+        /// </summary>
+        public WebApiProjectOptions WithIncludeAppSettings()
+        {
+            ProjectOptions optionsWithIncludeAppSettings = AddOption("--include-appsettings");
+
+            return new WebApiProjectOptions(optionsWithIncludeAppSettings);
+        }
 
         /// <summary>
         /// Adds a shared access key authentication to the web API project.

@@ -63,7 +63,7 @@ namespace Arcus.Templates.WebApi
 
             services.AddHealthChecks();
             
-//#if DEBUG
+//[#if DEBUG]
             var openApiInformation = new Info
             {
                 Title = "Arcus.Templates.WebApi",
@@ -75,7 +75,7 @@ namespace Arcus.Templates.WebApi
                 swaggerGenerationOptions.SwaggerDoc("v1", openApiInformation);
                 swaggerGenerationOptions.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "Arcus.Templates.WebApi.Open-Api.xml"));
             });
-//#endif
+//[#endif]
         }
 
         private static void RestrictToJsonContentType(MvcOptions options)
@@ -114,14 +114,14 @@ namespace Arcus.Templates.WebApi
 #endif
             app.UseMvc();
 
-//#if DEBUG
+//[#if DEBUG]
             app.UseSwagger();
             app.UseSwaggerUI(swaggerUiOptions =>
             {
                 swaggerUiOptions.SwaggerEndpoint("v1/swagger.json", "Arcus.Templates.WebApi");
                 swaggerUiOptions.DocumentTitle = "Arcus.Templates.WebApi";
             });
-//#endif
+//[#endif]
         }
 #if CertificateAuth
         // Remove this middleware method when the web API authentication NuGet package gets updated and the client certificate gets loaded in the CertificateAuthenticationFilter.

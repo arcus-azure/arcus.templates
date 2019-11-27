@@ -237,7 +237,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             }
 
             return Policy.Timeout(TimeSpan.FromSeconds(30))
-                         .Wrap(Policy.Handle<Exception>((exception) => exception is UnauthorizedAccessException == false)
+                         .Wrap(Policy.Handle<Exception>()
                                      .WaitAndRetryForever(_ => TimeSpan.FromSeconds(1)))
                          .ExecuteAndCapture(action);
         }

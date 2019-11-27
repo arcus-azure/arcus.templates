@@ -35,7 +35,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             _outputWriter = outputWriter;
 
             string tempDirectoryPath = Path.Combine(Path.GetTempPath(), $"{ProjectName}-{Guid.NewGuid()}");
-            ProjectDirectory = new DirectoryInfo(tempDirectoryPath);;
+            ProjectDirectory = new DirectoryInfo(tempDirectoryPath);
             FixtureDirectory = fixtureDirectory;
         }
 
@@ -43,7 +43,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         /// Gets the directory where the fixtures are located that are used when a project requires additional functionality.
         /// </summary>
         protected DirectoryInfo FixtureDirectory { get; }
-        
+
         /// <summary>
         /// Gets the directory where a new project is created from the template.
         /// </summary>
@@ -69,7 +69,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
 
             string shortName = GetTemplateShortNameAtTemplateFolder();
             _outputWriter.WriteLine($"Creates new project from template {shortName} at {ProjectDirectory.FullName}");
-            
+
             RunDotNet($"new -i {_templateDirectory.FullName}");
 
             string commandArguments = projectOptions.ToCommandLineArguments();
@@ -114,7 +114,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
 
             string targetAssembly = Path.Combine(ProjectDirectory.FullName, $"bin/{buildConfiguration}/netcoreapp2.2/{ProjectName}.dll");
             string runCommand = $"exec {targetAssembly} {commandArguments ?? String.Empty}";
-            
+
             _outputWriter.WriteLine("> dotnet {0}", runCommand);
             var processInfo = new ProcessStartInfo("dotnet", runCommand)
             {
@@ -142,15 +142,15 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             _disposed = true;
             LogTearDownAction();
 
-            PolicyResult[] results = 
+            PolicyResult[] results =
             {
                 Policy.NoOp().ExecuteAndCapture(() => Disposing(true)),
                 RetryActionExceptWhen(TearDownOptions.KeepProjectRunning, StopProject),
-                RetryActionExceptWhen(TearDownOptions.KeepProjectDirectory, DeleteProjectDirectory), 
+                RetryActionExceptWhen(TearDownOptions.KeepProjectDirectory, DeleteProjectDirectory),
                 RetryActionExceptWhen(TearDownOptions.KeepProjectTemplateInstalled, UninstallTemplate),
             };
 
-            IEnumerable<Exception> exceptions = 
+            IEnumerable<Exception> exceptions =
                 results.Where(result => result.Outcome == OutcomeType.Failure)
                        .Select(result => result.FinalException);
 
@@ -188,7 +188,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             {
                 _process.Kill();
             }
-            
+
             _process.Dispose();
         }
 
@@ -237,7 +237,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             }
 
             return Policy.Timeout(TimeSpan.FromSeconds(30))
-                         .Wrap(Policy.Handle<Exception>()
+                         .Wrap(Policy.Handle<Exception>((exception) => exception is UnauthorizedAccessException == false)
                                      .WaitAndRetryForever(_ => TimeSpan.FromSeconds(1)))
                          .ExecuteAndCapture(action);
         }

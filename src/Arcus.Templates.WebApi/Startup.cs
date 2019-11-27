@@ -103,9 +103,6 @@ namespace Arcus.Templates.WebApi
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             app.UseMiddleware<Arcus.WebApi.Logging.ExceptionHandlingMiddleware>();
-#if CertificateAuth
-            app.Use(LoadClientCertificateFromHeader);
-#endif
 
             #warning Please configure application with HTTPS transport layer security
 
@@ -123,46 +120,5 @@ namespace Arcus.Templates.WebApi
             });
 //[#endif]
         }
-#if CertificateAuth
-        // Remove this middleware method when the web API authentication NuGet package gets updated and the client certificate gets loaded in the CertificateAuthenticationFilter.
-        // For more information when to remove this, see issue: https://github.com/arcus-azure/arcus.templates/issues/58.
-        private static Task LoadClientCertificateFromHeader(HttpContext context, Func<Task> next)
-        {
-            if (context.Connection.ClientCertificate is null)
-            {
-                const string headerName = "X-ARR-ClientCert";
-
-                try
-                {
-                    if (context.Request.Headers.TryGetValue(headerName, out StringValues headerValue))
-                    {
-                        byte[] rawData = Convert.FromBase64String(headerValue);
-                        context.Connection.ClientCertificate = new X509Certificate2(rawData);
-                    }
-                }
-                catch (Exception exception)
-                {
-                    ILogger logger = GetLoggerOrDefault(context.RequestServices);
-                    logger.LogError(exception, "Cannot load client certificate from {headerName} header", headerName);
-                }
-            }
-
-            return next.Invoke();
-        }
-
-        private static ILogger GetLoggerOrDefault(IServiceProvider services)
-        {
-            ILogger logger = 
-                services.GetService<ILoggerFactory>()
-                        ?.CreateLogger<Startup>();
-
-            if (logger != null)
-            {
-                return logger;
-            }
-
-            return NullLogger.Instance;
-        }
-#endif
     }
 }

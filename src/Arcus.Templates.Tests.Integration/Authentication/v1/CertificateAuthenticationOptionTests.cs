@@ -9,6 +9,7 @@ using Xunit.Abstractions;
 namespace Arcus.Templates.Tests.Integration.Authentication.v1
 {
     [Collection("Integration")]
+    [Trait("Category", TestTraits.Integration)]
     public class CertificateAuthenticationOptionTests
     {
         private readonly TestConfig _configuration;

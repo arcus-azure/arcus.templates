@@ -27,8 +27,9 @@ namespace Arcus.Templates.Tests.Integration.Worker.Health
         public HealthEndpointService(int healthPort, ITestOutputHelper outputWriter)
         {
             Guard.NotLessThanOrEqualTo<int, ArgumentException>(
-                healthPort, threshold: 0, 
-                "Local TCP port on which the health report is exposed by the worker should be greater than zero");
+                healthPort, 
+                threshold: 0, 
+                message: "Local TCP port on which the health report is exposed by the worker should be greater than zero");
             Guard.NotNull(outputWriter, nameof(outputWriter));
 
             _healthPort = healthPort;

@@ -5,7 +5,7 @@ using Arcus.Templates.Tests.Integration.Fixture;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Arcus.Templates.Tests.Integration.Swagger.v1
+namespace Arcus.Templates.Tests.Integration.WebApi.Swagger.v1
 {
     [Collection(TestCollections.Integration)]
     [Trait("Category", TestTraits.Integration)]

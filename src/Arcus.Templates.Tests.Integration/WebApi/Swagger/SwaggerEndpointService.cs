@@ -6,7 +6,7 @@ using Flurl;
 using GuardNet;
 using Xunit.Abstractions;
 
-namespace Arcus.Templates.Tests.Integration.Swagger
+namespace Arcus.Templates.Tests.Integration.WebApi.Swagger
 {
     /// <summary>
     /// Service to collect operations on the Swagger information of the API.

@@ -6,7 +6,7 @@ using Flurl;
 using GuardNet;
 using Xunit.Abstractions;
 
-namespace Arcus.Templates.Tests.Integration.Health
+namespace Arcus.Templates.Tests.Integration.WebApi.Health
 {
     /// <summary>
     /// Service to collect operations on the health functionality of the API.

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Primitives;
 using GuardNet;
@@ -14,13 +15,17 @@ namespace Arcus.Templates.Tests.Integration.Fixture
     {
         private readonly IConfigurationRoot _configuration;
 
-        private TestConfig(IConfigurationRoot configuration, BuildConfiguration buildConfiguration)
+        private TestConfig(
+            IConfigurationRoot configuration, 
+            BuildConfiguration buildConfiguration,
+            TargetFramework targetFramework)
         {
             Guard.NotNull(configuration, nameof(configuration));
 
             _configuration = configuration;
 
             BuildConfiguration = buildConfiguration;
+            TargetFramework = targetFramework;
         }
 
         /// <summary>
@@ -29,10 +34,18 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         public BuildConfiguration BuildConfiguration { get; }
 
         /// <summary>
+        /// Gets the target framework for the project created from the template.
+        /// </summary>
+        public TargetFramework TargetFramework { get; }
+
+        /// <summary>
         /// Creates a new <see cref="IConfigurationRoot"/> with test values.
         /// </summary>
         /// <param name="buildConfiguration">The configuration in which the created project from the template should be build.</param>
-        public static TestConfig Create(BuildConfiguration buildConfiguration = BuildConfiguration.Debug)
+        /// <param name="targetFramework">The target framework in which the created project from the template should be build and run.</param>
+        public static TestConfig Create(
+            BuildConfiguration buildConfiguration = BuildConfiguration.Debug,
+            TargetFramework targetFramework = TargetFramework.NetCoreApp22)
         {
             var configuration = new ConfigurationBuilder()
                 .AddJsonFile(path: "appsettings.json", optional: true)
@@ -40,7 +53,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
                 .AddEnvironmentVariables()
                 .Build();
 
-            return new TestConfig(configuration, buildConfiguration);
+            return new TestConfig(configuration, buildConfiguration, targetFramework);
         }
 
         /// <summary>
@@ -48,16 +61,15 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         /// </summary>
         public DirectoryInfo GetWebApiProjectDirectory()
         {
-            DirectoryInfo sourcesDirectory = GetBuildSourcesDirectory();
+            return PathCombineWithSourcesDirectory("Arcus.Templates.WebApi");
+        }
 
-            string webApiProjectPath = Path.Combine(sourcesDirectory.FullName, "src", "Arcus.Templates.WebApi");
-            if (!Directory.Exists(webApiProjectPath))
-            {
-                throw new DirectoryNotFoundException(
-                    $"Cannot find web API project directory at: {Path.GetFullPath(webApiProjectPath)}");
-            }
-
-            return new DirectoryInfo(webApiProjectPath);
+        /// <summary>
+        /// Gets the project directory of the ServiceBus Queue worker project.
+        /// </summary>
+        public DirectoryInfo GetServiceBusQueueProjectDirectory()
+        {
+            return PathCombineWithSourcesDirectory("Arcus.Templates.ServiceBus.Queue");
         }
 
         /// <summary>
@@ -65,16 +77,21 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         /// </summary>
         public DirectoryInfo GetFixtureProjectDirectory()
         {
+            return PathCombineWithSourcesDirectory(typeof(TestConfig).Assembly.GetName().Name);
+        }
+
+        private DirectoryInfo PathCombineWithSourcesDirectory(string subPath)
+        {
             DirectoryInfo sourcesDirectory = GetBuildSourcesDirectory();
 
-            string fixtureProjectPath = Path.Combine(sourcesDirectory.FullName, "src", typeof(TestConfig).Assembly.GetName().Name);
-            if (!Directory.Exists(fixtureProjectPath))
+            string path = Path.Combine(sourcesDirectory.FullName, "src", subPath);
+            if (!Directory.Exists(path))
             {
                 throw new DirectoryNotFoundException(
-                    $"Cannot find fixture project directory at: {Path.GetFullPath(fixtureProjectPath)}");
+                    $"Cannot find sub-directory in build sources directory at: {path}");
             }
 
-            return new DirectoryInfo(fixtureProjectPath);
+            return new DirectoryInfo(path);
         }
 
         private DirectoryInfo GetBuildSourcesDirectory()
@@ -127,6 +144,24 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Generates a new TCP port for self-containing worker projects.
+        /// </summary>
+        public int GenerateWorkerHealthPort()
+        {
+            return RandomPort.Next(8080, 9000);
+        }
+
+        /// <summary>
+        /// Gets the TCP port on which the worker projects on docker run on.
+        /// </summary>
+        public int GetDockerWorkerHealthPort()
+        {
+            const string tcpPortKey = "Arcus:Worker:HealthPort";
+
+            return _configuration.GetValue<int>(tcpPortKey);
         }
 
         /// <summary>

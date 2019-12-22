@@ -6,14 +6,15 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Arcus.Templates.Tests.Integration.Health;
-using Arcus.Templates.Tests.Integration.Swagger;
+using Arcus.Templates.Tests.Integration.Fixture;
+using Arcus.Templates.Tests.Integration.WebApi.Health;
+using Arcus.Templates.Tests.Integration.WebApi.Swagger;
 using Flurl;
 using GuardNet;
 using Polly;
 using Xunit.Abstractions;
 
-namespace Arcus.Templates.Tests.Integration.Fixture 
+namespace Arcus.Templates.Tests.Integration.WebApi 
 {
     /// <summary>
     /// Project template to create new web API projects.
@@ -23,7 +24,6 @@ namespace Arcus.Templates.Tests.Integration.Fixture
     {
         private readonly Uri _baseUrl;
         private readonly TestConfig _configuration;
-        private readonly ITestOutputHelper _outputWriter;
 
         private static readonly HttpClient HttpClient = new HttpClient();
 
@@ -41,7 +41,6 @@ namespace Arcus.Templates.Tests.Integration.Fixture
 
             _baseUrl = baseUrl;
             _configuration = configuration;
-            _outputWriter = outputWriter; 
 
             Health = new HealthEndpointService(baseUrl, outputWriter);
             Swagger = new SwaggerEndpointService(baseUrl, outputWriter);
@@ -202,7 +201,10 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         /// </summary>
         public async Task StartAsync()
         {
-            Run(_configuration.BuildConfiguration, $"--ARCUS_HTTP_PORT {_baseUrl.Port}");
+            Run(_configuration.BuildConfiguration, 
+                _configuration.TargetFramework,
+                $"--ARCUS_HTTP_PORT {_baseUrl.Port}");
+            
             await WaitUntilWebProjectIsAvailable(_baseUrl.Port);
         }
 
@@ -219,11 +221,11 @@ namespace Arcus.Templates.Tests.Integration.Fixture
 
             if (result.Outcome == OutcomeType.Successful)
             {
-                _outputWriter.WriteLine("Test template web API project fully started at: localhost:{0}", httpPort);
+                Logger.WriteLine("Test template web API project fully started at: localhost:{0}", httpPort);
             }
             else
             {
-                _outputWriter.WriteLine("Test template web API project could not be started");
+                Logger.WriteLine("Test template web API project could not be started");
                 throw new CannotStartTemplateProjectException(
                     "The test project created from the web API project template doesn't seem to be running, "
                     + "please check any build or runtime errors that could occur when the test project was created");

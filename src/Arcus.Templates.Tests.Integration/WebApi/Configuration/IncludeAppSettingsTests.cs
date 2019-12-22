@@ -6,7 +6,7 @@ using Xunit;
 using Xunit.Abstractions;
 using static Arcus.Templates.Tests.Integration.Fixture.FeatureToggledController;
 
-namespace Arcus.Templates.Tests.Integration.Configuration
+namespace Arcus.Templates.Tests.Integration.WebApi.Configuration
 {
     [Collection(TestCollections.Integration)]
     [Trait("Category", TestTraits.Integration)]

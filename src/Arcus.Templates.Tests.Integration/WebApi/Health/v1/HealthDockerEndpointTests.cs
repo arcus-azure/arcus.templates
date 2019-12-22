@@ -7,7 +7,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Arcus.Templates.Tests.Integration.Health.v1
+namespace Arcus.Templates.Tests.Integration.WebApi.Health.v1
 {
     [Collection(TestCollections.Docker)]
     [Trait("Category", TestTraits.Docker)]

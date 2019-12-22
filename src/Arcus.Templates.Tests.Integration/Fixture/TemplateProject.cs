@@ -20,7 +20,6 @@ namespace Arcus.Templates.Tests.Integration.Fixture
 
         private readonly Process _process;
         private readonly DirectoryInfo _templateDirectory;
-        private readonly ITestOutputHelper _outputWriter;
 
         private bool _created, _started, _disposed;
 
@@ -32,7 +31,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
 
             _process = new Process();
             _templateDirectory = templateDirectory;
-            _outputWriter = outputWriter;
+            Logger = outputWriter;
 
             string tempDirectoryPath = Path.Combine(Path.GetTempPath(), $"{ProjectName}-{Guid.NewGuid()}");
             ProjectDirectory = new DirectoryInfo(tempDirectoryPath);
@@ -48,6 +47,11 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         /// Gets the directory where a new project is created from the template.
         /// </summary>
         protected DirectoryInfo ProjectDirectory { get; }
+
+        /// <summary>
+        /// Gets the output logger to add telemetry information during the creation, startup and breakdown process.
+        /// </summary>
+        protected ITestOutputHelper Logger { get; }
 
         /// <summary>
         /// Sets the options to control how the template project should be tear down during the <see cref="Dispose"/>.
@@ -68,7 +72,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             _created = true;
 
             string shortName = GetTemplateShortNameAtTemplateFolder();
-            _outputWriter.WriteLine($"Creates new project from template {shortName} at {ProjectDirectory.FullName}");
+            Logger.WriteLine($"Creates new project from template {shortName} at {ProjectDirectory.FullName}");
 
             RunDotNet($"new -i {_templateDirectory.FullName}");
 
@@ -102,8 +106,9 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         /// Run the created project from the template with a given set of <paramref name="commandArguments"/>.
         /// </summary>
         /// <param name="buildConfiguration">The build configuration on which the project should be build.</param>
+        /// <param name="targetFramework">The target framework in which the project should be build and run.</param>
         /// <param name="commandArguments">The command line arguments that control the startup of the project.</param>
-        protected void Run(BuildConfiguration buildConfiguration, string commandArguments)
+        protected void Run(BuildConfiguration buildConfiguration, TargetFramework targetFramework, string commandArguments)
         {
             if (_started)
             {
@@ -112,10 +117,11 @@ namespace Arcus.Templates.Tests.Integration.Fixture
 
             RunDotNet($"build -c {buildConfiguration} {ProjectDirectory.FullName}");
 
-            string targetAssembly = Path.Combine(ProjectDirectory.FullName, $"bin/{buildConfiguration}/netcoreapp2.2/{ProjectName}.dll");
+            string targetFrameworkIdentifier = GetTargetFrameworkIdentifier(targetFramework);
+            string targetAssembly = Path.Combine(ProjectDirectory.FullName, $"bin/{buildConfiguration}/{targetFrameworkIdentifier}/{ProjectName}.dll");
             string runCommand = $"exec {targetAssembly} {commandArguments ?? String.Empty}";
 
-            _outputWriter.WriteLine("> dotnet {0}", runCommand);
+            Logger.WriteLine("> dotnet {0}", runCommand);
             var processInfo = new ProcessStartInfo("dotnet", runCommand)
             {
                 UseShellExecute = false,
@@ -127,6 +133,17 @@ namespace Arcus.Templates.Tests.Integration.Fixture
 
             _started = true;
             _process.Start();
+        }
+
+        private static string GetTargetFrameworkIdentifier(TargetFramework targetFramework)
+        {
+            switch (targetFramework)
+            {
+                case TargetFramework.NetCoreApp22: return "netcoreapp2.2";
+                case TargetFramework.NetCoreApp30: return "netcoreapp3.0";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(targetFramework), targetFramework, "Unknown target framework specified for template project");
+            }
         }
 
         /// <summary>
@@ -164,17 +181,17 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         {
             if ((TearDownOptions & TearDownOptions.KeepProjectDirectory) == TearDownOptions.KeepProjectDirectory)
             {
-                _outputWriter.WriteLine("Keep project directory at: {0}", ProjectDirectory.FullName);
+                Logger.WriteLine("Keep project directory at: {0}", ProjectDirectory.FullName);
             }
 
             if ((TearDownOptions & TearDownOptions.KeepProjectRunning) == TearDownOptions.KeepProjectRunning)
             {
-                _outputWriter.WriteLine("Keep project running");
+                Logger.WriteLine("Keep project running");
             }
 
             if ((TearDownOptions & TearDownOptions.KeepProjectTemplateInstalled) == TearDownOptions.KeepProjectTemplateInstalled)
             {
-                _outputWriter.WriteLine("Keep project template template installed");
+                Logger.WriteLine("Keep project template template installed");
             }
         }
 
@@ -201,7 +218,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         {
             try
             {
-                _outputWriter.WriteLine("> dotnet {0}", command);
+                Logger.WriteLine("> dotnet {0}", command);
             }
             catch
             {

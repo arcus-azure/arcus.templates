@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Arcus.Security.Secrets.Core.Interfaces;
+using Arcus.Templates.Tests.Integration.Fixture;
 using GuardNet;
 
-namespace Arcus.Templates.Tests.Integration.Fixture
+namespace Arcus.Templates.Tests.Integration.WebApi
 {
     /// <summary>
     /// Represents all the available project options on the web API template project.

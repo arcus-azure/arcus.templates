@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Arcus",
+  "classifications": [
+    "Worker",
+    "ServiceBus",
+    "Queue",
+    "BoilerPlate"
+  ],
+  "name": "Arcus ServiceBus Queue",
+  "identity": "Arcus.Templates.ServiceBus.Queue",
+  "shortName": "arcus-servicebus-queue",
+  "sourceName": "Arcus.Templates.ServiceBus.Queue",
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "sources": [
+    {
+      "exclude": [
+        "**/[Bb]in/**",
+        "**/[Oo]bj/**",
+        ".template.config/**/*",
+        "**/*.filelist",
+        "**/*.user",
+        "**/*.lock.json",
+        "**/launchSettings.json"
+      ]
+    }
+  ],
+  "symbols": {
+    "AuthoringMode": {
+      "type": "generated",
+      "generator": "constant",
+      "parameters": {
+        "value": false
+      }
+    }
+  }
+}

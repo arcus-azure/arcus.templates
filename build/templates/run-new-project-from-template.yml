@@ -5,7 +5,7 @@ parameters:
   envVars: {}
 
 steps:
-  - bash: /
+  - bash: |
       if [ -z "$PROJECT_NAME" ]; then
         echo "##vso[task.logissue type=error;]Missing template parameter \"projectName\""
         echo "##vso[task.complete result=Failed;]"

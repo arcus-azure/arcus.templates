@@ -56,6 +56,6 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <RestoreSources>$(RestoreSources);https://www.myget.org/F/arcus/api/v3/index.json</RestoreSources>
+    <RestoreSources>$(RestoreSources);https://api.nuget.org/v3/index.json;https://www.myget.org/F/arcus/api/v3/index.json</RestoreSources>
   </PropertyGroup>
 </Project>

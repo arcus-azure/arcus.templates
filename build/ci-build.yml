@@ -32,7 +32,7 @@ variables:
     value: '5000'
   - name: 'Arcus_Api_BaseUrl'
     value: 'http://localhost:$(Http.Port)/api/v1'
-  - name: 'Health.Port'
+  - name: 'Arcus_Worker_HealthPort'
     value: '42065'
   # 'Package.Version.ManualTrigger' is added as queue-time variable on build in Azure DevOps
 
@@ -98,9 +98,9 @@ stages:
             parameters:
               projectName: 'Arcus.Demo.ServiceBus.Queue'
               projectAlias: 'arcus-servicebus-queue'
-              ports: '$(Health.Port):$(Health.Port)'
+              ports: '$(Arcus_Worker_HealthPort):$(Arcus_Worker_HealthPort)'
               envVars: |
-                ARCUS_HEALTH_PORT=$(Health.Port)
+                ARCUS_HEALTH_PORT=$(Arcus_Worker_HealthPort)
           - template: test/run-integration-tests.yml@templates
             parameters:
               dotnetSdkVersion: '$(DotNet.Sdk.Version)'

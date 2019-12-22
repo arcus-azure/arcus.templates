@@ -78,7 +78,7 @@ stages:
               artifact: 'Templates'
               path: '$(Build.SourcesDirectory)/templates'
           - task: DotNetCoreInstaller@0
-            displayName: 'Import .NET Core SDK ($(DotNet.Sdk.Version)) in web API template'
+            displayName: 'Import .NET Core SDK ($(DotNet.Sdk.Version))'
             inputs:
               version: '$(DotNet.Sdk.Version)'
           - task: DotNetCoreCLI@2
@@ -103,7 +103,7 @@ stages:
                 ARCUS_HEALTH_PORT=$(Arcus_Worker_HealthPort)
           - template: test/run-integration-tests.yml@templates
             parameters:
-              dotnetSdkVersion: '$(DotNet.Sdk.Version)'
+              dotnetSdkVersion: '2.2.105'
               projectName: '$(Project).Tests.Integration'
               category: 'Docker'
 
@@ -119,7 +119,7 @@ stages:
         steps:
           - template: test/run-integration-tests.yml@templates
             parameters:
-              dotnetSdkVersion: '$(DotNet.Sdk.Version)'
+              dotnetSdkVersion: '2.2.105'
               projectName: '$(Project).Tests.Integration'
               category: 'Integration'
 

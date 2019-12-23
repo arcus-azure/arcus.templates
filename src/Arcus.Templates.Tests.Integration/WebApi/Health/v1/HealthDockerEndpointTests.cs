@@ -1,9 +1,11 @@
 ﻿using System;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.Fixture;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Newtonsoft.Json;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -36,10 +38,9 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Health.v1
             using (HttpResponseMessage response = await healthEndpointService.GetAsync())
             {
                 // Assert
-                // Assert
                 Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-                
-                HealthReport healthReport = await response.Content.ReadAsAsync<HealthReport>();
+                string healthReportJson = await response.Content.ReadAsStringAsync();
+                var healthReport = JsonConvert.DeserializeObject<HealthReport>(healthReportJson);
                 Assert.NotNull(healthReport);
                 Assert.Equal(HealthStatus.Healthy, healthReport.Status);
             }

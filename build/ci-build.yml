@@ -103,7 +103,7 @@ stages:
                 ARCUS_HEALTH_PORT=$(Arcus_Worker_HealthPort)
           - template: test/run-integration-tests.yml@templates
             parameters:
-              dotnetSdkVersion: '2.2.105'
+              dotnetSdkVersion: '$(DotNet.Sdk.Version)'
               projectName: '$(Project).Tests.Integration'
               category: 'Docker'
 
@@ -119,7 +119,7 @@ stages:
         steps:
           - template: test/run-integration-tests.yml@templates
             parameters:
-              dotnetSdkVersion: '2.2.105'
+              dotnetSdkVersion: '$(DotNet.Sdk.Version)'
               projectName: '$(Project).Tests.Integration'
               category: 'Integration'
 

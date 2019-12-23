@@ -1,6 +1,19 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Arcus.EventGrid;
+using Arcus.EventGrid.Contracts;
+using Arcus.EventGrid.Publishing;
+using Arcus.EventGrid.Publishing.Interfaces;
+using Arcus.Messaging.Abstractions;
+using Arcus.Messaging.Pumps.ServiceBus;
+using Arcus.Security.Secrets.Core.Caching;
+using Arcus.Security.Secrets.Core.Interfaces;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace Arcus.Templates.ServiceBus.Queue
 {
@@ -22,104 +35,115 @@ namespace Arcus.Templates.ServiceBus.Queue
                 })
                 .ConfigureServices((hostContext, services) =>
                 {
-                    //services.AddServiceBusQueueMessagePump<OrdersMessagePump>(configuration => configuration["ARCUS_SERVICEBUS_CONNECTIONSTRING"]);
+                    //#error Please provide a valid secret provider, for example Azure Key Vault: https: //security.arcus-azure.net/features/secrets/consume-from-key-vault
+                    services.AddSingleton<ISecretProvider>(serviceProvider => new CachedSecretProvider(secretProvider: new InMemorySecretProvider()));
+
+                    services.AddServiceBusQueueMessagePump<OrdersMessagePump>(configuration => configuration["ARCUS_WORKER_SERVICEBUS_CONNECTIONSTRING"]);
                     services.AddTcpHealthProbes();
                 });
     }
 
-    //public class Order
-    //{
-    //    [JsonProperty]
-    //    public string Id { get; set; }
+    public class InMemorySecretProvider : ISecretProvider
+    {
+        public Task<string> Get(string secretName)
+        {
+            return Task.FromResult("");
+        }
+    }
 
-    //    [JsonProperty]
-    //    public int Amount { get; set; }
+    public class Order
+    {
+        [JsonProperty]
+        public string Id { get; set; }
 
-    //    [JsonProperty]
-    //    public string ArticleNumber { get; set; }
-    //}
+        [JsonProperty]
+        public int Amount { get; set; }
 
-    //public class OrderCreatedEventData
-    //{
-    //    public OrderCreatedEventData(string id, int amount, string articleNumber, MessageCorrelationInfo correlationInfo)
-    //    {
-    //        Id = id;
-    //        Amount = amount;
-    //        ArticleNumber = articleNumber;
-    //        CorrelationInfo = correlationInfo;
-    //    }
+        [JsonProperty]
+        public string ArticleNumber { get; set; }
+    }
 
-    //    public string Id { get; set; }
-    //    public int Amount { get; set; }
-    //    public string ArticleNumber { get; set; }
-    //    public MessageCorrelationInfo CorrelationInfo { get; set; }
-    //}
+    public class OrderCreatedEventData
+    {
+        public OrderCreatedEventData(string id, int amount, string articleNumber, MessageCorrelationInfo correlationInfo)
+        {
+            Id = id;
+            Amount = amount;
+            ArticleNumber = articleNumber;
+            CorrelationInfo = correlationInfo;
+        }
 
-    //public class OrderCreatedEvent : EventGridEvent<OrderCreatedEventData>
-    //{
-    //    private const string DefaultDataVersion = "1";
-    //    private const string DefaultEventType = "Arcus.Samples.Orders.OrderCreated";
+        public string Id { get; set; }
+        public int Amount { get; set; }
+        public string ArticleNumber { get; set; }
+        public MessageCorrelationInfo CorrelationInfo { get; set; }
+    }
 
-    //    public OrderCreatedEvent(string eventId, string orderId, int amount, string articleNumber, MessageCorrelationInfo correlationInfo)
-    //        : base(eventId, subject: "order-created",
-    //               new OrderCreatedEventData(orderId, amount, articleNumber, correlationInfo), 
-    //               DefaultDataVersion,
-    //               DefaultEventType)
-    //    {
-    //    }
+    public class OrderCreatedEvent : EventGridEvent<OrderCreatedEventData>
+    {
+        private const string DefaultDataVersion = "1";
+        private const string DefaultEventType = "Arcus.Samples.Orders.OrderCreated";
 
-    //    [JsonConstructor]
-    //    private OrderCreatedEvent()
-    //    {
-    //    }
-    //}
+        public OrderCreatedEvent(string eventId, string orderId, int amount, string articleNumber, MessageCorrelationInfo correlationInfo)
+            : base(eventId, subject: "order-created",
+                   new OrderCreatedEventData(orderId, amount, articleNumber, correlationInfo),
+                   DefaultDataVersion,
+                   DefaultEventType)
+        {
+        }
 
-    //public class OrdersMessagePump : AzureServiceBusMessagePump<Order>
-    //{
-    //    private readonly IEventGridPublisher _eventGridPublisher;
+        [JsonConstructor]
+        private OrderCreatedEvent()
+        {
+        }
+    }
 
-    //    /// <summary>
-    //    /// Constructor
-    //    /// </summary>
-    //    /// <param name="configuration">Configuration of the application</param>
-    //    /// <param name="serviceProvider">Collection of services that are configured</param>
-    //    /// <param name="logger">Logger to write telemetry to</param>
-    //    public OrdersMessagePump(IConfiguration configuration, IServiceProvider serviceProvider, ILogger<OrdersMessagePump> logger)
-    //        : base(configuration, serviceProvider, logger)
-    //    {
-    //        var eventGridTopic = configuration.GetValue<string>("EVENTGRID_TOPIC_URI");
-    //        var eventGridKey = configuration.GetValue<string>("EVENTGRID_AUTH_KEY");
+    public class OrdersMessagePump : AzureServiceBusMessagePump<Order>
+    {
+        private readonly IEventGridPublisher _eventGridPublisher;
 
-    //        _eventGridPublisher = 
-    //            EventGridPublisherBuilder
-    //                .ForTopic(eventGridTopic)
-    //                .UsingAuthenticationKey(eventGridKey)
-    //                .Build();
-    //    }
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="configuration">Configuration of the application</param>
+        /// <param name="serviceProvider">Collection of services that are configured</param>
+        /// <param name="logger">Logger to write telemetry to</param>
+        public OrdersMessagePump(IConfiguration configuration, IServiceProvider serviceProvider, ILogger<OrdersMessagePump> logger)
+            : base(configuration, serviceProvider, logger)
+        {
+            var eventGridTopic = configuration.GetValue<string>("EVENTGRID_TOPIC_URI");
+            var eventGridKey = configuration.GetValue<string>("EVENTGRID_AUTH_KEY");
 
-    //    /// <inheritdoc />
-    //    protected override async Task ProcessMessageAsync(
-    //        Order orderMessage, 
-    //        AzureServiceBusMessageContext messageContext, 
-    //        MessageCorrelationInfo correlationInfo, 
-    //        CancellationToken cancellationToken)
-    //    {
-    //        Logger.LogInformation(
-    //            "Processing order {OrderId} for {OrderAmount} units of {OrderArticle}", 
-    //            orderMessage.Id, orderMessage.Amount, orderMessage.ArticleNumber);
+            _eventGridPublisher =
+                EventGridPublisherBuilder
+                    .ForTopic(eventGridTopic)
+                    .UsingAuthenticationKey(eventGridKey)
+                    .Build();
+        }
 
-    //        await PublishEventToEventGridAsync(orderMessage, correlationInfo.OperationId, correlationInfo);
+        /// <inheritdoc />
+        protected override async Task ProcessMessageAsync(
+            Order orderMessage,
+            AzureServiceBusMessageContext messageContext,
+            MessageCorrelationInfo correlationInfo,
+            CancellationToken cancellationToken)
+        {
+            Logger.LogInformation(
+                "Processing order {OrderId} for {OrderAmount} units of {OrderArticle}",
+                orderMessage.Id, orderMessage.Amount, orderMessage.ArticleNumber);
 
-    //        Logger.LogInformation("Order {OrderId} processed", orderMessage.Id);
-    //    }
+            await PublishEventToEventGridAsync(orderMessage, correlationInfo.OperationId, correlationInfo);
 
-    //    private async Task PublishEventToEventGridAsync(Order orderMessage, string operationId, MessageCorrelationInfo correlationInfo)
-    //    {
-    //        var orderCreatedEvent = new OrderCreatedEvent(operationId, orderMessage.Id, orderMessage.Amount, orderMessage.ArticleNumber, correlationInfo);
-            
-    //        await _eventGridPublisher.PublishAsync(orderCreatedEvent);
+            Logger.LogInformation("Order {OrderId} processed", orderMessage.Id);
+        }
 
-    //        Logger.LogInformation("Event {EventId} was published with subject {EventSubject}", orderCreatedEvent.Id, orderCreatedEvent.Subject);
-    //    }
-    //}
+        private async Task PublishEventToEventGridAsync(Order orderMessage, string operationId, MessageCorrelationInfo correlationInfo)
+        {
+            var orderCreatedEvent = new OrderCreatedEvent(operationId, orderMessage.Id, orderMessage.Amount, orderMessage.ArticleNumber, correlationInfo);
+
+            await _eventGridPublisher.PublishAsync(orderCreatedEvent);
+
+            Logger.LogInformation("Event {EventId} was published with subject {EventSubject}", orderCreatedEvent.Id, orderCreatedEvent.Subject);
+        }
+    }
 }

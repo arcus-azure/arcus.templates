@@ -42,12 +42,16 @@
     <None Remove="Dockerfile" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Arcus.EventGrid" Version="3.0.0-preview-1" />
+    <PackageReference Include="Arcus.EventGrid.Publishing" Version="3.0.0-preview-1" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.7.12" />
   </ItemGroup>
   <!--#endif-->
 
   <ItemGroup>
+    <PackageReference Include="Arcus.Security.Secrets.Core" Version="0.1.0" />
     <PackageReference Include="Arcus.Messaging.Health" Version="20191217.9.0-preview" />
+    <PackageReference Include="Arcus.Messaging.Pumps.ServiceBus" Version="20191218.0.0-PR-32" />
     <PackageReference Include="Guard.NET" Version="1.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.0.0" />

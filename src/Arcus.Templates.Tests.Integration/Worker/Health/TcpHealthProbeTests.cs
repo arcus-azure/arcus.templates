@@ -23,8 +23,6 @@ namespace Arcus.Templates.Tests.Integration.Worker.Health
             // Arrange
             using (var project = await ServiceBusQueueWorkerProject.StartNewAsync(_outputWriter))
             {
-                project.TearDownOptions = TearDownOptions.KeepProjectDirectory;
-
                 // Act
                 HealthReport report = await project.Health.ProbeHealthReportAsync();
 

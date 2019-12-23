@@ -34,9 +34,9 @@ variables:
     value: 'http://localhost:$(Http.Port)/api/v1'
   - name: 'Arcus_Worker_HealthPort'
     value: '42065'
-  - name: 'Arcus.Worker.EventGrid.TopicUri'
+  - name: 'Arcus_Worker_EventGrid_TopicUri'
     value: 'https://arcustestingtopicname.westeurope-1.eventgrid.azure.net/api/events'
-  - name: 'Arcus.Worker.EventGrid.TopicName'
+  - name: 'Arcus_Worker_EventGrid_TopicName'
     value: 'arcustestingtopicname' # We are re-using the Event Grid integration infrastructure
   # 'Package.Version.ManualTrigger' is added as queue-time variable on build in Azure DevOps
   # 'Arcus.ServiceBus.ConnectionStringWithQueue' is added as secret variable on build in Azure DevOps
@@ -107,9 +107,9 @@ stages:
               ports: '$(Arcus_Worker_HealthPort):$(Arcus_Worker_HealthPort)'
               envVars: |
                 ARCUS_HEALTH_PORT=$(Arcus_Worker_HealthPort)
-                EVENTGRID_TOPIC_URI=$(Arcus.Worker.EventGrid.TopicUri)
-                EVENTGRID_AUTH_KEY=$(Arcus.Worker.EventGrid.AuthKey)
-                ARCUS_SERVICEBUS_CONNECTIONSTRING=$(Arcus.Worker.ServiceBus.ConnectionStringWithQueue)
+                EVENTGRID_TOPIC_URI=$(Arcus_Worker_EventGrid_TopicUri)
+                EVENTGRID_AUTH_KEY=$(Arcus_Worker_EventGrid_AuthKey)
+                ARCUS_SERVICEBUS_CONNECTIONSTRING=$(Arcus_Worker_ServiceBus_ConnectionStringWithQueue)
           - template: test/run-integration-tests.yml@templates
             parameters:
               dotnetSdkVersion: '$(DotNet.Sdk.Version)'

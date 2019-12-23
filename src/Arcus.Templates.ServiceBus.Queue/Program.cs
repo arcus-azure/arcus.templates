@@ -10,6 +10,7 @@ using Arcus.Messaging.Pumps.ServiceBus;
 using Arcus.Security.Secrets.Core.Caching;
 using Arcus.Security.Secrets.Core.Interfaces;
 using GuardNet;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -39,32 +40,11 @@ namespace Arcus.Templates.ServiceBus.Queue
                     //#error Please provide a valid secret provider, for example Azure Key Vault: https: //security.arcus-azure.net/features/secrets/consume-from-key-vault
                     //services.AddSingleton<ISecretProvider>(serviceProvider => new CachedSecretProvider(secretProvider: new InMemorySecretProvider()));
 
-                    services.AddServiceBusQueueMessagePump<OrdersMessagePump>(configuration => configuration["ARCUS_SERVICEBUS_CONNECTIONSTRING"]);
+                    services.AddServiceBusQueueMessagePump<OrdersMessagePump>(
+                        queueName: hostContext.Configuration["ARCUS_SERVICEBUS_QUEUENAME"],
+                        getConnectionStringFromConfigurationFunc: configuration => configuration["ARCUS_SERVICEBUS_CONNECTIONSTRING"]);
                     services.AddTcpHealthProbes();
                 });
-    }
-
-    public class Startup
-    {
-        private readonly IConfiguration _configuration;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Startup"/> class.
-        /// </summary>
-        public Startup(IConfiguration configuration)
-        {
-            Guard.NotNull(configuration, nameof(configuration));
-
-            _configuration = configuration;
-        }
-
-        public void ConfigureService(IServiceCollection services)
-        {
-            services.AddServiceBusQueueMessagePump<OrdersMessagePump>(
-                queueName: _configuration["ARCUS_SERVICEBUS_QUEUENAME"],
-                getConnectionStringFromConfigurationFunc: configuration => configuration["ARCUS_SERVICEBUS_CONNECTIONSTRING"]);
-            services.AddTcpHealthProbes();
-        }
     }
 
     public class InMemorySecretProvider : ISecretProvider

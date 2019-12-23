@@ -63,7 +63,7 @@ namespace Arcus.Templates.Tests.Integration.Worker
                       .WaitAndRetryForeverAsync(retryNumber => TimeSpan.FromSeconds(1));
 
             PolicyResult result = 
-                await Policy.TimeoutAsync(TimeSpan.FromSeconds(20))
+                await Policy.TimeoutAsync(TimeSpan.FromSeconds(10))
                             .WrapAsync(waitAndRetryForeverAsync)
                             .ExecuteAndCaptureAsync(() => TryToConnectToTcpListener(tcpPort));
 

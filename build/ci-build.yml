@@ -117,11 +117,41 @@ stages:
         pool:
           vmImage: 'ubuntu-16.04'
         steps:
+          - task: UseDotNet@2
+            displayName: 'Import .NET Core SDK ($(DotNet.Sdk.Version))'
+            inputs:
+              packageType: 'sdk'
+              version: '$(DotNet.Sdk.Version)'
+          - task: UseDotNet@2
+            displayName: 'Import .NET Core SDK (2.2.105)'
+            inputs:
+              packageType: 'sdk'
+              version: '2.2.105'
           - template: test/run-integration-tests.yml@templates
             parameters:
               dotnetSdkVersion: '$(DotNet.Sdk.Version)'
               projectName: '$(Project).Tests.Integration'
               category: 'Integration'
+          - task: qetza.replacetokens.replacetokens-task.replacetokens@3
+            displayName: 'Replace integration test tokens'
+            inputs:
+              rootDirectory: 'src/$(Project).Tests.Integration/'
+              targetFiles: 'appsettings.json'
+              encoding: 'auto'
+              verbosity: 'detailed'
+              writeBOM: true
+              actionOnMissing: 'fail'
+              keepToken: false
+              tokenPrefix: '#{'
+              tokenSuffix: '}#'
+          - task: DotNetCoreCLI@2
+            displayName: 'Run integration tests'
+            inputs:
+              command: test
+              projects: 'src/**/$(Project).Tests.Integration.csproj'
+              arguments: '--configuration $(Build.Configuration) --filter Category=Integration'
+              nobuild: true
+              publishTestResults: true
 
   - stage: ReleaseToMyget
     displayName: 'Release to MyGet'

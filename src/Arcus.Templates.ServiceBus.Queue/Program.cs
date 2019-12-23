@@ -9,6 +9,7 @@ using Arcus.Messaging.Abstractions;
 using Arcus.Messaging.Pumps.ServiceBus;
 using Arcus.Security.Secrets.Core.Caching;
 using Arcus.Security.Secrets.Core.Interfaces;
+using GuardNet;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -41,6 +42,29 @@ namespace Arcus.Templates.ServiceBus.Queue
                     services.AddServiceBusQueueMessagePump<OrdersMessagePump>(configuration => configuration["ARCUS_SERVICEBUS_CONNECTIONSTRING"]);
                     services.AddTcpHealthProbes();
                 });
+    }
+
+    public class Startup
+    {
+        private readonly IConfiguration _configuration;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Startup"/> class.
+        /// </summary>
+        public Startup(IConfiguration configuration)
+        {
+            Guard.NotNull(configuration, nameof(configuration));
+
+            _configuration = configuration;
+        }
+
+        public void ConfigureService(IServiceCollection services)
+        {
+            services.AddServiceBusQueueMessagePump<OrdersMessagePump>(
+                queueName: _configuration["ARCUS_SERVICEBUS_QUEUENAME"],
+                getConnectionStringFromConfigurationFunc: configuration => configuration["ARCUS_SERVICEBUS_CONNECTIONSTRING"]);
+            services.AddTcpHealthProbes();
+        }
     }
 
     public class InMemorySecretProvider : ISecretProvider

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.Fixture;
 using Arcus.Templates.Tests.Integration.Worker.Health;
 using GuardNet;
+using Microsoft.Extensions.Configuration;
 using Polly;
 using Xunit.Abstractions;
 
@@ -48,12 +49,25 @@ namespace Arcus.Templates.Tests.Integration.Worker
             int healthPort = configuration.GenerateWorkerHealthPort();
 
             var project = new ServiceBusQueueWorkerProject(healthPort, templateDirectory, fixtureDirectory, outputWriter);
-
             project.CreateNewProject(new ProjectOptions());
-            project.Run(configuration.BuildConfiguration, TargetFramework.NetCoreApp30, $"--ARCUS_HEALTH_PORT {healthPort}");
+
+            string commands = CreateServiceBusQueueWorkerCommands(configuration, healthPort);
+            project.Run(configuration.BuildConfiguration, TargetFramework.NetCoreApp30, commands);
             await project.WaitUntilWorkerProjectIsAvailableAsync(healthPort);
 
             return project;
+        }
+
+        private static string CreateServiceBusQueueWorkerCommands(IConfiguration configuration, int healthPort)
+        {
+            string eventGridTopicUri = configuration["Arcus_Worker_EventGrid_TopicUri"];
+            string eventGridAuthKey = configuration["Arcus_Worker_EventGrid_AuthKey"];
+            string serviceBusQueueConnection = configuration["Arcus_Worker_ServiceBus_ConnectionStringWithQueue"];
+            
+            return $"--ARCUS_HEALTH_PORT {healthPort} "
+                   + $"--EVENTGRID_TOPIC_URI {eventGridTopicUri} "
+                   + $"--EVENTGRID_AUTH_KEY {eventGridAuthKey} "
+                   + $"--ARCUS_SERVICEBUS_CONNECTIONSTRING {serviceBusQueueConnection}";
         }
 
         private async Task WaitUntilWorkerProjectIsAvailableAsync(int tcpPort)

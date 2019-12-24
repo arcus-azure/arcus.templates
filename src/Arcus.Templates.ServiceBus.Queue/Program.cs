@@ -41,7 +41,7 @@ namespace Arcus.Templates.ServiceBus.Queue
                     //services.AddSingleton<ISecretProvider>(serviceProvider => new CachedSecretProvider(secretProvider: new InMemorySecretProvider()));
 
                     services.AddServiceBusQueueMessagePump<OrdersMessagePump>(
-                        queueName: hostContext.Configuration["ARCUS_SERVICEBUS_QUEUENAME"],
+                        //queueName: hostContext.Configuration["ARCUS_SERVICEBUS_QUEUENAME"],
                         getConnectionStringFromConfigurationFunc: configuration => configuration["ARCUS_SERVICEBUS_CONNECTIONSTRING"]);
                     services.AddTcpHealthProbes();
                 });

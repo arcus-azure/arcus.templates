@@ -49,8 +49,8 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         {
             var configuration = new ConfigurationBuilder()
                 .AddJsonFile(path: "appsettings.json", optional: true)
-                .AddJsonFile(path: "appsettings.local.json", optional: false)
-                .AddJsonFile(path: "appsettings.private.json", optional: false)
+                .AddJsonFile(path: "appsettings.local.json", optional: true)
+                .AddJsonFile(path: "appsettings.private.json", optional: true)
                 .AddEnvironmentVariables()
                 .Build();
 

@@ -40,9 +40,7 @@ namespace Arcus.Templates.ServiceBus.Queue
                     //#error Please provide a valid secret provider, for example Azure Key Vault: https: //security.arcus-azure.net/features/secrets/consume-from-key-vault
                     //services.AddSingleton<ISecretProvider>(serviceProvider => new CachedSecretProvider(secretProvider: new InMemorySecretProvider()));
 
-                    services.AddServiceBusQueueMessagePump<OrdersMessagePump>(
-                        //queueName: hostContext.Configuration["ARCUS_SERVICEBUS_QUEUENAME"],
-                        getConnectionStringFromConfigurationFunc: configuration => configuration["ARCUS_SERVICEBUS_CONNECTIONSTRING"]);
+                    services.AddServiceBusQueueMessagePump<OrdersMessagePump>(configuration => configuration["ARCUS_SERVICEBUS_CONNECTIONSTRING"]);
                     services.AddTcpHealthProbes();
                 });
     }

@@ -116,15 +116,16 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             }
 
             commandArguments = commandArguments ?? new CommandArgument[0];
-            string exposedCommands = String.Join(" ", commandArguments.Select(arg => arg.ToExposedString()));
-
             RunDotNet($"build -c {buildConfiguration} {ProjectDirectory.FullName}");
 
             string targetFrameworkIdentifier = GetTargetFrameworkIdentifier(targetFramework);
             string targetAssembly = Path.Combine(ProjectDirectory.FullName, $"bin/{buildConfiguration}/{targetFrameworkIdentifier}/{ProjectName}.dll");
-            string runCommand = $"exec {targetAssembly} {exposedCommands}";
+            string exposedSecretsCommands = String.Join(" ", commandArguments.Select(arg => arg.ToExposedString()));
+            string runCommand = $"exec {targetAssembly} {exposedSecretsCommands}";
 
-            Logger.WriteLine("> dotnet {0}", $"exec {targetAssembly} {String.Join(" ", commandArguments.Select(arg => arg.ToString()))}");
+            string hiddenSecretsCommands = String.Join(" ", commandArguments.Select(arg => arg.ToString()));
+            Logger.WriteLine("> dotnet {0}", $"exec {targetAssembly} {hiddenSecretsCommands}");
+
             var processInfo = new ProcessStartInfo("dotnet", runCommand)
             {
                 UseShellExecute = false,

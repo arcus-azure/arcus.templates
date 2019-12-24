@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using GuardNet;
+﻿using GuardNet;
 
 namespace Arcus.Templates.Tests.Integration.Fixture
 {
     /// <summary>
-    /// 
+    /// Represents an CLI command argument that can safely be used when passing secrets to an application.
     /// </summary>
     public class CommandArgument
     {
@@ -22,36 +18,36 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         }
 
         /// <summary>
-        /// 
+        /// Gets the exposed command argument name and value; including private information; use with care.
         /// </summary>
-        /// <returns></returns>
+        /// <remarks>
+        ///     This method will return the secrets embedded, please do not use it in logging or other external sources.
+        /// </remarks>
         internal string ToExposedString()
         {
             return $"--{_name} {_value}";
         }
 
         /// <summary>
-        /// 
+        /// Create an CLI command argument with a secret value (i.e. access key).
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public static CommandArgument CreateSecret(string name, object value)
+        /// <param name="name">The name of the argument.</param>
+        /// <param name="secret">The secret value of the argument.</param>
+        public static CommandArgument CreateSecret(string name, object secret)
         {
             Guard.NotNullOrWhitespace(name, nameof(name), "Name of CLI command argument cannot be blank");
-            Guard.NotNull(value, nameof(value), "Value of CLI command argument cannot be 'null'");
-            string valueString = value.ToString();
-            Guard.NotNullOrWhitespace(valueString, nameof(value), "Value of CLI command argument cannot be blank");
+            Guard.NotNull(secret, nameof(secret), "Value of CLI command argument cannot be 'null'");
+            string valueString = secret.ToString();
+            Guard.NotNullOrWhitespace(valueString, nameof(secret), "Value of CLI command argument cannot be blank");
 
             return new CommandArgument(name, valueString, isSecret: true);
         }
 
         /// <summary>
-        /// 
+        /// Creates an CLI command argument with a open value (i.e. health port number).
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
+        /// <param name="name">The name of the argument.</param>
+        /// <param name="value">The open value of the argument.</param>
         public static CommandArgument CreateOpen(string name, object value)
         {
             Guard.NotNullOrWhitespace(name, nameof(name), "Name of CLI command argument cannot be blank");

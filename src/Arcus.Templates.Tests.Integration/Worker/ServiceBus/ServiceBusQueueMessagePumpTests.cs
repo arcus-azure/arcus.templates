@@ -91,8 +91,8 @@ namespace Arcus.Templates.Tests.Integration.Worker.ServiceBus
         /// </summary>
         public async Task InitializeAsync()
         {
-            var connectionString = _configuration.GetValue<string>("Arcus:Infra:ServiceBus:ConnectionString");
-            var topicName = _configuration.GetValue<string>("Arcus:Infra:ServiceBus:TopicName");
+            var connectionString = _configuration.GetValue<string>("Arcus:Worker:ServiceBus:ConnectionStringWithQueue");
+            var topicName = _configuration.GetValue<string>("Arcus:Worker:EventGrid:TopicName");
 
             var serviceBusEventConsumerHostOptions = new ServiceBusEventConsumerHostOptions(topicName, connectionString);
             _serviceBusEventConsumerHost = await ServiceBusEventConsumerHost.StartAsync(serviceBusEventConsumerHostOptions, new XunitTestLogger(_outputWriter));

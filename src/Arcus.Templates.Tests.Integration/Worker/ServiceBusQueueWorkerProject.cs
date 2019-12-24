@@ -79,7 +79,7 @@ namespace Arcus.Templates.Tests.Integration.Worker
         {
             IAsyncPolicy waitAndRetryForeverAsync =
                 Policy.Handle<Exception>()
-                      .WaitAndRetryForeverAsync(retryNumber => TimeSpan.FromSeconds(10));
+                      .WaitAndRetryForeverAsync(retryNumber => TimeSpan.FromSeconds(1));
 
             PolicyResult result = 
                 await Policy.TimeoutAsync(TimeSpan.FromSeconds(10))

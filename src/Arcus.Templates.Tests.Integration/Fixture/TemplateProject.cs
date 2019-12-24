@@ -121,7 +121,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             string targetAssembly = Path.Combine(ProjectDirectory.FullName, $"bin/{buildConfiguration}/{targetFrameworkIdentifier}/{ProjectName}.dll");
             string runCommand = $"exec {targetAssembly} {commandArguments ?? String.Empty}";
 
-            Logger.WriteLine("> dotnet {0}", runCommand);
+            Logger.WriteLine("> dotnet {0}", $"exec {targetAssembly}");
             var processInfo = new ProcessStartInfo("dotnet", runCommand)
             {
                 UseShellExecute = false,

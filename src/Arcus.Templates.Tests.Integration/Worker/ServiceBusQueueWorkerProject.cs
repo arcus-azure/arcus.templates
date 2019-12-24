@@ -60,9 +60,9 @@ namespace Arcus.Templates.Tests.Integration.Worker
 
         private static string CreateServiceBusQueueWorkerCommands(IConfiguration configuration, int healthPort)
         {
-            string eventGridTopicUri = configuration["Arcus_Worker_EventGrid_TopicUri"];
-            string eventGridAuthKey = configuration["Arcus_Worker_EventGrid_AuthKey"];
-            string serviceBusQueueConnection = configuration["Arcus_Worker_ServiceBus_ConnectionStringWithQueue"];
+            string eventGridTopicUri = configuration["Arcus:Worker:EventGrid:TopicUri"];
+            string eventGridAuthKey = configuration["Arcus:Worker:EventGrid:AuthKey"];
+            string serviceBusQueueConnection = configuration["Arcus:Worker:ServiceBus:ConnectionStringWithQueue"];
             
             return $"--ARCUS_HEALTH_PORT {healthPort} "
                    + $"--EVENTGRID_TOPIC_URI {eventGridTopicUri} "
@@ -74,7 +74,7 @@ namespace Arcus.Templates.Tests.Integration.Worker
         {
             IAsyncPolicy waitAndRetryForeverAsync =
                 Policy.Handle<Exception>()
-                      .WaitAndRetryForeverAsync(retryNumber => TimeSpan.FromSeconds(1));
+                      .WaitAndRetryForeverAsync(retryNumber => TimeSpan.FromSeconds(10));
 
             PolicyResult result = 
                 await Policy.TimeoutAsync(TimeSpan.FromSeconds(10))

@@ -108,20 +108,23 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         /// <param name="buildConfiguration">The build configuration on which the project should be build.</param>
         /// <param name="targetFramework">The target framework in which the project should be build and run.</param>
         /// <param name="commandArguments">The command line arguments that control the startup of the project.</param>
-        protected void Run(BuildConfiguration buildConfiguration, TargetFramework targetFramework, string commandArguments)
+        protected void Run(BuildConfiguration buildConfiguration, TargetFramework targetFramework, params CommandArgument[] commandArguments)
         {
             if (_started)
             {
                 throw new InvalidOperationException("Test demo project from template is already started");
             }
 
+            commandArguments = commandArguments ?? new CommandArgument[0];
+            string exposedCommands = String.Join(" ", commandArguments.Select(arg => arg.ToExposedString()));
+
             RunDotNet($"build -c {buildConfiguration} {ProjectDirectory.FullName}");
 
             string targetFrameworkIdentifier = GetTargetFrameworkIdentifier(targetFramework);
             string targetAssembly = Path.Combine(ProjectDirectory.FullName, $"bin/{buildConfiguration}/{targetFrameworkIdentifier}/{ProjectName}.dll");
-            string runCommand = $"exec {targetAssembly} {commandArguments ?? String.Empty}";
+            string runCommand = $"exec {targetAssembly} {exposedCommands}";
 
-            Logger.WriteLine("> dotnet {0}", $"exec {targetAssembly}");
+            Logger.WriteLine("> dotnet {0}", $"exec {targetAssembly} {String.Join(" ", commandArguments.Select(arg => arg.ToString()))}");
             var processInfo = new ProcessStartInfo("dotnet", runCommand)
             {
                 UseShellExecute = false,

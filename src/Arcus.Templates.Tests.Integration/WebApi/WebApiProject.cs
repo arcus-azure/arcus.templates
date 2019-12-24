@@ -203,7 +203,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi
         {
             Run(_configuration.BuildConfiguration, 
                 _configuration.TargetFramework,
-                $"--ARCUS_HTTP_PORT {_baseUrl.Port}");
+                CommandArgument.CreateOpen("ARCUS_HTTP_PORT", _baseUrl.Port));
             
             await WaitUntilWebProjectIsAvailable(_baseUrl.Port);
         }

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
@@ -51,23 +53,26 @@ namespace Arcus.Templates.Tests.Integration.Worker
             var project = new ServiceBusQueueWorkerProject(healthPort, templateDirectory, fixtureDirectory, outputWriter);
             project.CreateNewProject(new ProjectOptions());
 
-            string commands = CreateServiceBusQueueWorkerCommands(configuration, healthPort);
-            project.Run(configuration.BuildConfiguration, TargetFramework.NetCoreApp30, commands);
+            var commands = CreateServiceBusQueueWorkerCommands(configuration, healthPort);
+            project.Run(configuration.BuildConfiguration, TargetFramework.NetCoreApp30, commands.ToArray());
             await project.WaitUntilWorkerProjectIsAvailableAsync(healthPort);
 
             return project;
         }
 
-        private static string CreateServiceBusQueueWorkerCommands(IConfiguration configuration, int healthPort)
+        private static IEnumerable<CommandArgument> CreateServiceBusQueueWorkerCommands(IConfiguration configuration, int healthPort)
         {
             string eventGridTopicUri = configuration["Arcus:Worker:EventGrid:TopicUri"];
             string eventGridAuthKey = configuration["Arcus:Worker:EventGrid:AuthKey"];
             string serviceBusQueueConnection = configuration["Arcus:Worker:ServiceBus:ConnectionStringWithQueue"];
-            
-            return $"--ARCUS_HEALTH_PORT {healthPort} "
-                   + $"--EVENTGRID_TOPIC_URI {eventGridTopicUri} "
-                   + $"--EVENTGRID_AUTH_KEY {eventGridAuthKey} "
-                   + $"--ARCUS_SERVICEBUS_CONNECTIONSTRING {serviceBusQueueConnection}";
+
+            return new[]
+            {
+                CommandArgument.CreateOpen("ARCUS_HEALTH_PORT", healthPort),
+                CommandArgument.CreateSecret("EVENTGRID_TOPIC_URI", eventGridTopicUri),
+                CommandArgument.CreateSecret("EVENTGRID_AUTH_KEY", eventGridAuthKey),
+                CommandArgument.CreateSecret("ARCUS_SERVICEBUS_CONNECTIONSTRING", serviceBusQueueConnection)
+            };
         }
 
         private async Task WaitUntilWorkerProjectIsAvailableAsync(int tcpPort)

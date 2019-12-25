@@ -113,7 +113,7 @@ stages:
                 ARCUS_HEALTH_PORT=$(Arcus_Worker_HealthPort)
                 EVENTGRID_TOPIC_URI=$(Arcus_Worker_EventGrid_TopicUri)
                 EVENTGRID_AUTH_KEY=$(Arcus_Worker_EventGrid_AuthKey)
-                ARCUS_SERVICEBUS_CONNECTIONSTRING=$(Arcus_Worker_ServiceBus_ConnectionStringWithQueue)
+                ARCUS_SERVICEBUS_CONNECTIONSTRING=""
           - template: test/run-integration-tests.yml@templates
             parameters:
               dotnetSdkVersion: '$(DotNet.Sdk.Version)'

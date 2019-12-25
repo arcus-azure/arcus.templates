@@ -40,6 +40,8 @@ variables:
     value: 'arcustestingtopicname' # We are re-using the Event Grid integration infrastructure
   - name: 'Arcus_Worker_ServiceBus_QueueName'
     value: 'arcustesting'
+  - name: 'Arcus_Worker_ServiceBus_TopicName'
+    value: 'arcustestingservicebustopicname'
   # 'Package.Version.ManualTrigger' is added as queue-time variable on build in Azure DevOps
   # 'Arcus.ServiceBus.ConnectionStringWithQueue' is added as secret variable on build in Azure DevOps
   # 'Arcus.TestInfra.EventGrid.Auth.Key' is added as secret variable on build in Azure DevOps

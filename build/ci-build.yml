@@ -113,7 +113,6 @@ stages:
                 ARCUS_HEALTH_PORT=$(Arcus_Worker_HealthPort)
                 EVENTGRID_TOPIC_URI=$(Arcus_Worker_EventGrid_TopicUri)
                 EVENTGRID_AUTH_KEY=$(Arcus_Worker_EventGrid_AuthKey)
-                ARCUS_SERICEBUS_QUEUENAME=$(Arcus_Worker_ServiceBus_QueueName)
                 ARCUS_SERVICEBUS_CONNECTIONSTRING=$(Arcus_Worker_ServiceBus_ConnectionStringWithQueue)
           - template: test/run-integration-tests.yml@templates
             parameters:

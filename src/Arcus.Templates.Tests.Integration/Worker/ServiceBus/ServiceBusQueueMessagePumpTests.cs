@@ -91,7 +91,7 @@ namespace Arcus.Templates.Tests.Integration.Worker.ServiceBus
         /// </summary>
         public async Task InitializeAsync()
         {
-            var connectionString = _configuration.GetValue<string>("Arcus:Worker:ServiceBus:ConnectionStringWithQueue");
+            var connectionString = _configuration.GetValue<string>("Arcus:Worker:ServiceBus:ConnectionString");
             var topicName = _configuration.GetValue<string>("Arcus:Worker:ServiceBus:TopicName");
 
             var serviceBusEventConsumerHostOptions = new ServiceBusEventConsumerHostOptions(topicName, connectionString);
@@ -102,8 +102,7 @@ namespace Arcus.Templates.Tests.Integration.Worker.ServiceBus
         public async Task MinimServiceBusQueueWorkerOnDocker_PublishServiceBusMessage_MessageSuccessfullyProcessed()
         {
             // Arrange
-            var configuration = TestConfig.Create();
-            string connectionString = configuration.GetValue<string>("Arcus:Worker:ServiceBus:ConnectionStringWithQueue");
+            var connectionString = _configuration.GetValue<string>("Arcus:Worker:ServiceBus:ConnectionStringWithQueue");
 
             var operationId = Guid.NewGuid().ToString();
             var transactionId = Guid.NewGuid().ToString();

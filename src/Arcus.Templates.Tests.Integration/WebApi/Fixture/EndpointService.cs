@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using GuardNet;
 using Xunit.Abstractions;
 
-namespace Arcus.Templates.Tests.Integration.Fixture
+namespace Arcus.Templates.Tests.Integration.WebApi.Fixture
 {
     /// <summary>
     /// Representation of an endpoint of the API, exposing the available HTTP methods to interact in a friendly manner.

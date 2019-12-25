@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.Fixture;
+using Arcus.Templates.Tests.Integration.WebApi.Fixture;
 using Arcus.Templates.Tests.Integration.WebApi.Health;
 using Arcus.Templates.Tests.Integration.WebApi.Swagger;
 using Flurl;

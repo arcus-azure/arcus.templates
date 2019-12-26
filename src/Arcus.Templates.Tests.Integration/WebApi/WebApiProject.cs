@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -255,75 +253,6 @@ namespace Arcus.Templates.Tests.Integration.WebApi
         /// Gets the service controlling the Swagger information of the created web API project.
         /// </summary>
         public SwaggerEndpointService Swagger { get; }
-
-        /// <summary>
-        /// Updates a file in the target project folder, using the given <paramref name="updateContents"/> function.
-        /// </summary>
-        /// <param name="fileName">The target file name to change it's contents.</param>
-        /// <param name="updateContents">The function that changes the contents of the file.</param>
-        public void UpdateFileInProject(string fileName, Func<string, string> updateContents)
-        {
-            Guard.NotNull(fileName, nameof(fileName), "Requires a file name (no file path) to update the contents");
-            Guard.NotNull(updateContents, nameof(updateContents), "Requires a function to update the project file contents");
-
-            string destPath = Path.Combine(ProjectDirectory.FullName, fileName);
-            if (!File.Exists(destPath))
-            {
-                throw new FileNotFoundException($"No project file with the file name: '{fileName}' was found in the target project folder");
-            }
-
-            string content = File.ReadAllText(destPath);
-            content = updateContents(content);
-            File.WriteAllText(destPath, content);
-        }
-
-        /// <summary>
-        /// Adds a fixture file to the web API project by its type: <typeparamref name="TFixture"/>,
-        /// and replace tokens with values via the given <paramref name="replacements"/> dictionary.
-        /// </summary>
-        /// <typeparam name="TFixture">The fixture type to include in the web API project.</typeparam>
-        /// <param name="replacements">The tokens and their corresponding values to replace in the fixture file.</param>
-        /// <param name="namespaces">The additional namespace the fixture file should be placed in.</param>
-        public void AddFixture<TFixture>(IDictionary<string, string> replacements = null, params string[] namespaces)
-        {
-            replacements = replacements ?? new Dictionary<string, string>();
-            namespaces = namespaces ?? new string[0];
-
-            string srcPath = FindFixtureTypeInDirectory(FixtureDirectory, typeof(TFixture));
-            string destPath = Path.Combine(ProjectDirectory.FullName, Path.Combine(namespaces), typeof(TFixture).Name + ".cs");
-            File.Copy(srcPath, destPath);
-
-            string key = typeof(TFixture).Namespace ?? throw new InvalidOperationException("Generic fixture requires a namespace");
-            string value = $"{ProjectName}.{String.Join(".", namespaces)}";
-            replacements[key] = value;
-
-            string content = File.ReadAllText(destPath);
-            content = replacements.Aggregate(content, (txt, kv) => txt.Replace(kv.Key, kv.Value));
-            
-            File.WriteAllText(destPath, content);
-        }
-
-        private static string FindFixtureTypeInDirectory(DirectoryInfo fixtureDirectory, Type fixtureType)
-        {
-            string fixtureFileName = fixtureType.Name + ".cs";
-            IEnumerable<FileInfo> files = 
-                fixtureDirectory.EnumerateFiles(fixtureFileName, SearchOption.AllDirectories);
-
-            if (!files.Any())
-            {
-                throw new FileNotFoundException(
-                    $"Cannot find fixture with file name: {fixtureFileName} in directory: {fixtureDirectory.FullName}", 
-                    fixtureFileName);
-            }
-
-            if (files.Count() > 1)
-            {
-                throw new IOException(
-                    $"More than a single fixture matches the file name: {fixtureFileName} in directory: {fixtureDirectory.FullName}");
-            }
-
-            return files.First().FullName;
-        }
 
         /// <summary>
         /// Returns a string that represents the current object.

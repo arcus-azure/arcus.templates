@@ -29,7 +29,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Configuration
             // Arrange
             using (var project = WebApiProject.CreateNew(_outputWriter))
             {
-                project.AddFixture<FeatureToggledController>(namespaces: "Controllers");
+                project.AddTypeAsFile<FeatureToggledController>(namespaces: "Controllers");
                 await project.StartAsync();
 
                 // Act
@@ -54,7 +54,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Configuration
 
             using (var project = WebApiProject.CreateNew(projectOptions, _outputWriter))
             {
-                project.AddFixture<FeatureToggledController>(namespaces: "Controllers");
+                project.AddTypeAsFile<FeatureToggledController>(namespaces: "Controllers");
                 project.UpdateFileInProject(
                     "appsettings.json", 
                     contents => AddJsonBoolValue(contents, key: FeatureToggle, value: isToggled));

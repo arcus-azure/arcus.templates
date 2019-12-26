@@ -62,7 +62,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         /// Creates a new project from this template at the project directory with a given set of <paramref name="projectOptions"/>.
         /// </summary>
         /// <param name="projectOptions">The console arguments that controls the creation process of the to-be-created project.</param>
-        public void CreateNewProject(ProjectOptions projectOptions)
+        protected void CreateNewProject(ProjectOptions projectOptions)
         {
             if (_created)
             {
@@ -100,6 +100,88 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             }
 
             return shortNameJson.Value<string>();
+        }
+
+        /// <summary>
+        /// Updates a file in the target project folder, using the given <paramref name="updateContents"/> function.
+        /// </summary>
+        /// <param name="fileName">The target file name to change it's contents.</param>
+        /// <param name="updateContents">The function that changes the contents of the file.</param>
+        public void UpdateFileInProject(string fileName, Func<string, string> updateContents)
+        {
+            Guard.NotNull(fileName, nameof(fileName), "Requires a file name (no file path) to update the contents");
+            Guard.NotNull(updateContents, nameof(updateContents), "Requires a function to update the project file contents");
+
+            string destPath = Path.Combine(ProjectDirectory.FullName, fileName);
+            if (!File.Exists(destPath))
+            {
+                throw new FileNotFoundException($"No project file with the file name: '{fileName}' was found in the target project folder");
+            }
+
+            string content = File.ReadAllText(destPath);
+            content = updateContents(content);
+            File.WriteAllText(destPath, content);
+        }
+
+        /// <summary>
+        /// Add a package to the created project from the template.
+        /// </summary>
+        /// <param name="packageName">The name of the package.</param>
+        /// <param name="packageVersion">The version of the package.</param>
+        public void AddPackage(string packageName, string packageVersion)
+        {
+            Guard.NotNullOrWhitespace(packageName, nameof(packageName), "Cannot add a package with a blank name");
+            Guard.NotNullOrWhitespace(packageVersion, nameof(packageVersion), "Cannot add a package with a blank version");
+
+            RunDotNet($"add {Path.Combine(ProjectDirectory.FullName, ProjectName)}.csproj package {packageName} -v {packageVersion}");
+        }
+
+        /// <summary>
+        /// Adds a fixture file to the web API project by its type: <typeparamref name="TFixture"/>,
+        /// and replace tokens with values via the given <paramref name="replacements"/> dictionary.
+        /// </summary>
+        /// <typeparam name="TFixture">The fixture type to include in the template project.</typeparam>
+        /// <param name="replacements">The tokens and their corresponding values to replace in the fixture file.</param>
+        /// <param name="namespaces">The additional namespace the fixture file should be placed in.</param>
+        public void AddTypeAsFile<TFixture>(IDictionary<string, string> replacements = null, params string[] namespaces)
+        {
+            replacements = replacements ?? new Dictionary<string, string>();
+            namespaces = namespaces ?? new string[0];
+
+            string srcPath = FindFixtureTypeInDirectory(FixtureDirectory, typeof(TFixture));
+            string destPath = Path.Combine(ProjectDirectory.FullName, Path.Combine(namespaces), typeof(TFixture).Name + ".cs");
+            File.Copy(srcPath, destPath);
+
+            string key = typeof(TFixture).Namespace ?? throw new InvalidOperationException("Generic fixture requires a namespace");
+            string value = namespaces.Length == 0 ? ProjectName : $"{ProjectName}.{String.Join(".", namespaces)}";
+            replacements[key] = value;
+
+            string content = File.ReadAllText(destPath);
+            content = replacements.Aggregate(content, (txt, kv) => txt.Replace(kv.Key, kv.Value));
+            
+            File.WriteAllText(destPath, content);
+        }
+
+        private static string FindFixtureTypeInDirectory(DirectoryInfo fixtureDirectory, Type fixtureType)
+        {
+            string fixtureFileName = fixtureType.Name + ".cs";
+            IEnumerable<FileInfo> files = 
+                fixtureDirectory.EnumerateFiles(fixtureFileName, SearchOption.AllDirectories);
+
+            if (!files.Any())
+            {
+                throw new FileNotFoundException(
+                    $"Cannot find fixture with file name: {fixtureFileName} in directory: {fixtureDirectory.FullName}", 
+                    fixtureFileName);
+            }
+
+            if (files.Count() > 1)
+            {
+                throw new IOException(
+                    $"More than a single fixture matches the file name: {fixtureFileName} in directory: {fixtureDirectory.FullName}");
+            }
+
+            return files.First().FullName;
         }
 
         /// <summary>

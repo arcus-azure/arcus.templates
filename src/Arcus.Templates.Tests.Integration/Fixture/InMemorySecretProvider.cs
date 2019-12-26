@@ -17,6 +17,15 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         /// <summary>
         /// Initializes a new instance of the <see cref="InMemorySecretProvider"/> class.
         /// </summary>
+        public InMemorySecretProvider(string name, string value) : this(new Dictionary<string, string> { [name] = value })
+        {
+            Guard.NotNullOrWhitespace(name, nameof(name), "Cannot create in-memory secret provider with a blank secret name");
+            Guard.NotNullOrWhitespace(value, nameof(value), "Cannot create in-memory secret provider with a blank secret value");
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="InMemorySecretProvider"/> class.
+        /// </summary>
         /// <param name="secretValueByName">The sequence of combinations of secret names and values.</param>
         public InMemorySecretProvider(IDictionary<string, string> secretValueByName)
         {

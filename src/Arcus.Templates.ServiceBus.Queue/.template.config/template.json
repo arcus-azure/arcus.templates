@@ -35,6 +35,14 @@
       "parameters": {
         "value": false
       }
+    },
+    "ErrorDirective": {
+      "type": "generated",
+      "generator": "constant",
+      "parameters": {
+        "value": "#error"
+      },
+      "replaces": "//#error"
     }
   }
 }

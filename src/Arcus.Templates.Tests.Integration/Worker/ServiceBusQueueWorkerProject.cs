@@ -5,9 +5,12 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
+using Arcus.EventGrid.Testing.Infrastructure.Hosts.ServiceBus;
 using Arcus.Templates.Tests.Integration.Fixture;
+using Arcus.Templates.Tests.Integration.Logging;
 using Arcus.Templates.Tests.Integration.Worker.Fixture;
 using Arcus.Templates.Tests.Integration.Worker.Health;
+using Arcus.Templates.Tests.Integration.Worker.MessagePump;
 using GuardNet;
 using Microsoft.Extensions.Configuration;
 using Polly;
@@ -18,7 +21,7 @@ namespace Arcus.Templates.Tests.Integration.Worker
     /// <summary>
     /// Project template to create Azure ServiceBus Queue worker projects.
     /// </summary>
-    public class ServiceBusQueueWorkerProject : TemplateProject
+    public class ServiceBusQueueWorkerProject : TemplateProject, IAsyncDisposable
     {
         private readonly int _healthPort;
         private readonly TestConfig _configuration;
@@ -119,6 +122,13 @@ namespace Arcus.Templates.Tests.Integration.Worker
             ServiceBusQueueWorkerProject project = CreateNew(configuration, outputWriter);
 
             await project.StartAsync();
+            var connectionString = configuration.GetValue<string>("Arcus:Worker:ServiceBus:ConnectionString");
+            var topicName = configuration.GetValue<string>("Arcus:Worker:ServiceBus:TopicName");
+
+            var serviceBusEventConsumerHostOptions = new ServiceBusEventConsumerHostOptions(topicName, connectionString);
+            var serviceBusEventConsumerHost = await ServiceBusEventConsumerHost.StartAsync(serviceBusEventConsumerHostOptions, new XunitTestLogger(outputWriter));
+            project.MessagePump = new MessagePumpService(configuration, serviceBusEventConsumerHost);
+
             return project;
         }
 
@@ -186,12 +196,29 @@ namespace Arcus.Templates.Tests.Integration.Worker
         public HealthEndpointService Health { get; }
 
         /// <summary>
+        /// Gets the service that interacts with the hosted-service message pump in the ServiceBus Queue worker project.
+        /// </summary>
+        /// <remarks>
+        ///     Only when the project is started, is this service available for interaction.
+        /// </remarks>
+        public MessagePumpService MessagePump { get; private set; }
+
+        /// <summary>
         /// Returns a string that represents the current object.
         /// </summary>
         /// <returns>A string that represents the current object.</returns>
         public override string ToString()
         {
             return $"Project: {ProjectDirectory.FullName}, running at: localhost:{_healthPort}";
+        }
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources asynchronously.
+        /// </summary>
+        /// <returns>A task that represents the asynchronous dispose operation.</returns>
+        public async ValueTask DisposeAsync()
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Arcus.Templates.Tests.Integration.WebApi;
 using GuardNet;
 
 namespace Arcus.Templates.Tests.Integration.Fixture 
@@ -16,7 +15,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         private readonly  IEnumerable<Action<DirectoryInfo, DirectoryInfo>> _updateProject;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="WebApiProjectOptions"/> class.
+        /// Initializes a new instance of the <see cref="ProjectOptions"/> class.
         /// </summary>
         public ProjectOptions() 
             : this(Enumerable.Empty<string>(),

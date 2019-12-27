@@ -313,6 +313,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
 
             var startInfo = new ProcessStartInfo("dotnet", command)
             {
+                UseShellExecute = false,
                 CreateNoWindow = true,
             };
 

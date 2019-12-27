@@ -322,11 +322,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             using (var process = Process.Start(startInfo))
             {
                 process.WaitForExit();
-
-                if (!process.HasExited)
-                {
-                    process.Kill(entireProcessTree: true);
-                }
+                process.Kill(entireProcessTree: true);
             }
         }
 

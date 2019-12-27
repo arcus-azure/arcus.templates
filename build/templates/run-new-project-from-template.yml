@@ -33,13 +33,6 @@ steps:
       command: 'custom'
       custom: 'new'
       arguments: '${{ parameters.projectAlias }} -n ${{ parameters.projectName }} -o /${{ parameters.projectName }}'
-  - task: PowerShell@2
-    displayName: 'Remove error directives'
-    inputs:
-      targetType: inline
-      workingDirectory: '/${{ parameters.projectName }}'
-      script: |
-        Get-Content '/Program.cs' | Where-Object { $_ -notmatch '#error' } | Set-Content '/Program.cs'
   - task: Docker@1
     displayName: 'Build Docker image from newly created ${{ parameters.projectName }} project from template'
     inputs:

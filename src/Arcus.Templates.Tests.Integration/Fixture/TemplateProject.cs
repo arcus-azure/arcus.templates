@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -20,6 +21,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
 
         private readonly Process _process;
         private readonly DirectoryInfo _templateDirectory;
+        private readonly ICollection<int> _processIds = new Collection<int>();
 
         private bool _created, _started, _disposed;
 
@@ -289,7 +291,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         {
             if (!_process.HasExited)
             {
-                _process.Kill();
+                _process.Kill(entireProcessTree: true);
             }
 
             _process.Dispose();
@@ -323,7 +325,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
 
                 if (!process.HasExited)
                 {
-                    process.Kill();
+                    process.Kill(entireProcessTree: true);
                 }
             }
         }

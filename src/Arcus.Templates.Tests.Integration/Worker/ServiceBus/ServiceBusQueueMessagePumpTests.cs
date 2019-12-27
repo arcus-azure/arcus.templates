@@ -53,7 +53,7 @@ namespace Arcus.Templates.Tests.Integration.Worker.ServiceBus
         public async Task MinimServiceBusQueueWorker_PublishServiceBusMessage_MessageSuccessfullyProcessed()
         {
             // Arrange
-            using (var project = ServiceBusQueueWorkerProject.StartNewAsync(_configuration, _outputWriter))
+            using (var project = await ServiceBusQueueWorkerProject.StartNewAsync(_configuration, _outputWriter))
             {
                 var connectionString = _configuration.GetValue<string>("Arcus:Worker:ServiceBus:ConnectionStringWithQueue");
 

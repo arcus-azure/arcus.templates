@@ -38,7 +38,7 @@ steps:
     inputs:
       targetType: inline
       script: |
-        Get-Content './${{ parameters.projectName }}/Program.cs' | Where-Object { $_ -notmatch '#error' } | Set-Content './${{ parameters.ProjectName }}/Program.cs'
+        Get-Content '/${{ parameters.projectName }}/Program.cs' | Where-Object { $_ -notmatch '#error' } | Set-Content './${{ parameters.ProjectName }}/Program.cs'
   - task: Docker@1
     displayName: 'Build Docker image from newly created ${{ parameters.projectName }} project from template'
     inputs:

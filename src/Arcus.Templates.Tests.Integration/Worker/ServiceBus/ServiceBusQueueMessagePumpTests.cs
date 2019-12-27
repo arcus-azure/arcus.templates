@@ -49,7 +49,7 @@ namespace Arcus.Templates.Tests.Integration.Worker.ServiceBus
             _serviceBusEventConsumerHost = await ServiceBusEventConsumerHost.StartAsync(serviceBusEventConsumerHostOptions, new XunitTestLogger(_outputWriter));
         }
 
-        [Fact]
+        //[Fact]
         public async Task MinimServiceBusQueueWorker_PublishServiceBusMessage_MessageSuccessfullyProcessed()
         {
             // Arrange

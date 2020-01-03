@@ -123,7 +123,7 @@ namespace Arcus.Templates.Tests.Integration.Worker
 
         private async Task StartAsync()
         {
-            var commands = CreateServiceBusQueueWorkerCommands(_configuration, _healthPort);
+            IEnumerable<CommandArgument> commands = CreateServiceBusQueueWorkerCommands(_configuration, _healthPort);
             Run(_configuration.BuildConfiguration, TargetFramework.NetCoreApp30, commands.ToArray());
             await WaitUntilWorkerProjectIsAvailableAsync(_healthPort);
         }

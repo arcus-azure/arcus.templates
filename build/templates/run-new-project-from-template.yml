@@ -38,8 +38,7 @@ steps:
     displayName: 'Run additional custom PS script'
     inputs:
       targetType: inline
-      script: ${{ parameters.script }}
-    condition: ne('${{ parameters.script }}', '')
+      script: '${{ parameters.script }}'
   - task: Docker@1
     displayName: 'Build Docker image from newly created ${{ parameters.projectName }} project from template'
     inputs:

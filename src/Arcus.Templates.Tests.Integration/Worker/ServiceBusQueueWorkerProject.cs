@@ -218,7 +218,9 @@ namespace Arcus.Templates.Tests.Integration.Worker
         /// <returns>A task that represents the asynchronous dispose operation.</returns>
         public async ValueTask DisposeAsync()
         {
-            throw new NotImplementedException();
+            Dispose();
+
+            await MessagePump.DisposeAsync();
         }
     }
 }

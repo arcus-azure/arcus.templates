@@ -21,7 +21,7 @@ namespace Arcus.Templates.Tests.Integration.Worker.Health
         public async Task MinimumServiceBusQueueWorker_ProbeForHealthReport_ResponseHealthy()
         {
             // Arrange
-            using (var project = await ServiceBusQueueWorkerProject.StartNewAsync(_outputWriter))
+            await using (var project = await ServiceBusQueueWorkerProject.StartNewAsync(_outputWriter))
             {
                 // Act
                 HealthReport report = await project.Health.ProbeHealthReportAsync();

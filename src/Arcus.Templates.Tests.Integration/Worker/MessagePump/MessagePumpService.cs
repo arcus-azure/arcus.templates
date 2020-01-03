@@ -19,7 +19,7 @@ namespace Arcus.Templates.Tests.Integration.Worker.MessagePump
     /// <summary>
     /// Represents a service to interact with the hosted-service.
     /// </summary>
-    public class MessagePumpService
+    public class MessagePumpService : IAsyncDisposable
     {
         private readonly TestConfig _configuration;
         private readonly ServiceBusEventConsumerHost _serviceBusEventConsumerHost;
@@ -80,6 +80,15 @@ namespace Arcus.Templates.Tests.Integration.Worker.MessagePump
                 .RuleFor(u => u.ArticleNumber, f => f.Commerce.Product());
 
             return orderGenerator.Generate();
+        }
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources asynchronously.
+        /// </summary>
+        /// <returns>A task that represents the asynchronous dispose operation.</returns>
+        public async ValueTask DisposeAsync()
+        {
+            await _serviceBusEventConsumerHost.StopAsync();
         }
     }
 }

@@ -25,7 +25,7 @@ namespace Arcus.Templates.Tests.Integration.Worker.ServiceBus
         public async Task MinimServiceBusQueueWorker_PublishServiceBusMessage_MessageSuccessfullyProcessed()
         {
             // Arrange
-            using (var project = await ServiceBusQueueWorkerProject.StartNewAsync(_configuration, _outputWriter))
+            await using (var project = await ServiceBusQueueWorkerProject.StartNewAsync(_configuration, _outputWriter))
             {
                 // Act / Assert
                 await project.MessagePump.SimulateMessageProcessingAsync();

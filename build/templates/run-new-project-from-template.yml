@@ -39,7 +39,7 @@ steps:
     inputs:
       targetType: inline
       script: ${{ parameters.script }}
-    condition: ne(${{ parameters.script }}, '')
+    condition: ne('${{ parameters.script }}', '')
   - task: Docker@1
     displayName: 'Build Docker image from newly created ${{ parameters.projectName }} project from template'
     inputs:

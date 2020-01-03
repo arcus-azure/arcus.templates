@@ -23,9 +23,11 @@ resources:
 
 variables:
   - group: 'Build Configuration'
-  # Always use fixed version for .NET Core SDK
   - name: 'DotNet.Sdk.Version'
     value: '3.0.101'
+  # Backwards compatible .NET SDK version
+  - name: 'DotNet.Sdk.VersionBC'
+    value: '2.2.105'
   - name: 'Project'
     value: 'Arcus.Templates'
   - name: 'Http.Port'
@@ -135,35 +137,15 @@ stages:
           vmImage: 'ubuntu-16.04'
         steps:
           - task: UseDotNet@2
-            displayName: 'Import .NET Core SDK ($(DotNet.Sdk.Version))'
+            displayName: 'Import .NET Core SDK ($(DotNet.Sdk.VersionBC))'
             inputs:
               packageType: 'sdk'
-              version: '$(DotNet.Sdk.Version)'
-          - task: UseDotNet@2
-            displayName: 'Import .NET Core SDK (2.2.105)'
-            inputs:
-              packageType: 'sdk'
-              version: '2.2.105'
-          - task: qetza.replacetokens.replacetokens-task.replacetokens@3
-            displayName: 'Replace integration test tokens'
-            inputs:
-              rootDirectory: 'src/$(Project).Tests.Integration/'
-              targetFiles: 'appsettings.json'
-              encoding: 'auto'
-              verbosity: 'detailed'
-              writeBOM: true
-              actionOnMissing: 'fail'
-              keepToken: false
-              tokenPrefix: '#{'
-              tokenSuffix: '}#'
-          - task: DotNetCoreCLI@2
-            displayName: 'Run integration tests'
-            inputs:
-              command: test
-              projects: 'src/**/$(Project).Tests.Integration.csproj'
-              arguments: '--configuration $(Build.Configuration) --filter Category=Integration'
-              nobuild: true
-              publishTestResults: true
+              version: '$(DotNet.Sdk.VersionBC)'
+          - template: test/run-integration-tests.yml@templates
+            parameters:
+              dotnetSdkVersion: '$(DotNet.Sdk.Version)'
+              projectName: '$(Project).Tests.Integration'
+              category: 'Integration'
 
   - stage: ReleaseToMyget
     displayName: 'Release to MyGet'

@@ -41,57 +41,6 @@ namespace Arcus.Templates.Tests.Integration.Worker
         }
 
         /// <summary>
-        /// Creates a new Azure ServiceBus Queue worker project from the project template.
-        /// </summary>
-        /// <param name="configuration">The configuration used when configuring the message pump of the project.</param>
-        /// <param name="outputWriter">The output logger to add telemetry information during the creation and startup process.</param>
-        /// <returns>
-        ///     A not yet started Azure ServiceBus Queue worker project with a full set of services to interact with the worker.
-        /// </returns>
-        /// <remarks>
-        ///     Before the project can be interacted with, the project must be started by calling the <see cref="StartAsync" /> method.
-        /// </remarks>
-        public static ServiceBusQueueWorkerProject CreateNew(TestConfig configuration, ITestOutputHelper outputWriter)
-        {
-            Guard.NotNull(configuration, nameof(configuration));
-            Guard.NotNull(outputWriter, nameof(outputWriter));
-
-            DirectoryInfo templateDirectory = configuration.GetServiceBusQueueProjectDirectory();
-            DirectoryInfo fixtureDirectory = configuration.GetFixtureProjectDirectory();
-            int healthPort = configuration.GenerateWorkerHealthPort();
-
-            var project = new ServiceBusQueueWorkerProject(healthPort, configuration, templateDirectory, fixtureDirectory, outputWriter);
-            project.CreateNewProject(new ProjectOptions());
-            project.AddOrdersMessagePump();
-
-            return project;
-        }
-
-        private void AddOrdersMessagePump()
-        {
-            AddPackage("Arcus.EventGrid", "3.0.0-preview-1");
-            AddPackage("Arcus.EventGrid.Publishing", "3.0.0-preview-1");
-            AddTypeAsFile<Order>();
-            AddTypeAsFile<OrderCreatedEvent>();
-            AddTypeAsFile<OrderCreatedEventData>();
-            AddTypeAsFile<OrdersMessagePump>();
-            AddTypeAsFile<SingleValueSecretProvider>();
-
-            var connectionStringWithQueue = _configuration.GetValue<string>("Arcus:Worker:ServiceBus:ConnectionStringWithQueue");
-            UpdateFileInProject("Program.cs", contents => 
-                RemoveCustomUserErrors(contents)
-                    .Replace("EmptyMessagePump", nameof(OrdersMessagePump))
-                    .Replace("secretProvider: null", $"new {nameof(SingleValueSecretProvider)}(\"{connectionStringWithQueue}\")"));
-        }
-
-        private static string RemoveCustomUserErrors(string content)
-        {
-            return content.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
-                          .Where(line => !line.Contains("#error"))
-                          .Aggregate((line1, line2) => line1 + Environment.NewLine + line2);
-        }
-
-        /// <summary>
         /// Starts a newly created project from the ServiceBus Queue worker project template.
         /// </summary>
         /// <param name="outputWriter">The output logger to add telemetry information during the creation and startup process.</param>
@@ -132,10 +81,47 @@ namespace Arcus.Templates.Tests.Integration.Worker
             return project;
         }
 
-        /// <summary>
-        /// Starts the Azure ServiceBus Queue worker project; created from the template.
-        /// </summary>
-        public async Task StartAsync()
+        private static ServiceBusQueueWorkerProject CreateNew(TestConfig configuration, ITestOutputHelper outputWriter)
+        {
+            Guard.NotNull(configuration, nameof(configuration));
+            Guard.NotNull(outputWriter, nameof(outputWriter));
+
+            DirectoryInfo templateDirectory = configuration.GetServiceBusQueueProjectDirectory();
+            DirectoryInfo fixtureDirectory = configuration.GetFixtureProjectDirectory();
+            int healthPort = configuration.GenerateWorkerHealthPort();
+
+            var project = new ServiceBusQueueWorkerProject(healthPort, configuration, templateDirectory, fixtureDirectory, outputWriter);
+            project.CreateNewProject(new ProjectOptions());
+            project.AddOrdersMessagePump();
+
+            return project;
+        }
+
+        private void AddOrdersMessagePump()
+        {
+            AddPackage("Arcus.EventGrid", "3.0.0-preview-1");
+            AddPackage("Arcus.EventGrid.Publishing", "3.0.0-preview-1");
+            AddTypeAsFile<Order>();
+            AddTypeAsFile<OrderCreatedEvent>();
+            AddTypeAsFile<OrderCreatedEventData>();
+            AddTypeAsFile<OrdersMessagePump>();
+            AddTypeAsFile<SingleValueSecretProvider>();
+
+            var connectionStringWithQueue = _configuration.GetValue<string>("Arcus:Worker:ServiceBus:ConnectionStringWithQueue");
+            UpdateFileInProject("Program.cs", contents => 
+                RemoveCustomUserErrors(contents)
+                    .Replace("EmptyMessagePump", nameof(OrdersMessagePump))
+                    .Replace("secretProvider: null", $"new {nameof(SingleValueSecretProvider)}(\"{connectionStringWithQueue}\")"));
+        }
+
+        private static string RemoveCustomUserErrors(string content)
+        {
+            return content.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
+                          .Where(line => !line.Contains("#error"))
+                          .Aggregate((line1, line2) => line1 + Environment.NewLine + line2);
+        }
+
+        private async Task StartAsync()
         {
             var commands = CreateServiceBusQueueWorkerCommands(_configuration, _healthPort);
             Run(_configuration.BuildConfiguration, TargetFramework.NetCoreApp30, commands.ToArray());

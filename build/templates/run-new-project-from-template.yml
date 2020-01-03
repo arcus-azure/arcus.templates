@@ -2,6 +2,7 @@ parameters:
   projectName: ''
   projectAlias: ''
   ports: ''
+  script: ''
   envVars: {}
 
 steps:
@@ -34,13 +35,11 @@ steps:
       custom: 'new'
       arguments: '${{ parameters.projectAlias }} -n ${{ parameters.projectName }} -o /${{ parameters.projectName }}'
   - task: PowerShell@2
-    displayName: 'Remove error directives'
+    displayName: 'Run additional custom PS script'
     inputs:
       targetType: inline
-      script: |
-        Get-Content '/${{parameters.projectName}}/Program.cs' | 
-            Where-Object { $_ -notmatch '#error' -and $_ -notmatch 'secretProvider: null' -and $_ -notmatch 'EmptyMessagePump' } | 
-            Set-Content '/${{ parameters.projectName }}/Program.cs'
+      script: ${{ parameters.script }}
+    condition: ne(${{ parameters.script }}, '')
   - task: Docker@1
     displayName: 'Build Docker image from newly created ${{ parameters.projectName }} project from template'
     inputs:

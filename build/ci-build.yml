@@ -109,6 +109,10 @@ stages:
               projectName: 'Arcus.Demo.ServiceBus.Queue'
               projectAlias: 'arcus-servicebus-queue'
               ports: '$(Arcus_Worker_HealthPort):$(Arcus_Worker_HealthPort)'
+              script: |
+                Get-Content '/Arcus.Demo.ServiceBus.Queue/Program.cs' | 
+                  Where-Object { $_ -notmatch '#error' -and $_ -notmatch 'secretProvider: null' -and $_ -notmatch 'EmptyMessagePump' } | 
+                  Set-Content '/Arcus.Demo.ServiceBus.Queue/Program.cs'
               envVars: |
                 ARCUS_HEALTH_PORT=$(Arcus_Worker_HealthPort)
                 EVENTGRID_TOPIC_URI=$(Arcus_Worker_EventGrid_TopicUri)

@@ -103,11 +103,24 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         }
 
         /// <summary>
+        /// Add a package to the created project from the template.
+        /// </summary>
+        /// <param name="packageName">The name of the package.</param>
+        /// <param name="packageVersion">The version of the package.</param>
+        protected void AddPackage(string packageName, string packageVersion)
+        {
+            Guard.NotNullOrWhitespace(packageName, nameof(packageName), "Cannot add a package with a blank name");
+            Guard.NotNullOrWhitespace(packageVersion, nameof(packageVersion), "Cannot add a package with a blank version");
+
+            RunDotNet($"add {Path.Combine(ProjectDirectory.FullName, ProjectName)}.csproj package {packageName} -v {packageVersion}");
+        }
+
+        /// <summary>
         /// Updates a file in the target project folder, using the given <paramref name="updateContents"/> function.
         /// </summary>
         /// <param name="fileName">The target file name to change it's contents.</param>
         /// <param name="updateContents">The function that changes the contents of the file.</param>
-        protected void UpdateFileInProject(string fileName, Func<string, string> updateContents)
+        public void UpdateFileInProject(string fileName, Func<string, string> updateContents)
         {
             Guard.NotNull(fileName, nameof(fileName), "Requires a file name (no file path) to update the contents");
             Guard.NotNull(updateContents, nameof(updateContents), "Requires a function to update the project file contents");
@@ -121,19 +134,6 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             string content = File.ReadAllText(destPath);
             content = updateContents(content);
             File.WriteAllText(destPath, content);
-        }
-
-        /// <summary>
-        /// Add a package to the created project from the template.
-        /// </summary>
-        /// <param name="packageName">The name of the package.</param>
-        /// <param name="packageVersion">The version of the package.</param>
-        protected void AddPackage(string packageName, string packageVersion)
-        {
-            Guard.NotNullOrWhitespace(packageName, nameof(packageName), "Cannot add a package with a blank name");
-            Guard.NotNullOrWhitespace(packageVersion, nameof(packageVersion), "Cannot add a package with a blank version");
-
-            RunDotNet($"add {Path.Combine(ProjectDirectory.FullName, ProjectName)}.csproj package {packageName} -v {packageVersion}");
         }
 
         /// <summary>

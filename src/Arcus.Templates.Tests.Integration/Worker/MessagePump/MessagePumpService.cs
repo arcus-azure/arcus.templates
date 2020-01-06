@@ -115,7 +115,10 @@ namespace Arcus.Templates.Tests.Integration.Worker.MessagePump
         /// <returns>A task that represents the asynchronous dispose operation.</returns>
         public async ValueTask DisposeAsync()
         {
-            await _serviceBusEventConsumerHost.StopAsync();
+            if (_serviceBusEventConsumerHost != null)
+            {
+                await _serviceBusEventConsumerHost.StopAsync();
+            }
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -21,7 +20,6 @@ namespace Arcus.Templates.Tests.Integration.Fixture
 
         private readonly Process _process;
         private readonly DirectoryInfo _templateDirectory;
-        private readonly ICollection<int> _processIds = new Collection<int>();
 
         private bool _created, _started, _disposed;
 
@@ -109,7 +107,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         /// </summary>
         /// <param name="fileName">The target file name to change it's contents.</param>
         /// <param name="updateContents">The function that changes the contents of the file.</param>
-        public void UpdateFileInProject(string fileName, Func<string, string> updateContents)
+        protected void UpdateFileInProject(string fileName, Func<string, string> updateContents)
         {
             Guard.NotNull(fileName, nameof(fileName), "Requires a file name (no file path) to update the contents");
             Guard.NotNull(updateContents, nameof(updateContents), "Requires a function to update the project file contents");
@@ -130,7 +128,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         /// </summary>
         /// <param name="packageName">The name of the package.</param>
         /// <param name="packageVersion">The version of the package.</param>
-        public void AddPackage(string packageName, string packageVersion)
+        protected void AddPackage(string packageName, string packageVersion)
         {
             Guard.NotNullOrWhitespace(packageName, nameof(packageName), "Cannot add a package with a blank name");
             Guard.NotNullOrWhitespace(packageVersion, nameof(packageVersion), "Cannot add a package with a blank version");

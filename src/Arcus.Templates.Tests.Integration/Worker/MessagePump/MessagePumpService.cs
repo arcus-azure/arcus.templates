@@ -5,6 +5,7 @@ using Arcus.EventGrid.Parsers;
 using Arcus.EventGrid.Testing.Infrastructure.Hosts.ServiceBus;
 using Arcus.Messaging.ServiceBus.Core.Extensions;
 using Arcus.Templates.Tests.Integration.Fixture;
+using Arcus.Templates.Tests.Integration.Logging;
 using Arcus.Templates.Tests.Integration.Worker.Fixture;
 using Bogus;
 using GuardNet;
@@ -13,6 +14,7 @@ using Microsoft.Azure.ServiceBus;
 using Microsoft.Azure.ServiceBus.Core;
 using Microsoft.Extensions.Configuration;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Arcus.Templates.Tests.Integration.Worker.MessagePump
 {
@@ -22,20 +24,39 @@ namespace Arcus.Templates.Tests.Integration.Worker.MessagePump
     public class MessagePumpService : IAsyncDisposable
     {
         private readonly TestConfig _configuration;
-        private readonly ServiceBusEventConsumerHost _serviceBusEventConsumerHost;
+        private readonly ITestOutputHelper _outputWriter;
+
+        private ServiceBusEventConsumerHost _serviceBusEventConsumerHost;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MessagePumpService"/> class.
         /// </summary>
-        public MessagePumpService(
-            TestConfig configuration,
-            ServiceBusEventConsumerHost serviceBusEventConsumerHost)
+        public MessagePumpService(TestConfig configuration, ITestOutputHelper outputWriter)
         {
             Guard.NotNull(configuration, nameof(configuration));
-            Guard.NotNull(serviceBusEventConsumerHost, nameof(serviceBusEventConsumerHost));
+            Guard.NotNull(outputWriter, nameof(outputWriter));
 
             _configuration = configuration;
-            _serviceBusEventConsumerHost = serviceBusEventConsumerHost;
+            _outputWriter = outputWriter;
+        }
+
+        /// <summary>
+        /// Starts a new instance of the <see cref="MessagePumpService"/> type to simulate messages.
+        /// </summary>
+        public async Task StartAsync()
+        {
+            if (_serviceBusEventConsumerHost is null)
+            {
+                var connectionString = _configuration.GetValue<string>("Arcus:Worker:ServiceBus:ConnectionString");
+                var topicName = _configuration.GetValue<string>("Arcus:Worker:ServiceBus:TopicName");
+
+                var serviceBusEventConsumerHostOptions = new ServiceBusEventConsumerHostOptions(topicName, connectionString);
+                _serviceBusEventConsumerHost = await ServiceBusEventConsumerHost.StartAsync(serviceBusEventConsumerHostOptions, new XunitTestLogger(_outputWriter));
+            }
+            else
+            {
+                throw new InvalidOperationException("Service is already started!");
+            }
         }
 
         /// <summary>
@@ -43,6 +64,12 @@ namespace Arcus.Templates.Tests.Integration.Worker.MessagePump
         /// </summary>
         public async Task SimulateMessageProcessingAsync()
         {
+            if (_serviceBusEventConsumerHost is null)
+            {
+                throw new InvalidOperationException(
+                    "Cannot simulate the message pump because the service is not yet started; please start this service before simulating");
+            }
+
             var connectionString = _configuration.GetValue<string>("Arcus:Worker:ServiceBus:ConnectionStringWithQueue");
 
             var operationId = Guid.NewGuid().ToString();

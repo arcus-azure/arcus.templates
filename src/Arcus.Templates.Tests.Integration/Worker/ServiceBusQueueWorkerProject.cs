@@ -38,6 +38,7 @@ namespace Arcus.Templates.Tests.Integration.Worker
             _configuration = configuration;
 
             Health = new HealthEndpointService(_healthPort, outputWriter);
+            MessagePump = new MessagePumpService(configuration, outputWriter);
         }
 
         /// <summary>
@@ -71,12 +72,7 @@ namespace Arcus.Templates.Tests.Integration.Worker
             ServiceBusQueueWorkerProject project = CreateNew(configuration, outputWriter);
 
             await project.StartAsync();
-            var connectionString = configuration.GetValue<string>("Arcus:Worker:ServiceBus:ConnectionString");
-            var topicName = configuration.GetValue<string>("Arcus:Worker:ServiceBus:TopicName");
-
-            var serviceBusEventConsumerHostOptions = new ServiceBusEventConsumerHostOptions(topicName, connectionString);
-            var serviceBusEventConsumerHost = await ServiceBusEventConsumerHost.StartAsync(serviceBusEventConsumerHostOptions, new XunitTestLogger(outputWriter));
-            project.MessagePump = new MessagePumpService(configuration, serviceBusEventConsumerHost);
+            await project.MessagePump.StartAsync();
 
             return project;
         }
@@ -187,7 +183,7 @@ namespace Arcus.Templates.Tests.Integration.Worker
         /// <remarks>
         ///     Only when the project is started, is this service available for interaction.
         /// </remarks>
-        public MessagePumpService MessagePump { get; private set; }
+        public MessagePumpService MessagePump { get; }
 
         /// <summary>
         /// Returns a string that represents the current object.

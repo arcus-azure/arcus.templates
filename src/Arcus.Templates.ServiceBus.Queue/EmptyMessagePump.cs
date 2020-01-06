@@ -11,7 +11,7 @@ namespace Arcus.Templates.ServiceBus.Queue
     /// <summary>
     /// Empty implementation of the <see cref="AzureServiceBusMessagePump{TMessage}"/>, using an <see cref="object"/> as event message.
     /// </summary>
-    public class EmptyMessagePump : AzureServiceBusMessagePump<object>
+    public class EmptyMessagePump : AzureServiceBusMessagePump<EmptyMessage>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="EmptyMessagePump"/> class.
@@ -26,16 +26,16 @@ namespace Arcus.Templates.ServiceBus.Queue
 
         /// <inheritdoc />
         protected override async Task ProcessMessageAsync(
-            object message,
+            EmptyMessage message,
             AzureServiceBusMessageContext messageContext,
             MessageCorrelationInfo correlationInfo,
             CancellationToken cancellationToken)
         {
-            Logger.LogTrace("Processing message...");
+            Logger.LogTrace("Processing message {message}...", message);
 
             // Process message.
 
-            Logger.LogInformation("Message processed!");
+            Logger.LogInformation("Message {message} processed!", message);
         }
     }
 }

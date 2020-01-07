@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 
-namespace Arcus.Templates.Tests.Integration.Fixture
+namespace Arcus.Templates.Tests.Integration.WebApi.Fixture
 {
     /// <summary>
     /// Fixture controller to toggle the <see cref="Get"/> response based on a <see cref="FeatureToggle"/> configuration key.

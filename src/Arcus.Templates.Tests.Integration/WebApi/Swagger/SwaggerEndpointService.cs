@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Arcus.Templates.Tests.Integration.Fixture;
+using Arcus.Templates.Tests.Integration.WebApi.Fixture;
 using Flurl;
 using GuardNet;
 using Xunit.Abstractions;
 
-namespace Arcus.Templates.Tests.Integration.Swagger
+namespace Arcus.Templates.Tests.Integration.WebApi.Swagger
 {
     /// <summary>
     /// Service to collect operations on the Swagger information of the API.

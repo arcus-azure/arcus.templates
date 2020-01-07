@@ -3,10 +3,11 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.Fixture;
+using Arcus.Templates.Tests.Integration.WebApi.Fixture;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Arcus.Templates.Tests.Integration.Authentication.v1
+namespace Arcus.Templates.Tests.Integration.WebApi.Authentication.v1
 {
     [Collection(TestCollections.Integration)]
     [Trait("Category", TestTraits.Integration)]

@@ -105,6 +105,12 @@
       "datatype": "bool",
       "defaultValue": "false",
       "description": "Include a 'appsettings.json' file to the web API project"
-    }
+    },
+    "correlation": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false",
+      "description": "Adds correlation on transaction and operation level"
+    } 
   }
 }

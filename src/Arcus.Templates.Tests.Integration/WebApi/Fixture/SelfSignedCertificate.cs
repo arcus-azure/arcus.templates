@@ -14,7 +14,7 @@ using Org.BouncyCastle.Utilities;
 using Org.BouncyCastle.X509;
 using X509Certificate = Org.BouncyCastle.X509.X509Certificate;
 
-namespace Arcus.Templates.Tests.Integration.Fixture
+namespace Arcus.Templates.Tests.Integration.WebApi.Fixture
 {
     /// <summary>
     /// Exposes several certificate generation function to control the OCSP and/or CRL information of the certificates.

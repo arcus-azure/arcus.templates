@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using GuardNet;
 using Xunit.Abstractions;
 
-namespace Arcus.Templates.Tests.Integration.Fixture
+namespace Arcus.Templates.Tests.Integration.WebApi.Fixture
 {
     /// <summary>
     /// Representation of an endpoint of the API, exposing the available HTTP methods to interact in a friendly manner.
@@ -47,7 +50,8 @@ namespace Arcus.Templates.Tests.Integration.Fixture
                 alterRequest?.Invoke(request);
                 HttpResponseMessage response = await HttpClient.SendAsync(request);
 
-                Logger.WriteLine("{0} <- {1}", response.StatusCode, endpoint);
+                IEnumerable<string> headers = response.Headers.Select(h => $"{h.Key}={String.Join("", h.Value)}");
+                Logger.WriteLine("{0} <- {1} {{{2}}}", response.StatusCode, endpoint, String.Join(", ", headers));
                 return response;
             }
         }

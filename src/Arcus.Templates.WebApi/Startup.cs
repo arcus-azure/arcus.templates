@@ -22,6 +22,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Primitives;
 #endif
+#if correlation
+using Arcus.WebApi.Correlation;
+#endif
 
 namespace Arcus.Templates.WebApi
 {
@@ -62,6 +65,9 @@ namespace Arcus.Templates.WebApi
             });
 
             services.AddHealthChecks();
+#if correlation
+            services.AddCorrelation();
+#endif
             
 //[#if DEBUG]
             var openApiInformation = new Info
@@ -109,9 +115,13 @@ namespace Arcus.Templates.WebApi
 #if NoneAuth
             #warning Please configure application with authentication mechanism: https://webapi.arcus-azure.net/features/security/auth/shared-access-key
 #endif
+
+#if correlation
+            app.UseCorrelation();
+#endif
             app.UseMvc();
 
-//[#if DEBUG]
+            //[#if DEBUG]
             app.UseSwagger();
             app.UseSwaggerUI(swaggerUiOptions =>
             {

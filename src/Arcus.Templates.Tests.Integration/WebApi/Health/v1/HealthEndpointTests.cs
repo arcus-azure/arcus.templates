@@ -1,5 +1,4 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.Fixture;
@@ -7,7 +6,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Arcus.Templates.Tests.Integration.Health.v1
+namespace Arcus.Templates.Tests.Integration.WebApi.Health.v1
 {
     [Collection(TestCollections.Integration)]
     [Trait("Category", TestTraits.Integration)]

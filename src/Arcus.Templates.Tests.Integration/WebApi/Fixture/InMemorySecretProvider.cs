@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Arcus.Security.Secrets.Core.Interfaces;
 using GuardNet;
 
-namespace Arcus.Templates.Tests.Integration.Fixture
+namespace Arcus.Templates.Tests.Integration.WebApi.Fixture
 {
     /// <summary>
     /// <see cref="ISecretProvider"/> implementation that provides an in-memory storage of secrets by name.

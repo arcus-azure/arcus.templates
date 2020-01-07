@@ -5,7 +5,7 @@ using Flurl;
 using GuardNet;
 using Xunit.Abstractions;
 
-namespace Arcus.Templates.Tests.Integration.Fixture
+namespace Arcus.Templates.Tests.Integration.WebApi.Fixture
 {
     /// <summary>
     /// Represents a default implementation of the <see cref="EndpointService"/> to send out minimal HTTP requests starting from the base path of the web application.

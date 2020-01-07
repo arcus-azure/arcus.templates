@@ -1,12 +1,12 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
-using Arcus.Templates.Tests.Integration.Fixture;
+using Arcus.Templates.Tests.Integration.WebApi.Fixture;
 using Newtonsoft.Json.Linq;
 using Xunit;
 using Xunit.Abstractions;
-using static Arcus.Templates.Tests.Integration.Fixture.FeatureToggledController;
+using static Arcus.Templates.Tests.Integration.WebApi.Fixture.FeatureToggledController;
 
-namespace Arcus.Templates.Tests.Integration.Configuration
+namespace Arcus.Templates.Tests.Integration.WebApi.Configuration
 {
     [Collection(TestCollections.Integration)]
     [Trait("Category", TestTraits.Integration)]

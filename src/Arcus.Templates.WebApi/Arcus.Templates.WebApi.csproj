@@ -56,10 +56,15 @@
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.2.0" />
+    <PackageReference Include="Arcus.WebApi.Correlation" Version="20200106.0.0-PR-92" Condition="'$(correlation)' == 'true'" />
     <PackageReference Include="Arcus.WebApi.Logging" Version="0.3.0" />
     <PackageReference Include="Arcus.WebApi.Security.Authentication" Version="0.3.0" Condition="'$(Auth)' == 'true'" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="4.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="4.0.1" />
   </ItemGroup>
+
+  <PropertyGroup>
+    <RestoreSources>$(RestoreSources);https://api.nuget.org/v3/index.json;https://www.myget.org/F/arcus/api/v3/index.json</RestoreSources>
+  </PropertyGroup>
 
 </Project>

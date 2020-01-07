@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Arcus.Security.Secrets.Core.Interfaces;
+using Arcus.Templates.Tests.Integration.Fixture;
+using Arcus.Templates.Tests.Integration.WebApi.Fixture;
 using GuardNet;
 
-namespace Arcus.Templates.Tests.Integration.Fixture
+namespace Arcus.Templates.Tests.Integration.WebApi
 {
     /// <summary>
     /// Represents all the available project options on the web API template project.
@@ -39,6 +41,16 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             ProjectOptions optionsWithIncludeAppSettings = AddOption("--include-appsettings");
 
             return new WebApiProjectOptions(optionsWithIncludeAppSettings);
+        }
+
+        /// <summary>
+        /// Adds the project options to add correlation on operation and transaction level to the web API project.
+        /// </summary>
+        public WebApiProjectOptions WithCorrelation()
+        {
+            ProjectOptions optionsWithCorrelation = AddOption("--correlation");
+
+            return new WebApiProjectOptions(optionsWithCorrelation);
         }
 
         /// <summary>

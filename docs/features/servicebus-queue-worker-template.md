@@ -1,5 +1,5 @@
 ---
-title: "ServiceBus Queue worker template"
+title: "Azure Service Bus Queue worker template"
 layout: default
 ---
 

@@ -24,5 +24,5 @@ When installed, the template can be created with shortname: `arcus-servicebus-qu
 
 Creates a starter worker project with by default configured:
 * TCP [health check](https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-2.2) probe.
-* Empty message pump on [Azure ServiceBus Queue](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-dotnet-get-started-with-queues)
+* Empty message pump on [Azure Service Bus Queue](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-dotnet-get-started-with-queues)
 * Docker building file.

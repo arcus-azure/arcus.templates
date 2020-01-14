@@ -6,7 +6,7 @@
     <Authors>Arcus</Authors>
     <Company>Arcus</Company>
     <RepositoryType>Git</RepositoryType>
-    <Description>Provide a template to easily build workers on a Azure ServiceBus Queue.</Description>
+    <Description>Provide a template to easily build workers on a Azure Service Bus Queue.</Description>
     <IsPackable>true</IsPackable>
     <PackageId>Arcus.Templates.ServiceBus.Queue</PackageId>
     <Title>Template for worker Azure ServiceBus Queue project</Title>

@@ -3,7 +3,7 @@ title: "Azure Service Bus Queue worker template"
 layout: default
 ---
 
-# ServiceBus Queue Worker Project Template
+# Azure Service Bus Queue Worker Project Template
 
 ## Create Your First Arcus ServiceBus Queue Worker Project
 

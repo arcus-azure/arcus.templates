@@ -5,7 +5,7 @@ layout: default
 
 # Azure Service Bus Queue Worker Project Template
 
-## Create Your First Arcus ServiceBus Queue Worker Project
+## Create Your First Arcus Azure Service Bus Queue Worker Project
 
 First, install the template from NuGet:
 

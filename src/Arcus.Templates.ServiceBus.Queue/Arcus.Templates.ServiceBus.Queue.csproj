@@ -9,7 +9,7 @@
     <Description>Provide a template to easily build workers on a Azure Service Bus Queue.</Description>
     <IsPackable>true</IsPackable>
     <PackageId>Arcus.Templates.ServiceBus.Queue</PackageId>
-    <Title>Template for worker Azure ServiceBus Queue project</Title>
+    <Title>Template for worker Azure Service Bus Queue project</Title>
     <PackageType>Template</PackageType>
     <PackageTags>Worker;Azure;Azure;ServiceBus;Queue</PackageTags>
     <Copyright>Copyright (c) Arcus</Copyright>

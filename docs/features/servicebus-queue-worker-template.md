@@ -1,11 +1,11 @@
 ---
-title: "ServiceBus Queue worker template"
+title: "Service Bus Queue worker template"
 layout: default
 ---
 
 # ServiceBus Queue Worker Project Template
 
-## Create Your First Arcus ServiceBus Queue Worker Project
+## Create Your First Arcus Service Bus Queue Worker Project
 
 First, install the template from NuGet:
 
@@ -23,6 +23,6 @@ When installed, the template can be created with shortname: `arcus-servicebus-qu
 ## Features
 
 Creates a starter worker project with by default configured:
-* TCP [health check](https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-2.2) probe.
-* Empty message pump on [Azure ServiceBus Queue](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-dotnet-get-started-with-queues)
+* TCP health check probe ([official docs](https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-2.2) & [Arcus docs](https://messaging.arcus-azure.net/features/tcp-health-probe)).
+* Empty message pump on Azure Service Bus Queue ([official docs](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-dotnet-get-started-with-queues))
 * Docker building file.

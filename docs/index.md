@@ -16,7 +16,7 @@ PM > dotnet new --install Arcus.Templates.WebApi
 
 Read [here](features/web-api-template) for standard and configurable features.
 
-## ServiceBus Queue
+## Azure Service Bus Queue
 
 ```shell
 PM > dotnet new --install Arcus.Templates.ServiceBus.Queue

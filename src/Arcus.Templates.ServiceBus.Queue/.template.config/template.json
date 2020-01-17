@@ -3,11 +3,11 @@
   "author": "Arcus",
   "classifications": [
     "Worker",
-    "ServiceBus",
+    "Service Bus",
     "Queue",
     "BoilerPlate"
   ],
-  "name": "Arcus ServiceBus Queue",
+  "name": "Arcus Service Bus Queue",
   "identity": "Arcus.Templates.ServiceBus.Queue",
   "shortName": "arcus-servicebus-queue",
   "sourceName": "Arcus.Templates.ServiceBus.Queue",

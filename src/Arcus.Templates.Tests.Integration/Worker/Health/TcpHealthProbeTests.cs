@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Arcus.Templates.Tests.Integration.Fixture;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Xunit;
 using Xunit.Abstractions;

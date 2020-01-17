@@ -24,7 +24,7 @@ namespace Arcus.Templates.Tests.Integration.Worker.MessagePump
     public class MessagePumpService : IAsyncDisposable
     {
         private readonly ITestOutputHelper _outputWriter;
-        private readonly ServiceBusConnectionStringBuilder _serviceBusConnectionStringBuilder;
+        private readonly TestConfig _configuration;
 
         private ServiceBusEventConsumerHost _serviceBusEventConsumerHost;
 
@@ -37,10 +37,7 @@ namespace Arcus.Templates.Tests.Integration.Worker.MessagePump
             Guard.NotNull(outputWriter, nameof(outputWriter));
 
             _outputWriter = outputWriter;
-
-            var connectionString = configuration.GetValue<string>("Arcus:Worker:ServiceBus:ConnectionStringWithQueue");
-            _serviceBusConnectionStringBuilder = new ServiceBusConnectionStringBuilder(connectionString);
-
+            _configuration = configuration;
         }
 
         /// <summary>
@@ -50,8 +47,9 @@ namespace Arcus.Templates.Tests.Integration.Worker.MessagePump
         {
             if (_serviceBusEventConsumerHost is null)
             {
-                string namespaceConnectionString = _serviceBusConnectionStringBuilder.GetNamespaceConnectionString();
-                var serviceBusEventConsumerHostOptions = new ServiceBusEventConsumerHostOptions(_serviceBusConnectionStringBuilder.EntityPath, namespaceConnectionString);
+                var topicName = _configuration.GetValue<string>("Arcus:Worker:Infra:ServiceBus:TopicName");
+                var connectionString = _configuration.GetValue<string>("Arcus:Worker:Infra:ServiceBus:ConnectionString");
+                var serviceBusEventConsumerHostOptions = new ServiceBusEventConsumerHostOptions(topicName, connectionString);
 
                 _serviceBusEventConsumerHost = await ServiceBusEventConsumerHost.StartAsync(serviceBusEventConsumerHostOptions, new XunitTestLogger(_outputWriter));
             }
@@ -74,7 +72,10 @@ namespace Arcus.Templates.Tests.Integration.Worker.MessagePump
 
             var operationId = Guid.NewGuid().ToString();
             var transactionId = Guid.NewGuid().ToString();
-            var messageSender = new MessageSender(_serviceBusConnectionStringBuilder);
+            
+            var connectionString = _configuration.GetValue<string>("Arcus:Worker:ServiceBus:ConnectionStringWithQueue");
+            var serviceBusConnectionStringBuilder = new ServiceBusConnectionStringBuilder(connectionString);
+            var messageSender = new MessageSender(serviceBusConnectionStringBuilder);
 
             Order order = GenerateOrder();
             Message orderMessage = order.WrapInServiceBusMessage(operationId, transactionId);

@@ -23,8 +23,8 @@ namespace Arcus.Templates.Tests.Integration.Worker.MessagePump
     /// </summary>
     public class MessagePumpService : IAsyncDisposable
     {
-        private readonly TestConfig _configuration;
         private readonly ITestOutputHelper _outputWriter;
+        private readonly ServiceBusConnectionStringBuilder _serviceBusConnectionStringBuilder;
 
         private ServiceBusEventConsumerHost _serviceBusEventConsumerHost;
 
@@ -36,8 +36,11 @@ namespace Arcus.Templates.Tests.Integration.Worker.MessagePump
             Guard.NotNull(configuration, nameof(configuration));
             Guard.NotNull(outputWriter, nameof(outputWriter));
 
-            _configuration = configuration;
             _outputWriter = outputWriter;
+
+            var connectionString = configuration.GetValue<string>("Arcus:Worker:ServiceBus:ConnectionStringWithQueue");
+            _serviceBusConnectionStringBuilder = new ServiceBusConnectionStringBuilder(connectionString);
+
         }
 
         /// <summary>
@@ -47,10 +50,9 @@ namespace Arcus.Templates.Tests.Integration.Worker.MessagePump
         {
             if (_serviceBusEventConsumerHost is null)
             {
-                var connectionString = _configuration.GetValue<string>("Arcus:Worker:ServiceBus:ConnectionString");
-                var topicName = _configuration.GetValue<string>("Arcus:Worker:ServiceBus:TopicName");
+                string namespaceConnectionString = _serviceBusConnectionStringBuilder.GetNamespaceConnectionString();
+                var serviceBusEventConsumerHostOptions = new ServiceBusEventConsumerHostOptions(_serviceBusConnectionStringBuilder.EntityPath, namespaceConnectionString);
 
-                var serviceBusEventConsumerHostOptions = new ServiceBusEventConsumerHostOptions(topicName, connectionString);
                 _serviceBusEventConsumerHost = await ServiceBusEventConsumerHost.StartAsync(serviceBusEventConsumerHostOptions, new XunitTestLogger(_outputWriter));
             }
             else
@@ -70,11 +72,9 @@ namespace Arcus.Templates.Tests.Integration.Worker.MessagePump
                     "Cannot simulate the message pump because the service is not yet started; please start this service before simulating");
             }
 
-            var connectionString = _configuration.GetValue<string>("Arcus:Worker:ServiceBus:ConnectionStringWithQueue");
-
             var operationId = Guid.NewGuid().ToString();
             var transactionId = Guid.NewGuid().ToString();
-            var messageSender = new MessageSender(new ServiceBusConnectionStringBuilder(connectionString));
+            var messageSender = new MessageSender(_serviceBusConnectionStringBuilder);
 
             Order order = GenerateOrder();
             Message orderMessage = order.WrapInServiceBusMessage(operationId, transactionId);

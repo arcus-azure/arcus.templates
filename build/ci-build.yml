@@ -23,6 +23,8 @@ resources:
 
 variables:
   - group: 'Build Configuration'
+  # We are re-using the Event Grid integration infrastructure
+  - group: 'Arcus Messaging - Integration Testing'
   - name: 'DotNet.Sdk.Version'
     value: '3.0.101'
   # Backwards compatible .NET SDK version
@@ -36,17 +38,7 @@ variables:
     value: 'http://localhost:$(Http.Port)/api/v1'
   - name: 'Arcus_Worker_HealthPort'
     value: '42065'
-  - name: 'Arcus_Worker_EventGrid_TopicUri'
-    value: 'https://arcustestingtopicname.westeurope-1.eventgrid.azure.net/api/events'
-  - name: 'Arcus_Worker_EventGrid_TopicName'
-    value: 'arcustestingtopicname' # We are re-using the Event Grid integration infrastructure
-  - name: 'Arcus_Worker_ServiceBus_QueueName'
-    value: 'arcustesting'
-  - name: 'Arcus_Worker_ServiceBus_TopicName'
-    value: 'arcustestingservicebustopicname'
   # 'Package.Version.ManualTrigger' is added as queue-time variable on build in Azure DevOps
-  # 'Arcus.ServiceBus.ConnectionStringWithQueue' is added as secret variable on build in Azure DevOps
-  # 'Arcus.TestInfra.EventGrid.Auth.Key' is added as secret variable on build in Azure DevOps
 
 stages:
   - stage: Build
@@ -117,9 +109,9 @@ stages:
                   Set-Content '/Arcus.Demo.ServiceBus.Queue/Program.cs'
               envVars: |
                 ARCUS_HEALTH_PORT=$(Arcus_Worker_HealthPort)
-                EVENTGRID_TOPIC_URI=$(Arcus_Worker_EventGrid_TopicUri)
-                EVENTGRID_AUTH_KEY=$(Arcus_Worker_EventGrid_AuthKey)
-                ARCUS_SERVICEBUS_CONNECTIONSTRING=$(Arcus_Worker_ServiceBus_ConnectionStringWithQueue)
+                EVENTGRID_TOPIC_URI=$(Arcus_Messaging_EventGrid_TopicEndpoint)
+                EVENTGRID_AUTH_KEY=$(Arcus_Messaging_EventGrid_Endpointkey)
+                ARCUS_SERVICEBUS_CONNECTIONSTRING=$(Arcus_Messaging_ServiceBus_ConnectionStringWithQueue)
           - template: test/run-integration-tests.yml@templates
             parameters:
               dotnetSdkVersion: '$(DotNet.Sdk.Version)'

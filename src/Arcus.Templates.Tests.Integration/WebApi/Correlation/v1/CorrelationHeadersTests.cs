@@ -34,8 +34,6 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Correlation.v1
             // Act
             using (HttpResponseMessage response = await project.Health.GetAsync())
             {
-                project.TearDownOptions = TearDownOptions.KeepProjectTemplateInstalled;
-
                 // Assert
                 Assert.NotNull(response);
                 Assert.DoesNotContain(response.Headers, h => h.Key == OperationHeaderName);

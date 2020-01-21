@@ -12,16 +12,22 @@ resources:
 
 variables:
   - group: 'Build Configuration'
-  # Always use fixed version for .NET Core SDK
+  # We are re-using the Event Grid integration infrastructure
+  - group: 'Arcus Messaging - Integration Testing'
   - name: 'DotNet.Sdk.Version'
-    value: '2.2.402'
+    value: '3.0.101'
+  # Backwards compatible .NET SDK version
+  - name: 'DotNet.Sdk.VersionBC'
+    value: '2.2.105'
   - name: 'Project'
-    value: 'Arcus.Template'
+    value: 'Arcus.Templates'
   - name: 'Http.Port'
     value: '5000'
   - name: 'Arcus_Api_BaseUrl'
     value: 'http://localhost:$(Http.Port)/api/v1'
-  # 'Package.Version' is added as queue-time variable on build in Azure DevOps
+  - name: 'Arcus_Worker_HealthPort'
+    value: '42065'
+  # 'Package.Version.ManualTrigger' is added as queue-time variable on build in Azure DevOps
 
 stages:
   - stage: Build
@@ -46,8 +52,8 @@ stages:
               targetPath: '$(Pipeline.Workspace)/templates'
               artifactName: Templates
 
-  - stage: IntegrationTests
-    displayName: Integration Tests
+  - stage: DockerIntegrationTests
+    displayName: Docker Integration Tests
     dependsOn: Build
     condition: succeeded()
     jobs:
@@ -62,7 +68,7 @@ stages:
               artifact: 'Templates'
               path: '$(Build.SourcesDirectory)/templates'
           - task: DotNetCoreInstaller@0
-            displayName: 'Import .NET Core SDK ($(DotNet.Sdk.Version)) in web API template'
+            displayName: 'Import .NET Core SDK ($(DotNet.Sdk.Version))'
             inputs:
               version: '$(DotNet.Sdk.Version)'
           - task: DotNetCoreCLI@2
@@ -71,30 +77,53 @@ stages:
               command: 'custom'
               custom: 'new'
               arguments: '-i "templates/*.nupkg"'
-          - task: DotNetCoreCLI@2
-            displayName: 'Create new project from template'
-            inputs:
-              command: 'custom'
-              custom: 'new'
-              arguments: 'arcus-webapi -n MyProject -o /MyProject'
-          - task: Docker@1
-            displayName: 'Build Docker image from newly created web API project from template'
-            inputs:
-              dockerFile: /MyProject/Dockerfile
-              imageName: 'myproject:$(Build.BuildId)'
-          - task: Docker@1
-            displayName: 'Run new web API project Docker image from template'
-            inputs:
-              command: 'Run an image'
-              imageName: 'myproject:$(Build.BuildId)'
-              containerName: 'myproject'
+          - template: 'templates/run-new-project-from-template.yml'
+            parameters:
+              projectName: 'Arcus.Demo.WebApi'
+              projectAlias: 'arcus-webapi'
               ports: '$(Http.Port):$(Http.Port)'
               envVars: |
                 ARCUS_HTTP_PORT=$(Http.Port)
+          - template: 'templates/run-new-project-from-template.yml'
+            parameters:
+              projectName: 'Arcus.Demo.ServiceBus.Queue'
+              projectAlias: 'arcus-servicebus-queue'
+              ports: '$(Arcus_Worker_HealthPort):$(Arcus_Worker_HealthPort)'
+              script: |
+                Get-Content '/Arcus.Demo.ServiceBus.Queue/Program.cs' | 
+                  Where-Object { $_ -notmatch '#error' -and $_ -notmatch 'secretProvider: null' -and $_ -notmatch 'EmptyMessagePump' } | 
+                  Set-Content '/Arcus.Demo.ServiceBus.Queue/Program.cs'
+              envVars: |
+                ARCUS_HEALTH_PORT=$(Arcus_Worker_HealthPort)
+                EVENTGRID_TOPIC_URI=$(Arcus_Messaging_EventGrid_TopicEndpoint)
+                EVENTGRID_AUTH_KEY=$(Arcus_Messaging_EventGrid_Endpointkey)
+                ARCUS_SERVICEBUS_CONNECTIONSTRING=$(Arcus_Messaging_ServiceBus_ConnectionStringWithQueue)
           - template: test/run-integration-tests.yml@templates
             parameters:
               dotnetSdkVersion: '$(DotNet.Sdk.Version)'
               projectName: '$(Project).Tests.Integration'
+              category: 'Docker'
+
+  - stage: SelfContainingIntegrationTests
+    displayName: Self-Containing Integration Tests
+    dependsOn: Build
+    condition: succeeded()
+    jobs:
+      - job: RunIntegrationTests
+        displayName: 'Run integration tests'
+        pool:
+          vmImage: 'ubuntu-16.04'
+        steps:
+          - task: UseDotNet@2
+            displayName: 'Import .NET Core SDK ($(DotNet.Sdk.VersionBC))'
+            inputs:
+              packageType: 'sdk'
+              version: '$(DotNet.Sdk.VersionBC)'
+          - template: test/run-integration-tests.yml@templates
+            parameters:
+              dotnetSdkVersion: '$(DotNet.Sdk.Version)'
+              projectName: '$(Project).Tests.Integration'
+              category: 'Integration'
 
   - stage: Release
     displayName: 'Release to NuGet.org'
@@ -143,10 +172,6 @@ stages:
               isPreRelease: true
               compareWith: 'lastRelease'
             condition: contains(variables['Build.BuildNumber'], '-')
-          - task: NuGetCommand@2
-            displayName: 'Push to NuGet.org'
-            inputs:
-              command: push
+          - template: 'nuget/publish-official-package.yml@templates'
+            parameters:
               packagesToPush: 'templates/*.nupkg'
-              nuGetFeedType: external
-              publishFeedCredentials: 'NuGet.org'

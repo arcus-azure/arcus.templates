@@ -331,3 +331,6 @@ ASALocalRun/
 
 # Open API documentation files
 **/*Open-Api.xml
+
+# Private application settings
+*.private.json

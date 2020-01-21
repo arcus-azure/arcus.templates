@@ -20,7 +20,6 @@ namespace Arcus.Templates.Tests.Integration.Fixture
 
         private readonly Process _process;
         private readonly DirectoryInfo _templateDirectory;
-        private readonly ITestOutputHelper _outputWriter;
 
         private bool _created, _started, _disposed;
 
@@ -32,7 +31,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
 
             _process = new Process();
             _templateDirectory = templateDirectory;
-            _outputWriter = outputWriter;
+            Logger = outputWriter;
 
             string tempDirectoryPath = Path.Combine(Path.GetTempPath(), $"{ProjectName}-{Guid.NewGuid()}");
             ProjectDirectory = new DirectoryInfo(tempDirectoryPath);
@@ -50,6 +49,11 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         protected DirectoryInfo ProjectDirectory { get; }
 
         /// <summary>
+        /// Gets the output logger to add telemetry information during the creation, startup and breakdown process.
+        /// </summary>
+        protected ITestOutputHelper Logger { get; }
+
+        /// <summary>
         /// Sets the options to control how the template project should be tear down during the <see cref="Dispose"/>.
         /// </summary>
         public TearDownOptions TearDownOptions { private get; set; } = TearDownOptions.None;
@@ -58,7 +62,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         /// Creates a new project from this template at the project directory with a given set of <paramref name="projectOptions"/>.
         /// </summary>
         /// <param name="projectOptions">The console arguments that controls the creation process of the to-be-created project.</param>
-        public void CreateNewProject(ProjectOptions projectOptions)
+        protected void CreateNewProject(ProjectOptions projectOptions)
         {
             if (_created)
             {
@@ -68,7 +72,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             _created = true;
 
             string shortName = GetTemplateShortNameAtTemplateFolder();
-            _outputWriter.WriteLine($"Creates new project from template {shortName} at {ProjectDirectory.FullName}");
+            Logger.WriteLine($"Creates new project from template {shortName} at {ProjectDirectory.FullName}");
 
             RunDotNet($"new -i {_templateDirectory.FullName}");
 
@@ -99,23 +103,111 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         }
 
         /// <summary>
+        /// Add a package to the created project from the template.
+        /// </summary>
+        /// <param name="packageName">The name of the package.</param>
+        /// <param name="packageVersion">The version of the package.</param>
+        protected void AddPackage(string packageName, string packageVersion)
+        {
+            Guard.NotNullOrWhitespace(packageName, nameof(packageName), "Cannot add a package with a blank name");
+            Guard.NotNullOrWhitespace(packageVersion, nameof(packageVersion), "Cannot add a package with a blank version");
+
+            RunDotNet($"add {Path.Combine(ProjectDirectory.FullName, ProjectName)}.csproj package {packageName} -v {packageVersion}");
+        }
+
+        /// <summary>
+        /// Updates a file in the target project folder, using the given <paramref name="updateContents"/> function.
+        /// </summary>
+        /// <param name="fileName">The target file name to change it's contents.</param>
+        /// <param name="updateContents">The function that changes the contents of the file.</param>
+        public void UpdateFileInProject(string fileName, Func<string, string> updateContents)
+        {
+            Guard.NotNull(fileName, nameof(fileName), "Requires a file name (no file path) to update the contents");
+            Guard.NotNull(updateContents, nameof(updateContents), "Requires a function to update the project file contents");
+
+            string destPath = Path.Combine(ProjectDirectory.FullName, fileName);
+            if (!File.Exists(destPath))
+            {
+                throw new FileNotFoundException($"No project file with the file name: '{fileName}' was found in the target project folder");
+            }
+
+            string content = File.ReadAllText(destPath);
+            content = updateContents(content);
+            File.WriteAllText(destPath, content);
+        }
+
+        /// <summary>
+        /// Adds a fixture file to the web API project by its type: <typeparamref name="TFixture"/>,
+        /// and replace tokens with values via the given <paramref name="replacements"/> dictionary.
+        /// </summary>
+        /// <typeparam name="TFixture">The fixture type to include in the template project.</typeparam>
+        /// <param name="replacements">The tokens and their corresponding values to replace in the fixture file.</param>
+        /// <param name="namespaces">The additional namespace the fixture file should be placed in.</param>
+        public void AddTypeAsFile<TFixture>(IDictionary<string, string> replacements = null, params string[] namespaces)
+        {
+            replacements = replacements ?? new Dictionary<string, string>();
+            namespaces = namespaces ?? new string[0];
+
+            string srcPath = FindFixtureTypeInDirectory(FixtureDirectory, typeof(TFixture));
+            string destPath = Path.Combine(ProjectDirectory.FullName, Path.Combine(namespaces), typeof(TFixture).Name + ".cs");
+            File.Copy(srcPath, destPath);
+
+            string key = typeof(TFixture).Namespace ?? throw new InvalidOperationException("Generic fixture requires a namespace");
+            string value = namespaces.Length == 0 ? ProjectName : $"{ProjectName}.{String.Join(".", namespaces)}";
+            replacements[key] = value;
+
+            string content = File.ReadAllText(destPath);
+            content = replacements.Aggregate(content, (txt, kv) => txt.Replace(kv.Key, kv.Value));
+            
+            File.WriteAllText(destPath, content);
+        }
+
+        private static string FindFixtureTypeInDirectory(DirectoryInfo fixtureDirectory, Type fixtureType)
+        {
+            string fixtureFileName = fixtureType.Name + ".cs";
+            IEnumerable<FileInfo> files = 
+                fixtureDirectory.EnumerateFiles(fixtureFileName, SearchOption.AllDirectories);
+
+            if (!files.Any())
+            {
+                throw new FileNotFoundException(
+                    $"Cannot find fixture with file name: {fixtureFileName} in directory: {fixtureDirectory.FullName}", 
+                    fixtureFileName);
+            }
+
+            if (files.Count() > 1)
+            {
+                throw new IOException(
+                    $"More than a single fixture matches the file name: {fixtureFileName} in directory: {fixtureDirectory.FullName}");
+            }
+
+            return files.First().FullName;
+        }
+
+        /// <summary>
         /// Run the created project from the template with a given set of <paramref name="commandArguments"/>.
         /// </summary>
         /// <param name="buildConfiguration">The build configuration on which the project should be build.</param>
+        /// <param name="targetFramework">The target framework in which the project should be build and run.</param>
         /// <param name="commandArguments">The command line arguments that control the startup of the project.</param>
-        protected void Run(BuildConfiguration buildConfiguration, string commandArguments)
+        protected void Run(BuildConfiguration buildConfiguration, TargetFramework targetFramework, params CommandArgument[] commandArguments)
         {
             if (_started)
             {
                 throw new InvalidOperationException("Test demo project from template is already started");
             }
 
+            commandArguments = commandArguments ?? new CommandArgument[0];
             RunDotNet($"build -c {buildConfiguration} {ProjectDirectory.FullName}");
 
-            string targetAssembly = Path.Combine(ProjectDirectory.FullName, $"bin/{buildConfiguration}/netcoreapp2.2/{ProjectName}.dll");
-            string runCommand = $"exec {targetAssembly} {commandArguments ?? String.Empty}";
+            string targetFrameworkIdentifier = GetTargetFrameworkIdentifier(targetFramework);
+            string targetAssembly = Path.Combine(ProjectDirectory.FullName, $"bin/{buildConfiguration}/{targetFrameworkIdentifier}/{ProjectName}.dll");
+            string exposedSecretsCommands = String.Join(" ", commandArguments.Select(arg => arg.ToExposedString()));
+            string runCommand = $"exec {targetAssembly} {exposedSecretsCommands}";
 
-            _outputWriter.WriteLine("> dotnet {0}", runCommand);
+            string hiddenSecretsCommands = String.Join(" ", commandArguments.Select(arg => arg.ToString()));
+            Logger.WriteLine("> dotnet {0}", $"exec {targetAssembly} {hiddenSecretsCommands}");
+
             var processInfo = new ProcessStartInfo("dotnet", runCommand)
             {
                 UseShellExecute = false,
@@ -127,6 +219,17 @@ namespace Arcus.Templates.Tests.Integration.Fixture
 
             _started = true;
             _process.Start();
+        }
+
+        private static string GetTargetFrameworkIdentifier(TargetFramework targetFramework)
+        {
+            switch (targetFramework)
+            {
+                case TargetFramework.NetCoreApp22: return "netcoreapp2.2";
+                case TargetFramework.NetCoreApp30: return "netcoreapp3.0";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(targetFramework), targetFramework, "Unknown target framework specified for template project");
+            }
         }
 
         /// <summary>
@@ -164,17 +267,17 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         {
             if ((TearDownOptions & TearDownOptions.KeepProjectDirectory) == TearDownOptions.KeepProjectDirectory)
             {
-                _outputWriter.WriteLine("Keep project directory at: {0}", ProjectDirectory.FullName);
+                Logger.WriteLine("Keep project directory at: {0}", ProjectDirectory.FullName);
             }
 
             if ((TearDownOptions & TearDownOptions.KeepProjectRunning) == TearDownOptions.KeepProjectRunning)
             {
-                _outputWriter.WriteLine("Keep project running");
+                Logger.WriteLine("Keep project running");
             }
 
             if ((TearDownOptions & TearDownOptions.KeepProjectTemplateInstalled) == TearDownOptions.KeepProjectTemplateInstalled)
             {
-                _outputWriter.WriteLine("Keep project template template installed");
+                Logger.WriteLine("Keep project template template installed");
             }
         }
 
@@ -186,7 +289,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         {
             if (!_process.HasExited)
             {
-                _process.Kill();
+                _process.Kill(entireProcessTree: true);
             }
 
             _process.Dispose();
@@ -201,7 +304,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         {
             try
             {
-                _outputWriter.WriteLine("> dotnet {0}", command);
+                Logger.WriteLine("> dotnet {0}", command);
             }
             catch
             {
@@ -210,6 +313,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
 
             var startInfo = new ProcessStartInfo("dotnet", command)
             {
+                UseShellExecute = false,
                 CreateNoWindow = true,
             };
 
@@ -219,7 +323,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
 
                 if (!process.HasExited)
                 {
-                    process.Kill();
+                    process.Kill(entireProcessTree: true);
                 }
             }
         }

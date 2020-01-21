@@ -22,7 +22,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Primitives;
 #endif
-#if correlation
+#if ExcludeCorrelation
+#else
 using Arcus.WebApi.Correlation;
 #endif
 
@@ -65,7 +66,8 @@ namespace Arcus.Templates.WebApi
             });
 
             services.AddHealthChecks();
-#if correlation
+#if ExcludeCorrelation
+#else
             services.AddCorrelation();
 #endif
             
@@ -109,7 +111,8 @@ namespace Arcus.Templates.WebApi
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             app.UseMiddleware<Arcus.WebApi.Logging.ExceptionHandlingMiddleware>();
-#if correlation
+#if ExcludeCorrelation
+#else
             app.UseCorrelation();
 #endif
 

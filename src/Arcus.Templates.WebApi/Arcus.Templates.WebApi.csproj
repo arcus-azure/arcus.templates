@@ -38,6 +38,7 @@
 
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);</DefineConstants>
+    <ExcludeCorrelation>false</ExcludeCorrelation>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.7.12" />
@@ -56,7 +57,7 @@
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.2.0" />
-    <PackageReference Include="Arcus.WebApi.Correlation" Version="20200121.10.0-preview" Condition="'$(correlation)' == 'true'" />
+    <PackageReference Include="Arcus.WebApi.Correlation" Version="20200121.10.0-preview" Condition="'$(ExcludeCorrelation)' == 'false'" />
     <PackageReference Include="Arcus.WebApi.Logging" Version="0.3.0" />
     <PackageReference Include="Arcus.WebApi.Security.Authentication" Version="0.3.0" Condition="'$(Auth)' == 'true'" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="4.0.1" />

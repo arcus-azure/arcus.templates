@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Arcus.Templates.Tests.Integration.Fixture;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -23,13 +24,30 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Correlation.v1
         }
 
         [Fact]
-        public async Task GetHealth_WithCorrelationProjectOption_ReturnsOkWithCorrelationHeaders()
+        public async Task GetHealth_WithoutCorrelationProjectOption_ReturnsOkWithoutCorrelationHeaders()
         {
             // Arrange
             var optionsWithCorrelation =
-                new WebApiProjectOptions().WithCorrelation();
+                new WebApiProjectOptions().WithExcludeCorrelation();
 
             using (var project = await WebApiProject.StartNewAsync(optionsWithCorrelation, _outputWriter))
+            // Act
+            using (HttpResponseMessage response = await project.Health.GetAsync())
+            {
+                project.TearDownOptions = TearDownOptions.KeepProjectTemplateInstalled;
+
+                // Assert
+                Assert.NotNull(response);
+                Assert.DoesNotContain(response.Headers, h => h.Key == OperationHeaderName);
+                Assert.DoesNotContain(response.Headers, h => h.Key == TransactionHeaderName);
+            }
+        }
+
+        [Fact]
+        public async Task GetHealth_OutOfTheBox_ReturnsOkWithCorrelationHeaders()
+        {
+            // Arrange
+            using (var project = await WebApiProject.StartNewAsync(_outputWriter))
             // Act
             using (HttpResponseMessage response = await project.Health.GetAsync())
             {
@@ -41,29 +59,11 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Correlation.v1
         }
 
         [Fact]
-        public async Task GetHealth_WithoutCorrelationProjectOption_ReturnsOkWithoutCorrelationHeaders()
-        {
-            // Arrange
-            using (var project = await WebApiProject.StartNewAsync(_outputWriter))
-            // Act
-            using (HttpResponseMessage response = await project.Health.GetAsync())
-            {
-                // Assert
-                Assert.NotNull(response);
-                Assert.DoesNotContain(response.Headers, h => h.Key == OperationHeaderName);
-                Assert.DoesNotContain(response.Headers, h => h.Key == TransactionHeaderName);
-            }
-        }
-
-        [Fact]
-        public async Task GetHealth_WithCorrelationProjectOption_AndTransactionIdRequestHeader_ReturnsOkWithCorrelationHeadersAndSameTransactionId()
+        public async Task GetHealth_OutOfTheBox_AndTransactionIdRequestHeader_ReturnsOkWithCorrelationHeadersAndSameTransactionId()
         {
             // Arrange
             var expectedTransactionId = $"transaction-{Guid.NewGuid():N}";
-            var projectWithCorrelation =
-                new WebApiProjectOptions().WithCorrelation();
-
-            using (var project = await WebApiProject.StartNewAsync(projectWithCorrelation, _outputWriter))
+            using (var project = await WebApiProject.StartNewAsync(_outputWriter))
             {
                 // Act
                 using (HttpResponseMessage response = 

@@ -43,6 +43,16 @@ namespace Arcus.Templates.Tests.Integration.WebApi
         }
 
         /// <summary>
+        /// Adds the project option to add the correlation capability to the web API project.
+        /// </summary>
+        public WebApiProjectOptions WithCorrelation()
+        {
+            ProjectOptions optionsWithCorrelation = AddOption("--correlation");
+
+            return new WebApiProjectOptions(optionsWithCorrelation);
+        }
+
+        /// <summary>
         /// Adds a shared access key authentication to the web API project.
         /// </summary>
         /// <param name="headerName">The name of the request header which value must match the stored secret.</param>

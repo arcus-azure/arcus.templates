@@ -22,6 +22,10 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Primitives;
 #endif
+#if ExcludeCorrelation
+#else
+using Arcus.WebApi.Correlation;
+#endif
 
 namespace Arcus.Templates.WebApi
 {
@@ -62,6 +66,10 @@ namespace Arcus.Templates.WebApi
             });
 
             services.AddHealthChecks();
+#if ExcludeCorrelation
+#else
+            services.AddCorrelation();
+#endif
             
 //[#if DEBUG]
             var openApiInformation = new Info
@@ -103,6 +111,10 @@ namespace Arcus.Templates.WebApi
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             app.UseMiddleware<Arcus.WebApi.Logging.ExceptionHandlingMiddleware>();
+#if ExcludeCorrelation
+#else
+            app.UseCorrelation();
+#endif
 
             #warning Please configure application with HTTPS transport layer security
 

@@ -105,6 +105,16 @@
       "datatype": "bool",
       "defaultValue": "false",
       "description": "Include a 'appsettings.json' file to the web API project"
-    }
+    },
+    "exclude-correlation": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false",
+      "description": "Exclude the capability to correlate between HTTP requests/responses"
+    },
+    "ExcludeCorrelation": {
+      "type": "computed",
+      "value": "exclude-correlation"
+    } 
   }
 }

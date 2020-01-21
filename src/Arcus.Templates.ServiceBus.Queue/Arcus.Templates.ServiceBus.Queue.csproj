@@ -47,16 +47,12 @@
   <!--#endif-->
 
   <ItemGroup>
-    <PackageReference Include="Arcus.Messaging.Health" Version="20191217.9.0-preview" />
-    <PackageReference Include="Arcus.Messaging.Pumps.ServiceBus" Version="20191218.0.0-PR-32" />
+    <PackageReference Include="Arcus.Messaging.Health" Version="0.1.0-preview-2" />
+    <PackageReference Include="Arcus.Messaging.Pumps.ServiceBus" Version="0.1.0-preview-2" />
     <PackageReference Include="Guard.NET" Version="1.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.5" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
-
-  <PropertyGroup>
-    <RestoreSources>$(RestoreSources);https://api.nuget.org/v3/index.json;https://www.myget.org/F/arcus/api/v3/index.json</RestoreSources>
-  </PropertyGroup>
 </Project>

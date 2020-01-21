@@ -28,7 +28,7 @@ namespace Arcus.Templates.ServiceBus.Queue
                     services.AddSingleton<ISecretProvider>(serviceProvider => new CachedSecretProvider(secretProvider: null));
 
                     services.AddServiceBusQueueMessagePump<EmptyMessagePump>(secretProvider => secretProvider.GetRawSecretAsync("ARCUS_SERVICEBUS_CONNECTIONSTRING"));
-                    services.AddTcpHealthProbes();
+                    services.AddTcpHealthProbes("ARCUS_HEALTH_PORT");
                 });
     }
 }

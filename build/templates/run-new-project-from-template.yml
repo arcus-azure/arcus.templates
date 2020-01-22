@@ -1,0 +1,54 @@
+parameters:
+  projectName: ''
+  projectAlias: ''
+  ports: ''
+  script: ''
+  envVars: {}
+
+steps:
+  - bash: |
+      if [ -z "$PROJECT_NAME" ]; then
+        echo "##vso[task.logissue type=error;]Missing template parameter \"projectName\""
+        echo "##vso[task.complete result=Failed;]"
+      fi
+      if [ -z "$PROJECT_ALIAS" ]; then
+        echo "##vso[task.logissue type=error;]Missing template parameter \"projectAlias\""
+        echo "##vso[task.complete result=Failed;]"
+      fi
+      if [ -z "$PORTS" ]; then
+        echo "##vso[task.logissue type=error;]Missing template parameter \"ports\""
+        echo "##vso[task.complete result=Failed;]"
+      fi
+      if [ -z "$ENV_VARS" ]; then
+        echo "##vso[task.logissue type=error;]Missing template parameter \"envVars\""
+        echo "##vso[task.complete result=Failed;]"
+      fi
+    env:
+      PROJECT_NAME: ${{ parameters.projectName }}
+      PROJECT_ALIAS: ${{ parameters.projectAlias }}
+      PORTS: ${{ parameters.ports }}
+      ENV_VARS: ${{ parameters.envVars }}
+  - task: DotNetCoreCLI@2
+    displayName: 'Create new project from template'
+    inputs:
+      command: 'custom'
+      custom: 'new'
+      arguments: '${{ parameters.projectAlias }} -n ${{ parameters.projectName }} -o /${{ parameters.projectName }}'
+  - task: PowerShell@2
+    displayName: 'Run additional custom PS script'
+    inputs:
+      targetType: inline
+      script: '${{ parameters.script }}'
+  - task: Docker@1
+    displayName: 'Build Docker image from newly created ${{ parameters.projectName }} project from template'
+    inputs:
+      dockerFile: /${{ parameters.projectName }}/Dockerfile
+      imageName: '${{ parameters.projectName }}:$(Build.BuildId)'
+  - task: Docker@1
+    displayName: 'Run new ${{ parameters.projectName }} project Docker image from template'
+    inputs:
+      command: 'Run an image'
+      imageName: '${{ parameters.projectName }}:$(Build.BuildId)'
+      containerName: '${{ parameters.projectName }}'
+      ports: '${{ parameters.ports }}'
+      envVars: ${{ parameters.envVars }}

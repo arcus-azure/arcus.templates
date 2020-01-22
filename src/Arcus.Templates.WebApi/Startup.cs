@@ -6,16 +6,28 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json.Converters;
 #if Serilog
 using Serilog;
 #endif
 using Swashbuckle.AspNetCore.Swagger;
-#if Auth
+#if SharedAccessKeyAuth
 using Arcus.Security.Secrets.Core.Caching;
 using Arcus.Security.Secrets.Core.Interfaces;
-#endif
-#if SharedAccessKeyAuth
 using Arcus.WebApi.Security.Authentication.SharedAccessKey;
+#endif
+#if CertificateAuth
+using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks;
+using Arcus.WebApi.Security.Authentication.Certificates;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Primitives;
+#endif
+#if ExcludeCorrelation
+#else
+using Arcus.WebApi.Correlation;
 #endif
 
 namespace Arcus.Templates.WebApi
@@ -26,10 +38,17 @@ namespace Arcus.Templates.WebApi
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-#if Auth
-            #warning Please provide a valid secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secrets/consume-from-key-vault
-            services.AddScoped<ICachedSecretProvider>(serviceProvider => new CachedSecretProvider(secretProvider: null));
-
+#if SharedAccessKeyAuth
+            #error Please provide a valid secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secrets/consume-from-key-vault
+            services.AddSingleton<ICachedSecretProvider>(serviceProvider => new CachedSecretProvider(secretProvider: null));
+#endif
+#if CertificateAuth
+            var certificateAuthenticationConfig = 
+                new CertificateAuthenticationConfigBuilder()
+                    .WithSubject(X509ValidationLocation.Configuration, "CertificateSubject")
+                    .Build();
+    
+            services.AddScoped(serviceProvider => new CertificateAuthenticationValidator(certificateAuthenticationConfig));
 #endif
             services.AddMvc(options => 
             {
@@ -37,16 +56,24 @@ namespace Arcus.Templates.WebApi
                 options.RespectBrowserAcceptHeader = true;
                 
                 RestrictToJsonContentType(options);
+                AddEnumAsStringRepresentation(options);
 
-#if SharedAccessKeyAuth                
+#if SharedAccessKeyAuth
                 #warning Please provide a valid request header name and secret name to the shared access filter
                 options.Filters.Add(new SharedAccessKeyAuthenticationFilter("YOUR REQUEST HEADER NAME", "YOUR SECRET NAME"));
+#endif
+#if CertificateAuth
+                options.Filters.Add(new CertificateAuthenticationFilter());
 #endif
             });
 
             services.AddHealthChecks();
+#if ExcludeCorrelation
+#else
+            services.AddCorrelation();
+#endif
             
-//#if DEBUG
+//[#if DEBUG]
             var openApiInformation = new Info
             {
                 Title = "Arcus.Templates.WebApi",
@@ -58,7 +85,7 @@ namespace Arcus.Templates.WebApi
                 swaggerGenerationOptions.SwaggerDoc("v1", openApiInformation);
                 swaggerGenerationOptions.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "Arcus.Templates.WebApi.Open-Api.xml"));
             });
-//#endif
+//[#endif]
         }
 
         private static void RestrictToJsonContentType(MvcOptions options)
@@ -68,14 +95,29 @@ namespace Arcus.Templates.WebApi
             {
                 options.InputFormatters.Remove(inputFormatter);
             }
+
+            // Removing for text/plain, see https://docs.microsoft.com/en-us/aspnet/core/web-api/advanced/formatting?view=aspnetcore-3.0#special-case-formatters
+            options.OutputFormatters.RemoveType<StringOutputFormatter>();
+        }
+
+        private static void AddEnumAsStringRepresentation(MvcOptions options)
+        {
+            var onlyJsonOutputFormatters = options.OutputFormatters.OfType<JsonOutputFormatter>();
+            foreach (JsonOutputFormatter outputFormatter in onlyJsonOutputFormatters)
+            {
+                outputFormatter.PublicSerializerSettings.Converters.Add(new StringEnumConverter());
+            }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             app.UseMiddleware<Arcus.WebApi.Logging.ExceptionHandlingMiddleware>();
+#if ExcludeCorrelation
+#else
+            app.UseCorrelation();
+#endif
 #if Serilog
-
             app.UseSerilogRequestLogging();
 #endif
 
@@ -86,14 +128,14 @@ namespace Arcus.Templates.WebApi
 #endif
             app.UseMvc();
 
-//#if DEBUG
+//[#if DEBUG]
             app.UseSwagger();
             app.UseSwaggerUI(swaggerUiOptions =>
             {
                 swaggerUiOptions.SwaggerEndpoint("v1/swagger.json", "Arcus.Templates.WebApi");
                 swaggerUiOptions.DocumentTitle = "Arcus.Templates.WebApi";
             });
-//#endif
+//[#endif]
         }
     }
 }

@@ -16,7 +16,7 @@ First, install the template from NuGet:
 When installed, the template can be created with shortname: `arcus-webapi`:
 
 ```shell
-> dotnet new arcus-webapi -n Arcus.Demo.WebAPI
+> dotnet new arcus-webapi --name Arcus.Demo.WebAPI
 ```
 
 
@@ -25,14 +25,21 @@ When installed, the template can be created with shortname: `arcus-webapi`:
 Creates a starter web API project with by default configured:
 * [Exception middleware](https://webapi.arcus-azure.net/features/logging) to log unhandled exceptions thrown during request processing.
 * Content negotiation that only supports `application/json`.
-* Swagger docs generation and UI only available in PROD environment.
-* [Health checks](https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-2.2) (_middleware only_) and health endpoint (_based on _[info gained via health checks](https://www.codit.eu/blog/documenting-asp-net-core-health-checks-with-openapi/)_).
+* Swagger docs generation and UI (only available locally).
+* Provides basic health endpoint with [ASP.NET Core health checks](https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-2.2) with [OpenAPI support](https://www.codit.eu/blog/documenting-asp-net-core-health-checks-with-openapi/).
 * Docker building file.
 * Default console logger.
 
 ## Configuration
 
 And additional features available with options:
-* `-A|--Authentication` (default `None`)
+* `-au|--authentication` (default `None`)
   * `SharedAccessKey`: adds [shared access key authentication](https://webapi.arcus-azure.net/features/security/auth/shared-access-key) mechanism to the API project
+  * `Certificate`: adds [client certificate authentication](https://webapi.arcus-azure.net/features/security/auth/certificate) mechanism to the API project
   * `None`: no authentication configured on the API project.
+* `-ec|--exclude-correlation` (default `false`): excludes the [capability to correlate](https://webapi.arcus-azure.net/features/correlation) between HTTP requests/responses.
+* `-ia|--include-appsettings` (default `false`): includes a `appsettings.json` file to the web API project.
+
+## Security
+As part of this template the following HTTP header(s) are removed for security sake:
+* `Server` header * Provides information concerning the Web API runtime

@@ -1,17 +1,19 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
     <IsPackable>false</IsPackable>
+    <EnableDefaultContentItems>false</EnableDefaultContentItems>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="appsettings.json" />
     <None Remove="appsettings.local.json" />
+    <None Remove="appsettings.private.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="appsettings.local.json">
+    <Content Include="appsettings.local.json" Condition="'$(Configuration)' == 'Debug'">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="appsettings.json">
@@ -24,12 +26,21 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="Arcus.EventGrid.Testing" Version="2.3.0" />
+    <PackageReference Include="Arcus.EventGrid.Publishing" Version="3.0.0-preview-1" />
+    <PackageReference Include="Arcus.WebApi.Security.Authentication" Version="0.3.0" />
+    <PackageReference Include="Arcus.Messaging.Pumps.ServiceBus" Version="0.1.0-preview-2" />
+    <PackageReference Include="Arcus.EventGrid.Testing" Version="3.0.0-preview-1" />
+    <PackageReference Include="Bogus" Version="28.4.3" />
+    <PackageReference Include="BouncyCastle" Version="1.8.5" />
+    <PackageReference Include="BouncyCastle.NetCoreSdk" Version="1.9.0.1" />
     <PackageReference Include="Flurl.Http" Version="2.4.2" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.5.0" />
-    <PackageReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="xunit" Version="2.4.0" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
+    <PackageReference Include="Polly" Version="7.1.1" />
+    <PackageReference Include="System.Web.Http" Version="4.0.0" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
-
 </Project>

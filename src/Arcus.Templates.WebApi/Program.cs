@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -53,21 +56,24 @@ namespace Arcus.Templates.WebApi
             IConfigurationRoot configuration =
                 new ConfigurationBuilder()
                     .AddCommandLine(args)
+#if AppSettings
+                    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+#endif
                     .AddEnvironmentVariables()
                     .Build();
 
             string httpEndpointUrl = "http://+:" + configuration["ARCUS_HTTP_PORT"];
             IWebHostBuilder webHostBuilder =
                 WebHost.CreateDefaultBuilder(args)
+                       .ConfigureKestrel(kestrelServerOptions => kestrelServerOptions.AddServerHeader = false)
                        .UseConfiguration(configuration)
                        .UseUrls(httpEndpointUrl)
 #if DefaultLog
                        .ConfigureLogging(logging => logging.AddConsole())
-                       .UseStartup<Startup>();
 #elif Serilog
-                        .UseStartup<Startup>()
-                        .UseSerilog();
+                       .UseSerilog();
 #endif
+                       .UseStartup<Startup>();
 
             return webHostBuilder;
         }

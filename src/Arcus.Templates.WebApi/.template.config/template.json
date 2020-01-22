@@ -25,6 +25,14 @@
         "**/*.lock.json",
         "**/launchSettings.json",
         "*Open-Api.xml"
+      ],
+      "modifiers": [
+        {
+          "condition": "!(AppSettings)",
+          "exclude": [
+            "appsettings*.json"
+          ]
+        }
       ]
     }
   ],
@@ -42,7 +50,7 @@
       "parameters": {
         "value": "#if DEBUG"
       },
-      "replaces": "//#if DEBUG"
+      "replaces": "//[#if DEBUG]"
     },
     "EndIf": {
       "type": "generated",
@@ -50,15 +58,19 @@
       "parameters": {
         "value": "#endif"
       },
-      "replaces": "//#endif"
+      "replaces": "//[#endif]"
     },
-    "Authentication": {
+    "authentication": {
       "type": "parameter",
       "datatype": "choice",
       "choices": [
         {
           "choice": "SharedAccessKey",
           "description": "Adds a shared access key authentication mechanism to the web API project"
+        },
+        {
+          "choice": "Certificate",
+          "description": "Adds a client certificate authentication mechanism to the web API project"
         },
         {
           "choice": "None",
@@ -70,15 +82,39 @@
     },
     "NoneAuth": {
       "type": "computed",
-      "value": "(Authentication == \"None\")"
+      "value": "(authentication == \"None\")"
     },
     "Auth": {
       "type": "computed",
-      "value": "(Authentication != \"None\")"
+      "value": "(authentication != \"None\")"
     },
     "SharedAccessKeyAuth": {
       "type": "computed",
-      "value": "(Authentication == \"SharedAccessKey\")"
+      "value": "(authentication == \"SharedAccessKey\")"
+    },
+    "CertificateAuth": {
+      "type": "computed",
+      "value": "(authentication == \"Certificate\")"
+    },
+    "AppSettings": {
+      "type": "computed",
+      "value": "include-appsettings || CertificateAuth"
+    },
+    "include-appsettings": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false",
+      "description": "Include a 'appsettings.json' file to the web API project"
+    },
+    "exclude-correlation": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false",
+      "description": "Exclude the capability to correlate between HTTP requests/responses"
+    },
+    "ExcludeCorrelation": {
+      "type": "computed",
+      "value": "exclude-correlation"
     },
     "Logging": {
       "type": "parameter",
@@ -90,7 +126,8 @@
         },
         {
           "choice": "Default",
-          "description": "No extra logging mechanism except for the default console logging will be added to the web API project"
+          "description":
+            "No extra logging mechanism except for the default console logging will be added to the web API project"
         }
       ],
       "defaultValue": "Default",
@@ -103,6 +140,6 @@
     "Serilog": {
       "type": "computed",
       "value": "(Logging == \"Serilog\")"
-    } 
+    }
   }
 }

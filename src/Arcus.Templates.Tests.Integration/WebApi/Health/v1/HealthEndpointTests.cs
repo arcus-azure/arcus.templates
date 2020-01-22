@@ -3,32 +3,38 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.Fixture;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Newtonsoft.Json;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Arcus.Templates.Tests.Integration.Endpoints.v1
+namespace Arcus.Templates.Tests.Integration.WebApi.Health.v1
 {
-    [Collection("Integration")]
+    [Collection(TestCollections.Integration)]
+    [Trait("Category", TestTraits.Integration)]
     public class HealthEndpointTests
     {
         private readonly TestConfig _configuration;
-        private readonly HealthEndpointService _healthService;
+        private readonly ITestOutputHelper _outputWriter;
 
         public HealthEndpointTests(ITestOutputHelper outputWriter)
         {
             _configuration = TestConfig.Create();
-            _healthService = new HealthEndpointService(_configuration, outputWriter);
+            _outputWriter = outputWriter;
         }
 
         [Fact]
         public async Task Health_Get_Succeeds()
         {
+            // Arrange
+            using (WebApiProject project = await WebApiProject.StartNewAsync(_configuration, _outputWriter))
             // Act
-            using (HttpResponseMessage response = await _healthService.GetAsync())
+            using (HttpResponseMessage response = await project.Health.GetAsync())
             {
                 // Assert
                 Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-                var healthReport = await response.Content.ReadAsAsync<HealthReport>();
+                
+                string healthReportJson = await response.Content.ReadAsStringAsync();
+                var healthReport = JsonConvert.DeserializeObject<HealthReport>(healthReportJson);
                 Assert.NotNull(healthReport);
                 Assert.Equal(HealthStatus.Healthy, healthReport.Status);
             }

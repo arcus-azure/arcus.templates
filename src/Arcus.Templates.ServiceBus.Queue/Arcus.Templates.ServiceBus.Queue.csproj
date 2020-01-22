@@ -1,0 +1,58 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <!--#if (AuthoringMode)-->
+    <Authors>Arcus</Authors>
+    <Company>Arcus</Company>
+    <RepositoryType>Git</RepositoryType>
+    <Description>Provide a template to easily build workers on a Azure Service Bus Queue.</Description>
+    <IsPackable>true</IsPackable>
+    <PackageId>Arcus.Templates.ServiceBus.Queue</PackageId>
+    <Title>Template for worker Azure Service Bus Queue project</Title>
+    <PackageType>Template</PackageType>
+    <PackageTags>Worker;Azure;Azure;ServiceBus;Queue</PackageTags>
+    <Copyright>Copyright (c) Arcus</Copyright>
+    <PackageLicenseUrl>https://github.com/arcus-azure/arcus.templates/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/arcus-azure/arcus.templates</PackageProjectUrl>
+    <PackageTags>Worker;Azure;ServiceBus;Queue</PackageTags>
+    <RepositoryUrl>https://github.com/arcus-azure/arcus.templates</RepositoryUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/arcus-azure/arcus/master/media/arcus.png</PackageIconUrl>
+    <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <IncludeContentInPack>true</IncludeContentInPack>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <ContentTargetFolders>content</ContentTargetFolders>
+    <EnableDefaultContentItems>false</EnableDefaultContentItems>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerComposeProjectPath>..\Arcus.Templates.Orchestrator.dcproj</DockerComposeProjectPath>
+    <!--#endif-->
+  </PropertyGroup>
+
+  <!--#if (AuthoringMode)-->
+  <ItemGroup>
+    <Content Include="**\*" Exclude="**\bin\**\*;**\obj\**\*;**\.vs\**\*;**\launchSettings.json" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Dockerfile" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.7.12" />
+  </ItemGroup>
+  <!--#endif-->
+
+  <ItemGroup>
+    <PackageReference Include="Arcus.Messaging.Health" Version="0.1.0-preview-2" />
+    <PackageReference Include="Arcus.Messaging.Pumps.ServiceBus" Version="0.1.0-preview-2" />
+    <PackageReference Include="Guard.NET" Version="1.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.5" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  </ItemGroup>
+</Project>

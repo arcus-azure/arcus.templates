@@ -25,6 +25,7 @@
     <IncludeContentInPack>true</IncludeContentInPack>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <ContentTargetFolders>content</ContentTargetFolders>
+    <EnableDefaultContentItems>false</EnableDefaultContentItems>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerComposeProjectPath>..\Arcus.Templates.Orchestrator.dcproj</DockerComposeProjectPath>
     <!--#endif-->
@@ -36,29 +37,35 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <DefineConstants>$(DefineConstants);NoneAuth;Auth;SharedAccessKeyAuth;DefaultLog;Serilog</DefineConstants>
-    <NoneAuth>false</NoneAuth>
-    <Auth>true</Auth>
-    <SharedAccessKeyAuth>true</SharedAccessKeyAuth>
-    <DefaultLog>false</DefaultLog>
-    <Serilog>true</Serilog>
+    <DefineConstants>$(DefineConstants);</DefineConstants>
+    <ExcludeCorrelation>false</ExcludeCorrelation>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.7.12" />
   </ItemGroup>
   <!--#endif-->
+
+  <ItemGroup Condition="'$(AppSettings)' == 'true'">
+    <Content Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Guard.NET" Version="1.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.2.0" />
-    <PackageReference Include="Arcus.WebApi.Logging" Version="0.2" />
-    <PackageReference Include="Arcus.WebApi.Security.Authentication" Version="0.2" Condition="'$(Auth)' == 'true'" />
+    <PackageReference Include="Arcus.WebApi.Correlation" Version="20200121.10.0-preview" Condition="'$(ExcludeCorrelation)' == 'false'" />
+    <PackageReference Include="Arcus.WebApi.Logging" Version="0.3.0" />
+    <PackageReference Include="Arcus.WebApi.Security.Authentication" Version="0.3.0" Condition="'$(Auth)' == 'true'" />
     <PackageReference Include="Serilog.AspNetCore" Version="3.0.0" Condition="'$(Serilog)' == 'true'" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="4.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="4.0.1" />
   </ItemGroup>
 
+  <PropertyGroup>	
+    <RestoreSources>$(RestoreSources);https://api.nuget.org/v3/index.json;https://www.myget.org/F/arcus/api/v3/index.json</RestoreSources>	
+  </PropertyGroup>
 </Project>

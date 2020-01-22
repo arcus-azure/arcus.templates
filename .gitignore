@@ -328,3 +328,9 @@ ASALocalRun/
 
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
+
+# Open API documentation files
+**/*Open-Api.xml
+
+# Private application settings
+*.private.json

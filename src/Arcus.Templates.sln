@@ -15,12 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arcus.Templates.ServiceBus.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arcus.Templates.ServiceBus.Topic", "Arcus.Templates.ServiceBus.Topic\Arcus.Templates.ServiceBus.Topic.csproj", "{F4200B87-E88B-4DF3-8385-CAF357956D29}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Arcus.Templates.ServiceBus", "Arcus.Templates.ServiceBus\Arcus.Templates.ServiceBus.shproj", "{BF11423E-B32A-4632-9255-DDE5E1DCF38E}"
-EndProject
 Global
-	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		Arcus.Templates.ServiceBus\Arcus.Templates.ServiceBus.projitems*{bf11423e-b32a-4632-9255-dde5e1dcf38e}*SharedItemsImports = 13
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU

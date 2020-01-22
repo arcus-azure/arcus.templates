@@ -60,9 +60,22 @@ namespace Arcus.Templates.Tests.Integration.Worker.MessagePump
         }
 
         /// <summary>
-        /// Simulate the message processing of the message pump.
+        /// Simulate the message processing of the message pump using the Service Bus Queue.
         /// </summary>
-        public async Task SimulateMessageProcessingAsync()
+        public async Task SimulateMessageProcessingWithQueueAsync()
+        {
+            await SimulateMessageProcessingAsync("Arcus:Worker:ServiceBus:ConnectionStringWithQueue");
+        }
+
+        /// <summary>
+        /// Simulate the message processing of the message pump using the Service Bus Topic.
+        /// </summary>
+        public async Task SimulateMessageProcessingWithTopicAsync()
+        {
+            await SimulateMessageProcessingAsync("Arcus:Worker:ServiceBus:ConnectionStringWithTopic");
+        }
+
+        private async Task SimulateMessageProcessingAsync(string connectionStringConfigurationKey)
         {
             if (_serviceBusEventConsumerHost is null)
             {
@@ -72,8 +85,8 @@ namespace Arcus.Templates.Tests.Integration.Worker.MessagePump
 
             var operationId = Guid.NewGuid().ToString();
             var transactionId = Guid.NewGuid().ToString();
-            
-            var connectionString = _configuration.GetValue<string>("Arcus:Worker:ServiceBus:ConnectionStringWithQueue");
+
+            var connectionString = _configuration.GetValue<string>(connectionStringConfigurationKey);
             var serviceBusConnectionStringBuilder = new ServiceBusConnectionStringBuilder(connectionString);
             var messageSender = new MessageSender(serviceBusConnectionStringBuilder);
 

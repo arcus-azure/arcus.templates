@@ -66,11 +66,19 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         }
 
         /// <summary>
-        /// Gets the project directory of the ServiceBus Queue worker project.
+        /// Gets the project directory of the Service Bus Queue worker project.
         /// </summary>
         public DirectoryInfo GetServiceBusQueueProjectDirectory()
         {
             return PathCombineWithSourcesDirectory("Arcus.Templates.ServiceBus.Queue");
+        }
+
+        /// <summary>
+        /// Gets the project directory of the Service Bus Topic worker project.
+        /// </summary>
+        public DirectoryInfo GetServiceBusTopicProjectDirectory()
+        {
+            return PathCombineWithSourcesDirectory("Arcus.Templates.ServiceBus.Topic");
         }
 
         /// <summary>

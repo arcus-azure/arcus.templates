@@ -16,27 +16,31 @@ using Xunit.Abstractions;
 
 namespace Arcus.Templates.Tests.Integration.Worker
 {
+    public enum ServiceBusEntity { Queue, Topic }
+
     /// <summary>
     /// Project template to create Azure ServiceBus Queue worker projects.
     /// </summary>
     public class ServiceBusWorkerProject : TemplateProject, IAsyncDisposable
     {
+        private readonly ServiceBusEntity _entity;
         private readonly int _healthPort;
         private readonly TestConfig _configuration;
 
-        private ServiceBusWorkerProject(
-            int healthPort,
+        protected ServiceBusWorkerProject(
+            ServiceBusEntity entity,
             TestConfig configuration,
-            DirectoryInfo templateDirectory,
-            DirectoryInfo fixtureDirectory,
             ITestOutputHelper outputWriter)
-            : base(templateDirectory, fixtureDirectory, outputWriter)
+            : base(configuration.GetServiceBusProjectDirectory(entity), 
+                   configuration.GetFixtureProjectDirectory(), 
+                   outputWriter)
         {
-            _healthPort = healthPort;
+            _entity = entity;
+            _healthPort = configuration.GenerateWorkerHealthPort();
             _configuration = configuration;
 
             Health = new HealthEndpointService(_healthPort, outputWriter);
-            MessagePump = new MessagePumpService(configuration, outputWriter);
+            MessagePump = new MessagePumpService(entity, configuration, outputWriter);
         }
 
         /// <summary>
@@ -67,11 +71,8 @@ namespace Arcus.Templates.Tests.Integration.Worker
             Guard.NotNull(configuration, nameof(configuration));
             Guard.NotNull(outputWriter, nameof(outputWriter));
 
-            const string connectionStringConfigurationKey = "Arcus:Worker:ServiceBus:ConnectionStringWithQueue";
-            DirectoryInfo templateDirectory = configuration.GetServiceBusQueueProjectDirectory();
-
-            ServiceBusWorkerProject project = CreateNew(templateDirectory, connectionStringConfigurationKey, configuration, outputWriter);
-            await project.StartAsync(connectionStringConfigurationKey);
+            ServiceBusWorkerProject project = CreateNew(ServiceBusEntity.Queue, configuration, outputWriter);
+            await project.StartAsync();
             await project.MessagePump.StartAsync();
 
             return project;
@@ -90,33 +91,23 @@ namespace Arcus.Templates.Tests.Integration.Worker
             Guard.NotNull(configuration, nameof(configuration));
             Guard.NotNull(outputWriter, nameof(outputWriter));
 
-            const string connectionStringConfigurationKey = "Arcus:Worker:ServiceBus:ConnectionStringWithTopic";
-            DirectoryInfo templateDirectory = configuration.GetServiceBusTopicProjectDirectory();
-
-            ServiceBusWorkerProject project = CreateNew(templateDirectory, connectionStringConfigurationKey, configuration, outputWriter);
-            await project.StartAsync(connectionStringConfigurationKey);
+            ServiceBusWorkerProject project = CreateNew(ServiceBusEntity.Topic, configuration, outputWriter);
+            await project.StartAsync();
             await project.MessagePump.StartAsync();
 
             return project;
         }
 
-        private static ServiceBusWorkerProject CreateNew(
-            DirectoryInfo templateDirectory,
-            string connectionStringConfigurationKey,
-            TestConfig configuration,
-            ITestOutputHelper outputWriter)
+        protected static ServiceBusWorkerProject CreateNew(ServiceBusEntity entity, TestConfig configuration, ITestOutputHelper outputWriter)
         {
-            DirectoryInfo fixtureDirectory = configuration.GetFixtureProjectDirectory();
-            int healthPort = configuration.GenerateWorkerHealthPort();
-
-            var project = new ServiceBusWorkerProject(healthPort, configuration, templateDirectory, fixtureDirectory, outputWriter);
+            var project = new ServiceBusWorkerProject(entity, configuration, outputWriter);
             project.CreateNewProject(new ProjectOptions());
-            project.AddOrdersMessagePump(connectionStringConfigurationKey: connectionStringConfigurationKey);
+            project.AddOrdersMessagePump();
 
             return project;
         }
 
-        private void AddOrdersMessagePump(string connectionStringConfigurationKey)
+        private void AddOrdersMessagePump()
         {
             AddPackage("Arcus.EventGrid", "3.0.0-preview-1");
             AddPackage("Arcus.EventGrid.Publishing", "3.0.0-preview-1");
@@ -126,7 +117,7 @@ namespace Arcus.Templates.Tests.Integration.Worker
             AddTypeAsFile<OrdersMessagePump>();
             AddTypeAsFile<SingleValueSecretProvider>();
 
-            var connectionString = _configuration.GetValue<string>(connectionStringConfigurationKey);
+            var connectionString = _configuration.GetServiceBusConnectionString(_entity);
             UpdateFileInProject("Program.cs", contents => 
                 RemoveCustomUserErrors(contents)
                     .Replace("EmptyMessagePump", nameof(OrdersMessagePump))
@@ -141,25 +132,22 @@ namespace Arcus.Templates.Tests.Integration.Worker
         }
 
 
-        private async Task StartAsync(string connectionStringConfigurationKey)
+        private async Task StartAsync()
         {
-            IEnumerable<CommandArgument> commands = CreateServiceBusQueueWorkerCommands(connectionStringConfigurationKey, _configuration, _healthPort);
+            IEnumerable<CommandArgument> commands = CreateServiceBusQueueWorkerCommands();
             Run(_configuration.BuildConfiguration, TargetFramework.NetCoreApp30, commands.ToArray());
             await WaitUntilWorkerProjectIsAvailableAsync(_healthPort);
         }
 
-        private static IEnumerable<CommandArgument> CreateServiceBusQueueWorkerCommands(
-            string connectionStringConfigurationKey,
-            IConfiguration configuration,
-            int healthPort)
+        private IEnumerable<CommandArgument> CreateServiceBusQueueWorkerCommands()
         {
-            string eventGridTopicUri = configuration["Arcus:Worker:EventGrid:TopicUri"];
-            string eventGridAuthKey = configuration["Arcus:Worker:EventGrid:AuthKey"];
-            string serviceBusConnection = configuration[connectionStringConfigurationKey];
+            string eventGridTopicUri = _configuration["Arcus:Worker:EventGrid:TopicUri"];
+            string eventGridAuthKey = _configuration["Arcus:Worker:EventGrid:AuthKey"];
+            string serviceBusConnection = _configuration.GetServiceBusConnectionString(_entity);
 
             return new[]
             {
-                CommandArgument.CreateOpen("ARCUS_HEALTH_PORT", healthPort),
+                CommandArgument.CreateOpen("ARCUS_HEALTH_PORT", _healthPort),
                 CommandArgument.CreateSecret("EVENTGRID_TOPIC_URI", eventGridTopicUri),
                 CommandArgument.CreateSecret("EVENTGRID_AUTH_KEY", eventGridAuthKey),
                 CommandArgument.CreateSecret("ARCUS_SERVICEBUS_CONNECTIONSTRING", serviceBusConnection)

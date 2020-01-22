@@ -23,6 +23,7 @@ namespace Arcus.Templates.Tests.Integration.Worker.MessagePump
     /// </summary>
     public class MessagePumpService : IAsyncDisposable
     {
+        private readonly ServiceBusEntity _entity;
         private readonly ITestOutputHelper _outputWriter;
         private readonly TestConfig _configuration;
 
@@ -31,11 +32,12 @@ namespace Arcus.Templates.Tests.Integration.Worker.MessagePump
         /// <summary>
         /// Initializes a new instance of the <see cref="MessagePumpService"/> class.
         /// </summary>
-        public MessagePumpService(TestConfig configuration, ITestOutputHelper outputWriter)
+        public MessagePumpService(ServiceBusEntity entity, TestConfig configuration, ITestOutputHelper outputWriter)
         {
             Guard.NotNull(configuration, nameof(configuration));
             Guard.NotNull(outputWriter, nameof(outputWriter));
 
+            _entity = entity;
             _outputWriter = outputWriter;
             _configuration = configuration;
         }
@@ -60,22 +62,9 @@ namespace Arcus.Templates.Tests.Integration.Worker.MessagePump
         }
 
         /// <summary>
-        /// Simulate the message processing of the message pump using the Service Bus Queue.
+        /// Simulate the message processing of the message pump using the Service Bus.
         /// </summary>
-        public async Task SimulateMessageProcessingWithQueueAsync()
-        {
-            await SimulateMessageProcessingAsync("Arcus:Worker:ServiceBus:ConnectionStringWithQueue");
-        }
-
-        /// <summary>
-        /// Simulate the message processing of the message pump using the Service Bus Topic.
-        /// </summary>
-        public async Task SimulateMessageProcessingWithTopicAsync()
-        {
-            await SimulateMessageProcessingAsync("Arcus:Worker:ServiceBus:ConnectionStringWithTopic");
-        }
-
-        private async Task SimulateMessageProcessingAsync(string connectionStringConfigurationKey)
+        public async Task SimulateMessageProcessingAsync()
         {
             if (_serviceBusEventConsumerHost is null)
             {
@@ -86,7 +75,7 @@ namespace Arcus.Templates.Tests.Integration.Worker.MessagePump
             var operationId = Guid.NewGuid().ToString();
             var transactionId = Guid.NewGuid().ToString();
 
-            var connectionString = _configuration.GetValue<string>(connectionStringConfigurationKey);
+            var connectionString = _configuration.GetServiceBusConnectionString(_entity);
             var serviceBusConnectionStringBuilder = new ServiceBusConnectionStringBuilder(connectionString);
             var messageSender = new MessageSender(serviceBusConnectionStringBuilder);
 

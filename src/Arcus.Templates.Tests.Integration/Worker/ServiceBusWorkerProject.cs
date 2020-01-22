@@ -97,7 +97,7 @@ namespace Arcus.Templates.Tests.Integration.Worker
             AddTypeAsFile<OrdersMessagePump>();
             AddTypeAsFile<SingleValueSecretProvider>();
 
-            var connectionString = _configuration.GetServiceBusConnectionString(_entity);
+            string connectionString = _configuration.GetServiceBusConnectionString(_entity);
             UpdateFileInProject("Program.cs", contents => 
                 RemoveCustomUserErrors(contents)
                     .Replace("EmptyMessagePump", nameof(OrdersMessagePump))

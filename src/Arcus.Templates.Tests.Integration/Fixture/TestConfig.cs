@@ -181,8 +181,8 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         {
             switch (entity)
             {
-                case ServiceBusEntity.Queue: return this.GetValue<string>("Arcus:Worker:ServiceBus:ConnectionStringWithQueue");
-                case ServiceBusEntity.Topic: return this.GetValue<string>("Arcus:Worker:ServiceBus:ConnectionStringWithTopic");
+                case ServiceBusEntity.Queue: return _configuration["Arcus:Worker:ServiceBus:ConnectionStringWithQueue"];
+                case ServiceBusEntity.Topic: return _configuration["Arcus:Worker:ServiceBus:ConnectionStringWithTopic"];
                 default:
                     throw new ArgumentOutOfRangeException(nameof(entity), entity, "Unknown Service Bus entity");
             }

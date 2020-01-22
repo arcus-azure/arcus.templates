@@ -75,7 +75,7 @@ namespace Arcus.Templates.Tests.Integration.Worker.MessagePump
             var operationId = Guid.NewGuid().ToString();
             var transactionId = Guid.NewGuid().ToString();
 
-            var connectionString = _configuration.GetServiceBusConnectionString(_entity);
+            string connectionString = _configuration.GetServiceBusConnectionString(_entity);
             var serviceBusConnectionStringBuilder = new ServiceBusConnectionStringBuilder(connectionString);
             var messageSender = new MessageSender(serviceBusConnectionStringBuilder);
 

@@ -116,7 +116,7 @@
       "type": "computed",
       "value": "exclude-correlation"
     },
-    "Logging": {
+    "logging": {
       "type": "parameter",
       "datatype": "choice",
       "choices": [
@@ -126,8 +126,7 @@
         },
         {
           "choice": "Default",
-          "description":
-            "No extra logging mechanism except for the default console logging will be added to the web API project"
+          "description": "No extra logging mechanism except for the default console logging will be added to the web API project"
         }
       ],
       "defaultValue": "Default",
@@ -135,11 +134,11 @@
     },
     "DefaultLog": {
       "type": "computed",
-      "value": "(Logging == \"Default\")"
+      "value": "(logging == \"Default\")"
     },
     "Serilog": {
       "type": "computed",
-      "value": "(Logging == \"Serilog\")"
+      "value": "(logging == \"Serilog\")"
     }
   }
 }

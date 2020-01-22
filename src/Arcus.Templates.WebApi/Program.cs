@@ -71,7 +71,7 @@ namespace Arcus.Templates.WebApi
 #if DefaultLog
                        .ConfigureLogging(logging => logging.AddConsole())
 #elif Serilog
-                       .UseSerilog();
+                       .UseSerilog()
 #endif
                        .UseStartup<Startup>();
 

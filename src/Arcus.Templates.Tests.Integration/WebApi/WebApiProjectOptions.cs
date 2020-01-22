@@ -43,13 +43,35 @@ namespace Arcus.Templates.Tests.Integration.WebApi
         }
 
         /// <summary>
-        /// Adds the project option to add the correlation capability to the web API project.
+        /// Adds the project option to exclude the correlation capability from the web API project.
         /// </summary>
         public WebApiProjectOptions WithExcludeCorrelation()
         {
             ProjectOptions optionsWithCorrelation = AddOption("--exclude-correlation");
 
             return new WebApiProjectOptions(optionsWithCorrelation);
+        }
+
+        /// <summary>
+        /// Adds the project option to configure the logging in the web API project.
+        /// </summary>
+        public WebApiProjectOptions WithLogging(WebApiLogging logging)
+        {
+            string loggingCommand = DetermineLoggingCommand(logging);
+            ProjectOptions optionsWithLogging = AddOption(loggingCommand);
+
+            return new WebApiProjectOptions(optionsWithLogging);
+        }
+
+        private static string DetermineLoggingCommand(WebApiLogging logging)
+        {
+            switch (logging)
+            {
+                case WebApiLogging.Default: return "--logging Default";
+                case WebApiLogging.Serilog: return "--logging Serilog";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(logging), logging, "Unknown web API logging");
+            }
         }
 
         /// <summary>

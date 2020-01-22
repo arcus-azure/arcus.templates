@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -10,14 +9,11 @@ using Arcus.Templates.Tests.Integration.Worker.Fixture;
 using Arcus.Templates.Tests.Integration.Worker.Health;
 using Arcus.Templates.Tests.Integration.Worker.MessagePump;
 using GuardNet;
-using Microsoft.Extensions.Configuration;
 using Polly;
 using Xunit.Abstractions;
 
 namespace Arcus.Templates.Tests.Integration.Worker
 {
-    public enum ServiceBusEntity { Queue, Topic }
-
     /// <summary>
     /// Project template to create Azure ServiceBus Queue worker projects.
     /// </summary>
@@ -27,7 +23,7 @@ namespace Arcus.Templates.Tests.Integration.Worker
         private readonly int _healthPort;
         private readonly TestConfig _configuration;
 
-        protected ServiceBusWorkerProject(
+        private ServiceBusWorkerProject(
             ServiceBusEntity entity,
             TestConfig configuration,
             ITestOutputHelper outputWriter)
@@ -54,51 +50,35 @@ namespace Arcus.Templates.Tests.Integration.Worker
         {
             Guard.NotNull(outputWriter, nameof(outputWriter));
 
-            ServiceBusWorkerProject project = await StartNewWithQueueAsync(TestConfig.Create(), outputWriter);
+            ServiceBusWorkerProject project = await StartNewAsync(ServiceBusEntity.Queue, TestConfig.Create(), outputWriter);
             return project;
         }
 
         /// <summary>
         /// Starts a newly created project from the ServiceBus Queue worker project template.
         /// </summary>
-        /// <param name="configuration">The configuration used to retrieve information to make the project runnable (i.e. connection strings for the message pump).</param>
         /// <param name="outputWriter">The output logger to add telemetry information during the creation and startup process.</param>
         /// <returns>
         ///     A ServiceBus Queue project with a set of services to interact with the worker.
         /// </returns>
-        public static async Task<ServiceBusWorkerProject> StartNewWithQueueAsync(TestConfig configuration, ITestOutputHelper outputWriter)
+        public static async Task<ServiceBusWorkerProject> StartNewWithTopicAsync(ITestOutputHelper outputWriter)
         {
-            Guard.NotNull(configuration, nameof(configuration));
             Guard.NotNull(outputWriter, nameof(outputWriter));
 
-            ServiceBusWorkerProject project = CreateNew(ServiceBusEntity.Queue, configuration, outputWriter);
+            ServiceBusWorkerProject project = await StartNewAsync(ServiceBusEntity.Topic, TestConfig.Create(), outputWriter);
+            return project;
+        }
+
+        private static async Task<ServiceBusWorkerProject> StartNewAsync(ServiceBusEntity entity, TestConfig configuration, ITestOutputHelper outputWriter)
+        {
+            ServiceBusWorkerProject project = CreateNew(entity, configuration, outputWriter);
             await project.StartAsync();
             await project.MessagePump.StartAsync();
 
             return project;
         }
 
-        /// <summary>
-        /// Starts a newly created project from the ServiceBus Queue worker project template.
-        /// </summary>
-        /// <param name="configuration">The configuration used to retrieve information to make the project runnable (i.e. connection strings for the message pump).</param>
-        /// <param name="outputWriter">The output logger to add telemetry information during the creation and startup process.</param>
-        /// <returns>
-        ///     A ServiceBus Queue project with a set of services to interact with the worker.
-        /// </returns>
-        public static async Task<ServiceBusWorkerProject> StartNewWithTopicAsync(TestConfig configuration, ITestOutputHelper outputWriter)
-        {
-            Guard.NotNull(configuration, nameof(configuration));
-            Guard.NotNull(outputWriter, nameof(outputWriter));
-
-            ServiceBusWorkerProject project = CreateNew(ServiceBusEntity.Topic, configuration, outputWriter);
-            await project.StartAsync();
-            await project.MessagePump.StartAsync();
-
-            return project;
-        }
-
-        protected static ServiceBusWorkerProject CreateNew(ServiceBusEntity entity, TestConfig configuration, ITestOutputHelper outputWriter)
+        private static ServiceBusWorkerProject CreateNew(ServiceBusEntity entity, TestConfig configuration, ITestOutputHelper outputWriter)
         {
             var project = new ServiceBusWorkerProject(entity, configuration, outputWriter);
             project.CreateNewProject(new ProjectOptions());

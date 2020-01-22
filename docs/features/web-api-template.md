@@ -39,6 +39,9 @@ And additional features available with options:
   * `None`: no authentication configured on the API project.
 * `-ec|--exclude-correlation` (default `false`): excludes the [capability to correlate](https://webapi.arcus-azure.net/features/correlation) between HTTP requests/responses.
 * `-ia|--include-appsettings` (default `false`): includes a `appsettings.json` file to the web API project.
+* `-lo|--logging` (default `Default`)
+  * `Default`: no extra logging mechanism except for the default console logging will be added to the web API project.
+  * `Serilog`: adds Serilog as logging mechanism with request logging to the web API project.
 
 ## Security
 As part of this template the following HTTP header(s) are removed for security sake:

@@ -60,7 +60,7 @@ stages:
               targetPath: '$(Pipeline.Workspace)/templates'
               artifactName: Templates
 
-  - template: 'templates/docker-integration-tests'
+  - template: 'templates/docker-integration-tests.yml'
     
   - stage: SelfContainingIntegrationTests
     displayName: Self-Containing Integration Tests

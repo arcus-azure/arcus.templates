@@ -16,7 +16,7 @@ First, install the template:
 > dotnet new --install Arcus.Templates.WebApi
 ```
 
-When installed, the template can be created with shortname: arcus-webapi:
+When installed, the template can be created with shortname: `arcus-webapi`:
 ```shell
 > dotnet new arcus-webapi --name Arcus.Demo.WebAPI
 ```
@@ -29,7 +29,7 @@ First, install the template:
 > dotnet new --install Arcus.Templates.SerivceBus.Queue
 ```
 
-When installed, the template can be created with shortname: arcus-servicebus-queue:
+When installed, the template can be created with shortname: `arcus-servicebus-queue`:
 ```shell
 > dotnet new arcus-servicebus-queue --name Arcus.Demo.ServiceBus.Queue
 ```

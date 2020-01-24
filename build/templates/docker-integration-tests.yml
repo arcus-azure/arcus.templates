@@ -31,14 +31,14 @@ stages:
               command: 'custom'
               custom: 'new'
               arguments: '-i "templates/*.nupkg"'
-          - template: 'templates/run-new-project-from-template.yml'
+          - template: 'run-new-project-from-template.yml'
             parameters:
               projectName: 'Arcus.Demo.WebApi'
               projectAlias: 'arcus-webapi'
               ports: '$(Http.Port):$(Http.Port)'
               envVars: |
                 ARCUS_HTTP_PORT=$(Http.Port)
-          - template: 'templates/run-new-project-from-template.yml'
+          - template: 'run-new-project-from-template.yml'
             parameters:
               projectName: 'Arcus.Demo.ServiceBus.Queue'
               projectAlias: 'arcus-servicebus-queue'

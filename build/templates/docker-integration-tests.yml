@@ -3,13 +3,6 @@ stages:
     displayName: Docker Integration Tests
     dependsOn: Build
     condition: succeeded()
-    variables:
-      - name: 'Http.Port'
-        value: '5000'
-      - name: 'Arcus_Api_BaseUrl'
-        value: 'http://localhost:$(Http.Port)/api/v1'
-      - name: 'Arcus_Worker_HealthPort'
-        value: '42065'
     jobs:
       - job: RunIntegrationTests
         displayName: 'Run integration tests'

@@ -1,0 +1,59 @@
+stages:
+  - stage: DockerIntegrationTests
+    displayName: Docker Integration Tests
+    dependsOn: Build
+    condition: succeeded()
+    variables:
+      - name: 'Http.Port'
+        value: '5000'
+      - name: 'Arcus_Api_BaseUrl'
+        value: 'http://localhost:$(Http.Port)/api/v1'
+      - name: 'Arcus_Worker_HealthPort'
+        value: '42065'
+    jobs:
+      - job: RunIntegrationTests
+        displayName: 'Run integration tests'
+        pool:
+          vmImage: 'ubuntu-16.04'
+        steps:
+          - task: DownloadPipelineArtifact@2
+            displayName: 'Download build artifacts'
+            inputs:
+              artifact: 'Templates'
+              path: '$(Build.SourcesDirectory)/templates'
+          - task: DotNetCoreInstaller@0
+            displayName: 'Import .NET Core SDK ($(DotNet.Sdk.Version))'
+            inputs:
+              version: '$(DotNet.Sdk.Version)'
+          - task: DotNetCoreCLI@2
+            displayName: 'Install template'
+            inputs:
+              command: 'custom'
+              custom: 'new'
+              arguments: '-i "templates/*.nupkg"'
+          - template: 'templates/run-new-project-from-template.yml'
+            parameters:
+              projectName: 'Arcus.Demo.WebApi'
+              projectAlias: 'arcus-webapi'
+              ports: '$(Http.Port):$(Http.Port)'
+              envVars: |
+                ARCUS_HTTP_PORT=$(Http.Port)
+          - template: 'templates/run-new-project-from-template.yml'
+            parameters:
+              projectName: 'Arcus.Demo.ServiceBus.Queue'
+              projectAlias: 'arcus-servicebus-queue'
+              ports: '$(Arcus_Worker_HealthPort):$(Arcus_Worker_HealthPort)'
+              script: |
+                Get-Content '/Arcus.Demo.ServiceBus.Queue/Program.cs' | 
+                  Where-Object { $_ -notmatch '#error' -and $_ -notmatch 'secretProvider: null' -and $_ -notmatch 'EmptyMessagePump' } | 
+                  Set-Content '/Arcus.Demo.ServiceBus.Queue/Program.cs'
+              envVars: |
+                ARCUS_HEALTH_PORT=$(Arcus_Worker_HealthPort)
+                EVENTGRID_TOPIC_URI=$(Arcus_Messaging_EventGrid_TopicEndpoint)
+                EVENTGRID_AUTH_KEY=$(Arcus_Messaging_EventGrid_Endpointkey)
+                ARCUS_SERVICEBUS_CONNECTIONSTRING=$(Arcus_Messaging_ServiceBus_ConnectionStringWithQueue)
+          - template: test/run-integration-tests.yml@templates
+            parameters:
+              dotnetSdkVersion: '$(DotNet.Sdk.Version)'
+              projectName: '$(Project).Tests.Integration'
+              category: 'Docker'

@@ -37,8 +37,9 @@ And additional features available with options:
   * `SharedAccessKey`: adds [shared access key authentication](https://webapi.arcus-azure.net/features/security/auth/shared-access-key) mechanism to the API project
   * `Certificate`: adds [client certificate authentication](https://webapi.arcus-azure.net/features/security/auth/certificate) mechanism to the API project
   * `None`: no authentication configured on the API project.
-* `-ec|--exclude-correlation` (default `false`): excludes the [capability to correlate](https://webapi.arcus-azure.net/features/correlation) between HTTP requests/responses.
 * `-ia|--include-appsettings` (default `false`): includes a `appsettings.json` file to the web API project.
+* `-ec|--exclude-correlation` (default `false`): excludes the [capability to correlate](https://webapi.arcus-azure.net/features/correlation) between HTTP requests/responses from the API project.
+* `-eo|--exdlude-openApi` (default `false`): exclude the [ASP.NET Swagger docs generation and UI](https://docs.microsoft.com/en-us/aspnet/core/tutorials/getting-started-with-swashbuckle?view=aspnetcore-3.1&tabs=visual-studio) from API project.
 
 ## Security
 As part of this template the following HTTP header(s) are removed for security sake:

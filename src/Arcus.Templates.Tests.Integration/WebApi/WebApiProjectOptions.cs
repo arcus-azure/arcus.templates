@@ -43,13 +43,23 @@ namespace Arcus.Templates.Tests.Integration.WebApi
         }
 
         /// <summary>
-        /// Adds the project option to add the correlation capability to the web API project.
+        /// Adds the project option to exclude the correlation capability to the web API project.
         /// </summary>
         public WebApiProjectOptions WithExcludeCorrelation()
         {
-            ProjectOptions optionsWithCorrelation = AddOption("--exclude-correlation");
+            ProjectOptions optionsWithExcludeCorrelation = AddOption("--exclude-correlation");
 
-            return new WebApiProjectOptions(optionsWithCorrelation);
+            return new WebApiProjectOptions(optionsWithExcludeCorrelation);
+        }
+
+        /// <summary>
+        /// Adds the project option to exclude the correlation capability to the web API project.
+        /// </summary>
+        public WebApiProjectOptions WithExcludeOpenApiDocs()
+        {
+            ProjectOptions optionsWithExcludeOpenApi = AddOption("--exclude-openApi");
+
+            return new WebApiProjectOptions(optionsWithExcludeOpenApi);
         }
 
         /// <summary>

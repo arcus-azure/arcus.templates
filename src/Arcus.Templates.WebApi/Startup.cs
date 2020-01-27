@@ -7,7 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Converters;
+#if ExcludeOpenApi
+#else
 using Swashbuckle.AspNetCore.Swagger;
+#endif
 #if SharedAccessKeyAuth
 using Arcus.Security.Secrets.Core.Caching;
 using Arcus.Security.Secrets.Core.Interfaces;
@@ -70,7 +73,9 @@ namespace Arcus.Templates.WebApi
 #else
             services.AddCorrelation();
 #endif
-            
+
+#if ExcludeOpenApi
+#else
 //[#if DEBUG]
             var openApiInformation = new Info
             {
@@ -84,6 +89,7 @@ namespace Arcus.Templates.WebApi
                 swaggerGenerationOptions.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "Arcus.Templates.WebApi.Open-Api.xml"));
             });
 //[#endif]
+#endif
         }
 
         private static void RestrictToJsonContentType(MvcOptions options)
@@ -123,6 +129,8 @@ namespace Arcus.Templates.WebApi
 #endif
             app.UseMvc();
 
+#if ExcludeOpenApi
+#else
 //[#if DEBUG]
             app.UseSwagger();
             app.UseSwaggerUI(swaggerUiOptions =>
@@ -131,6 +139,7 @@ namespace Arcus.Templates.WebApi
                 swaggerUiOptions.DocumentTitle = "Arcus.Templates.WebApi";
             });
 //[#endif]
+#endif
         }
     }
 }

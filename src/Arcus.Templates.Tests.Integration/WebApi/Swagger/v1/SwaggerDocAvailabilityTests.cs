@@ -47,11 +47,45 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Swagger.v1
             var configuration = TestConfig.Create(buildConfiguration);
             using (var project = await WebApiProject.StartNewAsync(configuration, _outputWriter))
             // Act
-            using (var response = await project.Swagger.GetSwaggerDocsAsync())
+            using (HttpResponseMessage response = await project.Swagger.GetSwaggerDocsAsync())
             {
                 // Assert
                 Assert.NotNull(response);
                 Assert.Equal(expectedStatusCode, response.StatusCode);
+            }
+        }
+
+        [Fact]
+        public async Task GetSwaggerUI_WithExcludeOpenApiProjectOption_ReturnsNotFound()
+        {
+            // Arrange
+            var options =
+                new WebApiProjectOptions().WithExcludeOpenApiDocs();
+
+            using (var project = await WebApiProject.StartNewAsync(options, _outputWriter))
+            // Act
+            using (HttpResponseMessage response = await project.Swagger.GetSwaggerUIAsync())
+            {
+                // Assert
+                Assert.NotNull(response);
+                Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+            }
+        }
+
+        [Fact]
+        public async Task GetSwaggerDocs_WithExcludeOpenApiProjectOption_ReturnsNotFound()
+        {
+            // Arrange
+            var options = 
+                new WebApiProjectOptions().WithExcludeOpenApiDocs();
+
+            using (var project = await WebApiProject.StartNewAsync(options, _outputWriter))
+            // Act
+            using (HttpResponseMessage response = await project.Swagger.GetSwaggerDocsAsync())
+            {
+                // Assert
+                Assert.NotNull(response);
+                Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
             }
         }
     }

@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <DocumentationFile>Arcus.Templates.WebApi.Open-Api.xml</DocumentationFile>
+    <GenerateDocumentationFile Condition="'$(ExcludeOpenApi)' == 'false'">true</GenerateDocumentationFile>
+    <DocumentationFile Condition="'$(ExcludeOpenApi)' == 'false'">Arcus.Templates.WebApi.Open-Api.xml</DocumentationFile>
     <!--#if (AuthoringMode)-->
     <Authors>Arcus</Authors>
     <Company>Arcus</Company>

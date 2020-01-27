@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:3.0.101-alpine3.9 AS base
+FROM mcr.microsoft.com/dotnet/core/sdk:3.0-alpine3.10 AS base
 WORKDIR /app
 EXPOSE 80
 

@@ -39,7 +39,7 @@ We provide a template to build worker projects with a Azure Service Bus message 
 
 First, install the template:
 ```shell
-> dotnet new --install Arcus.Templates.SerivceBus.Topic
+> dotnet new --install Arcus.Templates.ServiceBus.Topic
 ```
 
 When installed, the template can be created with shortname: `arcus-servicebus-topic`:

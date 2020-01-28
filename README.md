@@ -34,6 +34,19 @@ When installed, the template can be created with shortname: `arcus-servicebus-qu
 > dotnet new arcus-servicebus-queue --name Arcus.Demo.ServiceBus.Queue
 ```
 
+## Azure Service Bus Topic Worker Template
+We provide a template to build worker projects with a Azure Service Bus message pump. ([docs](https://templates.arcus-azure.net/features/servicebus-topic-worker-template))
+
+First, install the template:
+```shell
+> dotnet new --install Arcus.Templates.ServiceBus.Topic
+```
+
+When installed, the template can be created with shortname: `arcus-servicebus-topic`:
+```shell
+> dotnet new arcus-servicebus-topic --name Arcus.Demo.ServiceBus.Topic
+```
+
 # Documentation
 
 All documentation can be found on [here](https://templates.arcus-azure.net/).

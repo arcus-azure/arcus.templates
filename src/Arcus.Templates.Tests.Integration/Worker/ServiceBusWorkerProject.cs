@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -10,7 +9,6 @@ using Arcus.Templates.Tests.Integration.Worker.Fixture;
 using Arcus.Templates.Tests.Integration.Worker.Health;
 using Arcus.Templates.Tests.Integration.Worker.MessagePump;
 using GuardNet;
-using Microsoft.Extensions.Configuration;
 using Polly;
 using Xunit.Abstractions;
 
@@ -19,24 +17,26 @@ namespace Arcus.Templates.Tests.Integration.Worker
     /// <summary>
     /// Project template to create Azure ServiceBus Queue worker projects.
     /// </summary>
-    public class ServiceBusQueueWorkerProject : TemplateProject, IAsyncDisposable
+    public class ServiceBusWorkerProject : TemplateProject, IAsyncDisposable
     {
+        private readonly ServiceBusEntity _entity;
         private readonly int _healthPort;
         private readonly TestConfig _configuration;
 
-        private ServiceBusQueueWorkerProject(
-            int healthPort,
+        private ServiceBusWorkerProject(
+            ServiceBusEntity entity,
             TestConfig configuration,
-            DirectoryInfo templateDirectory,
-            DirectoryInfo fixtureDirectory,
             ITestOutputHelper outputWriter)
-            : base(templateDirectory, fixtureDirectory, outputWriter)
+            : base(configuration.GetServiceBusProjectDirectory(entity), 
+                   configuration.GetFixtureProjectDirectory(), 
+                   outputWriter)
         {
-            _healthPort = healthPort;
+            _entity = entity;
+            _healthPort = configuration.GenerateWorkerHealthPort();
             _configuration = configuration;
 
             Health = new HealthEndpointService(_healthPort, outputWriter);
-            MessagePump = new MessagePumpService(configuration, outputWriter);
+            MessagePump = new MessagePumpService(entity, configuration, outputWriter);
         }
 
         /// <summary>
@@ -46,45 +46,41 @@ namespace Arcus.Templates.Tests.Integration.Worker
         /// <returns>
         ///     A ServiceBus Queue project with a set of services to interact with the worker.
         /// </returns>
-        public static async Task<ServiceBusQueueWorkerProject> StartNewAsync(ITestOutputHelper outputWriter)
+        public static async Task<ServiceBusWorkerProject> StartNewWithQueueAsync(ITestOutputHelper outputWriter)
         {
             Guard.NotNull(outputWriter, nameof(outputWriter));
 
-            ServiceBusQueueWorkerProject project = await StartNewAsync(TestConfig.Create(), outputWriter);
+            ServiceBusWorkerProject project = await StartNewAsync(ServiceBusEntity.Queue, TestConfig.Create(), outputWriter);
             return project;
         }
 
         /// <summary>
         /// Starts a newly created project from the ServiceBus Queue worker project template.
         /// </summary>
-        /// <param name="configuration">The configuration used to retrieve information to make the project runnable (i.e. connection strings for the message pump).</param>
         /// <param name="outputWriter">The output logger to add telemetry information during the creation and startup process.</param>
         /// <returns>
         ///     A ServiceBus Queue project with a set of services to interact with the worker.
         /// </returns>
-        public static async Task<ServiceBusQueueWorkerProject> StartNewAsync(TestConfig configuration, ITestOutputHelper outputWriter)
+        public static async Task<ServiceBusWorkerProject> StartNewWithTopicAsync(ITestOutputHelper outputWriter)
         {
-            Guard.NotNull(configuration, nameof(configuration));
             Guard.NotNull(outputWriter, nameof(outputWriter));
 
-            ServiceBusQueueWorkerProject project = CreateNew(configuration, outputWriter);
+            ServiceBusWorkerProject project = await StartNewAsync(ServiceBusEntity.Topic, TestConfig.Create(), outputWriter);
+            return project;
+        }
 
+        private static async Task<ServiceBusWorkerProject> StartNewAsync(ServiceBusEntity entity, TestConfig configuration, ITestOutputHelper outputWriter)
+        {
+            ServiceBusWorkerProject project = CreateNew(entity, configuration, outputWriter);
             await project.StartAsync();
             await project.MessagePump.StartAsync();
 
             return project;
         }
 
-        private static ServiceBusQueueWorkerProject CreateNew(TestConfig configuration, ITestOutputHelper outputWriter)
+        private static ServiceBusWorkerProject CreateNew(ServiceBusEntity entity, TestConfig configuration, ITestOutputHelper outputWriter)
         {
-            Guard.NotNull(configuration, nameof(configuration));
-            Guard.NotNull(outputWriter, nameof(outputWriter));
-
-            DirectoryInfo templateDirectory = configuration.GetServiceBusQueueProjectDirectory();
-            DirectoryInfo fixtureDirectory = configuration.GetFixtureProjectDirectory();
-            int healthPort = configuration.GenerateWorkerHealthPort();
-
-            var project = new ServiceBusQueueWorkerProject(healthPort, configuration, templateDirectory, fixtureDirectory, outputWriter);
+            var project = new ServiceBusWorkerProject(entity, configuration, outputWriter);
             project.CreateNewProject(new ProjectOptions());
             project.AddOrdersMessagePump();
 
@@ -101,11 +97,11 @@ namespace Arcus.Templates.Tests.Integration.Worker
             AddTypeAsFile<OrdersMessagePump>();
             AddTypeAsFile<SingleValueSecretProvider>();
 
-            var connectionStringWithQueue = _configuration.GetValue<string>("Arcus:Worker:ServiceBus:ConnectionStringWithQueue");
+            string connectionString = _configuration.GetServiceBusConnectionString(_entity);
             UpdateFileInProject("Program.cs", contents => 
                 RemoveCustomUserErrors(contents)
                     .Replace("EmptyMessagePump", nameof(OrdersMessagePump))
-                    .Replace("secretProvider: null", $"new {nameof(SingleValueSecretProvider)}(\"{connectionStringWithQueue}\")"));
+                    .Replace("secretProvider: null", $"new {nameof(SingleValueSecretProvider)}(\"{connectionString}\")"));
         }
 
         private static string RemoveCustomUserErrors(string content)
@@ -115,25 +111,26 @@ namespace Arcus.Templates.Tests.Integration.Worker
                           .Aggregate((line1, line2) => line1 + Environment.NewLine + line2);
         }
 
+
         private async Task StartAsync()
         {
-            IEnumerable<CommandArgument> commands = CreateServiceBusQueueWorkerCommands(_configuration, _healthPort);
+            IEnumerable<CommandArgument> commands = CreateServiceBusQueueWorkerCommands();
             Run(_configuration.BuildConfiguration, TargetFramework.NetCoreApp30, commands.ToArray());
             await WaitUntilWorkerProjectIsAvailableAsync(_healthPort);
         }
 
-        private static IEnumerable<CommandArgument> CreateServiceBusQueueWorkerCommands(IConfiguration configuration, int healthPort)
+        private IEnumerable<CommandArgument> CreateServiceBusQueueWorkerCommands()
         {
-            string eventGridTopicUri = configuration["Arcus:Worker:EventGrid:TopicUri"];
-            string eventGridAuthKey = configuration["Arcus:Worker:EventGrid:AuthKey"];
-            string serviceBusQueueConnection = configuration["Arcus:Worker:ServiceBus:ConnectionStringWithQueue"];
+            string eventGridTopicUri = _configuration["Arcus:Worker:EventGrid:TopicUri"];
+            string eventGridAuthKey = _configuration["Arcus:Worker:EventGrid:AuthKey"];
+            string serviceBusConnection = _configuration.GetServiceBusConnectionString(_entity);
 
             return new[]
             {
-                CommandArgument.CreateOpen("ARCUS_HEALTH_PORT", healthPort),
+                CommandArgument.CreateOpen("ARCUS_HEALTH_PORT", _healthPort),
                 CommandArgument.CreateSecret("EVENTGRID_TOPIC_URI", eventGridTopicUri),
                 CommandArgument.CreateSecret("EVENTGRID_AUTH_KEY", eventGridAuthKey),
-                CommandArgument.CreateSecret("ARCUS_SERVICEBUS_CONNECTIONSTRING", serviceBusQueueConnection)
+                CommandArgument.CreateSecret("ARCUS_SERVICEBUS_CONNECTIONSTRING", serviceBusConnection)
             };
         }
 
@@ -150,13 +147,13 @@ namespace Arcus.Templates.Tests.Integration.Worker
 
             if (result.Outcome == OutcomeType.Successful)
             {
-                Logger.WriteLine("Test template ServiceBus Queue worker project fully started at: localhost:{0}", tcpPort);
+                Logger.WriteLine("Test template Service Bus worker project fully started at: localhost:{0}", tcpPort);
             }
             else
             {
-                Logger.WriteLine("Test template ServiceBus Queue project could not be started");
+                Logger.WriteLine("Test template Service Bus project could not be started");
                 throw new CannotStartTemplateProjectException(
-                    "The test project created from the ServiceBus Queue project template doesn't seem to be running, "
+                    "The test project created from the Service Bus project template doesn't seem to be running, "
                     + "please check any build or runtime errors that could occur when the test project was created");
             }
         }
@@ -171,12 +168,12 @@ namespace Arcus.Templates.Tests.Integration.Worker
         }
 
         /// <summary>
-        /// Gets the service that interacts with the exposed health report information of the ServiceBus Queue worker project.
+        /// Gets the service that interacts with the exposed health report information of the Service Bus worker project.
         /// </summary>
         public HealthEndpointService Health { get; }
 
         /// <summary>
-        /// Gets the service that interacts with the hosted-service message pump in the ServiceBus Queue worker project.
+        /// Gets the service that interacts with the hosted-service message pump in the Service Bus worker project.
         /// </summary>
         /// <remarks>
         ///     Only when the project is started, is this service available for interaction.

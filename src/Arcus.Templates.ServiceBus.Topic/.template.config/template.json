@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Arcus",
+  "classifications": [
+    "Worker",
+    "Service Bus",
+    "Topic",
+    "BoilerPlate"
+  ],
+  "name": "Arcus Service Bus Topic",
+  "identity": "Arcus.Templates.ServiceBus.Topic",
+  "shortName": "arcus-servicebus-topic",
+  "sourceName": "Arcus.Templates.ServiceBus.Topic",
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "sources": [
+    {
+      "exclude": [
+        "**/[Bb]in/**",
+        "**/[Oo]bj/**",
+        ".template.config/**/*",
+        "**/*.filelist",
+        "**/*.user",
+        "**/*.lock.json",
+        "**/launchSettings.json"
+      ]
+    }
+  ],
+  "symbols": {
+    "AuthoringMode": {
+      "type": "generated",
+      "generator": "constant",
+      "parameters": {
+        "value": false
+      }
+    },
+    "ErrorDirective": {
+      "type": "generated",
+      "generator": "constant",
+      "parameters": {
+        "value": "#error"
+      },
+      "replaces": "//#error"
+    }
+  }
+}

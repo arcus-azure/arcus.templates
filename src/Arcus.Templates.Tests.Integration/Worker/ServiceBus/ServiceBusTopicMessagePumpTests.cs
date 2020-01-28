@@ -7,14 +7,14 @@ namespace Arcus.Templates.Tests.Integration.Worker.ServiceBus
 {
     [Collection(TestCollections.Integration)]
     [Trait("Category", TestTraits.Integration)]
-    public class ServiceBusQueueMessagePumpTests
+    public class ServiceBusTopicMessagePumpTests
     {
         private readonly ITestOutputHelper _outputWriter;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ServiceBusQueueMessagePumpTests"/> class.
         /// </summary>
-        public ServiceBusQueueMessagePumpTests(ITestOutputHelper outputWriter)
+        public ServiceBusTopicMessagePumpTests(ITestOutputHelper outputWriter)
         {
             _outputWriter = outputWriter;
         }
@@ -23,7 +23,7 @@ namespace Arcus.Templates.Tests.Integration.Worker.ServiceBus
         public async Task MinimServiceBusQueueWorker_PublishServiceBusMessage_MessageSuccessfullyProcessed()
         {
             // Arrange
-            await using (var project = await ServiceBusWorkerProject.StartNewWithQueueAsync(_outputWriter))
+            await using (var project = await ServiceBusWorkerProject.StartNewWithTopicAsync(_outputWriter))
             {
                 // Act / Assert
                 await project.MessagePump.SimulateMessageProcessingAsync();

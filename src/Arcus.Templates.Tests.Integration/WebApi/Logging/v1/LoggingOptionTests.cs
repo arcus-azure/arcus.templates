@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Arcus.Templates.Tests.Integration.Fixture;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -10,6 +11,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Logging.v1
     [Trait("Category", TestTraits.Integration)]
     public class LoggingOptionTests
     {
+        private readonly TestConfig _configuration;
         private readonly ITestOutputHelper _outputWriter;
 
         /// <summary>
@@ -18,18 +20,35 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Logging.v1
         public LoggingOptionTests(ITestOutputHelper outputWriter)
         {
             _outputWriter = outputWriter;
+            _configuration = TestConfig.Create();   
         }
 
-        [Theory]
-        [InlineData(WebApiLogging.Default)]
-        [InlineData(WebApiLogging.Serilog)]
-        public async Task GetHealth_WithSerilogProjectOption_ReturnsOk(WebApiLogging logging)
+        [Fact]
+        public async Task GetHealth_WithDefaultLoggingProjectOption_ReturnsOk()
         {
             // Arrange
-            var optionsWithSerilog =
-                new WebApiProjectOptions().WithLogging(logging);
+            var optionsWithDefaultLogging =
+                new WebApiProjectOptions().WithDefaultLogging();
 
-            using (var project = await WebApiProject.StartNewAsync(optionsWithSerilog, _outputWriter))
+            using (var project = await WebApiProject.StartNewAsync(optionsWithDefaultLogging, _outputWriter))
+                // Act
+            using (HttpResponseMessage response = await project.Health.GetAsync())
+            {
+                // Assert
+                Assert.NotNull(response);
+                Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            }
+        }
+
+        [Fact]
+        public async Task GetHealth_WithSerilogLoggingProjectOption_ReturnsOk()
+        {
+            // Arrange
+            string instrumentationKey = _configuration.GetApplicationInsightsInstrumentationKey();
+            var optionsWithSerilogLogging =
+                new WebApiProjectOptions().WithSerilogLogging(instrumentationKey);
+
+            using (var project = await WebApiProject.StartNewAsync(optionsWithSerilogLogging, _outputWriter))
             // Act
             using (HttpResponseMessage response = await project.Health.GetAsync())
             {

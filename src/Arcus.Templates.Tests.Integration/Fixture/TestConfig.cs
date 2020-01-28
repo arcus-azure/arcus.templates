@@ -166,6 +166,16 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         }
 
         /// <summary>
+        /// Gets the instrumentation key to access the Azure Application Insights resource.
+        /// </summary>
+        public string GetApplicationInsightsInstrumentationKey()
+        {
+            const string key = "Arcus:Api:ApplicationInsights:InstrumentationKey";
+
+            return _configuration.GetValue<string>(key);
+        }
+
+        /// <summary>
         /// Gets or sets a configuration value.
         /// </summary>
         /// <param name="key">The configuration key.</param>

@@ -98,7 +98,7 @@
     },
     "AppSettings": {
       "type": "computed",
-      "value": "include-appsettings || CertificateAuth"
+      "value": "include-appsettings || CertificateAuth || Serilog"
     },
     "include-appsettings": {
       "type": "parameter",

@@ -53,25 +53,36 @@ namespace Arcus.Templates.Tests.Integration.WebApi
         }
 
         /// <summary>
-        /// Adds the project option to configure the logging in the web API project.
+        /// Adds the default logging option to the web API project.
         /// </summary>
-        public WebApiProjectOptions WithLogging(WebApiLogging logging)
+        /// <returns></returns>
+        public WebApiProjectOptions WithDefaultLogging()
         {
-            string loggingCommand = DetermineLoggingCommand(logging);
-            ProjectOptions optionsWithLogging = AddOption(loggingCommand);
+            ProjectOptions optionsWithDefaultLogging = AddOption("--logging Default");
 
-            return new WebApiProjectOptions(optionsWithLogging);
+            return new WebApiProjectOptions(optionsWithDefaultLogging);
         }
 
-        private static string DetermineLoggingCommand(WebApiLogging logging)
+        /// <summary>
+        /// Adds the Serilog logging option to the web API project; writing both to the console and to Azure Application Insights.
+        /// </summary>
+        /// <param name="applicationInsightsInstrumentationKey">The key to connect to the Azure Application Insights resource.</param>
+        public WebApiProjectOptions WithSerilogLogging(string applicationInsightsInstrumentationKey)
         {
-            switch (logging)
-            {
-                case WebApiLogging.Default: return "--logging Default";
-                case WebApiLogging.Serilog: return "--logging Serilog";
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(logging), logging, "Unknown web API logging");
-            }
+            ProjectOptions optionsWithSerilogLogging = 
+                AddOption("--logging Serilog", 
+                          (fixtureDirectory, projectDirectory) => ConfigureSerilogLogging(fixtureDirectory, projectDirectory, applicationInsightsInstrumentationKey));
+            
+            return new WebApiProjectOptions(optionsWithSerilogLogging);
+        }
+
+        private static void ConfigureSerilogLogging(DirectoryInfo fixtureDirectory, DirectoryInfo projectDirectory, string applicationInsightsInstrumentationKey)
+        {
+            ReplaceProjectFileContent(
+                projectDirectory, 
+                "appsettings.json", 
+                contents => contents.Replace("YOUR APPLICATION INSIGHTS INSTRUMENTATION KEY", applicationInsightsInstrumentationKey));
+
         }
 
         /// <summary>

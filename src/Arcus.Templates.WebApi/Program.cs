@@ -17,7 +17,8 @@ namespace Arcus.Templates.WebApi
     public class Program
     {
 #if Serilog
-        private const string ApplicationInsightsInstrumentationKeyName = "ApplicationInsightsInstrumentationKeyName";
+        #warning Make sure that the appsettings.json is updated with your Azure Application Insights instrumentation key.
+        private const string ApplicationInsightsInstrumentationKeyName = "Telemetry:ApplicationInsights:InstrumentationKey";
 
 #endif
         public static int Main(string[] args)

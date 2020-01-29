@@ -31,7 +31,7 @@ namespace Arcus.Templates.WebApi
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .Enrich.FromLogContext()
                 .WriteTo.Console()
-                .WriteTo.ApplicationInsights(instrumentationKey, new EventTelemetryConverter())
+                .WriteTo.ApplicationInsights(instrumentationKey, new TraceTelemetryConverter())
                 .CreateLogger();
 
             try

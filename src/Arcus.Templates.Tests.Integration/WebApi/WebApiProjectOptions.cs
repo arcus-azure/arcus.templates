@@ -68,7 +68,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi
         /// <returns></returns>
         public WebApiProjectOptions WithDefaultLogging()
         {
-            ProjectOptions optionsWithDefaultLogging = AddOption("--logging Default");
+            ProjectOptions optionsWithDefaultLogging = AddOption("--logging Console");
 
             return new WebApiProjectOptions(optionsWithDefaultLogging);
         }

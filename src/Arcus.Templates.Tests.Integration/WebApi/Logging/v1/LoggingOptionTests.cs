@@ -24,11 +24,11 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Logging.v1
         }
 
         [Fact]
-        public async Task GetHealth_WithDefaultLoggingProjectOption_ReturnsOk()
+        public async Task GetHealth_WithConsoleLoggingProjectOption_ReturnsOk()
         {
             // Arrange
             var optionsWithDefaultLogging =
-                new WebApiProjectOptions().WithDefaultLogging();
+                new WebApiProjectOptions().WithConsoleLogging();
 
             using (var project = await WebApiProject.StartNewAsync(optionsWithDefaultLogging, _outputWriter))
                 // Act

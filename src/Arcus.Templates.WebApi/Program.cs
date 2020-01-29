@@ -90,7 +90,7 @@ namespace Arcus.Templates.WebApi
                        .ConfigureKestrel(kestrelServerOptions => kestrelServerOptions.AddServerHeader = false)
                        .UseConfiguration(configuration)
                        .UseUrls(httpEndpointUrl)
-#if DefaultLog
+#if Console
                        .ConfigureLogging(logging => logging.AddConsole())
 #elif Serilog
                        .UseSerilog()

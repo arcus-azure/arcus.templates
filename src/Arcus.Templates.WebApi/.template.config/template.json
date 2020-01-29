@@ -125,16 +125,16 @@
           "description": "Adds Serilog as logging mechanism with request logging to the web API project"
         },
         {
-          "choice": "Default",
+          "choice": "Console",
           "description": "No extra logging mechanism except for the default console logging will be added to the web API project"
         }
       ],
-      "defaultValue": "Default",
+      "defaultValue": "Console",
       "description": "Choose whether to use the default console logging or a third-party logging mechanism"
     },
-    "DefaultLog": {
+    "Console": {
       "type": "computed",
-      "value": "(logging == \"Default\")"
+      "value": "(logging == \"Console\")"
     },
     "Serilog": {
       "type": "computed",

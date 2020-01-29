@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Arcus.Templates.Tests.Integration.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Primitives;
 using GuardNet;
@@ -66,11 +67,17 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         }
 
         /// <summary>
-        /// Gets the project directory of the ServiceBus Queue worker project.
+        /// Gets the project directory of the Service Bus project based on the given <paramref name="entity"/>.
         /// </summary>
-        public DirectoryInfo GetServiceBusQueueProjectDirectory()
+        public DirectoryInfo GetServiceBusProjectDirectory(ServiceBusEntity entity)
         {
-            return PathCombineWithSourcesDirectory("Arcus.Templates.ServiceBus.Queue");
+            switch (entity)
+            {
+                case ServiceBusEntity.Queue: return PathCombineWithSourcesDirectory("Arcus.Templates.ServiceBus.Queue");
+                case ServiceBusEntity.Topic: return PathCombineWithSourcesDirectory("Arcus.Templates.ServiceBus.Topic");
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(entity), entity, "Unknown Service Bus entity");
+            }
         }
 
         /// <summary>
@@ -163,6 +170,22 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             const string tcpPortKey = "Arcus:Worker:HealthPort";
 
             return _configuration.GetValue<int>(tcpPortKey);
+        }
+
+        /// <summary>
+        /// Gets the Service Bus connection string based on the given <paramref name="entity"/>.
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public string GetServiceBusConnectionString(ServiceBusEntity entity)
+        {
+            switch (entity)
+            {
+                case ServiceBusEntity.Queue: return _configuration["Arcus:Worker:ServiceBus:ConnectionStringWithQueue"];
+                case ServiceBusEntity.Topic: return _configuration["Arcus:Worker:ServiceBus:ConnectionStringWithTopic"];
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(entity), entity, "Unknown Service Bus entity");
+            }
         }
 
         /// <summary>

@@ -11,7 +11,9 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "Arcus.Templates.Orchestrato
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{F6DBEE21-816E-434F-AEA3-9FD6C2261E85}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arcus.Templates.ServiceBus.Queue", "Arcus.Templates.ServiceBus.Queue\Arcus.Templates.ServiceBus.Queue.csproj", "{094D277F-AB55-4CD8-B346-4693796FABDA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arcus.Templates.ServiceBus.Queue", "Arcus.Templates.ServiceBus.Queue\Arcus.Templates.ServiceBus.Queue.csproj", "{094D277F-AB55-4CD8-B346-4693796FABDA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arcus.Templates.ServiceBus.Topic", "Arcus.Templates.ServiceBus.Topic\Arcus.Templates.ServiceBus.Topic.csproj", "{F4200B87-E88B-4DF3-8385-CAF357956D29}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,6 +37,10 @@ Global
 		{094D277F-AB55-4CD8-B346-4693796FABDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{094D277F-AB55-4CD8-B346-4693796FABDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{094D277F-AB55-4CD8-B346-4693796FABDA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F4200B87-E88B-4DF3-8385-CAF357956D29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4200B87-E88B-4DF3-8385-CAF357956D29}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4200B87-E88B-4DF3-8385-CAF357956D29}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4200B87-E88B-4DF3-8385-CAF357956D29}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

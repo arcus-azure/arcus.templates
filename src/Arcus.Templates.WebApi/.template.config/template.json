@@ -110,11 +110,22 @@
       "type": "parameter",
       "datatype": "bool",
       "defaultValue": "false",
-      "description": "Exclude the capability to correlate between HTTP requests/responses"
+      "description": "Exclude the capability to correlate between HTTP requests/responses from the API project"
     },
     "ExcludeCorrelation": {
       "type": "computed",
       "value": "exclude-correlation"
+    },
+    "exclude-openApi": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false",
+      "description": "Exclude the OpenApi docs, UI generation from XML docs from the web API project"
+    },
+    "ExcludeOpenApi": {
+      "type": "computed",
+      "value": "exclude-openApi"
+    }
     },
     "logging": {
       "type": "parameter",

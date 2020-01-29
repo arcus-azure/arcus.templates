@@ -30,8 +30,8 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Logging.v1
             var optionsWithDefaultLogging =
                 new WebApiProjectOptions().WithConsoleLogging();
 
-            using (var project = await WebApiProject.StartNewAsync(optionsWithDefaultLogging, _outputWriter))
-                // Act
+            using (var project = await WebApiProject.StartNewAsync(optionsWithDefaultLogging, _outputWriter)) 
+            // Act
             using (HttpResponseMessage response = await project.Health.GetAsync())
             {
                 // Assert

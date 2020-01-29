@@ -125,7 +125,6 @@
     "ExcludeOpenApi": {
       "type": "computed",
       "value": "exclude-openApi"
-    }
     },
     "logging": {
       "type": "parameter",
@@ -137,7 +136,8 @@
         },
         {
           "choice": "Console",
-          "description": "No extra logging mechanism except for the default console logging will be added to the web API project"
+          "description":
+            "No extra logging mechanism except for the default console logging will be added to the web API project"
         }
       ],
       "defaultValue": "Console",

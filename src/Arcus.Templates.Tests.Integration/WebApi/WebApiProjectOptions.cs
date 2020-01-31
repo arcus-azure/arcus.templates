@@ -43,7 +43,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi
         }
 
         /// <summary>
-        /// Adds the project option to exclude the correlation capability to the web API project.
+        /// Adds the project option to exclude the correlation capability from the web API project.
         /// </summary>
         public WebApiProjectOptions WithExcludeCorrelation()
         {
@@ -60,6 +60,39 @@ namespace Arcus.Templates.Tests.Integration.WebApi
             ProjectOptions optionsWithExcludeOpenApi = AddOption("--exclude-openApi");
 
             return new WebApiProjectOptions(optionsWithExcludeOpenApi);
+        }
+
+        /// <summary>
+        /// Adds the default logging option to the web API project.
+        /// </summary>
+        /// <returns></returns>
+        public WebApiProjectOptions WithConsoleLogging()
+        {
+            ProjectOptions optionsWithDefaultLogging = AddOption("--logging Console");
+
+            return new WebApiProjectOptions(optionsWithDefaultLogging);
+        }
+
+        /// <summary>
+        /// Adds the Serilog logging option to the web API project; writing both to the console and to Azure Application Insights.
+        /// </summary>
+        /// <param name="applicationInsightsInstrumentationKey">The key to connect to the Azure Application Insights resource.</param>
+        public WebApiProjectOptions WithSerilogLogging(string applicationInsightsInstrumentationKey)
+        {
+            ProjectOptions optionsWithSerilogLogging = 
+                AddOption("--logging Serilog", 
+                          (fixtureDirectory, projectDirectory) => ConfigureSerilogLogging(fixtureDirectory, projectDirectory, applicationInsightsInstrumentationKey));
+            
+            return new WebApiProjectOptions(optionsWithSerilogLogging);
+        }
+
+        private static void ConfigureSerilogLogging(DirectoryInfo fixtureDirectory, DirectoryInfo projectDirectory, string applicationInsightsInstrumentationKey)
+        {
+            ReplaceProjectFileContent(
+                projectDirectory, 
+                "appsettings.json", 
+                contents => contents.Replace("YOUR APPLICATION INSIGHTS INSTRUMENTATION KEY", applicationInsightsInstrumentationKey));
+
         }
 
         /// <summary>

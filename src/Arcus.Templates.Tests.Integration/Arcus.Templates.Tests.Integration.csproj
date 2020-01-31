@@ -9,7 +9,6 @@
   <ItemGroup>
     <None Remove="appsettings.json" />
     <None Remove="appsettings.local.json" />
-    <None Remove="appsettings.private.json" />
   </ItemGroup>
 
   <ItemGroup>

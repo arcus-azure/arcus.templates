@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Converters;
+#if Serilog
+using Serilog;
+#endif
 #if ExcludeOpenApi
 #else
 using Swashbuckle.AspNetCore.Swagger;
@@ -50,7 +53,6 @@ namespace Arcus.Templates.WebApi
     
             services.AddScoped(serviceProvider => new CertificateAuthenticationValidator(certificateAuthenticationConfig));
 #endif
-            
             services.AddMvc(options => 
             {
                 options.ReturnHttpNotAcceptable = true;
@@ -121,10 +123,13 @@ namespace Arcus.Templates.WebApi
 #else
             app.UseCorrelation();
 #endif
+#if Serilog
+            app.UseSerilogRequestLogging();
+#endif
 
             #warning Please configure application with HTTPS transport layer security
-
 #if NoneAuth
+
             #warning Please configure application with authentication mechanism: https://webapi.arcus-azure.net/features/security/auth/shared-access-key
 #endif
             app.UseMvc();

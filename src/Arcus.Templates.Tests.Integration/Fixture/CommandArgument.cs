@@ -7,15 +7,20 @@ namespace Arcus.Templates.Tests.Integration.Fixture
     /// </summary>
     public class CommandArgument
     {
-        private readonly string _name, _value;
+        private readonly string _value;
         private readonly bool _isSecret;
 
         private CommandArgument(string name, string value, bool isSecret)
         {
-            _name = name;
+            Name = name;
             _value = value;
             _isSecret = isSecret;
         }
+
+        /// <summary>
+        /// Gets the name of the CLI argument.
+        /// </summary>
+        public string Name { get; }
 
         /// <summary>
         /// Gets the exposed command argument name and value; including private information; use with care.
@@ -25,7 +30,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         /// </remarks>
         internal string ToExposedString()
         {
-            return $"--{_name} {_value}";
+            return $"--{Name} {_value}";
         }
 
         /// <summary>
@@ -64,7 +69,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         /// <returns>A string that represents the current object.</returns>
         public override string ToString()
         {
-            return _isSecret ? $"--{_name} ***" : $"--{_name} {_value}";
+            return _isSecret ? $"--{Name} ***" : $"--{Name} {_value}";
         }
     }
 }

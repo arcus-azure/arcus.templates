@@ -43,6 +43,16 @@
         "value": "#error"
       },
       "replaces": "//#error"
+    },
+    "exclude-serilog": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false",
+      "description": "Exclude the Serilog logging infrastructure in the worker project"
+    },
+    "ExcludeSerilog": {
+      "type": "computed",
+      "value": "exclude-serilog"
     }
   }
 }

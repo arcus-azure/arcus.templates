@@ -18,7 +18,7 @@ namespace Arcus.Templates.ServiceBus.Queue
 #if ExcludeSerilog
 #else
 #warning Make sure that the appsettings.json is updated with your Azure Application Insights instrumentation key.
-        private const string ApplicationInsightsInstrumentationKeyName = "Telemetry_ApplicationInsights_InstrumentationKey";
+        private const string ApplicationInsightsInstrumentationKeyName = "TELEMETRY_APPLICATIONINSIGHTS_INSTRUMENTATIONKEY";
 
 #endif
         public static int Main(string[] args)

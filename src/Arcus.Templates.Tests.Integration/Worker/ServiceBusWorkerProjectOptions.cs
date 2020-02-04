@@ -11,7 +11,7 @@ namespace Arcus.Templates.Tests.Integration.Worker
     /// </summary>
     public class ServiceBusWorkerProjectOptions : ProjectOptions
     {
-        private const string SerilogTelemetryInstrumentationKey = "Telemetry_ApplicationInsights_InstrumentationKey";
+        private const string SerilogTelemetryInstrumentationKey = "TELEMETRY_APPLICATIONINSIGHTS_INSTRUMENTATIONKEY";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ServiceBusWorkerProjectOptions"/> class.

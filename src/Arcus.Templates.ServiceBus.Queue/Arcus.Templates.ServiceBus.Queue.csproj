@@ -58,8 +58,5 @@
     <PackageReference Include="Serilog" Version="2.9.0" Condition="'$(ExcludeSerilog)' == 'false'" />
     <PackageReference Include="Serilog.Extensions.Hosting" Version="3.0.0" Condition="'$(ExcludeSerilog)' == 'false'" />
     <PackageReference Include="Serilog.Sinks.ApplicationInsights" Version="3.0.4" Condition="'$(ExcludeSerilog)' == 'false'" />
-    <PackageReference Include="Serilog" Version="2.9.0" Condition="'$(ExcludeSerilog)' == 'false'" />
-    <PackageReference Include="Serilog.Extensions.Hosting" Version="3.0.0" Condition="'$(ExcludeSerilog)' == 'false'" />
-    <PackageReference Include="Serilog.Sinks.ApplicationInsights" Version="3.0.4" Condition="'$(ExcludeSerilog)' == 'false'" />
   </ItemGroup>
 </Project>

@@ -163,11 +163,21 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         }
 
         /// <summary>
-        /// Gets the TCP port on which the worker projects on docker run on.
+        /// Gets the TCP port on which the Service Bus Queue worker projects on docker run on.
         /// </summary>
-        public int GetDockerWorkerHealthPort()
+        public int GetDockerServiceBusQueueWorkerHealthPort()
         {
-            const string tcpPortKey = "Arcus:Worker:HealthPort";
+            const string tcpPortKey = "Arcus:Worker:ServiceBus:Queue:HealthPort";
+
+            return _configuration.GetValue<int>(tcpPortKey);
+        }
+
+        /// <summary>
+        /// Gets the TCP port on which the Service Bus topic worker projects on docker run on.
+        /// </summary>
+        public int GetDockerServiceBusTopicWorkerHealthPort()
+        {
+            const string tcpPortKey = "Arcus:Worker:ServiceBus:Topic:HealthPort";
 
             return _configuration.GetValue<int>(tcpPortKey);
         }
@@ -181,8 +191,8 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         {
             switch (entity)
             {
-                case ServiceBusEntity.Queue: return _configuration["Arcus:Worker:ServiceBus:ConnectionStringWithQueue"];
-                case ServiceBusEntity.Topic: return _configuration["Arcus:Worker:ServiceBus:ConnectionStringWithTopic"];
+                case ServiceBusEntity.Queue: return _configuration["Arcus:Worker:ServiceBus:Queue:ConnectionString"];
+                case ServiceBusEntity.Topic: return _configuration["Arcus:Worker:ServiceBus:Topic:ConnectionString"];
                 default:
                     throw new ArgumentOutOfRangeException(nameof(entity), entity, "Unknown Service Bus entity");
             }

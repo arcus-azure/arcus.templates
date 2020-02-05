@@ -25,7 +25,23 @@ namespace Arcus.Templates.Tests.Integration.Worker.Health
         {
             // Arrange
             var configuration = TestConfig.Create();
-            int healthPort = configuration.GetDockerWorkerHealthPort();
+            int healthPort = configuration.GetDockerServiceBusQueueWorkerHealthPort();
+
+            var healthEndpointService = new HealthEndpointService(healthPort, _outputWriter);
+
+            // Act
+            HealthReport report = await healthEndpointService.ProbeHealthReportAsync();
+
+            // Assert
+            Assert.Equal(HealthStatus.Healthy, report.Status);
+        }
+
+        [Fact]
+        public async Task MinimumServiceBusTopicWorkerOnDocker_ProbeForHealthReport_ResponseHealthy()
+        {
+            // Arrange
+            var configuration = TestConfig.Create();
+            int healthPort = configuration.GetDockerServiceBusTopicWorkerHealthPort();
 
             var healthEndpointService = new HealthEndpointService(healthPort, _outputWriter);
 

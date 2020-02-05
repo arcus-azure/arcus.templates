@@ -46,6 +46,21 @@ stages:
                 EVENTGRID_AUTH_KEY=$(Arcus.TestInfra.EventGrid.Auth.Key)
                 ARCUS_SERVICEBUS_CONNECTIONSTRING=$(Arcus.ServiceBus.ConnectionStringWithQueue)
                 TELEMETRY_APPLICATIONINSIGHTS_INSTRUMENTATIONKEY=$(Arcus.ApplicationInsights.InstrumentationKey)
+          - template: 'run-new-project-from-template.yml'
+            parameters:
+              projectName: 'Arcus.Demo.ServiceBus.Topic'
+              projectAlias: 'arcus-servicebus-topic'
+              ports: '$(Arcus_Worker_HealthPort):$(Arcus_Worker_HealthPort)'
+              script: |
+                Get-Content '/Arcus.Demo.ServiceBus.Topic/Program.cs' | 
+                  Where-Object { $_ -notmatch '#error' -and $_ -notmatch 'secretProvider: null' -and $_ -notmatch 'EmptyMessagePump' } | 
+                  Set-Content '/Arcus.Demo.ServiceBus.Topic/Program.cs'
+              envVars: |
+                ARCUS_HEALTH_PORT=$(Arcus_Worker_HealthPort)
+                EVENTGRID_TOPIC_URI=$(Arcus.TestInfra.EventGrid.Topic.Uri)
+                EVENTGRID_AUTH_KEY=$(Arcus.TestInfra.EventGrid.Auth.Key)
+                ARCUS_SERVICEBUS_CONNECTIONSTRING=$(Arcus.ServiceBus.ConnectionStringWithTopic)
+                TELEMETRY_APPLICATIONINSIGHTS_INSTRUMENTATIONKEY=$(Arcus.ApplicationInsights.InstrumentationKey)
           - template: test/run-integration-tests.yml@templates
             parameters:
               dotnetSdkVersion: '$(DotNet.Sdk.Version)'

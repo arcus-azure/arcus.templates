@@ -77,8 +77,7 @@ namespace Arcus.Templates.ServiceBus.Queue
                            //#error Please provide a valid secret provider, for example Azure Key Vault: https: //security.arcus-azure.net/features/secrets/consume-from-key-vault
                            services.AddSingleton<ISecretProvider>(serviceProvider => new CachedSecretProvider(secretProvider: null));
 
-                           services.AddServiceBusQueueMessagePump<EmptyMessagePump>(
-                               secretProvider => secretProvider.GetRawSecretAsync("ARCUS_SERVICEBUS_CONNECTIONSTRING"));
+                           services.AddServiceBusQueueMessagePump<EmptyMessagePump>(secretProvider => secretProvider.GetRawSecretAsync("ARCUS_SERVICEBUS_CONNECTIONSTRING"));
                            services.AddTcpHealthProbes("ARCUS_HEALTH_PORT");
                        });
         }

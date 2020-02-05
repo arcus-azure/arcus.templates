@@ -42,7 +42,7 @@ And additional features available with options:
 * `-eo|--exclude-openApi` (default `false`): exclude the [ASP.NET Swagger docs generation and UI](https://docs.microsoft.com/en-us/aspnet/core/tutorials/getting-started-with-swashbuckle?view=aspnetcore-3.1&tabs=visual-studio) from API project.
 * `-lo|--logging` (default `Console`)
   * `Console`: no extra logging mechanism except for the default console logging will be added to the web API project.
-  * `Serilog`: adds Serilog as logging mechanism with request logging to the web API project.
+  * `Serilog`: adds [Serilog](https://serilog.net/) as logging mechanism with request logging to the web API project.
 
 ## Security
 As part of this template the following HTTP header(s) are removed for security sake:

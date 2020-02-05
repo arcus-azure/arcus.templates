@@ -50,7 +50,32 @@ namespace Arcus.Templates.Tests.Integration.Worker
         {
             Guard.NotNull(outputWriter, nameof(outputWriter));
 
-            ServiceBusWorkerProject project = await StartNewAsync(ServiceBusEntity.Queue, TestConfig.Create(), outputWriter);
+            var config = TestConfig.Create();
+            var options = ServiceBusWorkerProjectOptions.Create(config);
+            ServiceBusWorkerProject project = await StartNewWithQueueAsync(config, options, outputWriter);
+            
+            return project;
+        }
+
+        /// <summary>
+        /// Starts a newly created project from the ServiceBus Queue worker project template.
+        /// </summary>
+        /// <param name="config">The collection of configuration values to correctly initialize the resulting project with secret values.</param>
+        /// <param name="options">The project options to manipulate the resulting structure of the project.</param>
+        /// <param name="outputWriter">The output logger to add telemetry information during the creation and startup process.</param>
+        /// <returns>
+        ///     A ServiceBus Queue project with a set of services to interact with the worker.
+        /// </returns>
+        public static async Task<ServiceBusWorkerProject> StartNewWithQueueAsync(
+            TestConfig config,
+            ServiceBusWorkerProjectOptions options,
+            ITestOutputHelper outputWriter)
+        {
+            Guard.NotNull(config, nameof(config));
+            Guard.NotNull(options, nameof(options));
+            Guard.NotNull(outputWriter, nameof(outputWriter));
+
+            ServiceBusWorkerProject project = await StartNewAsync(ServiceBusEntity.Queue, config, options, outputWriter);
             return project;
         }
 
@@ -65,23 +90,66 @@ namespace Arcus.Templates.Tests.Integration.Worker
         {
             Guard.NotNull(outputWriter, nameof(outputWriter));
 
-            ServiceBusWorkerProject project = await StartNewAsync(ServiceBusEntity.Topic, TestConfig.Create(), outputWriter);
+            var config = TestConfig.Create();
+            var options = ServiceBusWorkerProjectOptions.Create(config);
+            ServiceBusWorkerProject project = await StartNewWithTopicAsync(config, options, outputWriter);
+            
             return project;
         }
 
-        private static async Task<ServiceBusWorkerProject> StartNewAsync(ServiceBusEntity entity, TestConfig configuration, ITestOutputHelper outputWriter)
+        /// <summary>
+        /// Starts a newly created project from the ServiceBus Queue worker project template.
+        /// </summary>
+        /// <param name="config">The collection of configuration values to correctly initialize the resulting project with secret values.</param>
+        /// <param name="options">The project options to manipulate the resulting structure of the project.</param>
+        /// <param name="outputWriter">The output logger to add telemetry information during the creation and startup process.</param>
+        /// <returns>
+        ///     A ServiceBus Queue project with a set of services to interact with the worker.
+        /// </returns>
+        public static async Task<ServiceBusWorkerProject> StartNewWithTopicAsync(
+            TestConfig config,
+            ServiceBusWorkerProjectOptions options,
+            ITestOutputHelper outputWriter)
         {
-            ServiceBusWorkerProject project = CreateNew(entity, configuration, outputWriter);
-            await project.StartAsync();
+            Guard.NotNull(config, nameof(config));
+            Guard.NotNull(options, nameof(options));
+            Guard.NotNull(outputWriter, nameof(outputWriter));
+
+            ServiceBusWorkerProject project = await StartNewAsync(ServiceBusEntity.Topic, config, options, outputWriter);
+            return project;
+        }
+
+        /// <summary>
+        /// Starts a newly created project from the ServiceBus Queue or Topic worker project template.
+        /// </summary>
+        /// <param name="entity">The resource entity for which the worker template should be created, you can also use <see cref="StartNewWithQueueAsync(ITestOutputHelper)"/> or <see cref="StartNewWithTopicAsync(ITestOutputHelper)"/> instead.</param>
+        /// <param name="configuration">The collection of configuration values to correctly initialize the resulting project with secret values.</param>
+        /// <param name="options">The project options to manipulate the resulting structure of the project.</param>
+        /// <param name="outputWriter">The output logger to add telemetry information during the creation and startup process.</param>
+        /// <returns>
+        ///     A ServiceBus Queue project with a set of services to interact with the worker.
+        /// </returns>
+        public static async Task<ServiceBusWorkerProject> StartNewAsync(
+            ServiceBusEntity entity, 
+            TestConfig configuration, 
+            ServiceBusWorkerProjectOptions options, 
+            ITestOutputHelper outputWriter)
+        {
+            ServiceBusWorkerProject project = CreateNew(entity, configuration, options, outputWriter);
+            await project.StartAsync(options);
             await project.MessagePump.StartAsync();
 
             return project;
         }
 
-        private static ServiceBusWorkerProject CreateNew(ServiceBusEntity entity, TestConfig configuration, ITestOutputHelper outputWriter)
+        private static ServiceBusWorkerProject CreateNew(
+            ServiceBusEntity entity, 
+            TestConfig configuration, 
+            ServiceBusWorkerProjectOptions options,
+            ITestOutputHelper outputWriter)
         {
             var project = new ServiceBusWorkerProject(entity, configuration, outputWriter);
-            project.CreateNewProject(new ProjectOptions());
+            project.CreateNewProject(options);
             project.AddOrdersMessagePump();
 
             return project;
@@ -112,10 +180,14 @@ namespace Arcus.Templates.Tests.Integration.Worker
         }
 
 
-        private async Task StartAsync()
+        private async Task StartAsync(ServiceBusWorkerProjectOptions options)
         {
-            IEnumerable<CommandArgument> commands = CreateServiceBusQueueWorkerCommands();
-            Run(_configuration.BuildConfiguration, TargetFramework.NetCoreApp30, commands.ToArray());
+            CommandArgument[] commands = 
+                CreateServiceBusQueueWorkerCommands()
+                    .Concat(options.AdditionalArguments)
+                    .ToArray();
+            
+            Run(_configuration.BuildConfiguration, TargetFramework.NetCoreApp30, commands);
             await WaitUntilWorkerProjectIsAvailableAsync(_healthPort);
         }
 

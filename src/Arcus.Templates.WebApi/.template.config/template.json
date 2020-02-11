@@ -73,6 +73,10 @@
           "description": "Adds a client certificate authentication mechanism to the web API project"
         },
         {
+          "choice": "JWT",
+          "description": "Adds a JWT (JSON web token) authentication mechanism to the web API project"
+        },
+        {
           "choice": "None",
           "description": "No authentication mechanism is added to the web API project"
         }
@@ -96,9 +100,13 @@
       "type": "computed",
       "value": "(authentication == \"Certificate\")"
     },
+    "JwtAuth": {
+      "type": "computed",
+      "value": "(authentication == \"JWT\")"
+    },
     "AppSettings": {
       "type": "computed",
-      "value": "include-appsettings || CertificateAuth || Serilog"
+      "value": "include-appsettings || CertificateAuth || Serilog || JwtAuth"
     },
     "include-appsettings": {
       "type": "parameter",

@@ -96,6 +96,30 @@ namespace Arcus.Templates.Tests.Integration.WebApi
         }
 
         /// <summary>
+        /// Adds a JWT (JSON web token) authentication to the web API project.
+        /// </summary>
+        /// <param name="key">The security key that was used to generated the JWT token.</param>
+        /// <returns></returns>
+        public WebApiProjectOptions WithJwtAuthentication(string key)
+        {
+            Guard.NotNullOrWhitespace(key, nameof(key), "Cannot add JWT authentication authentication option without a security key to validate the JWT token");
+
+            ProjectOptions optionsWithJwtAuthentication = AddOption(
+                "--authentication JWT",
+                (fixtureDirectory, projectDirectory) => ConfigureJwtAuthentication(fixtureDirectory, projectDirectory, key));
+
+            return new WebApiProjectOptions(optionsWithJwtAuthentication);
+        }
+
+        private static void ConfigureJwtAuthentication(DirectoryInfo fixtureDirectory, DirectoryInfo projectDirectory, string key)
+        {
+            ReplaceProjectFileContent(
+                projectDirectory,
+                "appsettings.json",
+                contents => contents.Replace("YOUR SECRET KEY", key));
+        }
+
+        /// <summary>
         /// Adds a shared access key authentication to the web API project.
         /// </summary>
         /// <param name="headerName">The name of the request header which value must match the stored secret.</param>

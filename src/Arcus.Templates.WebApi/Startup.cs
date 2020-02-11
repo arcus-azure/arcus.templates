@@ -1,10 +1,12 @@
 using System;
+using System.Text;
 using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Converters;
 #if Serilog
@@ -28,6 +30,12 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Primitives;
 #endif
+#if JwtAuth
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.IdentityModel.Tokens;
+#endif
 #if ExcludeCorrelation
 #else
 using Arcus.WebApi.Correlation;
@@ -37,6 +45,19 @@ namespace Arcus.Templates.WebApi
 {
     public class Startup
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Startup"/> class.
+        /// </summary>
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+
+        /// <summary>
+        /// Gets the configuration of key/value application properties.
+        /// </summary>
+        public IConfiguration Configuration { get; }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
@@ -57,7 +78,7 @@ namespace Arcus.Templates.WebApi
             {
                 options.ReturnHttpNotAcceptable = true;
                 options.RespectBrowserAcceptHeader = true;
-                
+
                 RestrictToJsonContentType(options);
                 AddEnumAsStringRepresentation(options);
 
@@ -68,7 +89,37 @@ namespace Arcus.Templates.WebApi
 #if CertificateAuth
                 options.Filters.Add(new CertificateAuthenticationFilter());
 #endif
+#if JwtAuth
+                AuthorizationPolicy policy = 
+                    new AuthorizationPolicyBuilder()
+                        .RequireRole("Admin")
+                        .RequireAuthenticatedUser()
+                        .Build();
+
+                options.Filters.Add(new AuthorizeFilter(policy));
+#endif
             });
+#if JwtAuth
+            var key = Encoding.ASCII.GetBytes(Configuration["Jwt:Secret"]);
+            services.AddAuthentication(x =>
+                    {
+                        x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                        x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                    })
+                    .AddJwtBearer(x =>
+                    {
+                        x.SaveToken = true;
+                        x.TokenValidationParameters = new TokenValidationParameters
+                        {
+                            ValidateIssuerSigningKey = true,
+                            IssuerSigningKey = new SymmetricSecurityKey(key),
+                            ValidateIssuer = true,
+                            ValidIssuer = "entity that generates the token",
+                            ValidateAudience = true,
+                            ValidAudience = "client of the app"
+                        };
+                    });
+#endif
 
             services.AddHealthChecks();
 #if ExcludeCorrelation
@@ -127,11 +178,14 @@ namespace Arcus.Templates.WebApi
             app.UseSerilogRequestLogging();
 #endif
 
-            #warning Please configure application with HTTPS transport layer security
+#warning Please configure application with HTTPS transport layer security
+#if JwtAuth
+            app.UseAuthentication();
+#endif
 #if NoneAuth
-
             #warning Please configure application with authentication mechanism: https://webapi.arcus-azure.net/features/security/auth/shared-access-key
 #endif
+
             app.UseMvc();
 
 #if ExcludeOpenApi

@@ -99,7 +99,6 @@ namespace Arcus.Templates.Tests.Integration.WebApi
         /// Adds a JWT (JSON web token) authentication to the web API project.
         /// </summary>
         /// <param name="key">The security key that was used to generated the JWT token.</param>
-        /// <returns></returns>
         public WebApiProjectOptions WithJwtAuthentication(string key)
         {
             Guard.NotNullOrWhitespace(key, nameof(key), "Cannot add JWT authentication authentication option without a security key to validate the JWT token");

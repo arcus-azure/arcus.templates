@@ -100,7 +100,7 @@ namespace Arcus.Templates.WebApi
 #endif
             });
 #if JwtAuth
-            var key = Encoding.ASCII.GetBytes(Configuration["Jwt:Secret"]);
+            var key = Encoding.UTF8.GetBytes(Configuration["Jwt:Secret"]);
             services.AddAuthentication(x =>
                     {
                         x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

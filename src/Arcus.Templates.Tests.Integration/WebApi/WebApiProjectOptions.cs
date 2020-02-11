@@ -115,7 +115,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi
             ReplaceProjectFileContent(
                 projectDirectory,
                 "appsettings.json",
-                contents => contents.Replace("YOUR SECRET KEY", key));
+                contents => contents.Replace("YOUR SIGNING KEY", key));
         }
 
         /// <summary>

@@ -1,12 +1,12 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json.Converters;
 #if Serilog
 using Serilog;
 #endif
@@ -96,7 +96,7 @@ namespace Arcus.Templates.WebApi
 
         private static void RestrictToJsonContentType(MvcOptions options)
         {
-            var allButJsonInputFormatters = options.InputFormatters.Where(formatter => !(formatter is JsonInputFormatter));
+            var allButJsonInputFormatters = options.InputFormatters.Where(formatter => !(formatter is SystemTextJsonInputFormatter));
             foreach (IInputFormatter inputFormatter in allButJsonInputFormatters)
             {
                 options.InputFormatters.Remove(inputFormatter);
@@ -108,15 +108,15 @@ namespace Arcus.Templates.WebApi
 
         private static void AddEnumAsStringRepresentation(MvcOptions options)
         {
-            var onlyJsonOutputFormatters = options.OutputFormatters.OfType<JsonOutputFormatter>();
-            foreach (JsonOutputFormatter outputFormatter in onlyJsonOutputFormatters)
+            var onlyJsonOutputFormatters = options.OutputFormatters.OfType<SystemTextJsonOutputFormatter>();
+            foreach (SystemTextJsonOutputFormatter outputFormatter in onlyJsonOutputFormatters)
             {
-                outputFormatter.PublicSerializerSettings.Converters.Add(new StringEnumConverter());
+                outputFormatter.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
             }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseMiddleware<Arcus.WebApi.Logging.ExceptionHandlingMiddleware>();
 #if ExcludeCorrelation

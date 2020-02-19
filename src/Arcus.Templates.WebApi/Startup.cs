@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
 #if Serilog
 using Serilog;
 #endif
@@ -53,7 +54,7 @@ namespace Arcus.Templates.WebApi
     
             services.AddScoped(serviceProvider => new CertificateAuthenticationValidator(certificateAuthenticationConfig));
 #endif
-            services.AddMvc(options => 
+            services.AddControllers(options => 
             {
                 options.ReturnHttpNotAcceptable = true;
                 options.RespectBrowserAcceptHeader = true;
@@ -79,7 +80,7 @@ namespace Arcus.Templates.WebApi
 #if ExcludeOpenApi
 #else
 //[#if DEBUG]
-            var openApiInformation = new Info
+            var openApiInformation = new OpenApiInfo
             {
                 Title = "Arcus.Templates.WebApi",
                 Version = "v1"
@@ -123,6 +124,8 @@ namespace Arcus.Templates.WebApi
 #else
             app.UseCorrelation();
 #endif
+            app.UseRouting();
+
 #if Serilog
             app.UseSerilogRequestLogging();
 #endif
@@ -132,7 +135,6 @@ namespace Arcus.Templates.WebApi
 
             #warning Please configure application with authentication mechanism: https://webapi.arcus-azure.net/features/security/auth/shared-access-key
 #endif
-            app.UseMvc();
 
 #if ExcludeOpenApi
 #else
@@ -145,6 +147,7 @@ namespace Arcus.Templates.WebApi
             });
 //[#endif]
 #endif
+            app.UseEndpoints(endpoints => endpoints.MapControllers());
         }
     }
 }

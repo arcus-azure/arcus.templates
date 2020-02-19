@@ -7,13 +7,12 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.OpenApi.Models;
 #if Serilog
 using Serilog;
 #endif
 #if ExcludeOpenApi
 #else
-using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.OpenApi.Models;
 #endif
 #if SharedAccessKeyAuth
 using Arcus.Security.Secrets.Core.Caching;
@@ -142,7 +141,8 @@ namespace Arcus.Templates.WebApi
             app.UseSwagger();
             app.UseSwaggerUI(swaggerUiOptions =>
             {
-                swaggerUiOptions.SwaggerEndpoint("v1/swagger.json", "Arcus.Templates.WebApi");
+                swaggerUiOptions.SwaggerEndpoint("/api/v1/docs.json", "Arcus.Templates.WebApi");
+                swaggerUiOptions.RoutePrefix = "api/docs";
                 swaggerUiOptions.DocumentTitle = "Arcus.Templates.WebApi";
             });
 //[#endif]

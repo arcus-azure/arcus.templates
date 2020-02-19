@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <GenerateDocumentationFile Condition="'$(ExcludeOpenApi)' == 'false'">true</GenerateDocumentationFile>
     <DocumentationFile Condition="'$(ExcludeOpenApi)' == 'false'">Arcus.Templates.WebApi.Open-Api.xml</DocumentationFile>
     <!--#if (AuthoringMode)-->

@@ -11,8 +11,8 @@
         NetCoreApp22,
 
         /// <summary>
-        /// Sets the target framework of the project created from the templates to netcoreapp3.0.
+        /// Sets the target framework of the project created from the templates to netcoreapp3.1.
         /// </summary>
-        NetCoreApp30
+        NetCoreApp31
     }
 }

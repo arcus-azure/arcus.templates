@@ -79,27 +79,34 @@ namespace Arcus.Templates.Tests.Integration.Worker.MessagePump
             var serviceBusConnectionStringBuilder = new ServiceBusConnectionStringBuilder(connectionString);
             var messageSender = new MessageSender(serviceBusConnectionStringBuilder);
 
-            Order order = GenerateOrder();
-            Message orderMessage = order.WrapInServiceBusMessage(operationId, transactionId);
-            await messageSender.SendAsync(orderMessage);
+            try
+            {
+                Order order = GenerateOrder();
+                Message orderMessage = order.WrapInServiceBusMessage(operationId, transactionId);
+                await messageSender.SendAsync(orderMessage);
 
-            string receivedEvent = _serviceBusEventConsumerHost.GetReceivedEvent(operationId);
-            Assert.NotEmpty(receivedEvent);
+                string receivedEvent = _serviceBusEventConsumerHost.GetReceivedEvent(operationId);
+                Assert.NotEmpty(receivedEvent);
 
-            EventGridEventBatch<OrderCreatedEvent> eventBatch = EventGridParser.Parse<OrderCreatedEvent>(receivedEvent);
-            Assert.NotNull(eventBatch);
-            OrderCreatedEvent orderCreatedEvent = Assert.Single(eventBatch.Events);
-            Assert.NotNull(orderCreatedEvent);
+                EventGridEventBatch<OrderCreatedEvent> eventBatch = EventGridParser.Parse<OrderCreatedEvent>(receivedEvent);
+                Assert.NotNull(eventBatch);
+                OrderCreatedEvent orderCreatedEvent = Assert.Single(eventBatch.Events);
+                Assert.NotNull(orderCreatedEvent);
 
-            var orderCreatedEventData = orderCreatedEvent.GetPayload<OrderCreatedEventData>();
-            Assert.NotNull(orderCreatedEventData);
-            Assert.NotNull(orderCreatedEventData.CorrelationInfo);
-            Assert.Equal(order.Id, orderCreatedEventData.Id);
-            Assert.Equal(order.Amount, orderCreatedEventData.Amount);
-            Assert.Equal(order.ArticleNumber, orderCreatedEventData.ArticleNumber);
-            Assert.Equal(transactionId, orderCreatedEventData.CorrelationInfo.TransactionId);
-            Assert.Equal(operationId, orderCreatedEventData.CorrelationInfo.OperationId);
-            Assert.NotEmpty(orderCreatedEventData.CorrelationInfo.CycleId);
+                var orderCreatedEventData = orderCreatedEvent.GetPayload<OrderCreatedEventData>();
+                Assert.NotNull(orderCreatedEventData);
+                Assert.NotNull(orderCreatedEventData.CorrelationInfo);
+                Assert.Equal(order.Id, orderCreatedEventData.Id);
+                Assert.Equal(order.Amount, orderCreatedEventData.Amount);
+                Assert.Equal(order.ArticleNumber, orderCreatedEventData.ArticleNumber);
+                Assert.Equal(transactionId, orderCreatedEventData.CorrelationInfo.TransactionId);
+                Assert.Equal(operationId, orderCreatedEventData.CorrelationInfo.OperationId);
+                Assert.NotEmpty(orderCreatedEventData.CorrelationInfo.CycleId);
+            }
+            finally
+            {
+                await messageSender.CloseAsync();
+            }
         }
 
         private static Order GenerateOrder()

@@ -38,7 +38,7 @@ namespace Arcus.Templates.WebApi
 
             try
             {
-                CreateWebHostBuilder(args, configuration)
+                CreateHostBuilder(args, configuration)
                     .Build()
                     .Run();
 

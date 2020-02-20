@@ -1,5 +1,15 @@
 {
+  "masterIssue": false,
+  "branchPrefix":"renovate-",
+  "separateMajorMinor": false,
+  "labels":["dependencies"],
+  "ignoreDeps":[],
+  "prHourlyLimit": 0,
+  "prConcurrentLimit": 0,
   "extends": [
     "config:base"
-  ]
+  ],
+  "nuget": {
+    "enabled": true
+   }
 }

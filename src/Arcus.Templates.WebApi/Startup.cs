@@ -1,18 +1,18 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json.Converters;
 #if Serilog
 using Serilog;
 #endif
 #if ExcludeOpenApi
 #else
-using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.OpenApi.Models;
 #endif
 #if SharedAccessKeyAuth
 using Arcus.Security.Secrets.Core.Caching;
@@ -53,7 +53,7 @@ namespace Arcus.Templates.WebApi
     
             services.AddScoped(serviceProvider => new CertificateAuthenticationValidator(certificateAuthenticationConfig));
 #endif
-            services.AddMvc(options => 
+            services.AddControllers(options => 
             {
                 options.ReturnHttpNotAcceptable = true;
                 options.RespectBrowserAcceptHeader = true;
@@ -79,7 +79,7 @@ namespace Arcus.Templates.WebApi
 #if ExcludeOpenApi
 #else
 //[#if DEBUG]
-            var openApiInformation = new Info
+            var openApiInformation = new OpenApiInfo
             {
                 Title = "Arcus.Templates.WebApi",
                 Version = "v1"
@@ -96,7 +96,7 @@ namespace Arcus.Templates.WebApi
 
         private static void RestrictToJsonContentType(MvcOptions options)
         {
-            var allButJsonInputFormatters = options.InputFormatters.Where(formatter => !(formatter is JsonInputFormatter));
+            var allButJsonInputFormatters = options.InputFormatters.Where(formatter => !(formatter is SystemTextJsonInputFormatter));
             foreach (IInputFormatter inputFormatter in allButJsonInputFormatters)
             {
                 options.InputFormatters.Remove(inputFormatter);
@@ -108,21 +108,23 @@ namespace Arcus.Templates.WebApi
 
         private static void AddEnumAsStringRepresentation(MvcOptions options)
         {
-            var onlyJsonOutputFormatters = options.OutputFormatters.OfType<JsonOutputFormatter>();
-            foreach (JsonOutputFormatter outputFormatter in onlyJsonOutputFormatters)
+            var onlyJsonOutputFormatters = options.OutputFormatters.OfType<SystemTextJsonOutputFormatter>();
+            foreach (SystemTextJsonOutputFormatter outputFormatter in onlyJsonOutputFormatters)
             {
-                outputFormatter.PublicSerializerSettings.Converters.Add(new StringEnumConverter());
+                outputFormatter.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
             }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseMiddleware<Arcus.WebApi.Logging.ExceptionHandlingMiddleware>();
 #if ExcludeCorrelation
 #else
             app.UseCorrelation();
 #endif
+            app.UseRouting();
+
 #if Serilog
             app.UseSerilogRequestLogging();
 #endif
@@ -132,19 +134,23 @@ namespace Arcus.Templates.WebApi
 
             #warning Please configure application with authentication mechanism: https://webapi.arcus-azure.net/features/security/auth/shared-access-key
 #endif
-            app.UseMvc();
 
 #if ExcludeOpenApi
 #else
 //[#if DEBUG]
-            app.UseSwagger();
+            app.UseSwagger(swaggerOptions =>
+            {
+                swaggerOptions.RouteTemplate = "api/{documentName}/docs.json";
+            });
             app.UseSwaggerUI(swaggerUiOptions =>
             {
-                swaggerUiOptions.SwaggerEndpoint("v1/swagger.json", "Arcus.Templates.WebApi");
+                swaggerUiOptions.SwaggerEndpoint("/api/v1/docs.json", "Arcus.Templates.WebApi");
+                swaggerUiOptions.RoutePrefix = "api/docs";
                 swaggerUiOptions.DocumentTitle = "Arcus.Templates.WebApi";
             });
 //[#endif]
 #endif
+            app.UseEndpoints(endpoints => endpoints.MapControllers());
         }
     }
 }

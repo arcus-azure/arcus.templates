@@ -138,7 +138,10 @@ namespace Arcus.Templates.WebApi
 #if ExcludeOpenApi
 #else
 //[#if DEBUG]
-            app.UseSwagger();
+            app.UseSwagger(swaggerOptions =>
+            {
+                swaggerOptions.RouteTemplate = "api/{documentName}/docs.json";
+            });
             app.UseSwaggerUI(swaggerUiOptions =>
             {
                 swaggerUiOptions.SwaggerEndpoint("/api/v1/docs.json", "Arcus.Templates.WebApi");

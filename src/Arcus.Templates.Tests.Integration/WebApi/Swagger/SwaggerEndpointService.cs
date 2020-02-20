@@ -25,8 +25,8 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Swagger
             Guard.NotNull(baseUrl, nameof(baseUrl));
 
             Url rootUrl = baseUrl.OriginalString.ResetToRoot();
-            _swaggerUIEndpoint = rootUrl.AppendPathSegments("api", "docs");
-            _swaggerDocsEndpoint = rootUrl.AppendPathSegments("api", "v1", "docs.json");
+            _swaggerUIEndpoint = rootUrl.Clone().AppendPathSegments("api", "docs");
+            _swaggerDocsEndpoint = rootUrl.Clone().AppendPathSegments("api", "v1", "docs.json");
         }
 
         /// <summary>

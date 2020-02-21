@@ -63,7 +63,7 @@ namespace Arcus.Templates.WebApi
 
 #if SharedAccessKeyAuth
                 #warning Please provide a valid request header name and secret name to the shared access filter
-                options.Filters.Add(new SharedAccessKeyAuthenticationFilter("YOUR REQUEST HEADER NAME", "YOUR SECRET NAME"));
+                options.Filters.Add(new SharedAccessKeyAuthenticationFilter(headerName: "YOUR REQUEST HEADER NAME", queryParameterName: null, secretName: "YOUR SECRET NAME"));
 #endif
 #if CertificateAuth
                 options.Filters.Add(new CertificateAuthenticationFilter());

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <GenerateDocumentationFile Condition="'$(ExcludeOpenApi)' == 'false'">true</GenerateDocumentationFile>
     <DocumentationFile Condition="'$(ExcludeOpenApi)' == 'false'">Arcus.Templates.WebApi.Open-Api.xml</DocumentationFile>
     <!--#if (AuthoringMode)-->
@@ -42,7 +42,7 @@
     <ExcludeOpenApi>false</ExcludeOpenApi>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.7.12" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.10" />
   </ItemGroup>
   <!--#endif-->
 
@@ -55,19 +55,15 @@
 
   <ItemGroup>
     <PackageReference Include="Guard.NET" Version="1.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.2.0" />
-    <PackageReference Include="Arcus.WebApi.Correlation" Version="20200121.10.0-preview" Condition="'$(ExcludeCorrelation)' == 'false'" />
-    <PackageReference Include="Arcus.WebApi.Logging" Version="0.3.0" />
-    <PackageReference Include="Arcus.WebApi.Security.Authentication" Version="0.3.0" Condition="'$(Auth)' == 'true'" />
-    <PackageReference Include="Serilog.AspNetCore" Version="3.0.0" Condition="'$(Serilog)' == 'true'" />
-    <PackageReference Include="Serilog.Sinks.ApplicationInsights" Version="3.0.4" Condition="'$(Serilog)' == 'true'" />
-    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="4.0.1" Condition="'$(ExcludeOpenApi)' == 'false'" />
-    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="4.0.1" Condition="'$(ExcludeOpenApi)' == 'false'" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Formatters.Json" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.1.2" />
+    <PackageReference Include="Arcus.WebApi.Correlation" Version="0.4.0-preview-1" Condition="'$(ExcludeCorrelation)' == 'false'" />
+    <PackageReference Include="Arcus.WebApi.Logging" Version="0.4.0-preview-1" />
+    <PackageReference Include="Arcus.WebApi.Security.Authentication" Version="0.4.0-preview-1" Condition="'$(Auth)' == 'true'" />
+    <PackageReference Include="Serilog.AspNetCore" Version="3.2.0" Condition="'$(Serilog)' == 'true'" />
+    <PackageReference Include="Serilog.Sinks.ApplicationInsights" Version="3.1.0" Condition="'$(Serilog)' == 'true'" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="5.0.0" Condition="'$(ExcludeOpenApi)' == 'false'" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="5.0.0" Condition="'$(ExcludeOpenApi)' == 'false'" />
   </ItemGroup>
-
-  <PropertyGroup>	
-    <RestoreSources>$(RestoreSources);https://api.nuget.org/v3/index.json;https://www.myget.org/F/arcus/api/v3/index.json</RestoreSources>	
-  </PropertyGroup>
 </Project>

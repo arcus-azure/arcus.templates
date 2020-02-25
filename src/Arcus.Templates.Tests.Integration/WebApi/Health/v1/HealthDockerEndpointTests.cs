@@ -40,7 +40,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Health.v1
                 // Assert
                 Assert.Equal(HttpStatusCode.OK, response.StatusCode);
                 string healthReportJson = await response.Content.ReadAsStringAsync();
-                var healthReport = JsonConvert.DeserializeObject<HealthReport>(healthReportJson);
+                var healthReport = JsonConvert.DeserializeObject<HealthReport>(healthReportJson, new TimeSpanConverter());
                 Assert.NotNull(healthReport);
                 Assert.Equal(HealthStatus.Healthy, healthReport.Status);
             }

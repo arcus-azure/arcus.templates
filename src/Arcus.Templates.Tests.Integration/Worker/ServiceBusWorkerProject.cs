@@ -187,7 +187,7 @@ namespace Arcus.Templates.Tests.Integration.Worker
                     .Concat(options.AdditionalArguments)
                     .ToArray();
             
-            Run(_configuration.BuildConfiguration, TargetFramework.NetCoreApp31, commands);
+            Run(_configuration.BuildConfiguration, _configuration.TargetFramework, commands);
             await WaitUntilWorkerProjectIsAvailableAsync(_healthPort);
         }
 

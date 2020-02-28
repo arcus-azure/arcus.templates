@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <GenerateDocumentationFile Condition="'$(ExcludeOpenApi)' == 'false'">true</GenerateDocumentationFile>
     <DocumentationFile Condition="'$(ExcludeOpenApi)' == 'false'">Arcus.Templates.WebApi.Open-Api.xml</DocumentationFile>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <!--#if (AuthoringMode)-->
     <Authors>Arcus</Authors>
     <Company>Arcus</Company>
@@ -26,7 +27,6 @@
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <ContentTargetFolders>content</ContentTargetFolders>
     <EnableDefaultContentItems>false</EnableDefaultContentItems>
-    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerComposeProjectPath>..\Arcus.Templates.Orchestrator.dcproj</DockerComposeProjectPath>
     <!--#endif-->
   </PropertyGroup>
@@ -40,11 +40,16 @@
     <DefineConstants>$(DefineConstants);</DefineConstants>
     <ExcludeCorrelation>false</ExcludeCorrelation>
     <ExcludeOpenApi>false</ExcludeOpenApi>
+    <UserSecretsId>83392b5f-d23c-473f-87a2-f430dc5b9141</UserSecretsId>
   </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.10" />
-  </ItemGroup>
   <!--#endif-->
+
+  <ItemGroup Condition="'$(AppSettings)' == 'true'">
+    <Content Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
 
   <ItemGroup Condition="'$(AppSettings)' == 'true'">
     <Content Update="appsettings.json">
@@ -65,5 +70,6 @@
     <PackageReference Include="Serilog.Sinks.ApplicationInsights" Version="3.1.0" Condition="'$(Serilog)' == 'true'" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="5.0.0" Condition="'$(ExcludeOpenApi)' == 'false'" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="5.0.0" Condition="'$(ExcludeOpenApi)' == 'false'" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.10" />
   </ItemGroup>
 </Project>

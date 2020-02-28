@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <!--#if (AuthoringMode)-->
     <Authors>Arcus</Authors>
     <Company>Arcus</Company>
@@ -24,7 +25,6 @@
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <ContentTargetFolders>content</ContentTargetFolders>
     <EnableDefaultContentItems>false</EnableDefaultContentItems>
-    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerComposeProjectPath>..\Arcus.Templates.Orchestrator.dcproj</DockerComposeProjectPath>
     <!--#endif-->
   </PropertyGroup>
@@ -37,13 +37,11 @@
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);</DefineConstants>
     <ExcludeSerilog>false</ExcludeSerilog>
+    <UserSecretsId>d7596530-df47-4168-8585-a0cbbb74f2a9</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="Dockerfile" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.10" />
   </ItemGroup>
   <!--#endif-->
 
@@ -58,5 +56,6 @@
     <PackageReference Include="Serilog" Version="2.9.0" Condition="'$(ExcludeSerilog)' == 'false'" />
     <PackageReference Include="Serilog.Extensions.Hosting" Version="3.0.0" Condition="'$(ExcludeSerilog)' == 'false'" />
     <PackageReference Include="Serilog.Sinks.ApplicationInsights" Version="3.1.0" Condition="'$(ExcludeSerilog)' == 'false'" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.10" />
   </ItemGroup>
 </Project>

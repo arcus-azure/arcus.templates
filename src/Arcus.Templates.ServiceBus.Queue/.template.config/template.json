@@ -23,8 +23,7 @@
         ".template.config/**/*",
         "**/*.filelist",
         "**/*.user",
-        "**/*.lock.json",
-        "**/launchSettings.json"
+        "**/*.lock.json"
       ]
     }
   ],

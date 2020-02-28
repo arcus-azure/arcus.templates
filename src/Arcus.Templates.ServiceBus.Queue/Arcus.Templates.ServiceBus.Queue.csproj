@@ -37,7 +37,6 @@
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);</DefineConstants>
     <ExcludeSerilog>false</ExcludeSerilog>
-    <UserSecretsId>d7596530-df47-4168-8585-a0cbbb74f2a9</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

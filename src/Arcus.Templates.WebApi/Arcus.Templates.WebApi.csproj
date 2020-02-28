@@ -40,7 +40,6 @@
     <DefineConstants>$(DefineConstants);</DefineConstants>
     <ExcludeCorrelation>false</ExcludeCorrelation>
     <ExcludeOpenApi>false</ExcludeOpenApi>
-    <UserSecretsId>83392b5f-d23c-473f-87a2-f430dc5b9141</UserSecretsId>
   </PropertyGroup>
   <!--#endif-->
 

@@ -58,7 +58,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Formatters.Json" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.1.2" />
-    <PackageReference Include="Arcus.WebApi.Correlation" Version="0.4.0-preview-1" Condition="'$(ExcludeCorrelation)' == 'false'" />
+    <PackageReference Include="Arcus.WebApi.Correlation" Version="0.4.0-preview-2" Condition="'$(ExcludeCorrelation)' == 'false'" />
     <PackageReference Include="Arcus.WebApi.Logging" Version="0.4.0-preview-1" />
     <PackageReference Include="Arcus.WebApi.Security.Authentication" Version="0.4.0-preview-1" Condition="'$(Auth)' == 'true'" />
     <PackageReference Include="Serilog.AspNetCore" Version="3.2.0" Condition="'$(Serilog)' == 'true'" />

@@ -91,7 +91,7 @@ stages:
               releaseNotes: |
                 Install new version via [NuGet](https://www.nuget.org/packages/Arcus.Templates.WebApi/$(Build.BuildNumber))
                 ```shell
-                > dotnet new --install Arcus.Templates.WebApi --Version $(Build.BuildNumber)
+                > dotnet new --install Arcus.Templates.WebApi::$(Build.BuildNumber)
                 ```
           - template: 'nuget/publish-official-package.yml@templates'
             parameters:

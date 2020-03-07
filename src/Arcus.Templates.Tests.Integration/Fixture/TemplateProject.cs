@@ -16,7 +16,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
     /// </summary>
     public abstract class TemplateProject : IDisposable
     {
-        protected const string ProjectName = "Arcus.Demo.Project";
+        protected readonly string ProjectName = $"Arcus.Demo.Project.{Guid.NewGuid():N}";
 
         private readonly Process _process;
         private readonly DirectoryInfo _templateDirectory;
@@ -33,7 +33,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             _templateDirectory = templateDirectory;
             Logger = outputWriter;
 
-            string tempDirectoryPath = Path.Combine(Path.GetTempPath(), $"{ProjectName}-{Guid.NewGuid()}");
+            string tempDirectoryPath = Path.Combine(Path.GetTempPath(), ProjectName);
             ProjectDirectory = new DirectoryInfo(tempDirectoryPath);
             FixtureDirectory = fixtureDirectory;
         }
@@ -77,7 +77,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             RunDotNet($"new -i {_templateDirectory.FullName}");
 
             string commandArguments = projectOptions.ToCommandLineArguments();
-            RunDotNet($"new {shortName} {commandArguments ?? String.Empty} -n {ProjectName} -o {ProjectDirectory.FullName}");
+            RunDotNet($"new {shortName} {commandArguments ?? String.Empty} -n {ProjectName}");
 
             projectOptions.UpdateProjectToCorrectlyUseOptions(FixtureDirectory, ProjectDirectory);
         }

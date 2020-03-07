@@ -33,7 +33,7 @@ steps:
     inputs:
       command: 'custom'
       custom: 'new'
-      arguments: '${{ parameters.projectAlias }} -n ${{ parameters.projectName }} -o /${{ parameters.projectName }}'
+      arguments: '${{ parameters.projectAlias }} -n ${{ parameters.projectName }}'
       modifyOutputPath: true
   - task: PowerShell@2
     displayName: 'Run additional custom PS script'

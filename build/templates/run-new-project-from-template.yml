@@ -34,7 +34,6 @@ steps:
       command: 'custom'
       custom: 'new'
       arguments: '${{ parameters.projectAlias }} -n ${{ parameters.projectName }}'
-      modifyOutputPath: true
   - task: PowerShell@2
     displayName: 'Run additional custom PS script'
     inputs:
@@ -43,7 +42,7 @@ steps:
   - task: Docker@1
     displayName: 'Build Docker image from newly created ${{ parameters.projectName }} project from template'
     inputs:
-      dockerFile: /${{ parameters.projectName }}/Dockerfile
+      dockerFile: ./${{ parameters.projectName }}/Dockerfile
       imageName: '${{ parameters.projectName }}:$(Build.BuildId)'
   - task: Docker@1
     displayName: 'Run new ${{ parameters.projectName }} project Docker image from template'

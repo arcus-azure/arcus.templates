@@ -11,6 +11,7 @@
   "identity": "Arcus.Templates.ServiceBus.Topic",
   "shortName": "arcus-servicebus-topic",
   "sourceName": "Arcus.Templates.ServiceBus.Topic",
+  "preferNameDirectory": true,
   "tags": {
     "language": "C#",
     "type": "project"

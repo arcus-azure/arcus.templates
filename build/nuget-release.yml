@@ -15,18 +15,8 @@ variables:
   - group: 'Arcus Web Api - Integration Testing'
   # We are re-using the Event Grid integration infrastructure
   - group: 'Arcus Messaging - Integration Testing'
-  - name: 'DotNet.Sdk.Version'
-    value: '3.1.102'
-  - name: 'Project'
-    value: 'Arcus.Templates'
-  - name: 'Http.Port'
-    value: '5000'
-  - name: 'Arcus.Api.BaseUrl'
-    value: 'http://localhost:$(Http.Port)/api/v1'
-  - name: 'Arcus.ServiceBus.Queue.Worker.HealthPort'
-    value: '42065'
-  - name: 'Arcus.ServiceBus.Topic.Worker.HealthPort'
-    value: '42066'
+  - template: ./variables/build.yml
+  - template: ./variables/test.yml
   # 'Package.Version.ManualTrigger' is added as queue-time variable on build in Azure DevOps
 
 stages:

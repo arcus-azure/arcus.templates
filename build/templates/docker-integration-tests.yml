@@ -37,9 +37,9 @@ stages:
               projectAlias: 'arcus-servicebus-queue'
               ports: '$(Arcus.ServiceBus.Queue.Worker.HealthPort):$(Arcus.ServiceBus.Queue.Worker.HealthPort)'
               script: |
-                Get-Content '/Arcus.Demo.ServiceBus.Queue/Program.cs' | 
+                Get-Content './Arcus.Demo.ServiceBus.Queue/Program.cs' | 
                   Where-Object { $_ -notmatch '#error' -and $_ -notmatch 'secretProvider: null' -and $_ -notmatch 'EmptyMessagePump' } | 
-                  Set-Content '/Arcus.Demo.ServiceBus.Queue/Program.cs'
+                  Set-Content './Arcus.Demo.ServiceBus.Queue/Program.cs'
               envVars: |
                 ARCUS_HEALTH_PORT=$(Arcus.ServiceBus.Queue.Worker.HealthPort)
                 EVENTGRID_TOPIC_URI=$(Arcus.TestInfra.EventGrid.Topic.Uri)
@@ -52,9 +52,9 @@ stages:
               projectAlias: 'arcus-servicebus-topic'
               ports: '$(Arcus.ServiceBus.Topic.Worker.HealthPort):$(Arcus.ServiceBus.Topic.Worker.HealthPort)'
               script: |
-                Get-Content '/Arcus.Demo.ServiceBus.Topic/Program.cs' | 
+                Get-Content './Arcus.Demo.ServiceBus.Topic/Program.cs' | 
                   Where-Object { $_ -notmatch '#error' -and $_ -notmatch 'secretProvider: null' -and $_ -notmatch 'EmptyMessagePump' } | 
-                  Set-Content '/Arcus.Demo.ServiceBus.Topic/Program.cs'
+                  Set-Content './Arcus.Demo.ServiceBus.Topic/Program.cs'
               envVars: |
                 ARCUS_HEALTH_PORT=$(Arcus.ServiceBus.Topic.Worker.HealthPort)
                 EVENTGRID_TOPIC_URI=$(Arcus.TestInfra.EventGrid.Topic.Uri)

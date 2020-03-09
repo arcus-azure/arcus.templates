@@ -15,18 +15,8 @@ variables:
   - group: 'Arcus Web Api - Integration Testing'
   # We are re-using the Event Grid integration infrastructure
   - group: 'Arcus Messaging - Integration Testing'
-  - name: 'DotNet.Sdk.Version'
-    value: '3.1.102'
-  - name: 'Project'
-    value: 'Arcus.Templates'
-  - name: 'Http.Port'
-    value: '5000'
-  - name: 'Arcus.Api.BaseUrl'
-    value: 'http://localhost:$(Http.Port)/api/v1'
-  - name: 'Arcus.ServiceBus.Queue.Worker.HealthPort'
-    value: '42065'
-  - name: 'Arcus.ServiceBus.Topic.Worker.HealthPort'
-    value: '42066'
+  - template: ./variables/build.yml
+  - template: ./variables/test.yml
   # 'Package.Version.ManualTrigger' is added as queue-time variable on build in Azure DevOps
 
 stages:
@@ -85,38 +75,14 @@ stages:
             inputs:
               artifact: 'Templates'
               path: '$(Build.SourcesDirectory)/templates'
-          - task: GitHubRelease@0
-            displayName: 'Create GitHub Release (Conditional Step)'
-            inputs:
-              gitHubConnection: 'GitHub (arcus-automation - OAuth)'
+          - template: github/create-release.yml@templates
+            parameters:
               repositoryName: 'arcus-azure/arcus.templates'
-              tagSource: manual
-              tag: 'v$(Build.BuildNumber)'
-              title: 'v$(Build.BuildNumber)'
-              releaseNotesSource: input
               releaseNotes: |
                 Install new version via [NuGet](https://www.nuget.org/packages/Arcus.Templates.WebApi/$(Build.BuildNumber))
                 ```shell
                 > dotnet new --install Arcus.Templates.WebApi::$(Build.BuildNumber)
                 ```
-            condition: not(contains(variables['Build.BuildNumber'], '-'))
-          - task: GitHubRelease@0
-            displayName: 'Create GitHub Pre-Release (Conditional Step)'
-            inputs:
-              gitHubConnection: 'GitHub (arcus-automation - OAuth)'
-              repositoryName: 'arcus-azure/arcus.templates'
-              tagSource: manual
-              tag: 'v$(Build.BuildNumber)'
-              title: 'v$(Build.BuildNumber)'
-              releaseNotesSource: input
-              releaseNotes: |
-                Install new version via [NuGet](https://www.nuget.org/packages/Arcus.Templates.WebApi/$(Build.BuildNumber))
-                ```shell
-                > dotnet new --install Arcus.Templates.WebApi::$(Build.BuildNumber)
-                ```
-              isPreRelease: true
-              compareWith: 'lastRelease'
-            condition: contains(variables['Build.BuildNumber'], '-')
           - template: 'nuget/publish-official-package.yml@templates'
             parameters:
               packagesToPush: 'templates/*.nupkg'

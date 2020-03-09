@@ -11,6 +11,7 @@
   "identity": "Arcus.Templates.ServiceBus.Queue",
   "shortName": "arcus-servicebus-queue",
   "sourceName": "Arcus.Templates.ServiceBus.Queue",
+  "preferNameDirectory": true,
   "tags": {
     "language": "C#",
     "type": "project"

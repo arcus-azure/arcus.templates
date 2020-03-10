@@ -24,7 +24,6 @@
         "**/*.filelist",
         "**/*.user",
         "**/*.lock.json",
-        "**/launchSettings.json",
         "*Open-Api.xml"
       ],
       "modifiers": [

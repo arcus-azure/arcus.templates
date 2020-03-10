@@ -177,8 +177,7 @@ namespace Arcus.Templates.WebApi
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .Enrich.FromLogContext()
                 .WriteTo.Console()
-                .WriteTo.ApplicationInsights(instrumentationKey, new TraceTelemetryConverter())
-                .CreateLogger();
+                .WriteTo.ApplicationInsights(instrumentationKey, new TraceTelemetryConverter());
         }
 #endif
     }

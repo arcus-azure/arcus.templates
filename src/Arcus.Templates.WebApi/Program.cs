@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+#if Serilog
+using Serilog;
+#endif
 
 namespace Arcus.Templates.WebApi
 {

@@ -6,9 +6,12 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 #if Serilog
 using Serilog;
+using Serilog.Events;
+using Serilog.Sinks.ApplicationInsights.Sinks.ApplicationInsights.TelemetryConverters;
 #endif
 #if ExcludeOpenApi
 #else
@@ -162,9 +165,9 @@ namespace Arcus.Templates.WebApi
             Log.Logger = CreateLoggerConfiguration(app.ApplicationServices).CreateLogger();
 #endif
         }
-
 #if Serilog
-        private LoggerConfiguration CreateLoggerConfiguratio(IServiceProvider serviceProvider)
+
+        private LoggerConfiguration CreateLoggerConfiguration(IServiceProvider serviceProvider)
         {
             var configuration = serviceProvider.GetRequiredService<IConfiguration>();
             var instrumentationKey = configuration.GetValue<string>(ApplicationInsightsInstrumentationKeyName);

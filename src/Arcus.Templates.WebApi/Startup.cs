@@ -37,6 +37,12 @@ namespace Arcus.Templates.WebApi
 {
     public class Startup
     {
+#if Serilog
+        #warning Make sure that the appsettings.json is updated with your Azure Application Insights instrumentation key.
+        private const string ApplicationInsightsInstrumentationKeyName = "Telemetry:ApplicationInsights:InstrumentationKey";
+
+#endif
+
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
@@ -151,6 +157,26 @@ namespace Arcus.Templates.WebApi
 //[#endif]
 #endif
             app.UseEndpoints(endpoints => endpoints.MapControllers());
+
+#if Serilog
+            Log.Logger = CreateLoggerConfiguration(app.ApplicationServices).CreateLogger();
+#endif
         }
+
+#if Serilog
+        private LoggerConfiguration CreateLoggerConfiguratio(IServiceProvider serviceProvider)
+        {
+            var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+            var instrumentationKey = configuration.GetValue<string>(ApplicationInsightsInstrumentationKeyName);
+            
+            return new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                .Enrich.FromLogContext()
+                .WriteTo.Console()
+                .WriteTo.ApplicationInsights(instrumentationKey, new TraceTelemetryConverter())
+                .CreateLogger();
+        }
+#endif
     }
 }

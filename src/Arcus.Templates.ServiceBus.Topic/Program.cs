@@ -30,14 +30,9 @@ namespace Arcus.Templates.ServiceBus.Topic
 
             return 0;
 #else
-            IConfiguration configuration = new ConfigurationBuilder().AddCommandLine(args).Build();
-            var instrumentationKey = configuration.GetValue<string>(ApplicationInsightsInstrumentationKeyName);
-            
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-                .Enrich.FromLogContext()
-                .WriteTo.ApplicationInsights(instrumentationKey, new TraceTelemetryConverter())
+                .WriteTo.Console()
                 .CreateLogger();
 
             try
@@ -70,7 +65,7 @@ namespace Arcus.Templates.ServiceBus.Topic
                        })
 #if ExcludeSerilog
 #else
-                       .UseSerilog()
+                       .UseSerilog(UpdateLoggerConfiguration)
 #endif
                        .ConfigureServices((hostContext, services) =>
                        {
@@ -81,5 +76,24 @@ namespace Arcus.Templates.ServiceBus.Topic
                            services.AddTcpHealthProbes("ARCUS_HEALTH_PORT");
                        });
         }
+#if ExcludeSerilog
+#else
+
+        private static void UpdateLoggerConfiguration(
+            HostBuilderContext hostContext,
+            LoggerConfiguration currentLoggerConfiguration)
+        {
+            var instrumentationKey = hostContext.Configuration.GetValue<string>(ApplicationInsightsInstrumentationKeyName);
+
+            currentLoggerConfiguration
+                .MinimumLevel.Debug()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                .Enrich.FromLogContext()
+//#if DEBUG
+                .WriteTo.Console()
+//#endif
+                .WriteTo.ApplicationInsights(instrumentationKey, new TraceTelemetryConverter());
+        }
+#endif
     }
 }

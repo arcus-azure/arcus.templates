@@ -10,35 +10,23 @@ using Microsoft.Extensions.Logging;
 #if Serilog
 using Serilog;
 using Serilog.Events;
-using Serilog.Sinks.ApplicationInsights.Sinks.ApplicationInsights.TelemetryConverters;    
+using Serilog.Sinks.ApplicationInsights.Sinks.ApplicationInsights.TelemetryConverters;
 #endif
 
 namespace Arcus.Templates.WebApi
 {
     public class Program
     {
-#if Serilog
-        #warning Make sure that the appsettings.json is updated with your Azure Application Insights instrumentation key.
-        private const string ApplicationInsightsInstrumentationKeyName = "Telemetry:ApplicationInsights:InstrumentationKey";
-
-#endif
         public static int Main(string[] args)
         {
 #if Serilog
-            IConfiguration configuration = CreateConfiguration(args);
-            var instrumentationKey = configuration.GetValue<string>(ApplicationInsightsInstrumentationKeyName);
-
             Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Debug()
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-                .Enrich.FromLogContext()
                 .WriteTo.Console()
-                .WriteTo.ApplicationInsights(instrumentationKey, new TraceTelemetryConverter())
                 .CreateLogger();
 
             try
             {
-                CreateHostBuilder(args, configuration)
+                CreateHostBuilder(args)
                     .Build()
                     .Run();
 

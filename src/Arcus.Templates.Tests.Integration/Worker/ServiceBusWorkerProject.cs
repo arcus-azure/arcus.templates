@@ -162,13 +162,14 @@ namespace Arcus.Templates.Tests.Integration.Worker
             AddTypeAsFile<Order>();
             AddTypeAsFile<OrderCreatedEvent>();
             AddTypeAsFile<OrderCreatedEventData>();
-            AddTypeAsFile<OrdersMessagePump>();
+            AddTypeAsFile<OrdersMessageHandler>();
             AddTypeAsFile<SingleValueSecretProvider>();
 
             string connectionString = _configuration.GetServiceBusConnectionString(_entity);
             UpdateFileInProject("Program.cs", contents => 
                 RemoveCustomUserErrors(contents)
-                    .Replace("EmptyMessagePump", nameof(OrdersMessagePump))
+                    .Replace("EmptyMessageHandler", nameof(OrdersMessageHandler))
+                    .Replace("EmptyMessage", nameof(Order))
                     .Replace("secretProvider: null", $"new {nameof(SingleValueSecretProvider)}(\"{connectionString}\")"));
         }
 

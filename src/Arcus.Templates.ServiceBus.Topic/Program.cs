@@ -91,11 +91,7 @@ namespace Arcus.Templates.ServiceBus.Topic
                 .MinimumLevel.Debug()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .Enrich.FromLogContext()
-//#if DEBUG
-#if DEBUG
-                .WriteTo.Console()   
-#endif
-//#endif
+                .WriteTo.Console()
                 .WriteTo.ApplicationInsights(instrumentationKey, new TraceTelemetryConverter());
         }
 #endif

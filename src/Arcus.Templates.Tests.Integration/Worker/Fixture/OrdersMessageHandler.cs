@@ -12,19 +12,19 @@ using Microsoft.Extensions.Logging;
 
 namespace Arcus.Templates.Tests.Integration.Worker.Fixture
 {
-    public class OrdersMessagePump : AzureServiceBusMessagePump<Order>
+    public class OrdersMessageHandler : IAzureServiceBusMessageHandler<Order>
     {
+        private readonly ILogger<OrdersMessageHandler> _logger;
         private readonly IEventGridPublisher _eventGridPublisher;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="configuration">Configuration of the application</param>
-        /// <param name="serviceProvider">Collection of services that are configured</param>
         /// <param name="logger">Logger to write telemetry to</param>
-        public OrdersMessagePump(IConfiguration configuration, IServiceProvider serviceProvider, ILogger<OrdersMessagePump> logger)
-            : base(configuration, serviceProvider, logger)
+        public OrdersMessageHandler(IConfiguration configuration, ILogger<OrdersMessageHandler> logger)
         {
+            _logger = logger;
             var eventGridTopic = configuration.GetValue<string>("EVENTGRID_TOPIC_URI");
             var eventGridKey = configuration.GetValue<string>("EVENTGRID_AUTH_KEY");
 
@@ -35,20 +35,27 @@ namespace Arcus.Templates.Tests.Integration.Worker.Fixture
                     .Build();
         }
 
-        /// <inheritdoc />
-        protected override async Task ProcessMessageAsync(
-            Order orderMessage,
+        /// <summary>Process a new message that was received</summary>
+        /// <param name="message">Message that was received</param>
+        /// <param name="messageContext">Context providing more information concerning the processing</param>
+        /// <param name="correlationInfo">
+        ///     Information concerning correlation of telemetry and processes by using a variety of unique
+        ///     identifiers
+        /// </param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        public async Task ProcessMessageAsync(
+            Order message,
             AzureServiceBusMessageContext messageContext,
             MessageCorrelationInfo correlationInfo,
             CancellationToken cancellationToken)
         {
-            Logger.LogInformation(
+            _logger.LogInformation(
                 "Processing order {OrderId} for {OrderAmount} units of {OrderArticle}",
-                orderMessage.Id, orderMessage.Amount, orderMessage.ArticleNumber);
+                message.Id, message.Amount, message.ArticleNumber);
 
-            await PublishEventToEventGridAsync(orderMessage, correlationInfo.OperationId, correlationInfo);
+            await PublishEventToEventGridAsync(message, correlationInfo.OperationId, correlationInfo);
 
-            Logger.LogInformation("Order {OrderId} processed", orderMessage.Id);
+            _logger.LogInformation("Order {OrderId} processed", message.Id);
         }
 
         private async Task PublishEventToEventGridAsync(Order orderMessage, string operationId, MessageCorrelationInfo correlationInfo)
@@ -71,7 +78,7 @@ namespace Arcus.Templates.Tests.Integration.Worker.Fixture
 
             await _eventGridPublisher.PublishAsync(orderCreatedEvent);
 
-            Logger.LogInformation("Event {EventId} was published with subject {EventSubject}", orderCreatedEvent.Id, orderCreatedEvent.Subject);
+            _logger.LogInformation("Event {EventId} was published with subject {EventSubject}", orderCreatedEvent.Id, orderCreatedEvent.Subject);
         }
     }
 }

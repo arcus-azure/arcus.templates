@@ -30,8 +30,8 @@
   
   <ItemGroup>
     <PackageReference Include="Arcus.EventGrid.Publishing" Version="3.0.0" />
-    <PackageReference Include="Arcus.WebApi.Security.Authentication" Version="0.3.0" />
-    <PackageReference Include="Arcus.Messaging.Pumps.ServiceBus" Version="0.1.0-preview-2" />
+    <PackageReference Include="Arcus.WebApi.Security.Authentication" Version="0.4.0" />
+    <PackageReference Include="Arcus.Messaging.Pumps.ServiceBus" Version="20200310.7.0-preview" />
     <PackageReference Include="Arcus.EventGrid.Testing" Version="3.0.0" />
     <PackageReference Include="Bogus" Version="29.0.1" />
     <PackageReference Include="BouncyCastle" Version="1.8.5" />
@@ -46,4 +46,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
+
+  <PropertyGroup>	
+    <RestoreSources>$(RestoreSources);https://api.nuget.org/v3/index.json;https://www.myget.org/F/arcus/api/v3/index.json</RestoreSources>	
+  </PropertyGroup>
 </Project>

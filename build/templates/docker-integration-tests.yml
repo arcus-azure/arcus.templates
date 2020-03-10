@@ -38,7 +38,7 @@ stages:
               ports: '$(Arcus.ServiceBus.Queue.Worker.HealthPort):$(Arcus.ServiceBus.Queue.Worker.HealthPort)'
               script: |
                 Get-Content './Arcus.Demo.ServiceBus.Queue/Program.cs' | 
-                  Where-Object { $_ -notmatch '#error' -and $_ -notmatch 'secretProvider: null' -and $_ -notmatch 'EmptyMessagePump' } | 
+                  Where-Object { $_ -notmatch '#error' -and $_ -notmatch 'secretProvider: null' -and $_ -notmatch 'EmptyMessageHandler' -and $_ -notmatch 'AddServiceBusQueueMessagePump' } | 
                   Set-Content './Arcus.Demo.ServiceBus.Queue/Program.cs'
               envVars: |
                 ARCUS_HEALTH_PORT=$(Arcus.ServiceBus.Queue.Worker.HealthPort)
@@ -53,7 +53,7 @@ stages:
               ports: '$(Arcus.ServiceBus.Topic.Worker.HealthPort):$(Arcus.ServiceBus.Topic.Worker.HealthPort)'
               script: |
                 Get-Content './Arcus.Demo.ServiceBus.Topic/Program.cs' | 
-                  Where-Object { $_ -notmatch '#error' -and $_ -notmatch 'secretProvider: null' -and $_ -notmatch 'EmptyMessagePump' } | 
+                  Where-Object { $_ -notmatch '#error' -and $_ -notmatch 'secretProvider: null' -and $_ -notmatch 'EmptyMessageHandler' -and $_ -notmatch 'AddServiceBusTopicMessagePump' } | 
                   Set-Content './Arcus.Demo.ServiceBus.Topic/Program.cs'
               envVars: |
                 ARCUS_HEALTH_PORT=$(Arcus.ServiceBus.Topic.Worker.HealthPort)

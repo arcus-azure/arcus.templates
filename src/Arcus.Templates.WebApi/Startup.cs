@@ -6,9 +6,12 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 #if Serilog
 using Serilog;
+using Serilog.Events;
+using Serilog.Sinks.ApplicationInsights.Sinks.ApplicationInsights.TelemetryConverters;
 #endif
 #if ExcludeOpenApi
 #else
@@ -37,6 +40,12 @@ namespace Arcus.Templates.WebApi
 {
     public class Startup
     {
+#if Serilog
+        #warning Make sure that the appsettings.json is updated with your Azure Application Insights instrumentation key.
+        private const string ApplicationInsightsInstrumentationKeyName = "Telemetry:ApplicationInsights:InstrumentationKey";
+
+#endif
+
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
@@ -151,6 +160,25 @@ namespace Arcus.Templates.WebApi
 //[#endif]
 #endif
             app.UseEndpoints(endpoints => endpoints.MapControllers());
+
+#if Serilog
+            Log.Logger = CreateLoggerConfiguration(app.ApplicationServices).CreateLogger();
+#endif
         }
+#if Serilog
+
+        private LoggerConfiguration CreateLoggerConfiguration(IServiceProvider serviceProvider)
+        {
+            var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+            var instrumentationKey = configuration.GetValue<string>(ApplicationInsightsInstrumentationKeyName);
+            
+            return new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                .Enrich.FromLogContext()
+                .WriteTo.Console()
+                .WriteTo.ApplicationInsights(instrumentationKey, new TraceTelemetryConverter());
+        }
+#endif
     }
 }

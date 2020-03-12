@@ -45,7 +45,7 @@
   <!--#endif-->
 
   <ItemGroup>
-    <PackageReference Include="Arcus.Messaging.Health" Version="0.1.0-preview-2" />
+    <PackageReference Include="Arcus.Messaging.Health" Version="0.1.0-preview-3" />
     <PackageReference Include="Arcus.Messaging.Pumps.ServiceBus" Version="20200310.7.0-preview" />
     <PackageReference Include="Guard.NET" Version="1.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.2" />

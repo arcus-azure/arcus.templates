@@ -30,14 +30,9 @@ namespace Arcus.Templates.ServiceBus.Queue
 
             return 0;
 #else
-            IConfiguration configuration = new ConfigurationBuilder().AddCommandLine(args).Build();
-            var instrumentationKey = configuration.GetValue<string>(ApplicationInsightsInstrumentationKeyName);
-            
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-                .Enrich.FromLogContext()
-                .WriteTo.ApplicationInsights(instrumentationKey, new TraceTelemetryConverter())
+                .WriteTo.Console()
                 .CreateLogger();
 
             try
@@ -70,16 +65,35 @@ namespace Arcus.Templates.ServiceBus.Queue
                        })
 #if ExcludeSerilog
 #else
-                       .UseSerilog()
+                       .UseSerilog(UpdateLoggerConfiguration)
 #endif
                        .ConfigureServices((hostContext, services) =>
                        {
                            //#error Please provide a valid secret provider, for example Azure Key Vault: https: //security.arcus-azure.net/features/secrets/consume-from-key-vault
                            services.AddSingleton<ISecretProvider>(serviceProvider => new CachedSecretProvider(secretProvider: null));
 
-                           services.AddServiceBusQueueMessagePump<EmptyMessagePump>(secretProvider => secretProvider.GetRawSecretAsync("ARCUS_SERVICEBUS_CONNECTIONSTRING"));
+                           services.AddServiceBusQueueMessagePump(secretProvider => secretProvider.GetRawSecretAsync("ARCUS_SERVICEBUS_CONNECTIONSTRING"))
+                                   .WithServiceBusMessageHandler<EmptyMessageHandler, EmptyMessage>();
+                           
                            services.AddTcpHealthProbes("ARCUS_HEALTH_PORT");
                        });
         }
+#if ExcludeSerilog
+#else
+
+        private static void UpdateLoggerConfiguration(
+            HostBuilderContext hostContext,
+            LoggerConfiguration currentLoggerConfiguration)
+        {
+            var instrumentationKey = hostContext.Configuration.GetValue<string>(ApplicationInsightsInstrumentationKeyName);
+
+            currentLoggerConfiguration
+                .MinimumLevel.Debug()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                .Enrich.FromLogContext()
+                .WriteTo.Console()   
+                .WriteTo.ApplicationInsights(instrumentationKey, new TraceTelemetryConverter());
+        }
+#endif
     }
 }

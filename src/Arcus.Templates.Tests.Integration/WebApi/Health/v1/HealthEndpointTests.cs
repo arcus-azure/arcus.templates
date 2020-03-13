@@ -27,14 +27,15 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Health.v1
         {
             // Arrange
             using (WebApiProject project = await WebApiProject.StartNewAsync(_configuration, _outputWriter))
-            // Act
+                // Act
             using (HttpResponseMessage response = await project.Health.GetAsync())
             {
                 // Assert
                 Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-                
+
                 string healthReportJson = await response.Content.ReadAsStringAsync();
-                var healthReport = JsonConvert.DeserializeObject<HealthReport>(healthReportJson);
+
+                var healthReport = JsonConvert.DeserializeObject<HealthReport>(healthReportJson, new TimeSpanConverter());
                 Assert.NotNull(healthReport);
                 Assert.Equal(HealthStatus.Healthy, healthReport.Status);
             }

@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Arcus.Templates.Tests.Integration.Fixture;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -20,7 +19,7 @@ namespace Arcus.Templates.Tests.Integration.Worker.ServiceBus
         }
 
         [Fact]
-        public async Task MinimServiceBusQueueWorker_PublishServiceBusMessage_MessageSuccessfullyProcessed()
+        public async Task MinimumServiceBusTopicWorker_PublishServiceBusMessage_MessageSuccessfullyProcessed()
         {
             // Arrange
             await using (var project = await ServiceBusWorkerProject.StartNewWithTopicAsync(_outputWriter))

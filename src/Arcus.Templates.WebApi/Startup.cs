@@ -188,9 +188,10 @@ namespace Arcus.Templates.WebApi
 
 #if Serilog
             app.UseSerilogRequestLogging();
+            
 #endif
-
 #warning Please configure application with HTTPS transport layer security
+
 #if JwtAuth
             app.UseAuthentication();
 #endif

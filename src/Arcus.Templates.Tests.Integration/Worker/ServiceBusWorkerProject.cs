@@ -157,18 +157,19 @@ namespace Arcus.Templates.Tests.Integration.Worker
 
         private void AddOrdersMessagePump()
         {
-            AddPackage("Arcus.EventGrid", "3.0.0-preview-1");
-            AddPackage("Arcus.EventGrid.Publishing", "3.0.0-preview-1");
+            AddPackage("Arcus.EventGrid", "3.0.0");
+            AddPackage("Arcus.EventGrid.Publishing", "3.0.0");
             AddTypeAsFile<Order>();
             AddTypeAsFile<OrderCreatedEvent>();
             AddTypeAsFile<OrderCreatedEventData>();
-            AddTypeAsFile<OrdersMessagePump>();
+            AddTypeAsFile<OrdersMessageHandler>();
             AddTypeAsFile<SingleValueSecretProvider>();
 
             string connectionString = _configuration.GetServiceBusConnectionString(_entity);
             UpdateFileInProject("Program.cs", contents => 
                 RemoveCustomUserErrors(contents)
-                    .Replace("EmptyMessagePump", nameof(OrdersMessagePump))
+                    .Replace("EmptyMessageHandler", nameof(OrdersMessageHandler))
+                    .Replace("EmptyMessage", nameof(Order))
                     .Replace("secretProvider: null", $"new {nameof(SingleValueSecretProvider)}(\"{connectionString}\")"));
         }
 
@@ -187,7 +188,7 @@ namespace Arcus.Templates.Tests.Integration.Worker
                     .Concat(options.AdditionalArguments)
                     .ToArray();
             
-            Run(_configuration.BuildConfiguration, TargetFramework.NetCoreApp30, commands);
+            Run(_configuration.BuildConfiguration, _configuration.TargetFramework, commands);
             await WaitUntilWorkerProjectIsAvailableAsync(_healthPort);
         }
 

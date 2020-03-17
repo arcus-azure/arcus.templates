@@ -11,6 +11,7 @@
   "identity": "Arcus.Templates.ServiceBus.Queue",
   "shortName": "arcus-servicebus-queue",
   "sourceName": "Arcus.Templates.ServiceBus.Queue",
+  "preferNameDirectory": true,
   "tags": {
     "language": "C#",
     "type": "project"
@@ -23,8 +24,7 @@
         ".template.config/**/*",
         "**/*.filelist",
         "**/*.user",
-        "**/*.lock.json",
-        "**/launchSettings.json"
+        "**/*.lock.json"
       ]
     }
   ],

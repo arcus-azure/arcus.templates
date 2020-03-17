@@ -69,7 +69,7 @@ namespace Arcus.Templates.WebApi
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-#if SharedAccessKeyAuth
+#if SharedAccessKeyAuth || JwtAuth
             #error Please provide a valid secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secrets/consume-from-key-vault
             services.AddSingleton<ICachedSecretProvider>(serviceProvider => new CachedSecretProvider(secretProvider: null));
 #endif
@@ -106,8 +106,11 @@ namespace Arcus.Templates.WebApi
                 options.Filters.Add(new AuthorizeFilter(policy));
 #endif
             });
+
 #if JwtAuth
-            var key = Encoding.UTF8.GetBytes(Configuration["Jwt:SigningKey"]);
+            #error Use previously registered secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secrets/consume-from-key-vault
+            ISecretProvider secretProvider = null;
+            string key = secretProvider.GetRawSecretAsync("JwtSigningKey").GetAwaiter().GetResult();
             services.AddAuthentication(x =>
                     {
                         x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -119,11 +122,11 @@ namespace Arcus.Templates.WebApi
                         x.TokenValidationParameters = new TokenValidationParameters
                         {
                             ValidateIssuerSigningKey = true,
-                            IssuerSigningKey = new SymmetricSecurityKey(key),
+                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
                             ValidateIssuer = true,
-                            ValidIssuer = "entity that generates the token",
+                            ValidIssuer = Configuration.GetValue<string>("Jwt:Issuer"),
                             ValidateAudience = true,
-                            ValidAudience = "client of the app"
+                            ValidAudience = Configuration.GetValue<string>("Jwt:Audience")
                         };
                     });
 #endif

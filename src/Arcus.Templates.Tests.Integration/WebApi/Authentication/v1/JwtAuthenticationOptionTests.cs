@@ -6,6 +6,7 @@ using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Arcus.Templates.Tests.Integration.Fixture;
 using Microsoft.IdentityModel.Tokens;
 using Xunit;
 using Xunit.Abstractions;
@@ -33,8 +34,8 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Authentication.v1
             string key = $"secret-{Guid.NewGuid()}";
             var options = new WebApiProjectOptions().WithJwtAuthentication(key);
 
-            using (var project = await WebApiProject.StartNewAsync(options, _outputWriter))
-                // Act
+            using (var project = await WebApiProject.StartNewAsync(options, _outputWriter)) 
+            // Act
             using (HttpResponseMessage response = await project.Health.GetAsync())
             {
                 // Assert

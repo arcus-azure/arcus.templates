@@ -112,10 +112,18 @@ namespace Arcus.Templates.Tests.Integration.WebApi
 
         private static void ConfigureJwtAuthentication(DirectoryInfo fixtureDirectory, DirectoryInfo projectDirectory, string key)
         {
+            AddInMemorySecretProviderFixtureFileToProject(fixtureDirectory, projectDirectory);
+
             ReplaceProjectFileContent(
                 projectDirectory,
-                "appsettings.json",
-                contents => contents.Replace("YOUR SIGNING KEY", key));
+                "Startup.cs",
+                startupContent =>
+                {
+                    startupContent = InsertInMemorySecretProviderCode(startupContent, "secretProvider: null", "JwtSigningKey", key);
+                    startupContent = InsertInMemorySecretProviderCode(startupContent, "null", "JwtSigningKey", key);
+
+                    return RemoveCustomUserErrors(startupContent);
+                });
         }
 
         /// <summary>
@@ -191,11 +199,16 @@ namespace Arcus.Templates.Tests.Integration.WebApi
 
         private static string InsertInMemorySecretProviderCode(string startupContent, string secretName, string secretValue)
         {
+            return InsertInMemorySecretProviderCode(startupContent, "secretProvider: null", secretName, secretValue);
+        }
+
+        private static string InsertInMemorySecretProviderCode(string startupContent, string replacementToken, string secretName, string secretValue)
+        {
             string newSecretProviderWithSecret = 
                 $"new {typeof(InMemorySecretProvider).FullName}("
                 + $"new {typeof(Dictionary<string, string>).Namespace}.{nameof(Dictionary<string, string>)}<string, string> {{ [\"{secretName}\"] = \"{secretValue}\" }})";
 
-            return startupContent.Replace("secretProvider: null", newSecretProviderWithSecret);
+            return startupContent.Replace(replacementToken, newSecretProviderWithSecret);
         }
 
         private static string InsertSharedAccessAuthenticationHeaderSecretPair(string startupContent, string requestHeader, string secretName)

@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using System.IO;
 using System.Linq;
 using System.Text.Json.Serialization;
@@ -31,6 +32,14 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Primitives;
 #endif
+#if JwtAuth
+using Arcus.Security.Secrets.Core.Caching;
+using Arcus.Security.Secrets.Core.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.IdentityModel.Tokens;
+#endif
 #if ExcludeCorrelation
 #else
 using Arcus.WebApi.Correlation;
@@ -45,12 +54,24 @@ namespace Arcus.Templates.WebApi
         private const string ApplicationInsightsInstrumentationKeyName = "Telemetry:ApplicationInsights:InstrumentationKey";
 
 #endif
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Startup"/> class.
+        /// </summary>
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+
+        /// <summary>
+        /// Gets the configuration of key/value application properties.
+        /// </summary>
+        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-#if SharedAccessKeyAuth
+#if (SharedAccessKeyAuth || JwtAuth)
             #error Please provide a valid secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secrets/consume-from-key-vault
             services.AddSingleton<ICachedSecretProvider>(serviceProvider => new CachedSecretProvider(secretProvider: null));
 #endif
@@ -66,7 +87,7 @@ namespace Arcus.Templates.WebApi
             {
                 options.ReturnHttpNotAcceptable = true;
                 options.RespectBrowserAcceptHeader = true;
-                
+
                 RestrictToJsonContentType(options);
                 AddEnumAsStringRepresentation(options);
 
@@ -77,7 +98,41 @@ namespace Arcus.Templates.WebApi
 #if CertificateAuth
                 options.Filters.Add(new CertificateAuthenticationFilter());
 #endif
+#if JwtAuth
+                AuthorizationPolicy policy = 
+                    new AuthorizationPolicyBuilder()
+                        .RequireRole("Admin")
+                        .RequireAuthenticatedUser()
+                        .Build();
+
+                options.Filters.Add(new AuthorizeFilter(policy));
+#endif
             });
+
+#if JwtAuth
+            #error Use previously registered secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secrets/consume-from-key-vault
+            ISecretProvider secretProvider = null;
+            services.AddAuthentication(x =>
+                    {
+                        x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                        x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                    })
+                    .AddJwtBearer(x =>
+                    {
+                        string key = secretProvider.Get("JwtSigningKey").GetAwaiter().GetResult();
+                        
+                        x.SaveToken = true;
+                        x.TokenValidationParameters = new TokenValidationParameters
+                        {
+                            ValidateIssuerSigningKey = true,
+                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
+                            ValidateIssuer = true,
+                            ValidIssuer = Configuration.GetValue<string>("Jwt:Issuer"),
+                            ValidateAudience = true,
+                            ValidAudience = Configuration.GetValue<string>("Jwt:Audience")
+                        };
+                    });
+#endif
 
             services.AddHealthChecks();
 #if ExcludeCorrelation
@@ -136,11 +191,14 @@ namespace Arcus.Templates.WebApi
 
 #if Serilog
             app.UseSerilogRequestLogging();
+            
 #endif
+#warning Please configure application with HTTPS transport layer security
 
-            #warning Please configure application with HTTPS transport layer security
+#if JwtAuth
+            app.UseAuthentication();
+#endif
 #if NoneAuth
-
             #warning Please configure application with authentication mechanism: https://webapi.arcus-azure.net/features/security/auth/shared-access-key
 #endif
 

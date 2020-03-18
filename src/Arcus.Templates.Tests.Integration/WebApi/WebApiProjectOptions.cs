@@ -96,6 +96,45 @@ namespace Arcus.Templates.Tests.Integration.WebApi
         }
 
         /// <summary>
+        /// Adds a JWT (JSON web token) authentication to the web API project.
+        /// </summary>
+        /// <param name="key">The security key that was used to generated the JWT token.</param>
+        /// <param name="issuer">The issuer that was used to generate the JWT token.</param>
+        /// <param name="audience">The audience that was used to generate the JWT token.</param>
+        public WebApiProjectOptions WithJwtAuthentication(string key, string issuer, string audience)
+        {
+            Guard.NotNullOrWhitespace(key, nameof(key), "Cannot add JWT authentication authentication option without a security key to validate the JWT token");
+
+            ProjectOptions optionsWithJwtAuthentication = AddOption(
+                "--authentication JWT",
+                (fixtureDirectory, projectDirectory) => ConfigureJwtAuthentication(fixtureDirectory, projectDirectory, key, issuer, audience));
+
+            return new WebApiProjectOptions(optionsWithJwtAuthentication);
+        }
+
+        private static void ConfigureJwtAuthentication(DirectoryInfo fixtureDirectory, DirectoryInfo projectDirectory, string key, string issuer, string audience)
+        {
+            AddInMemorySecretProviderFixtureFileToProject(fixtureDirectory, projectDirectory);
+
+            ReplaceProjectFileContent(
+                projectDirectory,
+                "Startup.cs",
+                startupContent =>
+                {
+                    startupContent = InsertInMemorySecretProviderCode(startupContent, "secretProvider: null", "JwtSigningKey", key);
+                    startupContent = InsertInMemorySecretProviderCode(startupContent, "null", "JwtSigningKey", key);
+
+                    return RemoveCustomUserErrors(startupContent);
+                });
+
+            ReplaceProjectFileContent(
+                projectDirectory,
+                "appsettings.json",
+                contents => contents.Replace("YOUR ISSUER", issuer)
+                                    .Replace("YOUR AUDIENCE", audience));
+        }
+
+        /// <summary>
         /// Adds a shared access key authentication to the web API project.
         /// </summary>
         /// <param name="headerName">The name of the request header which value must match the stored secret.</param>
@@ -168,11 +207,16 @@ namespace Arcus.Templates.Tests.Integration.WebApi
 
         private static string InsertInMemorySecretProviderCode(string startupContent, string secretName, string secretValue)
         {
+            return InsertInMemorySecretProviderCode(startupContent, "secretProvider: null", secretName, secretValue);
+        }
+
+        private static string InsertInMemorySecretProviderCode(string startupContent, string replacementToken, string secretName, string secretValue)
+        {
             string newSecretProviderWithSecret = 
                 $"new {typeof(InMemorySecretProvider).FullName}("
                 + $"new {typeof(Dictionary<string, string>).Namespace}.{nameof(Dictionary<string, string>)}<string, string> {{ [\"{secretName}\"] = \"{secretValue}\" }})";
 
-            return startupContent.Replace("secretProvider: null", newSecretProviderWithSecret);
+            return startupContent.Replace(replacementToken, newSecretProviderWithSecret);
         }
 
         private static string InsertSharedAccessAuthenticationHeaderSecretPair(string startupContent, string requestHeader, string secretName)

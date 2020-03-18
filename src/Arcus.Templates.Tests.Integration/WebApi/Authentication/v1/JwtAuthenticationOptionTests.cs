@@ -32,9 +32,11 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Authentication.v1
         {
             // Arrange
             string key = $"secret-{Guid.NewGuid()}";
-            var options = new WebApiProjectOptions().WithJwtAuthentication(key);
+            string issuer = $"issuer-{Guid.NewGuid()}";
+            string audience = $"audience-{Guid.NewGuid()}";
+            var options = new WebApiProjectOptions().WithJwtAuthentication(key, issuer, audience);
 
-            using (var project = await WebApiProject.StartNewAsync(options, _outputWriter)) 
+            using (var project = await WebApiProject.StartNewAsync(options, _outputWriter))
             // Act
             using (HttpResponseMessage response = await project.Health.GetAsync())
             {
@@ -49,10 +51,12 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Authentication.v1
         {
             // Arrange
             string key = $"secret-{Guid.NewGuid()}";
-            string jwtToken = CreateToken(key);
+            string issuer = $"issuer-{Guid.NewGuid()}";
+            string audience = $"audience-{Guid.NewGuid()}";
+            string jwtToken = CreateToken(key, issuer, audience);
             var jwtHeader = AuthenticationHeaderValue.Parse("Bearer " + jwtToken);
 
-            var options = new WebApiProjectOptions().WithJwtAuthentication(key);
+            var options = new WebApiProjectOptions().WithJwtAuthentication(key, issuer, audience);
 
             using (var project = await WebApiProject.StartNewAsync(options, _outputWriter))
             // Act
@@ -64,7 +68,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Authentication.v1
             }
         }
 
-        private static string CreateToken(string key)
+        private static string CreateToken(string key, string issuer, string audience)
         {
             var claims = new[] 
             {
@@ -75,8 +79,8 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Authentication.v1
             var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
          
             var securityToken = new JwtSecurityToken(
-                issuer: "entity that generates the token",
-                audience: "client of the app",
+                issuer: issuer,
+                audience: audience,
                 claims: claims,
                 notBefore: DateTime.Now,
                 expires: DateTime.Now.AddMinutes(1),

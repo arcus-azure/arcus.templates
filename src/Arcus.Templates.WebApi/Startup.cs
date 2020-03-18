@@ -33,6 +33,8 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Primitives;
 #endif
 #if JwtAuth
+using Arcus.Security.Secrets.Core.Caching;
+using Arcus.Security.Secrets.Core.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -69,7 +71,7 @@ namespace Arcus.Templates.WebApi
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-#if SharedAccessKeyAuth || JwtAuth
+#if (SharedAccessKeyAuth || JwtAuth)
             #error Please provide a valid secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secrets/consume-from-key-vault
             services.AddSingleton<ICachedSecretProvider>(serviceProvider => new CachedSecretProvider(secretProvider: null));
 #endif
@@ -110,7 +112,6 @@ namespace Arcus.Templates.WebApi
 #if JwtAuth
             #error Use previously registered secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secrets/consume-from-key-vault
             ISecretProvider secretProvider = null;
-            string key = secretProvider.GetRawSecretAsync("JwtSigningKey").GetAwaiter().GetResult();
             services.AddAuthentication(x =>
                     {
                         x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -118,6 +119,8 @@ namespace Arcus.Templates.WebApi
                     })
                     .AddJwtBearer(x =>
                     {
+                        string key = secretProvider.Get("JwtSigningKey").GetAwaiter().GetResult();
+                        
                         x.SaveToken = true;
                         x.TokenValidationParameters = new TokenValidationParameters
                         {

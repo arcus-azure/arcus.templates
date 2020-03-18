@@ -99,18 +99,20 @@ namespace Arcus.Templates.Tests.Integration.WebApi
         /// Adds a JWT (JSON web token) authentication to the web API project.
         /// </summary>
         /// <param name="key">The security key that was used to generated the JWT token.</param>
-        public WebApiProjectOptions WithJwtAuthentication(string key)
+        /// <param name="issuer">The issuer that was used to generate the JWT token.</param>
+        /// <param name="audience">The audience that was used to generate the JWT token.</param>
+        public WebApiProjectOptions WithJwtAuthentication(string key, string issuer, string audience)
         {
             Guard.NotNullOrWhitespace(key, nameof(key), "Cannot add JWT authentication authentication option without a security key to validate the JWT token");
 
             ProjectOptions optionsWithJwtAuthentication = AddOption(
                 "--authentication JWT",
-                (fixtureDirectory, projectDirectory) => ConfigureJwtAuthentication(fixtureDirectory, projectDirectory, key));
+                (fixtureDirectory, projectDirectory) => ConfigureJwtAuthentication(fixtureDirectory, projectDirectory, key, issuer, audience));
 
             return new WebApiProjectOptions(optionsWithJwtAuthentication);
         }
 
-        private static void ConfigureJwtAuthentication(DirectoryInfo fixtureDirectory, DirectoryInfo projectDirectory, string key)
+        private static void ConfigureJwtAuthentication(DirectoryInfo fixtureDirectory, DirectoryInfo projectDirectory, string key, string issuer, string audience)
         {
             AddInMemorySecretProviderFixtureFileToProject(fixtureDirectory, projectDirectory);
 
@@ -124,6 +126,12 @@ namespace Arcus.Templates.Tests.Integration.WebApi
 
                     return RemoveCustomUserErrors(startupContent);
                 });
+
+            ReplaceProjectFileContent(
+                projectDirectory,
+                "appsettings.json",
+                contents => contents.Replace("YOUR ISSUER", issuer)
+                                    .Replace("YOUR AUDIENCE", audience));
         }
 
         /// <summary>

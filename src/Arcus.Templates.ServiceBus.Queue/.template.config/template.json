@@ -7,7 +7,7 @@
     "Queue",
     "BoilerPlate"
   ],
-  "name": "Arcus Service Bus Queue v#{PackageVersion}#",
+  "name": "Arcus Service Bus Queue v#{Package.Version}#",
   "identity": "Arcus.Templates.ServiceBus.Queue",
   "shortName": "arcus-servicebus-queue",
   "sourceName": "Arcus.Templates.ServiceBus.Queue",

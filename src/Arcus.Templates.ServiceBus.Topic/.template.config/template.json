@@ -7,7 +7,7 @@
     "Topic",
     "BoilerPlate"
   ],
-  "name": "Arcus Service Bus Topic v#{PackageVersion}#",
+  "name": "Arcus Service Bus Topic v#{Package.Version}#",
   "identity": "Arcus.Templates.ServiceBus.Topic",
   "shortName": "arcus-servicebus-topic",
   "sourceName": "Arcus.Templates.ServiceBus.Topic",

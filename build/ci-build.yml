@@ -40,6 +40,7 @@ stages:
           - template: nuget/determine-pr-version.yml@templates
             parameters:
               manualTriggerVersion: $(Package.Version.ManualTrigger)
+              packageVersionVariableName: 'Package.Version'
           - task: qetza.replacetokens.replacetokens-task.replacetokens@3
             displayName: 'Replace .template.json version'
             inputs:
@@ -55,7 +56,7 @@ stages:
           - template: 'build/build-solution.yml@templates'
             parameters:
               dotnetSdkVersion: '$(DotNet.Sdk.Version)'
-              versionSuffix: '$(packageVersion)'
+              versionSuffix: '$(package.Version)'
           - task: CopyFiles@2
             displayName: 'Copy build artifacts'
             inputs:

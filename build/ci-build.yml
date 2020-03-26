@@ -40,6 +40,18 @@ stages:
           - template: nuget/determine-pr-version.yml@templates
             parameters:
               manualTriggerVersion: $(Package.Version.ManualTrigger)
+          - task: qetza.replacetokens.replacetokens-task.replacetokens@3
+            displayName: 'Replace .template.json version'
+            inputs:
+              rootDirectory: 'src/'
+              targetFiles: '**\template.json'
+              encoding: 'auto'
+              verbosity: 'detailed'
+              writeBOM: true
+              actionOnMissing: 'fail'
+              keepToken: false
+              tokenPrefix: '#{'
+              tokenSuffix: '}#'
           - template: 'build/build-solution.yml@templates'
             parameters:
               dotnetSdkVersion: '$(DotNet.Sdk.Version)'

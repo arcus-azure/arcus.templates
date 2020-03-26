@@ -17,6 +17,8 @@ variables:
   - group: 'Arcus Messaging - Integration Testing'
   - template: ./variables/build.yml
   - template: ./variables/test.yml
+  - name: 'PackageVersion'
+    value: '$(Package.Version)'
   # 'Package.Version.ManualTrigger' is added as queue-time variable on build in Azure DevOps
 
 stages:

@@ -6,7 +6,7 @@
     "API",
     "BoilerPlate"
   ],
-  "name": "Arcus WebAPI (#{PackageVersion}#)",
+  "name": "Arcus WebAPI v#{PackageVersion}#",
   "identity": "Arcus.Templates.WebApi",
   "shortName": "arcus-webapi",
   "sourceName": "Arcus.Templates.WebApi",

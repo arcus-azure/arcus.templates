@@ -23,16 +23,31 @@ When installed, the template can be created with shortname: `arcus-webapi`:
 ## Features
 
 Creates a starter web API project with by default configured:
+
+![](https://img.shields.io/badge/Available%20starting-v0.1-green?link=https://github.com/arcus-azure/arcus.templates/releases/tag/v0.1.0)
+
 * [Exception middleware](https://webapi.arcus-azure.net/features/logging) to log unhandled exceptions thrown during request processing.
 * Content negotiation that only supports `application/json`.
 * OpenAPI docs generation and UI (only available locally).
+
+### Configuration
+
+And additional features available with options:
+
+* `-A|--Authentication` (default `None`)
+  * `SharedAccessKey`: adds [shared access key authentication](https://webapi.arcus-azure.net/features/
+  * `None`: no authentication configured on the API project.
+
+![](https://img.shields.io/badge/Available%20starting-v0.2-green?link=https://github.com/arcus-azure/arcus.templates/releases/tag/v0.2.0)
+
 * Provides basic health endpoint with [ASP.NET Core health checks](https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-2.2) with [OpenAPI support](https://www.codit.eu/blog/documenting-asp-net-core-health-checks-with-openapi/).
 * Docker building file.
 * Default console logger.
 
-## Configuration
+### Configuration
 
 And additional features available with options:
+
 * `-au|--authentication` (default `None`)
   * `SharedAccessKey`: adds [shared access key authentication](https://webapi.arcus-azure.net/features/security/auth/shared-access-key) mechanism to the API project
   * `Certificate`: adds [client certificate authentication](https://webapi.arcus-azure.net/features/security/auth/certificate) mechanism to the API project
@@ -45,6 +60,7 @@ And additional features available with options:
   * `Console`: no extra logging mechanism except for the default console logging will be added to the web API project.
   * `Serilog`: adds [Serilog](https://serilog.net/) as logging mechanism with request logging to the web API project.
 
-## Security
+### Security
+
 As part of this template the following HTTP header(s) are removed for security sake:
 * `Server` header * Provides information concerning the Web API runtime

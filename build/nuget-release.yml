@@ -95,6 +95,16 @@ stages:
                 ```shell
                 > dotnet new --install Arcus.Templates.WebApi::$(Build.BuildNumber)
                 ```
+
+                Install new version via [NuGet](https://www.nuget.org/packages/Arcus.Templates.ServiceBus.Queue/$(Build.BuildNumber))
+                ```shell
+                > dotnet new --install Arcus.Templates.ServiceBus.Queue::$(Build.BuildNumber)
+                ```
+
+                Install new version via [NuGet](https://www.nuget.org/packages/Arcus.Templates.ServiceBus.Topic/$(Build.BuildNumber))
+                ```shell
+                > dotnet new --install Arcus.Templates.ServiceBus.Topic::$(Build.BuildNumber)
+                ```
           - template: 'nuget/publish-official-package.yml@templates'
             parameters:
               packagesToPush: 'templates/*.nupkg'

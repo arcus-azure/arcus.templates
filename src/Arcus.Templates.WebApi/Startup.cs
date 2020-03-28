@@ -227,8 +227,7 @@ namespace Arcus.Templates.WebApi
 
         private LoggerConfiguration CreateLoggerConfiguration(IServiceProvider serviceProvider)
         {
-            var configuration = serviceProvider.GetRequiredService<IConfiguration>();
-            var instrumentationKey = configuration.GetValue<string>(ApplicationInsightsInstrumentationKeyName);
+            var instrumentationKey = Configuration.GetValue<string>(ApplicationInsightsInstrumentationKeyName);
             
             return new LoggerConfiguration()
                 .MinimumLevel.Debug()

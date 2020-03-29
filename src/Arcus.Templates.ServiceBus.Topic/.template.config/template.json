@@ -54,5 +54,21 @@
       "type": "computed",
       "value": "exclude-serilog"
     }
-  }
+  },
+  "postActions": [
+    {
+      "actionId": "3A7C4B45-1F5D-4A30-959A-51B88E82B5D2",
+      "args": {
+        "executable": "powershell check-version.ps1",
+        "args": "-packageName Arcus.Templates.ServiceBus.Topic -packageVersion #{Package.Version}#"
+      },
+      "manualInstructions": [
+        {
+          "text": "Automatically checking for most recent versions failed. The current version is #{Package.Version}#, please check updates at: https://github.com/arcus-azure/arcus.templates/releases"
+        }
+      ],
+      "continueOnError": true,
+      "description": "Automatically checking for template update"
+    }
+  ]
 }

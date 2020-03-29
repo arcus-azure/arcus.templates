@@ -36,6 +36,10 @@
     <Content Include="**\*" Exclude="**\bin\**\*;**\obj\**\*;**\.vs\**\*;**\launchSettings.json" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="..\scripts\check-version.ps1" Link="check-version.ps1" />
+  </ItemGroup>
+
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);</DefineConstants>
     <ExcludeCorrelation>false</ExcludeCorrelation>

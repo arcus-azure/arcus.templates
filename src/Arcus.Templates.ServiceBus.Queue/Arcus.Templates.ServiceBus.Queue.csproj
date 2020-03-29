@@ -42,6 +42,10 @@
   <ItemGroup>
     <None Remove="Dockerfile" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\scripts\check-version.ps1" Link="check-version.ps1" />
+  </ItemGroup>
   <!--#endif-->
 
   <ItemGroup>

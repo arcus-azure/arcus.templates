@@ -50,7 +50,7 @@ namespace Arcus.Templates.WebApi
     public class Startup
     {
 #if Serilog
-        #warning Make sure that the appsettings.json is updated with your Azure Application Insights instrumentation key.
+#warning Make sure that the appsettings.json is updated with your Azure Application Insights instrumentation key.
         private const string ApplicationInsightsInstrumentationKeyName = "Telemetry:ApplicationInsights:InstrumentationKey";
 
 #endif
@@ -72,7 +72,7 @@ namespace Arcus.Templates.WebApi
         public void ConfigureServices(IServiceCollection services)
         {
 #if (SharedAccessKeyAuth || JwtAuth)
-            #error Please provide a valid secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secrets/consume-from-key-vault
+#error Please provide a valid secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secrets/consume-from-key-vault
             services.AddSingleton<ICachedSecretProvider>(serviceProvider => new CachedSecretProvider(secretProvider: null));
 #endif
 #if CertificateAuth
@@ -83,7 +83,8 @@ namespace Arcus.Templates.WebApi
     
             services.AddScoped(serviceProvider => new CertificateAuthenticationValidator(certificateAuthenticationConfig));
 #endif
-            services.AddControllers(options => 
+            services.AddRouting(options => options.LowercaseQueryStrings = true);
+            services.AddControllers(options =>
             {
                 options.ReturnHttpNotAcceptable = true;
                 options.RespectBrowserAcceptHeader = true;
@@ -92,7 +93,7 @@ namespace Arcus.Templates.WebApi
                 AddEnumAsStringRepresentation(options);
 
 #if SharedAccessKeyAuth
-                #warning Please provide a valid request header name and secret name to the shared access filter
+#warning Please provide a valid request header name and secret name to the shared access filter
                 options.Filters.Add(new SharedAccessKeyAuthenticationFilter(headerName: "YOUR REQUEST HEADER NAME", queryParameterName: null, secretName: "YOUR SECRET NAME"));
 #endif
 #if CertificateAuth
@@ -110,7 +111,7 @@ namespace Arcus.Templates.WebApi
             });
 
 #if JwtAuth
-            #error Use previously registered secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secrets/consume-from-key-vault
+#error Use previously registered secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secrets/consume-from-key-vault
             ISecretProvider secretProvider = null;
             services.AddAuthentication(x =>
                     {
@@ -142,7 +143,7 @@ namespace Arcus.Templates.WebApi
 
 #if ExcludeOpenApi
 #else
-//[#if DEBUG]
+            //[#if DEBUG]
             var openApiInformation = new OpenApiInfo
             {
                 Title = "Arcus.Templates.WebApi",
@@ -154,7 +155,7 @@ namespace Arcus.Templates.WebApi
                 swaggerGenerationOptions.SwaggerDoc("v1", openApiInformation);
                 swaggerGenerationOptions.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "Arcus.Templates.WebApi.Open-Api.xml"));
             });
-//[#endif]
+            //[#endif]
 #endif
         }
 
@@ -199,12 +200,12 @@ namespace Arcus.Templates.WebApi
             app.UseAuthentication();
 #endif
 #if NoneAuth
-            #warning Please configure application with authentication mechanism: https://webapi.arcus-azure.net/features/security/auth/shared-access-key
+#warning Please configure application with authentication mechanism: https://webapi.arcus-azure.net/features/security/auth/shared-access-key
 #endif
 
 #if ExcludeOpenApi
 #else
-//[#if DEBUG]
+            //[#if DEBUG]
             app.UseSwagger(swaggerOptions =>
             {
                 swaggerOptions.RouteTemplate = "api/{documentName}/docs.json";
@@ -215,7 +216,7 @@ namespace Arcus.Templates.WebApi
                 swaggerUiOptions.RoutePrefix = "api/docs";
                 swaggerUiOptions.DocumentTitle = "Arcus.Templates.WebApi";
             });
-//[#endif]
+            //[#endif]
 #endif
             app.UseEndpoints(endpoints => endpoints.MapControllers());
 

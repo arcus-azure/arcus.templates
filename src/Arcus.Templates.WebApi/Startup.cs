@@ -83,7 +83,11 @@ namespace Arcus.Templates.WebApi
     
             services.AddScoped(serviceProvider => new CertificateAuthenticationValidator(certificateAuthenticationConfig));
 #endif
-            services.AddRouting(options => options.LowercaseQueryStrings = true);
+            services.AddRouting(options =>
+            {
+                options.LowercaseUrls = true;
+                options.LowercaseQueryStrings = true;
+            });
             services.AddControllers(options => 
             {
                 options.ReturnHttpNotAcceptable = true;

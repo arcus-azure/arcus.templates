@@ -19,7 +19,6 @@ When installed, the template can be created with shortname: `arcus-webapi`:
 > dotnet new arcus-webapi --name Arcus.Demo.WebAPI
 ```
 
-
 ## Features
 
 Creates a starter web API project with by default configured:

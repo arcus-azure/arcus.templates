@@ -18,6 +18,9 @@ using Serilog.Sinks.ApplicationInsights.Sinks.ApplicationInsights.TelemetryConve
 #else
 using Microsoft.OpenApi.Models;
 #endif
+#if (ExcludeOpenApi == false && ExcludeCorrelation == false)
+using Swashbuckle.AspNetCore.Filters;
+#endif
 #if SharedAccessKeyAuth
 using Arcus.Security.Secrets.Core.Caching;
 using Arcus.Security.Secrets.Core.Interfaces;
@@ -144,9 +147,9 @@ namespace Arcus.Templates.WebApi
 #else
             services.AddCorrelation();
 #endif
-
 #if ExcludeOpenApi
 #else
+
 //[#if DEBUG]
             var openApiInformation = new OpenApiInfo
             {
@@ -158,6 +161,12 @@ namespace Arcus.Templates.WebApi
             {
                 swaggerGenerationOptions.SwaggerDoc("v1", openApiInformation);
                 swaggerGenerationOptions.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "Arcus.Templates.WebApi.Open-Api.xml"));
+
+#if (ExcludeCorrelation == false)
+                swaggerGenerationOptions.OperationFilter<AddHeaderOperationFilter>("RequestId", "The header that will have an unique identifier to distinguish between requests/responses", false);
+                swaggerGenerationOptions.OperationFilter<AddHeaderOperationFilter>("X-Transaction-Id", "The header that will have an identifier that relate requests/responses", false);
+                swaggerGenerationOptions.OperationFilter<AddResponseHeadersFilter>();
+#endif
             });
 //[#endif]
 #endif
@@ -198,7 +207,7 @@ namespace Arcus.Templates.WebApi
             app.UseSerilogRequestLogging();
             
 #endif
-#warning Please configure application with HTTPS transport layer security
+            #warning Please configure application with HTTPS transport layer security
 
 #if JwtAuth
             app.UseAuthentication();

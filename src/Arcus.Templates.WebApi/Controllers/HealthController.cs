@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using GuardNet;
+#if (ExcludeCorrelation == false && ExcludeCorrelation == false)
+using Swashbuckle.AspNetCore.Filters;
+#endif
 
 namespace Arcus.Templates.WebApi.Controllers
 {
@@ -35,6 +38,10 @@ namespace Arcus.Templates.WebApi.Controllers
         [HttpGet(Name = "Health_Get")]
         [ProducesResponseType(typeof(HealthReport), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(HealthReport), StatusCodes.Status503ServiceUnavailable)]
+#if (ExcludeCorrelation == false && ExcludeCorrelation == false)
+        [SwaggerResponseHeader(200, "RequestId", "string", "The header that will have an unique identifier to distinguish between requests/responses")]
+        [SwaggerResponseHeader(200, "X-Transaction-Id", "string", "The header that will have an identifier that relate requests/responses")]
+#endif
         public async Task<IActionResult> Get()
         {
             HealthReport healthReport = await _healthCheckService.CheckHealthAsync();

@@ -163,7 +163,6 @@ namespace Arcus.Templates.WebApi
                 swaggerGenerationOptions.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "Arcus.Templates.WebApi.Open-Api.xml"));
 
 #if (ExcludeCorrelation == false)
-                swaggerGenerationOptions.OperationFilter<AddHeaderOperationFilter>("RequestId", "The header that will have an unique identifier to distinguish between requests/responses", false);
                 swaggerGenerationOptions.OperationFilter<AddHeaderOperationFilter>("X-Transaction-Id", "Transaction ID is used to correlate multiple operation calls. A new transaction ID will be generated if not specified.", false);
                 swaggerGenerationOptions.OperationFilter<AddResponseHeadersFilter>();
 #endif

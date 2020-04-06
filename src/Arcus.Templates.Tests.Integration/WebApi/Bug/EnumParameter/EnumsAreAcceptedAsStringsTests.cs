@@ -31,9 +31,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Bug.EnumParameter
                 project.AddTypeAsFile<TestEnum>();
                 await project.StartAsync();
 
-                var content = new StringContent("\"One\"", Encoding.UTF8, "application/json");
-
-                // Act
+                using (var content = new StringContent("\"One\"", Encoding.UTF8, "application/json"))
                 using (HttpResponseMessage response = await project.Root.GetAsync(EnumController.GetRoute, content))
                 {
                     // Assert

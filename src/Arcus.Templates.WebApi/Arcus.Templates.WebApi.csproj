@@ -62,6 +62,7 @@
     <PackageReference Include="Arcus.WebApi.Security.Authentication" Version="0.4.0" Condition="'$(Auth)' == 'true'" />
     <PackageReference Include="Serilog.AspNetCore" Version="3.2.0" Condition="'$(Serilog)' == 'true'" />
     <PackageReference Include="Serilog.Sinks.ApplicationInsights" Version="3.1.0" Condition="'$(Serilog)' == 'true'" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="5.1.0" Condition="'$(ExcludeOpenApi)' == 'false' and '$(ExcludeCorrelation)' == 'false'" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="5.3.1" Condition="'$(ExcludeOpenApi)' == 'false'" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="5.3.1" Condition="'$(ExcludeOpenApi)' == 'false'" />
   </ItemGroup>

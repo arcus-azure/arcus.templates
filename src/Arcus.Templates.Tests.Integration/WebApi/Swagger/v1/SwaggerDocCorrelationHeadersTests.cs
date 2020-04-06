@@ -60,7 +60,6 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Swagger.v1
                 Assert.Contains("RequestId", headers);
                 Assert.Contains("X-Transaction-Id", headers);
                 IList<OpenApiParameter> parameters = SelectHealthCorrelationParameters(document);
-                Assert.Single(parameters, parameter => parameter.Name == "RequestId");
                 Assert.Single(parameters, parameter => parameter.Name == "X-Transaction-Id");
             }
         }

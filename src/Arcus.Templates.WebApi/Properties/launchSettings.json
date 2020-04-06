@@ -1,7 +1,8 @@
 {
   "profiles": {
     "Docker": {
-      "commandName": "Docker"
+      "commandName": "Docker",
+      "useSSL": false
     }
   }
 }

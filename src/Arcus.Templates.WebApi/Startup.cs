@@ -177,6 +177,12 @@ namespace Arcus.Templates.WebApi
 
         private static void AddEnumAsStringRepresentation(MvcOptions options)
         {
+            var onlyJsonInputFormatters = options.InputFormatters.OfType<SystemTextJsonInputFormatter>();
+            foreach (SystemTextJsonInputFormatter inputFormatter in onlyJsonInputFormatters)
+            {
+                inputFormatter.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            }
+            
             var onlyJsonOutputFormatters = options.OutputFormatters.OfType<SystemTextJsonOutputFormatter>();
             foreach (SystemTextJsonOutputFormatter outputFormatter in onlyJsonOutputFormatters)
             {

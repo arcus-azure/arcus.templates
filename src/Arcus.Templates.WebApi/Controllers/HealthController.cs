@@ -39,7 +39,7 @@ namespace Arcus.Templates.WebApi.Controllers
         [ProducesResponseType(typeof(HealthReport), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(HealthReport), StatusCodes.Status503ServiceUnavailable)]
 #if (ExcludeCorrelation == false && ExcludeCorrelation == false)
-        [SwaggerResponseHeader(200, "RequestId", "string", "The header that will have an unique identifier to distinguish between requests/responses")]
+        [SwaggerResponseHeader(200, "RequestId", "string", "The header that has a request ID that uniquely identifies this operation call")]
         [SwaggerResponseHeader(200, "X-Transaction-Id", "string", "The header that has the transaction ID is used to correlate multiple operation calls.")]
 #endif
         public async Task<IActionResult> Get()

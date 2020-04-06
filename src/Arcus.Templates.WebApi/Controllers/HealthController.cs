@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using GuardNet;
-#if (ExcludeCorrelation == false && ExcludeCorrelation == false)
+#if (ExcludeOpenApi == false && ExcludeCorrelation == false)
 using Swashbuckle.AspNetCore.Filters;
 #endif
 

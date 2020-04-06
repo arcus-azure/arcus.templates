@@ -37,5 +37,19 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Fixture
             string endpoint = _baseUri.OriginalString.AppendPathSegments(route);
             return await base.GetAsync(endpoint);
         }
+
+        /// <summary>
+        /// Sends a HTTP GET request starting from the base root HTTP path of the web application, and appending the given <paramref name="route"/>.
+        /// </summary>
+        /// <param name="route">The specific route to which the HTTP GET request should be sent.</param>
+        /// <param name="content">The content to add to the HTTP GET request.</param>
+        public async Task<HttpResponseMessage> GetAsync(string route, HttpContent content)
+        {
+            Guard.NotNullOrWhitespace(route, nameof(route), "Requires a HTTP route");
+            Guard.NotNull(content, nameof(content), "Requires a HTTP content");
+            
+            string endpoint = _baseUri.OriginalString.AppendPathSegments(route);
+            return await base.GetAsync(endpoint, request => request.Content = content);
+        }
     }
 }

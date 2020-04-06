@@ -212,7 +212,7 @@ namespace Arcus.Templates.WebApi
             app.UseSerilogRequestLogging();
             
 #endif
-            #warning Please configure application with HTTPS transport layer security
+            #warning Please configure application with HTTPS transport layer security and set 'useSSL' in the Docker 'launchSettings.json' back to 'true'
 
 #if JwtAuth
             app.UseAuthentication();

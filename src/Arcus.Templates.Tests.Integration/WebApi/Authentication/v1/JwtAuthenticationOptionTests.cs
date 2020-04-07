@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -8,6 +10,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.Fixture;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Readers;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -65,6 +69,43 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Authentication.v1
                 // Assert
                 Assert.NotNull(response);
                 Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            }
+        }
+
+        [Fact]
+        public async Task JwtAuthenticationOption_GetSwaggerDocs_ContainsJwtSecurityScheme()
+        {
+            // Arrange
+            string key = $"secret-{Guid.NewGuid()}";
+            string issuer = $"issuer-{Guid.NewGuid()}";
+            string audience = $"audience-{Guid.NewGuid()}";
+            string jwtToken = CreateToken(key, issuer, audience);
+            var jwtHeader = AuthenticationHeaderValue.Parse("Bearer " + jwtToken);
+
+            var options = new WebApiProjectOptions().WithJwtAuthentication(key, issuer, audience);
+
+            using (var project = await WebApiProject.StartNewAsync(options, _outputWriter))
+            {
+                // Act
+                using (HttpResponseMessage response = await project.Swagger.GetSwaggerDocsAsync())
+                {
+                    // Assert
+                    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+                    var reader = new OpenApiStreamReader();
+                    using (Stream json = await response.Content.ReadAsStreamAsync())
+                    {
+                        OpenApiDocument document = reader.Read(json, out OpenApiDiagnostic diagnostic);
+
+                        Assert.NotNull(document.Components);
+                        (string schemeName, OpenApiSecurityScheme componentScheme) = Assert.Single(document.Components.SecuritySchemes);
+                        Assert.Equal(SecuritySchemeType.Http, componentScheme.Type);
+                        
+                        OpenApiSecurityRequirement requirement = Assert.Single(document.SecurityRequirements);
+                        Assert.NotNull(requirement);
+                        (OpenApiSecurityScheme requirementScheme, IList<string> scopes) = Assert.Single(requirement);
+                        Assert.Equal("jwt", requirementScheme.Reference.Id);
+                    }
+                }
             }
         }
 

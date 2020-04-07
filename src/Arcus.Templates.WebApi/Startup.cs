@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Linq;
@@ -52,6 +53,10 @@ namespace Arcus.Templates.WebApi
 {
     public class Startup
     {
+#if SharedAccessKeyAuth
+        private const string SharedAccessKeyHeaderName = "X-API-Key";
+
+#endif
 #if Serilog
         #warning Make sure that the appsettings.json is updated with your Azure Application Insights instrumentation key.
         private const string ApplicationInsightsInstrumentationKeyName = "Telemetry:ApplicationInsights:InstrumentationKey";
@@ -101,7 +106,7 @@ namespace Arcus.Templates.WebApi
 
 #if SharedAccessKeyAuth
                 #warning Please provide a valid request header name and secret name to the shared access filter
-                options.Filters.Add(new SharedAccessKeyAuthenticationFilter(headerName: "YOUR REQUEST HEADER NAME", queryParameterName: null, secretName: "YOUR SECRET NAME"));
+                options.Filters.Add(new SharedAccessKeyAuthenticationFilter(headerName: SharedAccessKeyHeaderName, queryParameterName: null, secretName: "YOUR SECRET NAME"));
 #endif
 #if CertificateAuth
                 options.Filters.Add(new CertificateAuthenticationFilter());
@@ -165,6 +170,75 @@ namespace Arcus.Templates.WebApi
 #if (ExcludeCorrelation == false)
                 swaggerGenerationOptions.OperationFilter<AddHeaderOperationFilter>("X-Transaction-Id", "Transaction ID is used to correlate multiple operation calls. A new transaction ID will be generated if not specified.", false);
                 swaggerGenerationOptions.OperationFilter<AddResponseHeadersFilter>();
+#endif
+#if SharedAccessKeyAuth
+
+                swaggerGenerationOptions.AddSecurityDefinition("shared-access-key", new OpenApiSecurityScheme
+                {
+                    Type = SecuritySchemeType.ApiKey,
+                    In = ParameterLocation.Header,
+                    Name = SharedAccessKeyHeaderName,
+                    Description = "Authentication scheme based on shared access key"
+                });
+                swaggerGenerationOptions.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    { 
+                        new OpenApiSecurityScheme
+                        {
+                            Description = "Globally authentication scheme based on shared access key",
+                            Reference = new OpenApiReference
+                            {
+                                Id = "shared-access-key",
+                                Type = ReferenceType.SecurityScheme
+                            }
+                        }, new List<string>() }
+                });
+#endif
+ #if CertificateAuth
+
+                swaggerGenerationOptions.AddSecurityDefinition("certificate", new OpenApiSecurityScheme
+                {
+                    Type = SecuritySchemeType.ApiKey,
+                    In = ParameterLocation.Header,
+                    Name = "X-ARR-ClientCert",
+                    Description = "Authentication scheme based on client certificate"
+                });
+                swaggerGenerationOptions.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Description = "Globally authentication scheme based on client certificate",
+                            Reference = new OpenApiReference
+                            {
+                                Id = "certificate",
+                                Type = ReferenceType.SecurityScheme
+                            }
+                        }, new List<string>()
+                    }
+                });
+#endif
+#if JwtAuth
+
+                swaggerGenerationOptions.AddSecurityDefinition("jwt", new OpenApiSecurityScheme
+                {
+                    Type = SecuritySchemeType.Http,
+                    Description = "Authentication scheme based on JWT"
+                });
+                swaggerGenerationOptions.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Description = "Globally authentication scheme based on JWT",
+                            Reference = new OpenApiReference
+                            {
+                                Id = "jwt",
+                                Type = ReferenceType.SecurityScheme
+                            }
+                        }, new List<string>()
+                    }
+                });
 #endif
             });
 //[#endif]

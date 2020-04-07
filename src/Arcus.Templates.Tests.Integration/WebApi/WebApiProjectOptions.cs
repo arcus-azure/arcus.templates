@@ -221,7 +221,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi
 
         private static string InsertSharedAccessAuthenticationHeaderSecretPair(string startupContent, string requestHeader, string secretName)
         {
-            return startupContent.Replace("X-Api-Key", requestHeader)
+            return startupContent.Replace("X-API-Key", requestHeader)
                                  .Replace("YOUR SECRET NAME", secretName);
         }
 

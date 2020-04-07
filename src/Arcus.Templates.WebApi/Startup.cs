@@ -54,7 +54,7 @@ namespace Arcus.Templates.WebApi
     public class Startup
     {
 #if SharedAccessKeyAuth
-        private const string SharedAccessKeyHeaderName = "X-Api-Key";
+        private const string SharedAccessKeyHeaderName = "X-API-Key";
 
 #endif
 #if Serilog

@@ -185,7 +185,7 @@ namespace Arcus.Templates.WebApi
                     { 
                         new OpenApiSecurityScheme
                         {
-                            Description = "Globally authentication scheme based on shared access key"
+                            Description = "Globally authentication scheme based on shared access key",
                             Reference = new OpenApiReference
                             {
                                 Id = "shared-access-key",

@@ -4,6 +4,7 @@ using System.Text;
 using System.IO;
 using System.Linq;
 using System.Text.Json.Serialization;
+using Arcus.WebApi.Logging.Correlation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -43,10 +44,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.IdentityModel.Tokens;
-#endif
-#if ExcludeCorrelation
-#else
-using Arcus.WebApi.Correlation;
 #endif
 
 namespace Arcus.Templates.WebApi
@@ -148,9 +145,8 @@ namespace Arcus.Templates.WebApi
 #endif
 
             services.AddHealthChecks();
-#if ExcludeCorrelation
-#else
-            services.AddCorrelation();
+#if ExcludeCorrelation == false
+            services.AddHttpCorrelation();
 #endif
 #if ExcludeOpenApi
 #else
@@ -167,7 +163,7 @@ namespace Arcus.Templates.WebApi
                 swaggerGenerationOptions.SwaggerDoc("v1", openApiInformation);
                 swaggerGenerationOptions.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "Arcus.Templates.WebApi.Open-Api.xml"));
 
-#if (ExcludeCorrelation == false)
+#if ExcludeCorrelation == false
                 swaggerGenerationOptions.OperationFilter<AddHeaderOperationFilter>("X-Transaction-Id", "Transaction ID is used to correlate multiple operation calls. A new transaction ID will be generated if not specified.", false);
                 swaggerGenerationOptions.OperationFilter<AddResponseHeadersFilter>();
 #endif
@@ -276,9 +272,8 @@ namespace Arcus.Templates.WebApi
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseMiddleware<Arcus.WebApi.Logging.ExceptionHandlingMiddleware>();
-#if ExcludeCorrelation
-#else
-            app.UseCorrelation();
+#if ExcludeCorrelation == false
+            app.UseHttpCorrelation();
 #endif
             app.UseRouting();
 
@@ -326,8 +321,11 @@ namespace Arcus.Templates.WebApi
                 .MinimumLevel.Debug()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .Enrich.FromLogContext()
+#if ExcludeCorrelation == false
+                .Enrich.WithHttpCorrelationInfo(serviceProvider)
+  #endif
                 .WriteTo.Console()
-                .WriteTo.ApplicationInsights(instrumentationKey, new TraceTelemetryConverter());
+                .WriteTo.AzureApplicationInsights(instrumentationKey);
         }
 #endif
     }

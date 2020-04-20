@@ -4,11 +4,11 @@ using Arcus.Security.Core.Caching;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Serilog.Configuration;
 #if ExcludeSerilog
 #else
 using Serilog;
 using Serilog.Events;
-using Serilog.Sinks.ApplicationInsights.Sinks.ApplicationInsights.TelemetryConverters;
 #endif
 
 namespace Arcus.Templates.ServiceBus.Topic
@@ -92,7 +92,7 @@ namespace Arcus.Templates.ServiceBus.Topic
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .Enrich.FromLogContext()
                 .WriteTo.Console()
-                .WriteTo.ApplicationInsights(instrumentationKey, new TraceTelemetryConverter());
+                .WriteTo.AzureApplicationInsights(instrumentationKey);
         }
 #endif
     }

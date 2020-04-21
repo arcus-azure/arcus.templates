@@ -4,9 +4,9 @@ using Arcus.Security.Core.Caching;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Serilog.Configuration;
 #if (ExcludeSerilog == false)
 using Serilog;
+using Serilog.Configuration;
 using Serilog.Events;
 #endif
 

@@ -5,8 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog.Configuration;
-#if ExcludeSerilog
-#else
+#if (ExcludeSerilog == false)
 using Serilog;
 using Serilog.Events;
 #endif
@@ -15,8 +14,7 @@ namespace Arcus.Templates.ServiceBus.Topic
 {
     public class Program
     {
-#if ExcludeSerilog
-#else
+#if (ExcludeSerilog == false)
         #warning Make sure that the appsettings.json is updated with your Azure Application Insights instrumentation key.
         private const string ApplicationInsightsInstrumentationKeyName = "TELEMETRY_APPLICATIONINSIGHTS_INSTRUMENTATIONKEY";
 
@@ -63,8 +61,7 @@ namespace Arcus.Templates.ServiceBus.Topic
                            configuration.AddCommandLine(args);
                            configuration.AddEnvironmentVariables();
                        })
-#if ExcludeSerilog
-#else
+#if (ExcludeSerilog == false)
                        .UseSerilog(UpdateLoggerConfiguration)
 #endif
                        .ConfigureServices((hostContext, services) =>
@@ -78,8 +75,7 @@ namespace Arcus.Templates.ServiceBus.Topic
                            services.AddTcpHealthProbes("ARCUS_HEALTH_PORT");
                        });
         }
-#if ExcludeSerilog
-#else
+#if (ExcludeSerilog == false)
 
         private static void UpdateLoggerConfiguration(
             HostBuilderContext hostContext,

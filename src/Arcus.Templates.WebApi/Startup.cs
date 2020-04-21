@@ -17,8 +17,7 @@ using Serilog.Configuration;
 using Serilog.Events;
 using Arcus.Observability.Telemetry.Serilog.Sinks.ApplicationInsights;
 #endif
-#if ExcludeOpenApi
-#else
+#if (ExcludeOpenApi == false)
 using Microsoft.OpenApi.Models;
 #endif
 #if (ExcludeOpenApi == false && ExcludeCorrelation == false)
@@ -143,14 +142,13 @@ namespace Arcus.Templates.WebApi
                             ValidAudience = Configuration.GetValue<string>("Jwt:Audience")
                         };
                     });
-#endif
 
+#endif
             services.AddHealthChecks();
 #if (ExcludeCorrelation == false)
             services.AddHttpCorrelation();
 #endif
-#if ExcludeOpenApi
-#else
+#if (ExcludeOpenApi == false)
 
 //[#if DEBUG]
             var openApiInformation = new OpenApiInfo
@@ -291,8 +289,7 @@ namespace Arcus.Templates.WebApi
             #warning Please configure application with authentication mechanism: https://webapi.arcus-azure.net/features/security/auth/shared-access-key
 #endif
 
-#if ExcludeOpenApi
-#else
+#if (ExcludeOpenApi == false)
 //[#if DEBUG]
             app.UseSwagger(swaggerOptions =>
             {
@@ -324,7 +321,7 @@ namespace Arcus.Templates.WebApi
                 .Enrich.FromLogContext()
 #if (Serilog && ExcludeCorrelation == false)
                 .Enrich.WithHttpCorrelationInfo(serviceProvider)
-  #endif
+#endif
                 .WriteTo.Console()
                 .WriteTo.AzureApplicationInsights(instrumentationKey);
         }

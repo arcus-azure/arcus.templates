@@ -319,7 +319,7 @@ namespace Arcus.Templates.WebApi
                 .MinimumLevel.Debug()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .Enrich.FromLogContext()
-#if (Serilog && ExcludeCorrelation == false)
+#if (ExcludeCorrelation == false)
                 .Enrich.WithHttpCorrelationInfo(serviceProvider)
 #endif
                 .WriteTo.Console()

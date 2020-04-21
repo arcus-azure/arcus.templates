@@ -57,5 +57,25 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Logging.v1
                 Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             }
         }
+
+        [Fact]
+        public async Task GetHealth_WithSerilogLoggingWithoutCorrelationProjectOption_ReturnsOk()
+        {
+            // Arrange
+            string instrumentationKey = _configuration.GetApplicationInsightsInstrumentationKey();
+            var optionsWithSerilogLogging =
+                new WebApiProjectOptions()
+                    .WithSerilogLogging(instrumentationKey)
+                    .WithExcludeCorrelation();
+
+            using (var project = await WebApiProject.StartNewAsync(optionsWithSerilogLogging, _outputWriter))
+                // Act
+            using (HttpResponseMessage response = await project.Health.GetAsync())
+            {
+                // Assert
+                Assert.NotNull(response);
+                Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            }
+        }
     }
 }

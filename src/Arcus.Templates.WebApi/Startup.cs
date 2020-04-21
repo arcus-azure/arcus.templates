@@ -4,6 +4,7 @@ using System.Text;
 using System.IO;
 using System.Linq;
 using System.Text.Json.Serialization;
+using Arcus.WebApi.Logging.Correlation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -12,11 +13,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 #if Serilog
 using Serilog;
+using Serilog.Configuration;
 using Serilog.Events;
-using Serilog.Sinks.ApplicationInsights.Sinks.ApplicationInsights.TelemetryConverters;
+using Arcus.Observability.Telemetry.Serilog.Sinks.ApplicationInsights;
 #endif
-#if ExcludeOpenApi
-#else
+#if (ExcludeOpenApi == false)
 using Microsoft.OpenApi.Models;
 #endif
 #if (ExcludeOpenApi == false && ExcludeCorrelation == false)
@@ -43,10 +44,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.IdentityModel.Tokens;
-#endif
-#if ExcludeCorrelation
-#else
-using Arcus.WebApi.Correlation;
 #endif
 
 namespace Arcus.Templates.WebApi
@@ -106,7 +103,7 @@ namespace Arcus.Templates.WebApi
 
 #if SharedAccessKeyAuth
                 #warning Please provide a valid request header name and secret name to the shared access filter
-                options.Filters.Add(new SharedAccessKeyAuthenticationFilter(headerName: SharedAccessKeyHeaderName, queryParameterName: null, secretName: "YOUR SECRET NAME"));
+                options.Filters.Add(new SharedAccessKeyAuthenticationFilter(headerName: SharedAccessKeyHeaderName, queryParameterName: null, secretName: "<your-secret-name>"));
 #endif
 #if CertificateAuth
                 options.Filters.Add(new CertificateAuthenticationFilter());
@@ -145,15 +142,13 @@ namespace Arcus.Templates.WebApi
                             ValidAudience = Configuration.GetValue<string>("Jwt:Audience")
                         };
                     });
-#endif
 
-            services.AddHealthChecks();
-#if ExcludeCorrelation
-#else
-            services.AddCorrelation();
 #endif
-#if ExcludeOpenApi
-#else
+            services.AddHealthChecks();
+#if (ExcludeCorrelation == false)
+            services.AddHttpCorrelation();
+#endif
+#if (ExcludeOpenApi == false)
 
 //[#if DEBUG]
             var openApiInformation = new OpenApiInfo
@@ -276,9 +271,8 @@ namespace Arcus.Templates.WebApi
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseMiddleware<Arcus.WebApi.Logging.ExceptionHandlingMiddleware>();
-#if ExcludeCorrelation
-#else
-            app.UseCorrelation();
+#if (ExcludeCorrelation == false)
+            app.UseHttpCorrelation();
 #endif
             app.UseRouting();
 
@@ -295,8 +289,7 @@ namespace Arcus.Templates.WebApi
             #warning Please configure application with authentication mechanism: https://webapi.arcus-azure.net/features/security/auth/shared-access-key
 #endif
 
-#if ExcludeOpenApi
-#else
+#if (ExcludeOpenApi == false)
 //[#if DEBUG]
             app.UseSwagger(swaggerOptions =>
             {
@@ -326,8 +319,11 @@ namespace Arcus.Templates.WebApi
                 .MinimumLevel.Debug()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .Enrich.FromLogContext()
+#if (ExcludeCorrelation == false)
+                .Enrich.WithHttpCorrelationInfo(serviceProvider)
+#endif
                 .WriteTo.Console()
-                .WriteTo.ApplicationInsights(instrumentationKey, new TraceTelemetryConverter());
+                .WriteTo.AzureApplicationInsights(instrumentationKey);
         }
 #endif
     }

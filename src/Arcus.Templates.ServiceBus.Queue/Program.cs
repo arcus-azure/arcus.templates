@@ -4,19 +4,17 @@ using Arcus.Security.Core.Caching;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-#if ExcludeSerilog
-#else
+#if (ExcludeSerilog == false)
 using Serilog;
+using Serilog.Configuration;
 using Serilog.Events;
-using Serilog.Sinks.ApplicationInsights.Sinks.ApplicationInsights.TelemetryConverters;
 #endif
 
 namespace Arcus.Templates.ServiceBus.Queue
 {
     public class Program
     {
-#if ExcludeSerilog
-#else
+#if (ExcludeSerilog == false)
 #warning Make sure that the appsettings.json is updated with your Azure Application Insights instrumentation key.
         private const string ApplicationInsightsInstrumentationKeyName = "TELEMETRY_APPLICATIONINSIGHTS_INSTRUMENTATIONKEY";
 
@@ -63,8 +61,7 @@ namespace Arcus.Templates.ServiceBus.Queue
                            configuration.AddCommandLine(args);
                            configuration.AddEnvironmentVariables();
                        })
-#if ExcludeSerilog
-#else
+#if (ExcludeSerilog == false)
                        .UseSerilog(UpdateLoggerConfiguration)
 #endif
                        .ConfigureServices((hostContext, services) =>
@@ -78,8 +75,7 @@ namespace Arcus.Templates.ServiceBus.Queue
                            services.AddTcpHealthProbes("ARCUS_HEALTH_PORT");
                        });
         }
-#if ExcludeSerilog
-#else
+#if (ExcludeSerilog == false)
 
         private static void UpdateLoggerConfiguration(
             HostBuilderContext hostContext,
@@ -92,7 +88,7 @@ namespace Arcus.Templates.ServiceBus.Queue
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .Enrich.FromLogContext()
                 .WriteTo.Console()   
-                .WriteTo.ApplicationInsights(instrumentationKey, new TraceTelemetryConverter());
+                .WriteTo.AzureApplicationInsights(instrumentationKey);
         }
 #endif
     }

@@ -34,3 +34,7 @@ Creates a starter worker project with by default configured:
 
 And additional features available with options:
 * `-es|--exclude-serilog`: Exclude the [Serilog](https://serilog.net/) logging infrastructure in the worker project which includes default enrichers ([version](https://observability.arcus-azure.net/features/telemetry-enrichment#version-enricher) and [application](https://observability.arcus-azure.net/features/telemetry-enrichment#application-enricher)), and sinking to Application Insights.
+
+## Older Versions
+
+* [v0.2.0](../v0.2/features/servicebus-queue-worker)

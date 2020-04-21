@@ -15,7 +15,7 @@ namespace Arcus.Templates.ServiceBus.Queue
     public class Program
     {
 #if (ExcludeSerilog == false)
-#warning Make sure that the appsettings.json is updated with your Azure Application Insights instrumentation key.
+        #warning Make sure that the appsettings.json is updated with your Azure Application Insights instrumentation key.
         private const string ApplicationInsightsInstrumentationKeyName = "TELEMETRY_APPLICATIONINSIGHTS_INSTRUMENTATIONKEY";
 
 #endif
@@ -87,6 +87,8 @@ namespace Arcus.Templates.ServiceBus.Queue
                 .MinimumLevel.Debug()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .Enrich.FromLogContext()
+                .Enrich.WithVersion()
+                .Enrich.WithComponentName("Service Bus Queue Worker")
                 .WriteTo.Console()   
                 .WriteTo.AzureApplicationInsights(instrumentationKey);
         }

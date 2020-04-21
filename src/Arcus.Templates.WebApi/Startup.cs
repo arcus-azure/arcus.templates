@@ -319,6 +319,8 @@ namespace Arcus.Templates.WebApi
                 .MinimumLevel.Debug()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .Enrich.FromLogContext()
+                .Enrich.WithVersion()
+                .Enrich.WithComponentName("API")
 #if (ExcludeCorrelation == false)
                 .Enrich.WithHttpCorrelationInfo(serviceProvider)
 #endif

@@ -87,6 +87,8 @@ namespace Arcus.Templates.ServiceBus.Topic
                 .MinimumLevel.Debug()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .Enrich.FromLogContext()
+                .Enrich.WithVersion()
+                .Enrich.WithComponentName("Service Bus Topic Worker")
                 .WriteTo.Console()
                 .WriteTo.AzureApplicationInsights(instrumentationKey);
         }

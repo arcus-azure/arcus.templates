@@ -91,7 +91,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi
             ReplaceProjectFileContent(
                 projectDirectory, 
                 "appsettings.json", 
-                contents => contents.Replace("YOUR APPLICATION INSIGHTS INSTRUMENTATION KEY", applicationInsightsInstrumentationKey));
+                contents => contents.Replace("<your-application-insights-instrumentation-key>", applicationInsightsInstrumentationKey));
 
         }
 
@@ -130,8 +130,8 @@ namespace Arcus.Templates.Tests.Integration.WebApi
             ReplaceProjectFileContent(
                 projectDirectory,
                 "appsettings.json",
-                contents => contents.Replace("YOUR ISSUER", issuer)
-                                    .Replace("YOUR AUDIENCE", audience));
+                contents => contents.Replace("<your-issuer>", issuer)
+                                    .Replace("<your-audience>", audience));
         }
 
         /// <summary>
@@ -222,7 +222,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi
         private static string InsertSharedAccessAuthenticationHeaderSecretPair(string startupContent, string requestHeader, string secretName)
         {
             return startupContent.Replace("X-API-Key", requestHeader)
-                                 .Replace("YOUR SECRET NAME", secretName);
+                                 .Replace("<your-secret-name>", secretName);
         }
 
         private static string RemoveCustomUserErrors(string content)
@@ -252,7 +252,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi
             ReplaceProjectFileContent(
                 projectDirectory,
                 "appsettings.json",
-                appSettingsContent => appSettingsContent.Replace("YOUR CERTIFICATE SUBJECT NAME", subject));
+                appSettingsContent => appSettingsContent.Replace("<your-certificate-subject-name>", subject));
         }
 
         private static void ReplaceProjectFileContent(DirectoryInfo projectDirectory, string fileName, Func<string, string> replacements)

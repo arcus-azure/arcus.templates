@@ -13,8 +13,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 #if Serilog
 using Serilog;
+using Serilog.Configuration;
 using Serilog.Events;
-using Serilog.Sinks.ApplicationInsights.Sinks.ApplicationInsights.TelemetryConverters;
+using Arcus.Observability.Telemetry.Serilog.Sinks.ApplicationInsights;
 #endif
 #if ExcludeOpenApi
 #else
@@ -103,7 +104,7 @@ namespace Arcus.Templates.WebApi
 
 #if SharedAccessKeyAuth
                 #warning Please provide a valid request header name and secret name to the shared access filter
-                options.Filters.Add(new SharedAccessKeyAuthenticationFilter(headerName: SharedAccessKeyHeaderName, queryParameterName: null, secretName: "YOUR SECRET NAME"));
+                options.Filters.Add(new SharedAccessKeyAuthenticationFilter(headerName: SharedAccessKeyHeaderName, queryParameterName: null, secretName: "<your-secret-name>"));
 #endif
 #if CertificateAuth
                 options.Filters.Add(new CertificateAuthenticationFilter());
@@ -145,7 +146,7 @@ namespace Arcus.Templates.WebApi
 #endif
 
             services.AddHealthChecks();
-#if ExcludeCorrelation == false
+#if (ExcludeCorrelation == false)
             services.AddHttpCorrelation();
 #endif
 #if ExcludeOpenApi
@@ -272,7 +273,7 @@ namespace Arcus.Templates.WebApi
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseMiddleware<Arcus.WebApi.Logging.ExceptionHandlingMiddleware>();
-#if ExcludeCorrelation == false
+#if (ExcludeCorrelation == false)
             app.UseHttpCorrelation();
 #endif
             app.UseRouting();
@@ -321,7 +322,7 @@ namespace Arcus.Templates.WebApi
                 .MinimumLevel.Debug()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .Enrich.FromLogContext()
-#if ExcludeCorrelation == false
+#if (Serilog && ExcludeCorrelation == false)
                 .Enrich.WithHttpCorrelationInfo(serviceProvider)
   #endif
                 .WriteTo.Console()

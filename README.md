@@ -51,5 +51,18 @@ When installed, the template can be created with shortname: `arcus-servicebus-to
 
 All documentation can be found on [here](https://templates.arcus-azure.net/).
 
+## Versioning
+
+We are using versioned documentation so that people can navigate to the docs for a specific version.
+
+To support this, we use a folder with our docs for that specific version by calling it `v0.3`.
+
+When introducing a new version, simply copy the folder of the previous version and call it `v0.5` where 0.5 is the new version of our packages.
+
+Once the new version is released, we have to change that version to the new "latest" version. To do that, you must:
+
+1. Change all docs in previous version so that they no longer have URL redirects
+2. Introduce redirects in the new version of the docs (as documented on [GitHub](https://github.com/jekyll/jekyll-redirect-from#usage))
+
 # License Information
 This is licensed under The MIT License (MIT). Which means that you can use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the web application. But you always need to state that Codit is the original author of this web application.

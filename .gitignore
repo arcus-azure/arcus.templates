@@ -334,3 +334,6 @@ ASALocalRun/
 
 # Private application settings
 *.private.json
+
+# Rendered docs
+docs/_site

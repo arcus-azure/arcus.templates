@@ -5,3 +5,4 @@ title: Arcus Templates
 description: Azure development in a breeze with our templates
 plugins:
   - jemoji
+  - jekyll-redirect-from

@@ -336,4 +336,4 @@ ASALocalRun/
 *.private.json
 
 # Rendered docs
-docs/_site
+docs/_site/

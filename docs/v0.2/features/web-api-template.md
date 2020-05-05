@@ -24,7 +24,7 @@ When installed, the template can be created with shortname: `arcus-webapi`:
 
 Creates a starter web API project with by default configured:
 
-![](https://img.shields.io/badge/Latest%20version-v0.3-green?link=https://github.com/arcus-azure/arcus.templates/releases/tag/v0.3.0)
+![](https://img.shields.io/badge/Latest%20version-v0.2-green?link=https://github.com/arcus-azure/arcus.templates/releases/tag/v0.2.0)
 
 * Provides basic health endpoint with [ASP.NET Core health checks](https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-2.2) with [OpenAPI support](https://www.codit.eu/blog/documenting-asp-net-core-health-checks-with-openapi/).
 * Docker building file.
@@ -44,7 +44,7 @@ And additional features available with options:
 * `-eo|--exclude-openApi` (default `false`): exclude the [ASP.NET OpenAPI docs generation and UI](https://docs.microsoft.com/en-us/aspnet/core/tutorials/getting-started-with-swashbuckle?view=aspnetcore-3.1&tabs=visual-studio) from API project.
 * `-lo|--logging` (default `Console`)
   * `Console`: no extra logging mechanism except for the default console logging will be added to the web API project.
-  * `Serilog`: adds [Serilog](https://serilog.net/) as logging mechanism with request logging, default enrichers ([version](https://observability.arcus-azure.net/features/telemetry-enrichment#version-enricher), [application](https://observability.arcus-azure.net/features/telemetry-enrichment#application-enricher), and [correlation](https://webapi.arcus-azure.net/features/telemetry) when appropriate), sinking to Application Insights to the web API project.
+  * `Serilog`: adds [Serilog](https://serilog.net/) as logging mechanism with request logging to the web API project.
 
 ### Security
 
@@ -54,4 +54,3 @@ As part of this template the following HTTP header(s) are removed for security s
 ## Older Versions
 
 * [v0.1.0](../v0.1/features/web-api-template)
-* [v0.2.0](../v0.2/features/web-api-template)

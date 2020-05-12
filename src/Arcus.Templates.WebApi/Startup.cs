@@ -270,17 +270,14 @@ namespace Arcus.Templates.WebApi
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseMiddleware<Arcus.WebApi.Logging.ExceptionHandlingMiddleware>();
+            app.UseExceptionHandling();
 #if (ExcludeCorrelation == false)
             app.UseHttpCorrelation();
 #endif
             app.UseRouting();
+            app.UseRequestTracking();
 
-#if Serilog
-            app.UseSerilogRequestLogging();
-            
-#endif
-            #warning Please configure application with HTTPS transport layer security and set 'useSSL' in the Docker 'launchSettings.json' back to 'true'
+#warning Please configure application with HTTPS transport layer security and set 'useSSL' in the Docker 'launchSettings.json' back to 'true'
 
 #if JwtAuth
             app.UseAuthentication();

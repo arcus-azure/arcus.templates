@@ -63,8 +63,12 @@ namespace Arcus.Templates.ServiceBus.Topic
                        })
                        .ConfigureSecretStore((config, stores) =>
                        {
+//[#if DEBUG]
+                           stores.AddConfiguration(config);
+//[#endif]
+
                            //#error Please provide a valid secret provider, for example Azure Key Vault: https: //security.arcus-azure.net/features/secrets/consume-from-key-vault
-                           stores.AddProvider(secretProvider: null);
+                           // stores.AddAzureKeyVault(secretProvider: null);
                        })
 #if (ExcludeSerilog == false)
                        .UseSerilog(UpdateLoggerConfiguration)

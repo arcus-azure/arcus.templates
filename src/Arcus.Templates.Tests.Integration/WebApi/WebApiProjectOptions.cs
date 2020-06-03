@@ -129,7 +129,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi
                 "Program.cs", 
                 contents =>
                 {
-                    contents = InsertInMemorySecretProviderCode(contents, "JwtSigningKey", key);
+                    contents = InsertInMemorySecretStore(contents, "JwtSigningKey", key);
                     return RemoveCustomUserErrors(contents);
                 });
 
@@ -173,7 +173,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi
                 "Program.cs",
                 contents =>
                 {
-                    contents = InsertInMemorySecretProviderCode(contents, secretName, secretValue);
+                    contents = InsertInMemorySecretStore(contents, secretName, secretValue);
                     return RemoveCustomUserErrors(contents);
                 });
         }
@@ -214,18 +214,22 @@ namespace Arcus.Templates.Tests.Integration.WebApi
             return files.First().FullName;
         }
 
-        private static string InsertInMemorySecretProviderCode(string contents, string secretName, string secretValue)
+        private static string InsertInMemorySecretStore(string contents, string secretName, string secretValue)
         {
-            return InsertInMemorySecretProviderCode(contents, "// stores.AddAzureKeyVault(secretProvider: null)", secretName, secretValue);
+            string newSecretProviderWithSecret = CreatesInMemorySecretProviderConstructor(secretName, secretValue);
+            return contents.Replace("// stores.AddAzureKeyVault(secretProvider: null)", $"stores.AddProvider({newSecretProviderWithSecret})");
         }
 
         private static string InsertInMemorySecretProviderCode(string contents, string replacementToken, string secretName, string secretValue)
         {
-            string newSecretProviderWithSecret = 
-                $"new {typeof(InMemorySecretProvider).FullName}("
-                + $"new {typeof(Dictionary<string, string>).Namespace}.{nameof(Dictionary<string, string>)}<string, string> {{ [\"{secretName}\"] = \"{secretValue}\" }})";
-
+            string newSecretProviderWithSecret = CreatesInMemorySecretProviderConstructor(secretName, secretValue);
             return contents.Replace(replacementToken, newSecretProviderWithSecret);
+        }
+
+        private static string CreatesInMemorySecretProviderConstructor(string secretName, string secretValue)
+        {
+            return $"new {typeof(InMemorySecretProvider).FullName}("
+                   + $"new {typeof(Dictionary<string, string>).Namespace}.{nameof(Dictionary<string, string>)}<string, string> {{ [\"{secretName}\"] = \"{secretValue}\" }})";
         }
 
         private static string InsertSharedAccessAuthenticationHeaderSecretPair(string startupContent, string requestHeader, string secretName)

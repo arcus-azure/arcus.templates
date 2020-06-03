@@ -129,7 +129,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi
                 "Program.cs", 
                 contents =>
                 {
-                    contents = InsertInMemorySecretProviderCode(contents, "secretProvider: null", "JwtSigningKey", key);
+                    contents = InsertInMemorySecretProviderCode(contents, "JwtSigningKey", key);
                     return RemoveCustomUserErrors(contents);
                 });
 
@@ -216,7 +216,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi
 
         private static string InsertInMemorySecretProviderCode(string contents, string secretName, string secretValue)
         {
-            return InsertInMemorySecretProviderCode(contents, "secretProvider: null", secretName, secretValue);
+            return InsertInMemorySecretProviderCode(contents, "// stores.AddAzureKeyVault(secretProvider: null)", secretName, secretValue);
         }
 
         private static string InsertInMemorySecretProviderCode(string contents, string replacementToken, string secretName, string secretValue)

@@ -61,14 +61,16 @@ namespace Arcus.Templates.ServiceBus.Topic
                            configuration.AddCommandLine(args);
                            configuration.AddEnvironmentVariables();
                        })
+                       .ConfigureSecretStore((config, stores) =>
+                       {
+                           //#error Please provide a valid secret provider, for example Azure Key Vault: https: //security.arcus-azure.net/features/secrets/consume-from-key-vault
+                           stores.AddProvider(secretProvider: null);
+                       })
 #if (ExcludeSerilog == false)
                        .UseSerilog(UpdateLoggerConfiguration)
 #endif
                        .ConfigureServices((hostContext, services) =>
                        {
-                           //#error Please provide a valid secret provider, for example Azure Key Vault: https: //security.arcus-azure.net/features/secrets/consume-from-key-vault
-                           services.AddSingleton<ISecretProvider>(serviceProvider => new CachedSecretProvider(secretProvider: null));
-
                            services.AddServiceBusTopicMessagePump("Receive-All", secretProvider => secretProvider.GetRawSecretAsync("ARCUS_SERVICEBUS_CONNECTIONSTRING"))
                                    .WithServiceBusMessageHandler<EmptyMessageHandler, EmptyMessage>();
                            

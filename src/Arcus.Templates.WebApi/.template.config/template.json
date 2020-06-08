@@ -147,7 +147,7 @@
           "description": "No extra logging mechanism except for the default console logging will be added to the web API project"
         }
       ],
-      "defaultValue": "Console",
+      "defaultValue": "Serilog",
       "description": "Choose whether to use the default console logging or a third-party logging mechanism"
     },
     "Console": {

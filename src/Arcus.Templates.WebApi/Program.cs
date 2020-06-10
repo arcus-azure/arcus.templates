@@ -84,7 +84,7 @@ namespace Arcus.Templates.WebApi
 //[#endif]
 
                         #error Please provide a valid secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secrets/consume-from-key-vault
-                        // stores.AddAzureKeyVault(secretProvider: null);
+                        stores.AddAzureKeyVaultWithManagedServiceIdentity("https://your-keyvault-vault.azure.net/");
                     })
 #endif
                     .ConfigureWebHostDefaults(webBuilder =>

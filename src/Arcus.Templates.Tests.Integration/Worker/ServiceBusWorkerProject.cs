@@ -170,7 +170,8 @@ namespace Arcus.Templates.Tests.Integration.Worker
                 RemoveCustomUserErrors(contents)
                     .Replace("EmptyMessageHandler", nameof(OrdersMessageHandler))
                     .Replace("EmptyMessage", nameof(Order))
-                    .Replace("// stores.AddAzureKeyVault(secretProvider: null)", $"stores.AddProvider(new {nameof(SingleValueSecretProvider)}(\"{connectionString}\"))"));
+                    .Replace("AddAzureKeyVaultWithManagedServiceIdentity(\"https://your-keyvault-vault.azure.net/\")", 
+                             $"AddProvider(new {nameof(SingleValueSecretProvider)}(\"{connectionString}\"))"));
         }
 
         private static string RemoveCustomUserErrors(string content)

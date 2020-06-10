@@ -52,6 +52,7 @@
 
   <ItemGroup>
     <PackageReference Include="Arcus.Security.Core" Version="1.2.0-preview-1" />
+    <PackageReference Include="Arcus.Security.Providers.AzureKeyVault" Version="1.2.0-preview-1" />
     <PackageReference Include="Arcus.WebApi.Logging" Version="1.0.1" />
     <PackageReference Include="Arcus.WebApi.Security" Version="1.0.1" Condition="'$(Auth)' == 'true'" />
     <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Sinks.ApplicationInsights" Version="0.2.1" Condition="'$(Serilog)' == 'true'" />

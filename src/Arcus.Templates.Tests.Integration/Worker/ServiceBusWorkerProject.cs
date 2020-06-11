@@ -167,20 +167,12 @@ namespace Arcus.Templates.Tests.Integration.Worker
 
             string connectionString = _configuration.GetServiceBusConnectionString(_entity);
             UpdateFileInProject("Program.cs", contents => 
-                RemoveCustomUserErrors(contents)
+                RemovesUserErrorsFromContents(contents)
                     .Replace("EmptyMessageHandler", nameof(OrdersMessageHandler))
                     .Replace("EmptyMessage", nameof(Order))
                     .Replace("AddAzureKeyVaultWithManagedServiceIdentity(\"https://your-keyvault-vault.azure.net/\")", 
                              $"AddProvider(new {nameof(SingleValueSecretProvider)}(\"{connectionString}\"))"));
         }
-
-        private static string RemoveCustomUserErrors(string content)
-        {
-            return content.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
-                          .Where(line => !line.Contains("#error"))
-                          .Aggregate((line1, line2) => line1 + Environment.NewLine + line2);
-        }
-
 
         private async Task StartAsync(ServiceBusWorkerProjectOptions options)
         {

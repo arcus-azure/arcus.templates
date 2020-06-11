@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Arcus.Security.Secrets.Core.Interfaces;
 using Arcus.Templates.Tests.Integration.Fixture;
 using GuardNet;
 
@@ -119,12 +118,19 @@ namespace Arcus.Templates.Tests.Integration.WebApi
             ReplaceProjectFileContent(
                 projectDirectory,
                 "Startup.cs",
-                startupContent =>
+                contents =>
                 {
-                    startupContent = InsertInMemorySecretProviderCode(startupContent, "secretProvider: null", "JwtSigningKey", key);
-                    startupContent = InsertInMemorySecretProviderCode(startupContent, "null", "JwtSigningKey", key);
+                    contents = InsertInMemorySecretProviderCode(contents, "null", "JwtSigningKey", key);
+                    return RemoveCustomUserErrors(contents);
+                });
 
-                    return RemoveCustomUserErrors(startupContent);
+            ReplaceProjectFileContent(
+                projectDirectory, 
+                "Program.cs", 
+                contents =>
+                {
+                    contents = InsertInMemorySecretStore(contents, "JwtSigningKey", key);
+                    return RemoveCustomUserErrors(contents);
                 });
 
             ReplaceProjectFileContent(
@@ -160,12 +166,15 @@ namespace Arcus.Templates.Tests.Integration.WebApi
             ReplaceProjectFileContent(
                 projectDirectory,
                 "Startup.cs",
-                startupContent =>
-                {
-                    startupContent = InsertInMemorySecretProviderCode(startupContent, secretName, secretValue);
-                    startupContent = InsertSharedAccessAuthenticationHeaderSecretPair(startupContent, requestHeader, secretName);
+                contents => InsertSharedAccessAuthenticationHeaderSecretPair(contents, requestHeader, secretName));
 
-                    return RemoveCustomUserErrors(startupContent);
+            ReplaceProjectFileContent(
+                projectDirectory,
+                "Program.cs",
+                contents =>
+                {
+                    contents = InsertInMemorySecretStore(contents, secretName, secretValue);
+                    return RemoveCustomUserErrors(contents);
                 });
         }
 
@@ -205,18 +214,22 @@ namespace Arcus.Templates.Tests.Integration.WebApi
             return files.First().FullName;
         }
 
-        private static string InsertInMemorySecretProviderCode(string startupContent, string secretName, string secretValue)
+        private static string InsertInMemorySecretStore(string contents, string secretName, string secretValue)
         {
-            return InsertInMemorySecretProviderCode(startupContent, "secretProvider: null", secretName, secretValue);
+            string newSecretProviderWithSecret = CreatesInMemorySecretProviderConstructor(secretName, secretValue);
+            return contents.Replace("AddAzureKeyVaultWithManagedServiceIdentity(\"https://your-keyvault-vault.azure.net/\")", $"AddProvider({newSecretProviderWithSecret})");
         }
 
-        private static string InsertInMemorySecretProviderCode(string startupContent, string replacementToken, string secretName, string secretValue)
+        private static string InsertInMemorySecretProviderCode(string contents, string replacementToken, string secretName, string secretValue)
         {
-            string newSecretProviderWithSecret = 
-                $"new {typeof(InMemorySecretProvider).FullName}("
-                + $"new {typeof(Dictionary<string, string>).Namespace}.{nameof(Dictionary<string, string>)}<string, string> {{ [\"{secretName}\"] = \"{secretValue}\" }})";
+            string newSecretProviderWithSecret = CreatesInMemorySecretProviderConstructor(secretName, secretValue);
+            return contents.Replace(replacementToken, newSecretProviderWithSecret);
+        }
 
-            return startupContent.Replace(replacementToken, newSecretProviderWithSecret);
+        private static string CreatesInMemorySecretProviderConstructor(string secretName, string secretValue)
+        {
+            return $"new {typeof(InMemorySecretProvider).FullName}("
+                   + $"new {typeof(Dictionary<string, string>).Namespace}.{nameof(Dictionary<string, string>)}<string, string> {{ [\"{secretName}\"] = \"{secretValue}\" }})";
         }
 
         private static string InsertSharedAccessAuthenticationHeaderSecretPair(string startupContent, string requestHeader, string secretName)

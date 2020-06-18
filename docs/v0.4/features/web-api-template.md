@@ -24,8 +24,6 @@ When installed, the template can be created with shortname: `arcus-webapi`:
 
 Creates a starter web API project with by default configured:
 
-![](https://img.shields.io/badge/Latest%20version-v0.3-green?link=https://github.com/arcus-azure/arcus.templates/releases/tag/v0.3.0)
-
 * Provides basic health endpoint with [ASP.NET Core health checks](https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-2.2) with [OpenAPI support](https://www.codit.eu/blog/documenting-asp-net-core-health-checks-with-openapi/).
 * Docker building file.
 * Default console logger.
@@ -55,3 +53,4 @@ As part of this template the following HTTP header(s) are removed for security s
 
 * [v0.1.0](../v0.1/features/web-api-template)
 * [v0.2.0](../v0.2/features/web-api-template)
+* [v0.3.0](../v0.3/features/web-api-template)

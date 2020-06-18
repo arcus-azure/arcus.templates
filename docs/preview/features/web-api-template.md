@@ -55,3 +55,4 @@ As part of this template the following HTTP header(s) are removed for security s
 
 * [v0.1.0](../v0.1/features/web-api-template)
 * [v0.2.0](../v0.2/features/web-api-template)
+* [v0.3.0](../v0.3/features/web-api-template)

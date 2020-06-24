@@ -3,6 +3,10 @@ name: $(Package.Version)
 trigger: none
 pr: none
 
+parameters:
+  - name: 'Package.Version'
+    type: 'string'
+
 resources:
   repositories:
     - repository: templates
@@ -17,7 +21,6 @@ variables:
   - group: 'Arcus Messaging - Integration Testing'
   - template: ./variables/build.yml
   - template: ./variables/test.yml
-  # 'Package.Version.ManualTrigger' is added as queue-time variable on build in Azure DevOps
 
 stages:
   - stage: Build

@@ -21,6 +21,8 @@ variables:
   - group: 'Arcus Messaging - Integration Testing'
   - template: ./variables/build.yml
   - template: ./variables/test.yml
+  - name: 'Package.Version'
+    value: ${{ parameters['Package.Version'] }}
 
 stages:
   - stage: Build

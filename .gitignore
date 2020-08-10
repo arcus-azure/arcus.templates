@@ -334,3 +334,7 @@ ASALocalRun/
 
 # Private application settings
 *.private.json
+
+# Local Jekyll output
+_site/*
+docs/_site/*

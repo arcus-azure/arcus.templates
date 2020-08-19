@@ -24,8 +24,6 @@ When installed, the template can be created with shortname: `arcus-servicebus-to
 
 Creates a starter worker project with by default configured:
 
-![](https://img.shields.io/badge/Latest%20version-v0.3-green?link=https://github.com/arcus-azure/arcus.templates/releases/tag/v0.3.0)
-
 * TCP health check probe ([official docs](https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-2.2) & [Arcus docs](https://messaging.arcus-azure.net/features/tcp-health-probe)).
 * Empty message pump on Azure Service Bus Topic ([official docs](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-dotnet-how-to-use-topics-subscriptions))
 * Dockerfile.
@@ -38,3 +36,4 @@ And additional features available with options:
 ## Older Versions
 
 * [v0.2.0](../v0.2/features/servicebus-topic-worker)
+* [v0.3.0](../v0.3/features/servicebus-topic-worker)

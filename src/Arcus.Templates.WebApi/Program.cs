@@ -76,6 +76,15 @@ namespace Arcus.Templates.WebApi
             IHostBuilder webHostBuilder =
                 Host.CreateDefaultBuilder(args)
                     .ConfigureAppConfiguration(configBuilder => configBuilder.AddConfiguration(configuration))
+                    .ConfigureSecretStore((config, stores) =>
+                    {
+//[#if DEBUG]
+                        stores.AddConfiguration(config);
+//[#endif]
+
+                        //#error Please provide a valid secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secrets/consume-from-key-vault
+                        stores.AddAzureKeyVaultWithManagedServiceIdentity("https://your-keyvault-vault.azure.net/");
+                    })
                     .ConfigureWebHostDefaults(webBuilder =>
                     {
                         webBuilder.ConfigureKestrel(kestrelServerOptions => kestrelServerOptions.AddServerHeader = false)

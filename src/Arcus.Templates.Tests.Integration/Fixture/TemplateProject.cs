@@ -103,6 +103,20 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         }
 
         /// <summary>
+        /// Removes the custom error lines from the file <paramref name="content"/> in the project.
+        /// </summary>
+        /// <param name="content">The contents to remove the error lines from.</param>
+        /// <returns>
+        ///     The content without any error lines.
+        /// </returns>
+        protected string RemovesUserErrorsFromContents(string content)
+        {
+            return content.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
+                          .Where(line => !line.Contains("#error"))
+                          .Aggregate((line1, line2) => line1 + Environment.NewLine + line2);
+        }
+
+        /// <summary>
         /// Add a package to the created project from the template.
         /// </summary>
         /// <param name="packageName">The name of the package.</param>

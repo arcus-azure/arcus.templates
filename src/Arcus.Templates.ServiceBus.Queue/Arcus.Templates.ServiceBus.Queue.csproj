@@ -45,7 +45,7 @@
   <!--#endif-->
 
   <ItemGroup>
-    <PackageReference Include="Arcus.Messaging.Health" Version="0.3.1" />
+    <PackageReference Include="Arcus.Messaging.Health" Version="0.4.0" />
     <PackageReference Include="Arcus.Messaging.Pumps.ServiceBus" Version="0.4.0" />
     <PackageReference Include="Arcus.Observability.Telemetry.Core" Version="0.3.0" />
     <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Sinks.ApplicationInsights" Version="0.3.0" Condition="'$(ExcludeSerilog)' == 'false'" />

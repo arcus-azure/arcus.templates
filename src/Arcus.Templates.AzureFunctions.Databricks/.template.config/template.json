@@ -1,0 +1,55 @@
+﻿{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Arcus",
+  "classifications": [
+    "AzureFunctions",
+    "Databricks",
+    "Metric"
+  ],
+  "name": "Arcus Azure Functions Databricks v#{Package.Version}#",
+  "identity": "Arcus.Templates.AzureFunctions.Databricks",
+  "shortName": "arcus-az-databricks",
+  "sourceName": "Arcus.Templates.AzureFunctions.Databricks",
+  "preferNameDirectory": true,
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "sources": [
+    {
+      "exclude": [
+        "**/[Bb]in/**",
+        "**/[Oo]bj/**",
+        ".template.config/**/*",
+        "**/*.filelist",
+        "**/*.user",
+        "**/*.lock.json"
+      ]
+    }
+  ],
+  "symbols": {
+    "AuthoringMode": {
+      "type": "generated",
+      "generator": "constant",
+      "parameters": {
+        "value": false
+      }
+    },
+    "IfDebug": {
+      "type": "generated",
+      "generator": "constant",
+      "parameters": {
+        "value": "#if DEBUG"
+      },
+      "replaces": "//[#if DEBUG]"
+    },
+    "EndIf": {
+      "type": "generated",
+      "generator": "constant",
+      "parameters": {
+        "value": "#endif"
+      },
+      "replaces": "//[#endif]"
+    }
+  }
+}

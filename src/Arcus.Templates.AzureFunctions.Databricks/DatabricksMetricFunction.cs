@@ -39,16 +39,16 @@ namespace Arcus.Templates.AzureFunctions.Databricks
         /// <param name="timer">The timer instance to provide information about this current scheduled run.</param>
         /// <param name="logger">The logger instance to write diagnostic trace messages and reporting metrics during the Databricks interaction.</param>
         [FunctionName("DatabricksMetricFunction")]
-        public async Task Run([TimerTrigger("0 */5 * * * *")]TimerInfo timer, ILogger logger)
+        public async Task Run([TimerTrigger("0 */1 * * * *")]TimerInfo timer, ILogger logger)
         {
             logger.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
 
-            var metricName = _configuration.GetValue<string>("Arcus.Databricks.MetricName");
-            var baseUrl = _configuration.GetValue<string>("Arcus.Databricks.Url");
+            var metricName = _configuration.GetValue<string>("Arcus:ApplicationInsights:MetricName");
+            var baseUrl = _configuration.GetValue<string>("Arcus:Databricks:Url");
             string secretToken = await _secretProvider.GetRawSecretAsync("Arcus.Databricks.SecretToken");
 
-            var startOfWindow = new DateTimeOffset(timer.ScheduleStatus.Last);
-            var endOfWindow = new DateTimeOffset(timer.ScheduleStatus.Next);
+            var startOfWindow = timer.ScheduleStatus.Last;
+            var endOfWindow = timer.ScheduleStatus.Next;
 
             using var client = DatabricksClient.CreateClient(baseUrl, secretToken);
             using (var provider = new DatabricksInfoProvider(client, logger))

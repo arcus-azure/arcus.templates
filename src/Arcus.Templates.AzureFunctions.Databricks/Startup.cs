@@ -1,7 +1,11 @@
 ﻿using Arcus.Templates.AzureFunctions.Databricks;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Serilog;
+using Serilog.Configuration;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 
@@ -29,8 +33,14 @@ namespace Arcus.Templates.AzureFunctions.Databricks
 
                 //#error Please provide a valid secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secrets/consume-from-key-vault
                 stores.AddAzureKeyVaultWithManagedServiceIdentity("https://your-keyvault-vault.azure.net/");
-
             });
+
+            var instrumentationKey = config.GetValue<string>("Arcus:ApplicationInsights:InstrumentationKey");
+            var configuration = new LoggerConfiguration()
+                .WriteTo.Console()
+                .WriteTo.AzureApplicationInsights(instrumentationKey);
+
+            builder.Services.AddLogging(logging => logging.AddSerilog(configuration.CreateLogger(), dispose: true));
         }
     }
 }

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Arcus.Templates.Tests.Integration.AzureFunctions.Databricks;
+using Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.Configuration;
 using Arcus.Templates.Tests.Integration.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Primitives;
@@ -78,6 +80,14 @@ namespace Arcus.Templates.Tests.Integration.Fixture
                 default:
                     throw new ArgumentOutOfRangeException(nameof(entity), entity, "Unknown Service Bus entity");
             }
+        }
+
+        /// <summary>
+        /// Gets the project directory of the Azure Functions Databricks project template.
+        /// </summary>
+        public DirectoryInfo GetAzureFunctionsDatabricksProjectDirectory()
+        {
+            return PathCombineWithSourcesDirectory("Arcus.Templates.AzureFunctions.Databricks");
         }
 
         /// <summary>
@@ -206,6 +216,44 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             const string key = "Arcus:Api:ApplicationInsights:InstrumentationKey";
 
             return _configuration.GetValue<string>(key);
+        }
+
+        /// <summary>
+        /// Gets the Azure Functions application configuration to create valid Azure Functions projects.
+        /// </summary>
+        /// <exception cref="KeyNotFoundException">Thrown when one of the Azure Functions configuration values are not found.</exception>
+        public AzureFunctionsConfig GetAzureFunctionsConfig()
+        {
+            var storageAccountConnectionString = _configuration.GetRequiredValue<string>("Arcus:AzureFunctions:AzureWebJobsStorage");
+
+            return new AzureFunctionsConfig(storageAccountConnectionString);
+        }
+
+        /// <summary>
+        /// Gets the Azure Databricks application configuration to interact with the Databricks resource.
+        /// </summary>
+        /// <exception cref="KeyNotFoundException">Thrown when one of the Azure Databricks configuration values are not found.</exception>
+        public DatabricksConfig GetDatabricksConfig()
+        {
+            var baseUrl = _configuration.GetRequiredValue<string>("Arcus:AzureFunctions:Databricks:BaseUrl");
+            var securityToken = _configuration.GetRequiredValue<string>("Arcus:AzureFunctions:Databricks:Token");
+            var jobId = _configuration.GetRequiredValue<int>("Arcus:AzureFunctions:Databricks:JobId");
+
+            return new DatabricksConfig(baseUrl, securityToken, jobId);
+        }
+
+        /// <summary>
+        /// Gets the Azure Application Insights configuration to interact with the Application Insights resource.
+        /// </summary>
+        /// <exception cref="KeyNotFoundException">Thrown when one of the Azure Application Insights configuration values are not found.</exception>
+        public ApplicationInsightsConfig GetApplicationInsightsConfig()
+        {
+            var instrumentationKey = _configuration.GetRequiredValue<string>("Arcus:AzureFunctions:ApplicationInsights:InstrumentationKey");
+            var applicationId = _configuration.GetRequiredValue<string>("Arcus:AzureFunctions:ApplicationInsights:ApplicationId");
+            var apiKey = _configuration.GetRequiredValue<string>("Arcus:AzureFunctions:ApplicationInsights:ApiKey");
+            var metricName = _configuration.GetRequiredValue<string>("Arcus:AzureFunctions:ApplicationInsights:MetricName");
+
+            return new ApplicationInsightsConfig(instrumentationKey, applicationId, apiKey, metricName);
         }
 
         /// <summary>

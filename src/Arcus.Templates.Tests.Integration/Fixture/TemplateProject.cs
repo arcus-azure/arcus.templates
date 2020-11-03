@@ -212,6 +212,16 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             }
 
             commandArguments = commandArguments ?? new CommandArgument[0];
+
+            ProcessStartInfo processInfo = PrepareProjectRun(buildConfiguration, targetFramework, commandArguments);
+            _process.StartInfo = processInfo;
+
+            _started = true;
+            _process.Start();
+        }
+
+        protected virtual ProcessStartInfo PrepareProjectRun(BuildConfiguration buildConfiguration, TargetFramework targetFramework, CommandArgument[] commandArguments)
+        {
             RunDotNet($"build -c {buildConfiguration} {ProjectDirectory.FullName}");
 
             string targetFrameworkIdentifier = GetTargetFrameworkIdentifier(targetFramework);
@@ -229,10 +239,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
                 WorkingDirectory = ProjectDirectory.FullName,
             };
 
-            _process.StartInfo = processInfo;
-
-            _started = true;
-            _process.Start();
+            return processInfo;
         }
 
         private static string GetTargetFrameworkIdentifier(TargetFramework targetFramework)
@@ -315,16 +322,21 @@ namespace Arcus.Templates.Tests.Integration.Fixture
 
         private void RunDotNet(string command)
         {
+            RunCommand("dotnet", command);
+        }
+
+        protected void RunCommand(string fileName, string arguments)
+        {
             try
             {
-                Logger.WriteLine("> dotnet {0}", command);
+                Logger.WriteLine("> {0} {1}", fileName, arguments);
             }
             catch
             {
-                Console.WriteLine("> dotnet {0}", command);
+                Console.WriteLine("> {0} {1}", fileName, arguments);
             }
 
-            var startInfo = new ProcessStartInfo("dotnet", command)
+            var startInfo = new ProcessStartInfo(fileName, arguments)
             {
                 UseShellExecute = false,
                 CreateNoWindow = true,

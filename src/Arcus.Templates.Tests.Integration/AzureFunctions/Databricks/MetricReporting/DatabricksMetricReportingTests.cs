@@ -61,7 +61,6 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.MetricRepo
 
                     Assert.NotEmpty(results);
                     Assert.All(results, result => Assert.NotNull(result.Body.Value));
-
                 }, timeout: TimeSpan.FromMinutes(2));
             }
         }

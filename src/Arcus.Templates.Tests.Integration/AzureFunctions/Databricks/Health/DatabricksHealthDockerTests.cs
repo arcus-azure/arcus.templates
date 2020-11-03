@@ -8,7 +8,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.Health
     public class DatabricksHealthDockerTests
     {
         [Fact]
-        public Task AzureFunctionsDatabricksProject_WithoutOptions_ShouldAnwserToAdministratorEndpoint()
+        public async Task AzureFunctionsDatabricksProject_WithoutOptions_ShouldAnwserToAdministratorEndpoint()
         {
             // Arrange
 

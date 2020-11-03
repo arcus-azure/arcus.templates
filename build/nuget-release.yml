@@ -16,6 +16,7 @@ resources:
 
 variables:
   - group: 'Build Configuration'
+  - group: 'Arcus Templates - Integration Testing'
   - group: 'Arcus Web Api - Integration Testing'
   # We are re-using the Event Grid integration infrastructure
   - group: 'Arcus Messaging - Integration Testing'

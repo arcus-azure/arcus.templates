@@ -51,5 +51,23 @@
       },
       "replaces": "//[#endif]"
     }
-  }
+  },
+  "postActions": [
+    {
+      "description": "Adding Reference to Microsoft.NET.Sdk.Functions Nuget package",
+      "actionId": "B17581D1-C5C9-4489-8F0A-004BE667B814",
+      "continueOnError": false,
+      "manualInstructions": [
+        {
+          "text": "Manually add the reference to Microsoft.NET.Sdk.Functions to your project file"
+        }
+      ],
+      "args": {
+        "referenceType": "package",
+        "reference": "Microsoft.NET.Sdk.Functions",
+        "version": "3.0.9",
+        "projectFileExtensions": ".csproj"
+      }
+    }
+  ]
 }

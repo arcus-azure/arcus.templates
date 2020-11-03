@@ -4,7 +4,6 @@ using Arcus.EventGrid;
 using Arcus.EventGrid.Contracts;
 using Arcus.EventGrid.Parsers;
 using Arcus.EventGrid.Testing.Infrastructure.Hosts.ServiceBus;
-using Arcus.Messaging.ServiceBus.Core.Extensions;
 using Arcus.Templates.Tests.Integration.Fixture;
 using Arcus.Templates.Tests.Integration.Logging;
 using Arcus.Templates.Tests.Integration.Worker.Fixture;
@@ -83,7 +82,7 @@ namespace Arcus.Templates.Tests.Integration.Worker.MessagePump
             try
             {
                 Order order = GenerateOrder();
-                Message orderMessage = order.WrapInServiceBusMessage(operationId, transactionId);
+                Message orderMessage = order.AsServiceBusMessage(operationId, transactionId);
                 await messageSender.SendAsync(orderMessage);
 
                 string receivedEvent = _serviceBusEventConsumerHost.GetReceivedEvent(operationId);

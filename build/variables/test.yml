@@ -4,4 +4,5 @@ variables:
   Arcus.ServiceBus.Queue.Worker.HealthPort: '42065'
   Arcus.ServiceBus.Topic.Worker.HealthPort: '42066'
   Arcus.Databricks.JobId: 9
+  Arcus.ApplicationInsights.MetricName: 'Databricks Job Completed'
   Arcus.AzureFunctions.Databricks.Http.Port: '5050'

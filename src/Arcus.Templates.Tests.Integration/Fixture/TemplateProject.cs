@@ -357,7 +357,6 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             {
                 UseShellExecute = false,
                 CreateNoWindow = true,
-                WorkingDirectory = ProjectDirectory.FullName
             };
 
             using (var process = Process.Start(startInfo))

@@ -224,9 +224,10 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         /// <exception cref="KeyNotFoundException">Thrown when one of the Azure Functions configuration values are not found.</exception>
         public AzureFunctionsConfig GetAzureFunctionsConfig()
         {
+            var httpPort = _configuration.GetRequiredValue<int>("Arcus:AzureFunctions:HttpPort");
             var storageAccountConnectionString = _configuration.GetRequiredValue<string>("Arcus:AzureFunctions:AzureWebJobsStorage");
 
-            return new AzureFunctionsConfig(storageAccountConnectionString);
+            return new AzureFunctionsConfig(httpPort, storageAccountConnectionString);
         }
 
         /// <summary>

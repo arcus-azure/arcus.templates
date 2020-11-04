@@ -142,7 +142,8 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             string destPath = Path.Combine(ProjectDirectory.FullName, fileName);
             if (!File.Exists(destPath))
             {
-                throw new FileNotFoundException($"No project file with the file name: '{fileName}' was found in the target project folder '{ProjectDirectory.FullName}'");
+                string files = String.Join(", ", ProjectDirectory.GetFiles().Select(f => f.FullName));
+                throw new FileNotFoundException($"No project file with the file name: '{fileName}' was found in the target project folder '{ProjectDirectory.FullName}' ({files})");
             }
 
             string content = File.ReadAllText(destPath);

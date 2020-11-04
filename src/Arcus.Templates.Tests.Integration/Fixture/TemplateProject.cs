@@ -337,7 +337,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             RunDotNet($"new -u {_templateDirectory.FullName}");
         }
 
-        private void RunDotNet(string command)
+        protected void RunDotNet(string command)
         {
             RunCommand("dotnet", command);
         }
@@ -357,6 +357,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             {
                 UseShellExecute = false,
                 CreateNoWindow = true,
+                WorkingDirectory = ProjectDirectory.FullName
             };
 
             using (var process = Process.Start(startInfo))

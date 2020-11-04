@@ -92,7 +92,9 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks
             TargetFramework targetFramework,
             CommandArgument[] commandArguments)
         {
-            var processInfo = new ProcessStartInfo("func", "start --build")
+            RunDotNet("build");
+
+            var processInfo = new ProcessStartInfo("func", "start")
             {
                 UseShellExecute = false,
                 CreateNoWindow = true,

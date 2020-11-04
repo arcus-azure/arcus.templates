@@ -130,20 +130,36 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         }
 
         /// <summary>
+        /// Adds a file in the target project folder, using the given file <paramref name="contents"/>.
+        /// </summary>
+        /// <param name="fileName">The file name (no file path) of the new project file.</param>
+        /// <param name="contents">The file contents to write to the project file.</param>
+        /// <exception cref="ArgumentException">Thrown when the <paramref name="fileName"/> is blank.</exception>
+        /// <exception cref="ArgumentNullException">Thrown when the <paramref name="contents"/> is <c>null</c>.</exception>
+        public void AddFileInProject(string fileName, string contents)
+        {
+            Guard.NotNullOrWhitespace(fileName, nameof(fileName), "Requires a non-blank file name (no file path) to add the file");
+            Guard.NotNull(contents, nameof(contents), "Requires contents to add to the project file");
+
+            string destPath = Path.Combine(ProjectDirectory.FullName, fileName);
+            File.WriteAllText(destPath, contents);
+        }
+
+        /// <summary>
         /// Updates a file in the target project folder, using the given <paramref name="updateContents"/> function.
         /// </summary>
         /// <param name="fileName">The target file name to change it's contents.</param>
         /// <param name="updateContents">The function that changes the contents of the file.</param>
         public void UpdateFileInProject(string fileName, Func<string, string> updateContents)
         {
-            Guard.NotNull(fileName, nameof(fileName), "Requires a file name (no file path) to update the contents");
+            Guard.NotNullOrWhitespace(fileName, nameof(fileName), "Requires a non-blank file name (no file path) to update the contents");
             Guard.NotNull(updateContents, nameof(updateContents), "Requires a function to update the project file contents");
 
             string destPath = Path.Combine(ProjectDirectory.FullName, fileName);
             if (!File.Exists(destPath))
             {
                 string files = String.Join(", ", ProjectDirectory.GetFiles().Select(f => f.FullName));
-                throw new FileNotFoundException($"No project file with the file name: '{fileName}' was found in the target project folder '{ProjectDirectory.FullName}' ({files})");
+                throw new FileNotFoundException($"No project file with the file name: '{fileName}' was found in the target project folder");
             }
 
             string content = File.ReadAllText(destPath);

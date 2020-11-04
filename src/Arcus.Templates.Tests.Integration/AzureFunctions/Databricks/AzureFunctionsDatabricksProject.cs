@@ -83,8 +83,8 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks
 
         private void AddStorageAccount(string storageAccountConnectionString)
         {
-            UpdateFileInProject("local.settings.json", 
-                contents => contents.Replace("UseDevelopmentStorage=true", storageAccountConnectionString));
+            AddFileInProject("local.settings.json", 
+                $"{{ \"IsEncrypted\": false, \"Values\": {{ \"AzureWebJobsStorage\": \"{storageAccountConnectionString}\", \"FUNCTIONS_WORKER_RUNTIME\": \"dotnet\" }}");
         }
 
         protected override ProcessStartInfo PrepareProjectRun(

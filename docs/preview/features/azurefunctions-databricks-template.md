@@ -1,5 +1,5 @@
 ---
-title: "Azure Functions Databricks template"
+title: "Databricks Job Metrics template (Azure Functions)"
 layout: default
 ---
 

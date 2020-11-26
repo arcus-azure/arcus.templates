@@ -12,7 +12,7 @@
     <PackageId>Arcus.Templates.AzureFunctions.Databricks</PackageId>
     <Title>Template for Azure Functions Databricks project</Title>
     <PackageType>Template</PackageType>
-    <PackageTags>Azure;Azure Functions;App Services;Databricks;Metric</PackageTags>
+    <PackageTags>Azure;Azure Functions;Databricks;Metric</PackageTags>
     <Copyright>Copyright (c) Arcus</Copyright>
     <PackageLicenseUrl>https://github.com/arcus-azure/arcus.templates/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/arcus-azure/arcus.templates</PackageProjectUrl>

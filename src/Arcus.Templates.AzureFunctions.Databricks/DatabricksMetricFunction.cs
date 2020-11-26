@@ -41,7 +41,7 @@ namespace Arcus.Templates.AzureFunctions.Databricks
         [FunctionName("DatabricksMetricFunction")]
         public async Task Run([TimerTrigger("0 */1 * * * *")]TimerInfo timer, ILogger logger)
         {
-            logger.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
+            logger.LogInformation($"C# Timer trigger function executed at: {DateTime.UtcNow}");
 
             var metricName = _configuration.GetValue<string>("Arcus:ApplicationInsights:MetricName");
             var baseUrl = _configuration.GetValue<string>("Arcus:Databricks:Url");

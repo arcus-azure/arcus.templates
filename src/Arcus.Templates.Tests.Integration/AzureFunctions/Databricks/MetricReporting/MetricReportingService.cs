@@ -29,7 +29,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.MetricRepo
         /// <exception cref="HttpRequestException">Thrown when the Azure Functions endpoint cannot be contacted.</exception>
         public async Task TriggerFunctionAsync()
         {
-            var endpoint = $"http://localhost:{_configuration.HttpPort}/admin/functions/DatabricksMetricFunction";
+            var endpoint = $"http://localhost:{_configuration.HttpPort}/admin/functions/databricks-job-metrics";
             try
             {
                 Logger.WriteLine("POST -> {0}", endpoint);

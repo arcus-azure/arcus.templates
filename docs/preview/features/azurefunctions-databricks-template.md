@@ -1,9 +1,9 @@
 ---
-title: "Azure Functions Databricks template"
+title: "Databricks Job Metrics template (Azure Functions)"
 layout: default
 ---
 
-# Azure Functions Databricks project template
+# Databricks Job Metrics template (Azure Functions)
 
 ## Create your first Arcus Azure Functions Databricks project
 

@@ -7,12 +7,12 @@
     <Authors>Arcus</Authors>
     <Company>Arcus</Company>
     <RepositoryType>Git</RepositoryType>
-    <Description>Provide a template to easily build Azure Functions running in Azure that report finished Databricks job runs as metrics.</Description>
+    <Description>Provide a template to easily build an Azure Functions that reports the completed Databricks job runs as metrics.</Description>
     <IsPackable>true</IsPackable>
     <PackageId>Arcus.Templates.AzureFunctions.Databricks</PackageId>
     <Title>Template for Azure Functions Databricks project</Title>
     <PackageType>Template</PackageType>
-    <PackageTags>Azure;Azure Functions;App Services;Databricks;Metric</PackageTags>
+    <PackageTags>Azure;Azure Functions;Databricks;Metric</PackageTags>
     <Copyright>Copyright (c) Arcus</Copyright>
     <PackageLicenseUrl>https://github.com/arcus-azure/arcus.templates/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/arcus-azure/arcus.templates</PackageProjectUrl>

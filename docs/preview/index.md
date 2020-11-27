@@ -32,7 +32,7 @@ PM > dotnet new --install Arcus.Templates.ServiceBus.Topic
 
 Read [here](features/servicebus-topic-worker-template) for standard and configurable features.
 
-## Azure Functions Databricks
+## Databricks Job Metrics (Azure Functions)
 
 ```shell
 PM > dotnet new --install Arcus.Templates.AzureFunctions.Databricks

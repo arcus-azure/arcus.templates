@@ -22,7 +22,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.Health
         }
 
         [Fact]
-        public async Task AzureFunctionsDatabricksProject_WithoutOptions_ShouldAnwserToAdministratorEndpoint()
+        public async Task AzureFunctionsDatabricksProject_WithoutOptions_ShouldAnswerToAdministratorEndpoint()
         {
             // Arrange
             var configuration = TestConfig.Create();

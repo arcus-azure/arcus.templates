@@ -54,6 +54,7 @@
 
   <ItemGroup>
     <PackageReference Include="Arcus.BackgroundJobs.Databricks" Version="0.2.0" />
+    <PackageReference Include="Arcus.Observability.Telemetry.AzureFunctions" Version="0.4.0" />
     <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Sinks.Applicationinsights" Version="0.4.0" />
     <PackageReference Include="Arcus.Security.AzureFunctions" Version="1.3.0" />
     <PackageReference Include="Arcus.Security.Providers.AzureKeyVault" Version="1.3.0" />

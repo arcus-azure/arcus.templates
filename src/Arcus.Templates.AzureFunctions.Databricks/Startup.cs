@@ -6,6 +6,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Configuration;
+using Serilog.Core;
+using Serilog.Events;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 
@@ -37,10 +39,19 @@ namespace Arcus.Templates.AzureFunctions.Databricks
 
             var instrumentationKey = config.GetValue<string>("Arcus:ApplicationInsights:InstrumentationKey");
             var configuration = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                .Enrich.FromLogContext()
+                .Enrich.WithComponentName("Docker Hub Job Metrics")
+                .Enrich.WithVersion()
                 .WriteTo.Console()
                 .WriteTo.AzureApplicationInsights(instrumentationKey);
 
-            builder.Services.AddLogging(logging => logging.AddSerilog(configuration.CreateLogger(), dispose: true));
+            builder.Services.AddLogging(logging =>
+            {
+                logging.ClearProvidersExceptFunctionProviders()
+                       .AddSerilog(configuration.CreateLogger(), dispose: true);
+            });
         }
     }
 }

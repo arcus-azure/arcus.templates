@@ -130,18 +130,35 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         }
 
         /// <summary>
+        /// Adds a file in the target project folder, using the given file <paramref name="contents"/>.
+        /// </summary>
+        /// <param name="fileName">The file name (no file path) of the new project file.</param>
+        /// <param name="contents">The file contents to write to the project file.</param>
+        /// <exception cref="ArgumentException">Thrown when the <paramref name="fileName"/> is blank.</exception>
+        /// <exception cref="ArgumentNullException">Thrown when the <paramref name="contents"/> is <c>null</c>.</exception>
+        public void AddFileInProject(string fileName, string contents)
+        {
+            Guard.NotNullOrWhitespace(fileName, nameof(fileName), "Requires a non-blank file name (no file path) to add the file");
+            Guard.NotNull(contents, nameof(contents), "Requires contents to add to the project file");
+
+            string destPath = Path.Combine(ProjectDirectory.FullName, fileName);
+            File.WriteAllText(destPath, contents);
+        }
+
+        /// <summary>
         /// Updates a file in the target project folder, using the given <paramref name="updateContents"/> function.
         /// </summary>
         /// <param name="fileName">The target file name to change it's contents.</param>
         /// <param name="updateContents">The function that changes the contents of the file.</param>
         public void UpdateFileInProject(string fileName, Func<string, string> updateContents)
         {
-            Guard.NotNull(fileName, nameof(fileName), "Requires a file name (no file path) to update the contents");
+            Guard.NotNullOrWhitespace(fileName, nameof(fileName), "Requires a non-blank file name (no file path) to update the contents");
             Guard.NotNull(updateContents, nameof(updateContents), "Requires a function to update the project file contents");
 
             string destPath = Path.Combine(ProjectDirectory.FullName, fileName);
             if (!File.Exists(destPath))
             {
+                string files = String.Join(", ", ProjectDirectory.GetFiles().Select(f => f.FullName));
                 throw new FileNotFoundException($"No project file with the file name: '{fileName}' was found in the target project folder");
             }
 
@@ -212,6 +229,16 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             }
 
             commandArguments = commandArguments ?? new CommandArgument[0];
+
+            ProcessStartInfo processInfo = PrepareProjectRun(buildConfiguration, targetFramework, commandArguments);
+            _process.StartInfo = processInfo;
+
+            _started = true;
+            _process.Start();
+        }
+
+        protected virtual ProcessStartInfo PrepareProjectRun(BuildConfiguration buildConfiguration, TargetFramework targetFramework, CommandArgument[] commandArguments)
+        {
             RunDotNet($"build -c {buildConfiguration} {ProjectDirectory.FullName}");
 
             string targetFrameworkIdentifier = GetTargetFrameworkIdentifier(targetFramework);
@@ -229,10 +256,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
                 WorkingDirectory = ProjectDirectory.FullName,
             };
 
-            _process.StartInfo = processInfo;
-
-            _started = true;
-            _process.Start();
+            return processInfo;
         }
 
         private static string GetTargetFrameworkIdentifier(TargetFramework targetFramework)
@@ -313,18 +337,23 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             RunDotNet($"new -u {_templateDirectory.FullName}");
         }
 
-        private void RunDotNet(string command)
+        protected void RunDotNet(string command)
+        {
+            RunCommand("dotnet", command);
+        }
+
+        protected void RunCommand(string fileName, string arguments)
         {
             try
             {
-                Logger.WriteLine("> dotnet {0}", command);
+                Logger.WriteLine("> {0} {1}", fileName, arguments);
             }
             catch
             {
-                Console.WriteLine("> dotnet {0}", command);
+                Console.WriteLine("> {0} {1}", fileName, arguments);
             }
 
-            var startInfo = new ProcessStartInfo("dotnet", command)
+            var startInfo = new ProcessStartInfo(fileName, arguments)
             {
                 UseShellExecute = false,
                 CreateNoWindow = true,

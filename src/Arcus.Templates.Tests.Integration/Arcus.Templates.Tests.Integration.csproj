@@ -27,19 +27,25 @@
   <ItemGroup>
     <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
   </ItemGroup>
-  
+
   <ItemGroup>
-    <PackageReference Include="Arcus.EventGrid.Publishing" Version="3.1.0" />
+    <PackageReference Include="Arcus.EventGrid.Publishing" Version="3.0.0" />
+    <PackageReference Include="Arcus.Observability.Telemetry.Core" Version="0.4.0" />
+    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Sinks.ApplicationInsights" Version="0.4.0" />
     <PackageReference Include="Arcus.WebApi.Security" Version="1.0.1" />
-    <PackageReference Include="Arcus.Messaging.Pumps.ServiceBus" Version="20200310.7.0-preview" />
+    <PackageReference Include="Arcus.Messaging.Pumps.ServiceBus" Version="0.5.1" />
     <PackageReference Include="Arcus.EventGrid.Testing" Version="3.1.0" />
     <PackageReference Include="Bogus" Version="32.0.1" />
     <PackageReference Include="BouncyCastle" Version="1.8.6" />
     <PackageReference Include="BouncyCastle.NetCoreSdk" Version="1.9.0.1" />
     <PackageReference Include="Flurl.Http" Version="2.4.2" />
+    <PackageReference Include="Guard.NET" Version="1.2.0" />
+    <PackageReference Include="Microsoft.Azure.ApplicationInsights.Query" Version="1.0.0" />
+    <PackageReference Include="Microsoft.Azure.Databricks.Client" Version="1.1.1613.2" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.0" />
     <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.2.3" />
     <PackageReference Include="Polly" Version="7.2.1" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
     <PackageReference Include="System.Web.Http" Version="4.0.0" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
@@ -48,7 +54,7 @@
     </PackageReference>
   </ItemGroup>
 
-  <PropertyGroup>	
-    <RestoreSources>$(RestoreSources);https://api.nuget.org/v3/index.json;https://www.myget.org/F/arcus/api/v3/index.json</RestoreSources>	
+  <PropertyGroup>
+    <RestoreSources>$(RestoreSources);https://api.nuget.org/v3/index.json;https://www.myget.org/F/arcus/api/v3/index.json</RestoreSources>
   </PropertyGroup>
 </Project>

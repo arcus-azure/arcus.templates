@@ -28,9 +28,11 @@ resources:
 
 variables:
   - group: 'Build Configuration'
+  - group: 'Arcus Templates - Integration Testing'
   - group: 'Arcus Web Api - Integration Testing'
   # We are re-using the Event Grid integration infrastructure
   - group: 'Arcus Messaging - Integration Testing'
+  - group: 'Arcus Background Jobs - Integration Testing'
   - template: ./variables/build.yml
   - template: ./variables/test.yml
 
@@ -85,6 +87,7 @@ stages:
         pool:
           vmImage: 'ubuntu-16.04'
         steps:
+          - template: 'templates/install-azure-functions-core-tools.yml'
           - template: test/run-integration-tests.yml@templates
             parameters:
               dotnetSdkVersion: '$(DotNet.Sdk.Version)'

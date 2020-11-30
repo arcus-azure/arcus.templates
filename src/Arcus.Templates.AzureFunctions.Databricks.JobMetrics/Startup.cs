@@ -39,7 +39,7 @@ namespace Arcus.Templates.AzureFunctions.Databricks.JobMetrics
                 stores.AddAzureKeyVaultWithManagedServiceIdentity("https://your-keyvault-vault.azure.net/");
             });
 
-            var instrumentationKey = config.GetValue<string>("Arcus:ApplicationInsights:InstrumentationKey");
+            var instrumentationKey = config.GetValue<string>("APPLICATIONINSIGHTS_INSTRUMENTATIONKEY");
             var configuration = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)

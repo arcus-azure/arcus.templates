@@ -10,7 +10,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics
     public class AzureFunctionsDatabricksProject : TemplateProject
     {
         private const string DatabricksUrlVariable = "Arcus__Databricks__Url",
-                             ApplicationInsightsInstrumentationKeyVariable = "Arcus__ApplicationInsights__InstrumentationKey",
+                             ApplicationInsightsInstrumentationKeyVariable = "APPLICATIONINSIGHTS_INSTRUMENTATIONKEY",
                              ApplicationInsightsMetricNameVariable = "Arcus__ApplicationInsights__MetricName";
 
         private readonly AzureFunctionsConfig _azureFunctionsConfig;

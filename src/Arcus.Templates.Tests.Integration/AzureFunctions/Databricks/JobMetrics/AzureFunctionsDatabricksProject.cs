@@ -18,7 +18,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics
         private AzureFunctionsDatabricksProject(
             TestConfig configuration, 
             ITestOutputHelper outputWriter) 
-            : base(configuration.GetAzureFunctionsDatabricksProjectDirectory(), 
+            : base(configuration.GetAzureFunctionsDatabricksJobMetricsProjectDirectory(), 
                    configuration.GetFixtureProjectDirectory(), 
                    outputWriter)
         {

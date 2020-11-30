@@ -8,7 +8,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace Arcus.Templates.AzureFunctions.Databricks
+namespace Arcus.Templates.AzureFunctions.Databricks.JobMetrics
 {
     /// <summary>
     /// Represents an Azure Function that will report periodically the finished Databricks job runs as metrics.

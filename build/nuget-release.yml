@@ -113,6 +113,11 @@ stages:
                 ```shell
                 > dotnet new --install Arcus.Templates.ServiceBus.Topic::$(Build.BuildNumber)
                 ```
+
+                Install new version via [NuGet](https://www.nuget.org/packages/Arcus.Templates.Databricks.JobMetrics/$(Build.BuildNumber))
+                ```shell
+                > dotnet new --install Arcus.Templates.Databricks.JobMetrics::$(Build.BuildNumber)
+                ```
           - template: 'nuget/publish-official-package.yml@templates'
             parameters:
               packagesToPush: 'templates/*.nupkg'

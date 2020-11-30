@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Arcus.Templates.Tests.Integration.AzureFunctions.Databricks;
-using Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.Configuration;
+using Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics.Configuration;
 using Arcus.Templates.Tests.Integration.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Primitives;
@@ -85,9 +85,9 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         /// <summary>
         /// Gets the project directory of the Azure Functions Databricks project template.
         /// </summary>
-        public DirectoryInfo GetAzureFunctionsDatabricksProjectDirectory()
+        public DirectoryInfo GetAzureFunctionsDatabricksJobMetricsProjectDirectory()
         {
-            return PathCombineWithSourcesDirectory("Arcus.Templates.AzureFunctions.Databricks");
+            return PathCombineWithSourcesDirectory("Arcus.Templates.AzureFunctions.Databricks.JobMetrics");
         }
 
         /// <summary>

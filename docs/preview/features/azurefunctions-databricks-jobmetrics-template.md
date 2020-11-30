@@ -10,13 +10,13 @@ layout: default
 First, install the template from NuGet:
 
 ```shell
-> dotnet new --install Arcus.Templates.AzureFunctions.Databricks
+> dotnet new --install Arcus.Templates.AzureFunctions.Databricks.JobMetrics
 ```
 
-When installed, the template can be created with shortname: `arcus-az-databricks`:
+When installed, the template can be created with shortname: `arcus-az-databricks-jobmetrics`:
 
 ```shell
-> dotnet new arcus-az-databricks --name Arcus.Demo.AzureFunctions.Databricks
+> dotnet new arcus-az-databricks-jobmetrics --name Arcus.Demo.AzureFunctions.Databricks.JobMetrics
 ```
 
 ## Features

@@ -1,6 +1,6 @@
 ﻿using GuardNet;
 
-namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.Configuration
+namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics.Configuration
 {
     /// <summary>
     /// Represents an application configuration section related to information regarding Azure Application Insights.

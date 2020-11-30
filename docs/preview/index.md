@@ -35,10 +35,10 @@ Read [here](features/servicebus-topic-worker-template) for standard and configur
 ## Databricks Job Metrics (Azure Functions)
 
 ```shell
-PM > dotnet new --install Arcus.Templates.AzureFunctions.Databricks
+PM > dotnet new --install Arcus.Templates.AzureFunctions.Databricks.JobMetrics
 ```
 
-Read [here](features/azurefunctions-databricks-template) for standard and configurable features.
+Read [here](features/azurefunctions-databricks-jobmetrics-template) for standard and configurable features.
 
 
 # License

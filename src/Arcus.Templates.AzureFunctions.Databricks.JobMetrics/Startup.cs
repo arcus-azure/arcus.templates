@@ -1,4 +1,4 @@
-﻿using Arcus.Templates.AzureFunctions.Databricks;
+﻿using Arcus.Templates.AzureFunctions.Databricks.JobMetrics;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,7 +11,7 @@ using Serilog.Events;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 
-namespace Arcus.Templates.AzureFunctions.Databricks
+namespace Arcus.Templates.AzureFunctions.Databricks.JobMetrics
 {
     public class Startup : FunctionsStartup
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.Configuration;
+using Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics.Configuration;
 using Arcus.Templates.Tests.Integration.Fixture;
 using Microsoft.Azure.ApplicationInsights.Query;
 using Microsoft.Azure.ApplicationInsights.Query.Models;
@@ -12,7 +12,7 @@ using Polly.Retry;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.MetricReporting
+namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics.MetricReporting
 {
     [Collection(TestCollections.Integration)]
     [Trait("Category", TestTraits.Integration)]

@@ -4,14 +4,14 @@ EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
-COPY ["Arcus.Templates.AzureFunctions.Databricks.csproj", ""]
+COPY ["Arcus.Templates.AzureFunctions.Databricks.JobMetrics.csproj", ""]
 
 COPY . .
 WORKDIR "/src/."
-RUN dotnet build "Arcus.Templates.AzureFunctions.Databricks.csproj" -c Release -o /app
+RUN dotnet build "Arcus.Templates.AzureFunctions.Databricks.JobMetrics.csproj" -c Release -o /app
 
 FROM build AS publish
-RUN dotnet publish "Arcus.Templates.AzureFunctions.Databricks.csproj" -c Release -o /app
+RUN dotnet publish "Arcus.Templates.AzureFunctions.Databricks.JobMetrics.csproj" -c Release -o /app
 
 FROM base AS final
 WORKDIR /app

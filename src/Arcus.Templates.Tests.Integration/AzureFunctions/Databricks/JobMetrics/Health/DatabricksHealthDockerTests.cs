@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
-using Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.Configuration;
-using Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.MetricReporting;
+using Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics.Configuration;
+using Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics.MetricReporting;
 using Arcus.Templates.Tests.Integration.Fixture;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.Health
+namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics.Health
 {
     [Collection(TestCollections.Docker)]
     [Trait("Category", TestTraits.Docker)]

@@ -9,7 +9,7 @@
     <RepositoryType>Git</RepositoryType>
     <Description>Provide a template to easily build an Azure Functions that reports the completed Databricks job runs as metrics.</Description>
     <IsPackable>true</IsPackable>
-    <PackageId>Arcus.Templates.AzureFunctions.Databricks</PackageId>
+    <PackageId>Arcus.Templates.AzureFunctions.Databricks.JobMetrics</PackageId>
     <Title>Template for Azure Functions Databricks project</Title>
     <PackageType>Template</PackageType>
     <PackageTags>Azure;Azure Functions;Databricks;Metric</PackageTags>

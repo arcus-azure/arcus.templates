@@ -7,9 +7,9 @@
     "Metric"
   ],
   "name": "Arcus Azure Functions Databricks v#{Package.Version}#",
-  "identity": "Arcus.Templates.AzureFunctions.Databricks",
-  "shortName": "arcus-az-databricks",
-  "sourceName": "Arcus.Templates.AzureFunctions.Databricks",
+  "identity": "Arcus.Templates.AzureFunctions.Databricks.JobMetrics",
+  "shortName": "arcus-az-databricks-jobmetrics",
+  "sourceName": "Arcus.Templates.AzureFunctions.Databricks.JobMetrics",
   "preferNameDirectory": true,
   "tags": {
     "language": "C#",

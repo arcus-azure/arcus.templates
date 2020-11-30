@@ -2,11 +2,11 @@
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.Configuration;
+using Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics.Configuration;
 using Arcus.Templates.Tests.Integration.WebApi.Fixture;
 using Xunit.Abstractions;
 
-namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.MetricReporting
+namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics.MetricReporting
 {
     /// <summary>
     /// Represents a service that acts as a gateway to the running Azure Functions project so the metric reporting function can be manually triggered.

@@ -63,13 +63,13 @@ stages:
                 TELEMETRY_APPLICATIONINSIGHTS_INSTRUMENTATIONKEY=$(Arcus.ApplicationInsights.InstrumentationKey)
           - template: 'run-new-project-from-template.yml'
             parameters:
-              projectName: 'Arcus.Demo.AzureFunctions.Databricks'
-              projectAlias: 'arcus-az-databricks'
+              projectName: 'Arcus.Demo.AzureFunctions.Databricks.JobMetrics'
+              projectAlias: 'arcus-az-databricks-jobmetrics'
               ports: '$(Arcus.AzureFunctions.Databricks.Http.Port):80'
               script: |
-                Get-Content './Arcus.Demo.AzureFunctions.Databricks/Startup.cs' |
+                Get-Content './Arcus.Demo.AzureFunctions.Databricks.JobMetrics/Startup.cs' |
                   Where-Object { $_ -notmatch '#error' } |
-                  Set-Content './Arcus.Demo.AzureFunctions.Databricks/Startup.cs'
+                  Set-Content './Arcus.Demo.AzureFunctions.Databricks.JobMetrics/Startup.cs'
               envVars: |
                 Arcus__Databricks__Url=$(Arcus.Databricks.Url)
                 Arcus__ApplicationInsights__MetricName=$(Arcus.ApplicationInsights.MetricName)

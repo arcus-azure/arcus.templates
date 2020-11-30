@@ -1,7 +1,7 @@
 ﻿using System;
 using GuardNet;
 
-namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.Configuration
+namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics.Configuration
 {
     /// <summary>
     /// Represents the Azure Databricks configuration used during the integration test suite.

@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.Configuration;
+using Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics.Configuration;
 using Arcus.Templates.Tests.Integration.Fixture;
 using Arcus.Templates.Tests.Integration.Worker.Fixture;
 using Xunit.Abstractions;
 
-namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks
+namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics
 {
     public class AzureFunctionsDatabricksProject : TemplateProject
     {

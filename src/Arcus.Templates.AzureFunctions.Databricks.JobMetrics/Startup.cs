@@ -42,7 +42,7 @@ namespace Arcus.Templates.AzureFunctions.Databricks.JobMetrics
                 .MinimumLevel.Debug()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .Enrich.FromLogContext()
-                .Enrich.WithComponentName("Docker Hub Job Metrics")
+                .Enrich.WithComponentName("Azure Databricks Metrics Scraper")
                 .Enrich.WithVersion()
                 .WriteTo.Console()
                 .WriteTo.AzureApplicationInsights(instrumentationKey);

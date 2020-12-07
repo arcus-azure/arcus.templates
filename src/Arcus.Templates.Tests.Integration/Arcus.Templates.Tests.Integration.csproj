@@ -29,7 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Arcus.EventGrid.Publishing" Version="3.0.0" />
+    <PackageReference Include="Arcus.EventGrid.Publishing" Version="3.1.0" />
     <PackageReference Include="Arcus.Observability.Telemetry.Core" Version="0.4.0" />
     <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Sinks.ApplicationInsights" Version="0.4.0" />
     <PackageReference Include="Arcus.WebApi.Security" Version="1.0.1" />

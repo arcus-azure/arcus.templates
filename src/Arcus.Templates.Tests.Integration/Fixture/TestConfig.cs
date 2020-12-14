@@ -91,6 +91,14 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         }
 
         /// <summary>
+        /// Gets the project directory of the Azure Functions Databricks project template.
+        /// </summary>
+        public DirectoryInfo GetAzureFunctionsHttpProjectDirectory()
+        {
+            return PathCombineWithSourcesDirectory("Arcus.Templates.AzureFunctions.Http");
+        }
+
+        /// <summary>
         /// Gets the project directory where the fixtures are located.
         /// </summary>
         public DirectoryInfo GetFixtureProjectDirectory()

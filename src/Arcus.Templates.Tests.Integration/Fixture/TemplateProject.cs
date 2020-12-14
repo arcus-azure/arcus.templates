@@ -237,6 +237,15 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             _process.Start();
         }
 
+        /// <summary>
+        /// Customized project process preparation that results in an <see cref="ProcessStartInfo"/> instance.
+        /// </summary>
+        /// <param name="buildConfiguration">The configuration to which the project should built.</param>
+        /// <param name="targetFramework">The code framework to which this project targets to.</param>
+        /// <param name="commandArguments">The CLI parameters which should be sent to the starting project.</param>
+        /// <returns>
+        ///     An run-ready <see cref="ProcessStartInfo"/> instance that will be used to start the project.
+        /// </returns>
         protected virtual ProcessStartInfo PrepareProjectRun(BuildConfiguration buildConfiguration, TargetFramework targetFramework, CommandArgument[] commandArguments)
         {
             RunDotNet($"build -c {buildConfiguration} {ProjectDirectory.FullName}");
@@ -318,6 +327,10 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             }
         }
 
+        /// <summary>
+        /// Performs additional application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        /// <param name="disposing">The flag indicating whether or not the additional tasks should be disposed.</param>
         protected virtual void Disposing(bool disposing)
         {
         }

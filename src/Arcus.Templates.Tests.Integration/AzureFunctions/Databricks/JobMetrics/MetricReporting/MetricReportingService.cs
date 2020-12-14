@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics.Configuration;
 using Arcus.Templates.Tests.Integration.WebApi.Fixture;
+using Flurl;
 using Xunit.Abstractions;
 
 namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics.MetricReporting
@@ -18,7 +19,8 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics
         /// <summary>
         /// Initializes a new instance of the <see cref="MetricReportingService"/> class.
         /// </summary>
-        public MetricReportingService(AzureFunctionsConfig configuration, ITestOutputHelper outputWriter) : base(outputWriter)
+        public MetricReportingService(AzureFunctionsConfig configuration, ITestOutputHelper outputWriter) 
+            : base(outputWriter)
         {
             _configuration = configuration;
         }
@@ -29,7 +31,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics
         /// <exception cref="HttpRequestException">Thrown when the Azure Functions endpoint cannot be contacted.</exception>
         public async Task TriggerFunctionAsync()
         {
-            var endpoint = $"http://localhost:{_configuration.HttpPort}/admin/functions/databricks-job-metrics";
+            string endpoint = $"http://localhost:{_configuration.HttpPort}/admin/functions/databricks-job-metrics";
             try
             {
                 Logger.WriteLine("POST -> {0}", endpoint);

@@ -38,7 +38,7 @@
     <PackageReference Include="Bogus" Version="32.0.2" />
     <PackageReference Include="BouncyCastle" Version="1.8.6" />
     <PackageReference Include="BouncyCastle.NetCoreSdk" Version="1.9.0.1" />
-    <PackageReference Include="Flurl.Http" Version="3.0.0" />
+    <PackageReference Include="Flurl.Http" Version="3.0.1" />
     <PackageReference Include="Guard.NET" Version="1.2.0" />
     <PackageReference Include="Microsoft.Azure.ApplicationInsights.Query" Version="1.0.0" />
     <PackageReference Include="Microsoft.Azure.Databricks.Client" Version="1.1.1613.2" />

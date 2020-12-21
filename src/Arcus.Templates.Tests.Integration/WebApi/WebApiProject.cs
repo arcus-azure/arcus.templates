@@ -188,7 +188,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi
 
             DirectoryInfo templateDirectory = configuration.GetWebApiProjectDirectory();
             DirectoryInfo fixtureDirectory = configuration.GetFixtureProjectDirectory();
-            Uri baseUrl = configuration.CreateWebApiBaseUrl();
+            Uri baseUrl = configuration.GenerateRandomLocalhostUrl();
             var project = new WebApiProject(baseUrl, configuration, templateDirectory, fixtureDirectory, outputWriter);
             project.CreateNewProject(projectOptions);
             project.UpdateFileInProject("Program.cs", contents => project.RemovesUserErrorsFromContents(contents));

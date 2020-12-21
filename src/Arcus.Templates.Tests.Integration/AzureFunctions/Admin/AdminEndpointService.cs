@@ -2,27 +2,30 @@
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Arcus.Templates.Tests.Integration.AzureFunctions.Configuration;
 using Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics.Configuration;
 using Arcus.Templates.Tests.Integration.WebApi.Fixture;
 using Flurl;
 using Xunit.Abstractions;
 
-namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics.MetricReporting
+namespace Arcus.Templates.Tests.Integration.AzureFunctions.Admin
 {
     /// <summary>
     /// Represents a service that acts as a gateway to the running Azure Functions project so the metric reporting function can be manually triggered.
     /// </summary>
-    public class MetricReportingService : EndpointService
+    public class AdminEndpointService : EndpointService
     {
-        private readonly AzureFunctionsConfig _configuration;
+        private readonly int _httpPort;
+        private readonly string _functionName;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MetricReportingService"/> class.
+        /// Initializes a new instance of the <see cref="AdminEndpointService"/> class.
         /// </summary>
-        public MetricReportingService(AzureFunctionsConfig configuration, ITestOutputHelper outputWriter) 
+        public AdminEndpointService(int httpPort, string functionName, ITestOutputHelper outputWriter) 
             : base(outputWriter)
         {
-            _configuration = configuration;
+            _httpPort = httpPort;
+            _functionName = functionName;
         }
 
         /// <summary>
@@ -31,7 +34,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics
         /// <exception cref="HttpRequestException">Thrown when the Azure Functions endpoint cannot be contacted.</exception>
         public async Task TriggerFunctionAsync()
         {
-            string endpoint = $"http://localhost:{_configuration.HttpPort}/admin/functions/databricks-job-metrics";
+            string endpoint = $"http://localhost:{_httpPort}/admin/functions/{_functionName}";
             try
             {
                 Logger.WriteLine("POST -> {0}", endpoint);

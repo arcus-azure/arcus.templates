@@ -65,11 +65,20 @@ stages:
             parameters:
               projectName: 'Arcus.Demo.AzureFunctions.Databricks.JobMetrics'
               projectAlias: 'arcus-az-databricks-jobmetrics'
-              ports: '$(Arcus.AzureFunctions.Databricks.Http.Port):80'
+              ports: '$(Arcus.AzureFunctions.Databricks.HttpPort):80'
               script: |
                 Get-Content './Arcus.Demo.AzureFunctions.Databricks.JobMetrics/Startup.cs' |
                   Where-Object { $_ -notmatch '#error' } |
                   Set-Content './Arcus.Demo.AzureFunctions.Databricks.JobMetrics/Startup.cs'
+          - template: 'run-new-project-from-template.yml'
+            parameters:
+              projectName: 'Arcus.Demo.AzureFunctions.Http'
+              projectAlias: 'arcus-az-http'
+              ports: '$(Arcus.AzureFunctions.Http.Port):80'
+              script: |
+                Get-Content './Arcus.Demo.AzureFunctions.Http/Startup.cs' |
+                  Where-Object { $_ -notmatch '#error' } |
+                  Set-Content './Arcus.Demo.AzureFunctions.Http/Startup.cs'
               envVars: |
                 Arcus__Databricks__Url=$(Arcus.Databricks.Url)
                 Arcus__ApplicationInsights__MetricName=$(Arcus.ApplicationInsights.MetricName)
@@ -79,3 +88,4 @@ stages:
               dotnetSdkVersion: '$(DotNet.Sdk.Version)'
               projectName: '$(Project).Tests.Integration'
               category: 'Docker'
+          

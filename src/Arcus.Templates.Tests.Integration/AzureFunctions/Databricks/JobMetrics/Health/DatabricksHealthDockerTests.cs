@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
+using Arcus.Templates.Tests.Integration.AzureFunctions.Admin;
 using Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics.Configuration;
-using Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics.MetricReporting;
 using Arcus.Templates.Tests.Integration.Fixture;
 using Xunit;
 using Xunit.Abstractions;
@@ -26,8 +26,8 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics
         {
             // Arrange
             var configuration = TestConfig.Create();
-            AzureFunctionsConfig azureFunctionsConfig = configuration.GetAzureFunctionsConfig();
-            var service = new MetricReportingService(azureFunctionsConfig, _outputWriter);
+            AzureFunctionDatabricksConfig databricksConfig = configuration.GetDatabricksConfig();
+            var service = new AdminEndpointService(databricksConfig.HttpPort, AzureFunctionsDatabricksProject.FunctionName, _outputWriter);
 
             // Act / Assert
             await service.TriggerFunctionAsync();

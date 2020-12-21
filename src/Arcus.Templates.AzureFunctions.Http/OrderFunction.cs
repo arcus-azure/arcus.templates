@@ -1,12 +1,6 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Http.Formatting;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
-using System.Web.Http;
 using Arcus.Security.Core;
 using Arcus.WebApi.Logging.Correlation;
 using GuardNet;
@@ -14,12 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Linq;
 using Arcus.Templates.AzureFunctions.Http.Model;
 
 namespace Arcus.Templates.AzureFunctions.Http
@@ -36,6 +26,7 @@ namespace Arcus.Templates.AzureFunctions.Http
         /// </summary>
         /// <param name="secretProvider">The instance that provides secrets to the HTTP trigger.</param>
         /// <param name="httpCorrelation">The instance to handle the HTTP request correlation.</param>
+        /// <param name="logger">The logger instance to write diagnostic trace messages while handling the HTTP request.</param>
         /// <exception cref="ArgumentNullException">Thrown when the <paramref name="secretProvider"/> or <paramref name="httpCorrelation"/> is <c>null</c>.</exception>
         public OrderFunction(ISecretProvider secretProvider, HttpCorrelation httpCorrelation, ILogger<OrderFunction> logger) : base(httpCorrelation, logger)
         {
@@ -44,32 +35,47 @@ namespace Arcus.Templates.AzureFunctions.Http
         }
 
         [FunctionName("order")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
+        [RequestSizeLimit(100)]
+        [ProducesResponseType(typeof(Order), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status415UnsupportedMediaType)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest request)
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "v1/order")] HttpRequest request)
         {
             try
             {
                 Logger.LogInformation("C# HTTP trigger function processed a request.");
-
                 if (IsJson(request) == false || AcceptsJson(request) == false)
                 {
-                    return new UnsupportedMediaTypeResult();
+                    string accept = String.Join(", ", GetAcceptMediaTypes(request));
+                    Logger.LogError("Could not process current request because the request body is not JSON and/or could not accept JSON as response (Content-Type: {ContentType}, Accept: {Accept})", request.ContentType, accept);
+                    
+                    return UnsupportedMediaType("Could not process current request because the request body is not JSON and/or could not accept JSON as response");
                 }
 
                 if (TryHttpCorrelate(out string errorMessage) == false)
                 {
-                    return new BadRequestObjectResult(errorMessage);
+                    return BadRequest(errorMessage);
                 }
 
-                var order = await ReadRequestBodyAsync<Order>(request);
-                return Ok(order);
+                var order = await GetJsonBodyAsync<Order>(request);
+                return Json(order);
+            }
+            catch (JsonException exception)
+            {
+                Logger.LogError(exception, exception.Message);
+                return BadRequest("Could not process the current request due to an JSON deserialization failure");
+            }
+            catch (ValidationException exception)
+            {
+                Logger.LogError(exception, exception.Message);
+                return BadRequest(exception.ValidationResult);
             }
             catch (Exception exception)
             {
-                return InternalServerError(exception);
+                Logger.LogCritical(exception, exception.Message);
+                return InternalServerError("Could not process the current request due to an unexpected exception");
             }
         }
     }

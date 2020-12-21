@@ -19,7 +19,7 @@ namespace Arcus.Templates.AzureFunctions.Http
         {
             builder.ConfigurationBuilder.AddEnvironmentVariables();
         }
-
+        
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://docs.microsoft.com/en-us/azure/azure-functions/functions-dotnet-dependency-injection
         public override void Configure(IFunctionsHostBuilder builder)
@@ -27,12 +27,11 @@ namespace Arcus.Templates.AzureFunctions.Http
             IConfiguration config = builder.GetContext().Configuration;
 
             builder.AddHttpCorrelation();
-            builder.Services.AddHealthChecks();
             builder.ConfigureSecretStore(stores =>
             {
-                //[#if DEBUG]
+//[#if DEBUG]
                 stores.AddConfiguration(config);
-                //[#endif]
+//[#endif]
 
                 stores.AddEnvironmentVariables();
 

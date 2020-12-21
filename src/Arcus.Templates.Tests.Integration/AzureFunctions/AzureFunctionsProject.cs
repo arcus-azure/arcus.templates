@@ -1,8 +1,14 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Arcus.Templates.Tests.Integration.AzureFunctions.Configuration;
 using Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics.Configuration;
 using Arcus.Templates.Tests.Integration.Fixture;
+using GuardNet;
+using Polly;
+using Polly.Retry;
 using Xunit.Abstractions;
 
 namespace Arcus.Templates.Tests.Integration.AzureFunctions
@@ -14,6 +20,15 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions
     {
         protected const string ApplicationInsightsInstrumentationKeyVariable = "APPLICATIONINSIGHTS_INSTRUMENTATIONKEY";
 
+        private static readonly HttpClient HttpClient = new HttpClient();
+        
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AzureFunctionsProject"/> class.
+        /// </summary>
+        /// <param name="templateDirectory">The file directory where the .NET project template is located.</param>
+        /// <param name="configuration">The configuration instance to retrieve Azure Functions specific test values.</param>
+        /// <param name="outputWriter">The logger instance to write diagnostic trace messages during the lifetime of the test project.</param>
+        /// <exception cref="ArgumentNullException">Thrown when the <paramref name="templateDirectory"/>, <paramref name="configuration"/>, or <paramref name="outputWriter"/> is <c>null</c>.</exception>
         protected  AzureFunctionsProject(
             DirectoryInfo templateDirectory, 
             TestConfig configuration,
@@ -22,9 +37,19 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions
                    configuration.GetFixtureProjectDirectory(), 
                    outputWriter)
         {
+            Guard.NotNull(templateDirectory, nameof(templateDirectory), "Requires a file template directory where the .NET project template is located");
+            Guard.NotNull(configuration, nameof(configuration), "Requires an configuration instance to retrieve Azure Functions specific test values");
+            Guard.NotNull(outputWriter, nameof(outputWriter), "Requires an logger instance to write diagnostic trace messages during the lifetime of the project.");
+            
+            RootEndpoint = configuration.GenerateRandomLocalhostUrl();
             AzureFunctionsConfig = configuration.GetAzureFunctionsConfig();
             ApplicationInsightsConfig = configuration.GetApplicationInsightsConfig();
         }
+
+        /// <summary>
+        /// Gets the root endpoint on which the Azure Function is running.
+        /// </summary>
+        protected Uri RootEndpoint { get; }
 
         /// <summary>
         /// Gets the Azure Functions information from the current application configuration, used by this project.
@@ -42,8 +67,13 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions
         protected void AddStorageAccount()
         {
             string storageAccountConnectionString = AzureFunctionsConfig.StorageAccountConnectionString;
+            
             AddFileInProject("local.settings.json", 
-                $"{{ \"IsEncrypted\": false, \"Values\": {{ \"AzureWebJobsStorage\": \"{storageAccountConnectionString}\", \"FUNCTIONS_WORKER_RUNTIME\": \"dotnet\" }} }}");
+                $"{{ " +
+                    $"\"IsEncrypted\": false, " +
+                    $"\"Values\": {{ \"AzureWebJobsStorage\": \"{storageAccountConnectionString}\", \"FUNCTIONS_WORKER_RUNTIME\": \"dotnet\" }}, " +
+                    $"\"Host\": {{ \"LocalHttpPort\": {RootEndpoint.Port} }}" +
+                $"}}");
         }
 
         /// <summary>
@@ -73,6 +103,38 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions
             return processInfo;
         }
 
+        /// <summary>
+        /// Waits until the Azure Function project is fully running and ready to be interacted with.
+        /// </summary>
+        /// <param name="endpoint">The HTTP endpoint for the Azure Functions project to poll so the test project knows that the Azure Functions project is available.</param>
+        /// <exception cref="ArgumentNullException">Thrown when the <paramref name="endpoint"/> is <c>null</c>.</exception>
+        /// <exception cref="CannotStartTemplateProjectException">Thrown when the HTTP <paramref name="endpoint"/> was still not available after polling for some time.</exception>
+        protected async Task WaitUntilTriggerIsAvailableAsync(Uri endpoint)
+        {
+            Guard.NotNull(endpoint, nameof(endpoint), "Requires an HTTP endpoint for the Azure Functions project so the project knows when the Azure Functions project is available");
+            
+            AsyncRetryPolicy retryPolicy =
+                Policy.Handle<Exception>()
+                      .WaitAndRetryForeverAsync(index => TimeSpan.FromMilliseconds(500));
+
+            PolicyResult<HttpResponseMessage> result =
+                await Policy.TimeoutAsync(TimeSpan.FromSeconds(30))
+                            .WrapAsync(retryPolicy)
+                            .ExecuteAndCaptureAsync(() => HttpClient.GetAsync(endpoint));
+
+            if (result.Outcome == OutcomeType.Successful)
+            {
+                Logger.WriteLine("Test template Azure Functions project fully started at: {0}", endpoint);
+            }
+            else
+            {
+                Logger.WriteLine("Test template Azure Functions project could not be started");
+                throw new CannotStartTemplateProjectException(
+                    "The test project created from the Azure Functions project template doesn't seem to be running, "
+                    + "please check any build or runtime errors that could occur when the test project was created");
+            }
+        }
+        
         /// <summary>
         /// Performs additional application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>

@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
+using Arcus.Templates.Tests.Integration.AzureFunctions.Http.Api;
 using Arcus.Templates.Tests.Integration.Fixture;
+using Flurl;
 using Xunit.Abstractions;
 
 namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http
@@ -15,6 +14,11 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http
     [DebuggerDisplay("Project = {ProjectDirectory.FullName}")]
     public class AzureFunctionsHttpProject : AzureFunctionsProject
     {
+        /// <summary>
+        /// Gets the name of the order Azure Function.
+        /// </summary>
+        public const string OrderFunctionName = "order";
+        
         private AzureFunctionsHttpProject(
             TestConfig configuration, 
             ITestOutputHelper outputWriter) 
@@ -22,7 +26,19 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http
                    configuration, 
                    outputWriter)
         {
+            OrderFunctionEndpoint = RootEndpoint.AppendPathSegments("order").ToUri();
+            Order = new OrderService(OrderFunctionEndpoint, outputWriter);
         }
+        
+        /// <summary>
+        /// Gets the endpoint of the order Azure Function.
+        /// </summary>
+        public Uri OrderFunctionEndpoint { get; }
+        
+        /// <summary>
+        /// Gets the service to interact with the order functionality of the Azure Function.
+        /// </summary>
+        public OrderService Order { get; }
 
         /// <summary>
         /// Starts a newly created project from the Azure Functions HTTP project template.
@@ -32,10 +48,11 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http
         /// <returns>
         ///     A Azure Functions HTTP project with a full set of endpoint services to interact with the Azure Function.
         /// </returns>
-        public static AzureFunctionsHttpProject StartNew(TestConfig configuration, ITestOutputHelper outputWriter)
+        /// <exception cref="CannotStartTemplateProjectException">Thrown when the Azure Functions project cannot be started correctly.</exception>
+        public static async Task<AzureFunctionsHttpProject> StartNewAsync(TestConfig configuration, ITestOutputHelper outputWriter)
         {
             AzureFunctionsHttpProject project = CreateNew(configuration, outputWriter);
-            project.Start();
+            await project.StartAsync();
 
             return project;
         }
@@ -49,9 +66,10 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http
             return project;
         }
 
-        private void Start()
+        private async Task StartAsync()
         {
             Run(BuildConfiguration.Debug, TargetFramework.NetCoreApp31);
+            await WaitUntilTriggerIsAvailableAsync(OrderFunctionEndpoint);
         }
     }
 }

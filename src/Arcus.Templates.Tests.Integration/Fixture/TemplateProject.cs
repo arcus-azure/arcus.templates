@@ -23,19 +23,26 @@ namespace Arcus.Templates.Tests.Integration.Fixture
 
         private bool _created, _started, _disposed;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TemplateProject"/> class.
+        /// </summary>
+        /// <param name="templateDirectory">The file directory where the .NET project template is located.</param>
+        /// <param name="fixtureDirectory">The file directory where the test fixtures for the project template are located..</param>
+        /// <param name="outputWriter">The logger instance to write diagnostic trace messages during the lifetime of the test project.</param>
+        /// <exception cref="ArgumentNullException">Thrown when the <paramref name="templateDirectory"/>, <paramref name="fixtureDirectory"/>, or <paramref name="outputWriter"/> is <c>null</c>.</exception>
         protected TemplateProject(DirectoryInfo templateDirectory, DirectoryInfo fixtureDirectory, ITestOutputHelper outputWriter)
         {
-            Guard.NotNull(templateDirectory, nameof(templateDirectory));
-            Guard.NotNull(fixtureDirectory, nameof(fixtureDirectory));
-            Guard.NotNull(outputWriter, nameof(outputWriter));
+            Guard.NotNull(templateDirectory, nameof(templateDirectory), "Requires a file template directory where the .NET project template is located");
+            Guard.NotNull(fixtureDirectory, nameof(fixtureDirectory), "Requires a file fixture directory where the test fixtures are located");
+            Guard.NotNull(outputWriter, nameof(outputWriter), "Requires an logger instance to write diagnostic trace messages during the lifetime of the project.");
 
             _process = new Process();
             _templateDirectory = templateDirectory;
-            Logger = outputWriter;
 
             string tempDirectoryPath = Path.Combine(Path.GetTempPath(), $"{ProjectName}-{Guid.NewGuid()}");
             ProjectDirectory = new DirectoryInfo(tempDirectoryPath);
             FixtureDirectory = fixtureDirectory;
+            Logger = outputWriter;
         }
 
         /// <summary>

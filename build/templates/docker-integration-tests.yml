@@ -70,6 +70,10 @@ stages:
                 Get-Content './Arcus.Demo.AzureFunctions.Databricks.JobMetrics/Startup.cs' |
                   Where-Object { $_ -notmatch '#error' } |
                   Set-Content './Arcus.Demo.AzureFunctions.Databricks.JobMetrics/Startup.cs'
+              envVars: |
+                Arcus__Databricks__Url=$(Arcus.Databricks.Url)
+                Arcus__ApplicationInsights__MetricName=$(Arcus.ApplicationInsights.MetricName)
+                APPLICATIONINSIGHTS_INSTRUMENTATIONKEY=$(Arcus.ApplicationInsights.InstrumentationKey)
           - template: 'run-new-project-from-template.yml'
             parameters:
               projectName: 'Arcus.Demo.AzureFunctions.Http'
@@ -80,9 +84,7 @@ stages:
                   Where-Object { $_ -notmatch '#error' } |
                   Set-Content './Arcus.Demo.AzureFunctions.Http/Startup.cs'
               envVars: |
-                Arcus__Databricks__Url=$(Arcus.Databricks.Url)
-                Arcus__ApplicationInsights__MetricName=$(Arcus.ApplicationInsights.MetricName)
-                Arcus__ApplicationInsights__InstrumentationKey=$(Arcus.ApplicationInsights.InstrumentationKey)
+                APPLICATIONINSIGHTS_INSTRUMENTATIONKEY=$(Arcus.ApplicationInsights.InstrumentationKey)
           - template: test/run-integration-tests.yml@templates
             parameters:
               dotnetSdkVersion: '$(DotNet.Sdk.Version)'

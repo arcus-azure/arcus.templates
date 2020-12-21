@@ -31,7 +31,6 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics
             AzureFunctionDatabricksConfig = configuration.GetDatabricksConfig();
         }
 
-
         /// <summary>
         /// Gets the Databricks connectivity information from the current application configuration, used by this project.
         /// </summary>

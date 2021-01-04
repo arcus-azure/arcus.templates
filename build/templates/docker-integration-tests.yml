@@ -77,7 +77,7 @@ stages:
           - template: 'run-new-project-from-template.yml'
             parameters:
               projectName: 'Arcus.Demo.AzureFunctions.Http'
-              projectAlias: 'arcus-az-http'
+              projectAlias: 'arcus-az-func-http'
               ports: '$(Arcus.AzureFunctions.Http.HttpPort):80'
               script: |
                 Get-Content './Arcus.Demo.AzureFunctions.Http/Startup.cs' |

@@ -8,7 +8,7 @@
   ],
   "name": "Arcus Azure Functions with Http trigger v#{Package.Version}#",
   "identity": "Arcus.Templates.AzureFunctions.Http",
-  "shortName": "arcus-az-http",
+  "shortName": "arcus-az-func-http",
   "sourceName": "Arcus.Templates.AzureFunctions.Http",
   "preferNameDirectory": true,
   "tags": {

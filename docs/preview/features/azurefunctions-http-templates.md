@@ -16,7 +16,7 @@ First, install the template from NuGet:
 When installed, the template can be created with shortname: `arcus-az-func-http`:
 
 ```shell
-> dotnet new arcus-az-http --name Arcus.Demo.AzureFunctions.Http
+> dotnet new arcus-az-func-http --name Arcus.Demo.AzureFunctions.Http
 ```
 
 ## Features

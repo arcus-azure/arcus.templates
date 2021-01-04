@@ -35,7 +35,6 @@ namespace Arcus.Templates.AzureFunctions.Http
         }
 
         [FunctionName("order")]
-        [RequestSizeLimit(100)]
         [ProducesResponseType(typeof(Order), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status415UnsupportedMediaType)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]

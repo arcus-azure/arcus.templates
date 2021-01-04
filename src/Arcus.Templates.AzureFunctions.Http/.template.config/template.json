@@ -6,7 +6,7 @@
     "Http",
     "API"
   ],
-  "name": "Arcus Azure Functions Http v#{Package.Version}#",
+  "name": "Arcus Azure Functions with Http trigger v#{Package.Version}#",
   "identity": "Arcus.Templates.AzureFunctions.Http",
   "shortName": "arcus-az-http",
   "sourceName": "Arcus.Templates.AzureFunctions.Http",

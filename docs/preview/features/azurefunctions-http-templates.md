@@ -5,7 +5,7 @@ layout: default
 
 # HTTP Trigger template (Azure Functions)
 
-## Create your first Arcus Azure Functions HTTP Trigger project
+## Create your first Arcus Azure Functions with HTTP Trigger project
 
 First, install the template from NuGet:
 

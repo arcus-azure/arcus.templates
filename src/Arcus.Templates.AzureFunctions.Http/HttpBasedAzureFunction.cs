@@ -40,10 +40,7 @@ namespace Arcus.Templates.AzureFunctions.Http
             _httpCorrelation = httpCorrelation;
 
             Logger = logger ?? NullLogger.Instance;
-        }
 
-        static HttpBasedAzureFunction()
-        {
             var jsonSettings = new JsonSerializerSettings
             {
                 MaxDepth = 10,
@@ -59,19 +56,18 @@ namespace Arcus.Templates.AzureFunctions.Http
                 IgnoreNullValues = true
             };
             jsonOptions.Converters.Add(new JsonStringEnumConverter());
-
-            OutputFormatters = new FormatterCollection<IOutputFormatter> { new SystemTextJsonOutputFormatter(jsonOptions) };
+            OutputFormatters = new FormatterCollection<IOutputFormatter> {new SystemTextJsonOutputFormatter(jsonOptions)};
         }
 
         /// <summary>
         /// Gets the serializer that's being used when incoming requests are being serialized or deserialized into JSON.
         /// </summary>
-        protected static JsonSerializer JsonSerializer { get; }
+        protected JsonSerializer JsonSerializer { get; }
 
         /// <summary>
         /// Gets the set of formatters that's being used when an outgoing response is being sent back to the sender.
         /// </summary>
-        protected static FormatterCollection<IOutputFormatter> OutputFormatters { get; }
+        protected FormatterCollection<IOutputFormatter> OutputFormatters { get; }
 
         /// <summary>
         /// Gets the logger instance used throughout this Azure Function.

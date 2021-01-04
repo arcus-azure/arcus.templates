@@ -17,7 +17,7 @@ namespace Arcus.Templates.AzureFunctions.Http
     /// <summary>
     /// Represents the root endpoint of the Azure Function.
     /// </summary>
-    public class OrderFunction : AzureFunction
+    public class OrderFunction : HttpBasedAzureFunction
     {
         private readonly ISecretProvider _secretProvider;
 

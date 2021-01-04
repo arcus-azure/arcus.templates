@@ -24,17 +24,17 @@ namespace Arcus.Templates.AzureFunctions.Http
     /// <summary>
     /// Represents the base HTTP web API functionality for an Azure Function implementation.
     /// </summary>
-    public abstract class AzureFunction
+    public abstract class HttpBasedAzureFunction
     {
         private readonly HttpCorrelation _httpCorrelation;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AzureFunction"/> class.
+        /// Initializes a new instance of the <see cref="HttpBasedAzureFunction"/> class.
         /// </summary>
         /// <param name="httpCorrelation">The correlation service to provide information of related requests.</param>
         /// <param name="logger">The logger instance to write diagnostic messages throughout the execution of the HTTP trigger.</param>
         /// <exception cref="ArgumentNullException">Thrown when the <paramref name="httpCorrelation"/> is <c>null</c></exception>
-        protected AzureFunction(HttpCorrelation httpCorrelation, ILogger logger)
+        protected HttpBasedAzureFunction(HttpCorrelation httpCorrelation, ILogger logger)
         {
             Guard.NotNull(httpCorrelation, nameof(httpCorrelation), "Requires an HTTP correlation instance");
             _httpCorrelation = httpCorrelation;
@@ -42,7 +42,7 @@ namespace Arcus.Templates.AzureFunctions.Http
             Logger = logger ?? NullLogger.Instance;
         }
 
-        static AzureFunction()
+        static HttpBasedAzureFunction()
         {
             var jsonSettings = new JsonSerializerSettings
             {

@@ -35,10 +35,6 @@ namespace Arcus.Templates.AzureFunctions.Http
         }
 
         [FunctionName("order")]
-        [ProducesResponseType(typeof(Order), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status415UnsupportedMediaType)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = "v1/order")] HttpRequest request)
         {

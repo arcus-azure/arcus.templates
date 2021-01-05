@@ -23,19 +23,26 @@ namespace Arcus.Templates.Tests.Integration.Fixture
 
         private bool _created, _started, _disposed;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TemplateProject"/> class.
+        /// </summary>
+        /// <param name="templateDirectory">The file directory where the .NET project template is located.</param>
+        /// <param name="fixtureDirectory">The file directory where the test fixtures for the project template are located..</param>
+        /// <param name="outputWriter">The logger instance to write diagnostic trace messages during the lifetime of the test project.</param>
+        /// <exception cref="ArgumentNullException">Thrown when the <paramref name="templateDirectory"/>, <paramref name="fixtureDirectory"/>, or <paramref name="outputWriter"/> is <c>null</c>.</exception>
         protected TemplateProject(DirectoryInfo templateDirectory, DirectoryInfo fixtureDirectory, ITestOutputHelper outputWriter)
         {
-            Guard.NotNull(templateDirectory, nameof(templateDirectory));
-            Guard.NotNull(fixtureDirectory, nameof(fixtureDirectory));
-            Guard.NotNull(outputWriter, nameof(outputWriter));
+            Guard.NotNull(templateDirectory, nameof(templateDirectory), "Requires a file template directory where the .NET project template is located");
+            Guard.NotNull(fixtureDirectory, nameof(fixtureDirectory), "Requires a file fixture directory where the test fixtures are located");
+            Guard.NotNull(outputWriter, nameof(outputWriter), "Requires an logger instance to write diagnostic trace messages during the lifetime of the project.");
 
             _process = new Process();
             _templateDirectory = templateDirectory;
-            Logger = outputWriter;
 
             string tempDirectoryPath = Path.Combine(Path.GetTempPath(), $"{ProjectName}-{Guid.NewGuid()}");
             ProjectDirectory = new DirectoryInfo(tempDirectoryPath);
             FixtureDirectory = fixtureDirectory;
+            Logger = outputWriter;
         }
 
         /// <summary>
@@ -237,6 +244,15 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             _process.Start();
         }
 
+        /// <summary>
+        /// Customized project process preparation that results in an <see cref="ProcessStartInfo"/> instance.
+        /// </summary>
+        /// <param name="buildConfiguration">The configuration to which the project should built.</param>
+        /// <param name="targetFramework">The code framework to which this project targets to.</param>
+        /// <param name="commandArguments">The CLI parameters which should be sent to the starting project.</param>
+        /// <returns>
+        ///     An run-ready <see cref="ProcessStartInfo"/> instance that will be used to start the project.
+        /// </returns>
         protected virtual ProcessStartInfo PrepareProjectRun(BuildConfiguration buildConfiguration, TargetFramework targetFramework, CommandArgument[] commandArguments)
         {
             RunDotNet($"build -c {buildConfiguration} {ProjectDirectory.FullName}");
@@ -318,6 +334,10 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             }
         }
 
+        /// <summary>
+        /// Performs additional application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        /// <param name="disposing">The flag indicating whether or not the additional tasks should be disposed.</param>
         protected virtual void Disposing(bool disposing)
         {
         }

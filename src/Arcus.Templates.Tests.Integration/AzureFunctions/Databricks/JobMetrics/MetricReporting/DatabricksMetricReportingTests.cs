@@ -38,11 +38,11 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics
 
             using (var project = AzureFunctionsDatabricksProject.StartNew(_config, _outputWriter))
             {
-                using (var client = DatabricksClient.CreateClient(project.DatabricksConfig.BaseUrl, project.DatabricksConfig.SecurityToken))
+                using (var client = DatabricksClient.CreateClient(project.AzureFunctionDatabricksConfig.BaseUrl, project.AzureFunctionDatabricksConfig.SecurityToken))
                 {
                     // Act
-                    await client.Jobs.RunNow(project.DatabricksConfig.JobId, parameters);
-                    await WaitUntilDatabricksJobRunIsCompleted(client, project.DatabricksConfig.JobId);
+                    await client.Jobs.RunNow(project.AzureFunctionDatabricksConfig.JobId, parameters);
+                    await WaitUntilDatabricksJobRunIsCompleted(client, project.AzureFunctionDatabricksConfig.JobId);
                 }
             }
 

@@ -7,43 +7,43 @@ using Xunit.Abstractions;
 
 namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics
 {
-    public class AzureFunctionsDatabricksProject : TemplateProject
+    /// <summary>
+    /// Project template to create new Azure Functions Databricks Job Metrics projects.
+    /// </summary>
+    [DebuggerDisplay("Project = {ProjectDirectory.FullName}, Databricks URL = {DatabricksUrlVariable}")]
+    public class AzureFunctionsDatabricksProject : AzureFunctionsProject
     {
-        private const string DatabricksUrlVariable = "Arcus__Databricks__Url",
-                             ApplicationInsightsInstrumentationKeyVariable = "APPLICATIONINSIGHTS_INSTRUMENTATIONKEY",
-                             ApplicationInsightsMetricNameVariable = "Arcus__ApplicationInsights__MetricName";
+        private const string ApplicationInsightsMetricNameVariable = "Arcus__ApplicationInsights__MetricName",
+                             DatabricksUrlVariable = "Arcus__Databricks__Url";
 
-        private readonly AzureFunctionsConfig _azureFunctionsConfig;
+        /// <summary>
+        /// Gets the name of the Azure Function in the project.
+        /// </summary>
+        public const string FunctionName = "databricks-job-metrics";
 
         private AzureFunctionsDatabricksProject(
             TestConfig configuration, 
             ITestOutputHelper outputWriter) 
             : base(configuration.GetAzureFunctionsDatabricksJobMetricsProjectDirectory(), 
-                   configuration.GetFixtureProjectDirectory(), 
+                   configuration, 
                    outputWriter)
         {
-            _azureFunctionsConfig = configuration.GetAzureFunctionsConfig();
-
-            DatabricksConfig = configuration.GetDatabricksConfig();
-            ApplicationInsightsConfig = configuration.GetApplicationInsightsConfig();
+            AzureFunctionDatabricksConfig = configuration.GetDatabricksConfig();
         }
 
         /// <summary>
         /// Gets the Databricks connectivity information from the current application configuration, used by this project.
         /// </summary>
-        public DatabricksConfig DatabricksConfig { get; }
+        public AzureFunctionDatabricksConfig AzureFunctionDatabricksConfig { get; }
 
         /// <summary>
-        /// Gets the Application Insights connectivity information from the current application configuration, used  by this project.
+        /// Starts a newly created project from the Azure Functions Databricks Job Metrics project template.
         /// </summary>
-        public ApplicationInsightsConfig ApplicationInsightsConfig { get; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="configuration"></param>
-        /// <param name="outputWriter"></param>
-        /// <returns></returns>
+        /// <param name="configuration">The configuration to control the hosting of the to-be-created project.</param>
+        /// <param name="outputWriter">The output logger to add telemetry information during the creation and startup process.</param>
+        /// <returns>
+        ///     A Azure Functions Databricks Job Metrics project with a full set of endpoint services to interact with the Azure Function.
+        /// </returns>
         public static AzureFunctionsDatabricksProject StartNew(TestConfig configuration, ITestOutputHelper outputWriter)
         {
             AzureFunctionsDatabricksProject project = CreateNew(configuration, outputWriter);
@@ -56,8 +56,8 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics
         {
             var project = new AzureFunctionsDatabricksProject(configuration, outputWriter);
             project.CreateNewProject(new ProjectOptions());
-            project.AddDatabricksSecurityToken(project.DatabricksConfig.SecurityToken);
-            project.AddStorageAccount(project._azureFunctionsConfig.StorageAccountConnectionString);
+            project.AddDatabricksSecurityToken(project.AzureFunctionDatabricksConfig.SecurityToken);
+            project.AddStorageAccount();
             
             return project;
         }
@@ -77,38 +77,36 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics
                              $"AddProvider(new {nameof(SingleValueSecretProvider)}(\"{securityToken}\"))"));
         }
 
-        private void AddStorageAccount(string storageAccountConnectionString)
-        {
-            AddFileInProject("local.settings.json", 
-                $"{{ \"IsEncrypted\": false, \"Values\": {{ \"AzureWebJobsStorage\": \"{storageAccountConnectionString}\", \"FUNCTIONS_WORKER_RUNTIME\": \"dotnet\" }} }}");
-        }
-
+        /// <summary>
+        /// Customized project process preparation that results in an <see cref="ProcessStartInfo"/> instance.
+        /// </summary>
+        /// <param name="buildConfiguration">The configuration to which the project should built.</param>
+        /// <param name="targetFramework">The code framework to which this project targets to.</param>
+        /// <param name="commandArguments">The CLI parameters which should be sent to the starting project.</param>
+        /// <returns>
+        ///     An run-ready <see cref="ProcessStartInfo"/> instance that will be used to start the project.
+        /// </returns>
         protected override ProcessStartInfo PrepareProjectRun(
             BuildConfiguration buildConfiguration,
             TargetFramework targetFramework,
             CommandArgument[] commandArguments)
         {
-            RunDotNet($"build {ProjectDirectory.FullName}");
-
-            var processInfo = new ProcessStartInfo("func", "start")
-            {
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                WorkingDirectory = ProjectDirectory.FullName,
-            };
-
-            Environment.SetEnvironmentVariable(DatabricksUrlVariable, DatabricksConfig.BaseUrl);
-            Environment.SetEnvironmentVariable(ApplicationInsightsInstrumentationKeyVariable, ApplicationInsightsConfig.InstrumentationKey);
+            ProcessStartInfo startInfo = base.PrepareProjectRun(buildConfiguration, targetFramework, commandArguments);
             Environment.SetEnvironmentVariable(ApplicationInsightsMetricNameVariable, ApplicationInsightsConfig.MetricName);
+            Environment.SetEnvironmentVariable(DatabricksUrlVariable, AzureFunctionDatabricksConfig.BaseUrl);
 
-            return processInfo;
+            return startInfo;
         }
 
+        /// <summary>
+        /// Performs additional application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        /// <param name="disposing">The flag indicating whether or not the additional tasks should be disposed.</param>
         protected override void Disposing(bool disposing)
         {
-            Environment.SetEnvironmentVariable(DatabricksUrlVariable, null);
-            Environment.SetEnvironmentVariable(ApplicationInsightsInstrumentationKeyVariable, null);
+            base.Disposing(disposing);
             Environment.SetEnvironmentVariable(ApplicationInsightsMetricNameVariable, null);
+            Environment.SetEnvironmentVariable(DatabricksUrlVariable, null);
         }
     }
 }

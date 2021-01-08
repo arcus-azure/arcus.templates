@@ -61,6 +61,30 @@ stages:
                 EVENTGRID_AUTH_KEY=$(Arcus.TestInfra.EventGrid.Auth.Key)
                 ARCUS_SERVICEBUS_CONNECTIONSTRING=$(Arcus.ServiceBus.ConnectionStringWithTopic)
                 TELEMETRY_APPLICATIONINSIGHTS_INSTRUMENTATIONKEY=$(Arcus.ApplicationInsights.InstrumentationKey)
+          - template: 'run-new-project-from-template.yml'
+            parameters:
+              projectName: 'Arcus.Demo.AzureFunctions.Databricks.JobMetrics'
+              projectAlias: 'arcus-az-databricks-jobmetrics'
+              ports: '$(Arcus.AzureFunctions.Databricks.HttpPort):80'
+              script: |
+                Get-Content './Arcus.Demo.AzureFunctions.Databricks.JobMetrics/Startup.cs' |
+                  Where-Object { $_ -notmatch '#error' } |
+                  Set-Content './Arcus.Demo.AzureFunctions.Databricks.JobMetrics/Startup.cs'
+              envVars: |
+                Arcus__Databricks__Url=$(Arcus.Databricks.Url)
+                Arcus__ApplicationInsights__MetricName=$(Arcus.ApplicationInsights.MetricName)
+                APPLICATIONINSIGHTS_INSTRUMENTATIONKEY=$(Arcus.ApplicationInsights.InstrumentationKey)
+          - template: 'run-new-project-from-template.yml'
+            parameters:
+              projectName: 'Arcus.Demo.AzureFunctions.Http'
+              projectAlias: 'arcus-az-func-http'
+              ports: '$(Arcus.AzureFunctions.Http.HttpPort):80'
+              script: |
+                Get-Content './Arcus.Demo.AzureFunctions.Http/Startup.cs' |
+                  Where-Object { $_ -notmatch '#error' } |
+                  Set-Content './Arcus.Demo.AzureFunctions.Http/Startup.cs'
+              envVars: |
+                APPLICATIONINSIGHTS_INSTRUMENTATIONKEY=$(Arcus.ApplicationInsights.InstrumentationKey)
           - template: test/run-integration-tests.yml@templates
             parameters:
               dotnetSdkVersion: '$(DotNet.Sdk.Version)'

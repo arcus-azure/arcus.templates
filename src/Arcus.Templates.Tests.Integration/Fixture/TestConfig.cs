@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Arcus.Templates.Tests.Integration.AzureFunctions.Configuration;
+using Arcus.Templates.Tests.Integration.AzureFunctions.Databricks;
+using Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics.Configuration;
+using Arcus.Templates.Tests.Integration.AzureFunctions.Http.Configuration;
 using Arcus.Templates.Tests.Integration.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Primitives;
@@ -81,6 +85,22 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         }
 
         /// <summary>
+        /// Gets the project directory of the Azure Functions Databricks project template.
+        /// </summary>
+        public DirectoryInfo GetAzureFunctionsDatabricksJobMetricsProjectDirectory()
+        {
+            return PathCombineWithSourcesDirectory("Arcus.Templates.AzureFunctions.Databricks.JobMetrics");
+        }
+
+        /// <summary>
+        /// Gets the project directory of the Azure Functions Databricks project template.
+        /// </summary>
+        public DirectoryInfo GetAzureFunctionsHttpProjectDirectory()
+        {
+            return PathCombineWithSourcesDirectory("Arcus.Templates.AzureFunctions.Http");
+        }
+
+        /// <summary>
         /// Gets the project directory where the fixtures are located.
         /// </summary>
         public DirectoryInfo GetFixtureProjectDirectory()
@@ -130,14 +150,14 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         /// <summary>
         /// Gets the base URL of the to-be-created project from the web API template.
         /// </summary>
-        public Uri CreateWebApiBaseUrl()
+        public Uri GenerateRandomLocalhostUrl()
         {
             Uri baseUrl = GetBaseUrl();
 
             int port = RandomPort.Next(8080, 9000);
             return new Uri($"http://localhost:{port}{baseUrl.AbsolutePath}");
         }
-
+        
         private Uri GetBaseUrl()
         {
             const string baseUrlKey = "Arcus:Api:BaseUrl";
@@ -206,6 +226,56 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             const string key = "Arcus:Api:ApplicationInsights:InstrumentationKey";
 
             return _configuration.GetValue<string>(key);
+        }
+
+        /// <summary>
+        /// Gets the Azure Functions application configuration to create valid Azure Functions projects.
+        /// </summary>
+        /// <exception cref="KeyNotFoundException">Thrown when one of the Azure Functions configuration values are not found.</exception>
+        public AzureFunctionsConfig GetAzureFunctionsConfig()
+        {
+            var storageAccountConnectionString = _configuration.GetRequiredValue<string>("Arcus:AzureFunctions:AzureWebJobsStorage");
+
+            return new AzureFunctionsConfig(storageAccountConnectionString);
+        }
+
+        /// <summary>
+        /// Gets the Azure Databricks application configuration to interact with the Databricks Azure Function.
+        /// </summary>
+        /// <exception cref="KeyNotFoundException">Thrown when one of the Azure Databricks configuration values are not found.</exception>
+        public AzureFunctionDatabricksConfig GetDatabricksConfig()
+        {
+            var httpPort = _configuration.GetRequiredValue<int>("Arcus:AzureFunctions:Databricks:HttpPort");
+            var baseUrl = _configuration.GetRequiredValue<string>("Arcus:AzureFunctions:Databricks:BaseUrl");
+            var securityToken = _configuration.GetRequiredValue<string>("Arcus:AzureFunctions:Databricks:Token");
+            var jobId = _configuration.GetRequiredValue<int>("Arcus:AzureFunctions:Databricks:JobId");
+
+            return new AzureFunctionDatabricksConfig(httpPort, baseUrl, securityToken, jobId);
+        }
+
+        /// <summary>
+        /// Gets the application configuration to interact with the HTTP Azure Function.
+        /// </summary>
+        /// <exception cref="KeyNotFoundException">Thrown when one of the HTTP Azure Function configuration values are not found.</exception>
+        public AzureFunctionHttpConfig GetAzureFunctionHttpConfig()
+        {
+            var httpPort = _configuration.GetRequiredValue<int>("Arcus:AzureFunctions:Http:HttpPort");
+            
+            return new AzureFunctionHttpConfig(httpPort);
+        }
+
+        /// <summary>
+        /// Gets the Azure Application Insights configuration to interact with the Application Insights resource.
+        /// </summary>
+        /// <exception cref="KeyNotFoundException">Thrown when one of the Azure Application Insights configuration values are not found.</exception>
+        public ApplicationInsightsConfig GetApplicationInsightsConfig()
+        {
+            var instrumentationKey = _configuration.GetRequiredValue<string>("Arcus:AzureFunctions:ApplicationInsights:InstrumentationKey");
+            var applicationId = _configuration.GetRequiredValue<string>("Arcus:AzureFunctions:ApplicationInsights:ApplicationId");
+            var apiKey = _configuration.GetRequiredValue<string>("Arcus:AzureFunctions:ApplicationInsights:ApiKey");
+            var metricName = _configuration.GetRequiredValue<string>("Arcus:AzureFunctions:ApplicationInsights:MetricName");
+
+            return new ApplicationInsightsConfig(instrumentationKey, applicationId, apiKey, metricName);
         }
 
         /// <summary>

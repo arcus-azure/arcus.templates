@@ -177,7 +177,7 @@ namespace Arcus.Templates.Tests.Integration.Worker
         private async Task StartAsync(ServiceBusWorkerProjectOptions options)
         {
             CommandArgument[] commands = 
-                CreateServiceBusQueueWorkerCommands()
+                CreateServiceBusWorkerCommands()
                     .Concat(options.AdditionalArguments)
                     .ToArray();
             
@@ -185,7 +185,7 @@ namespace Arcus.Templates.Tests.Integration.Worker
             await WaitUntilWorkerProjectIsAvailableAsync(_healthPort);
         }
 
-        private IEnumerable<CommandArgument> CreateServiceBusQueueWorkerCommands()
+        private IEnumerable<CommandArgument> CreateServiceBusWorkerCommands()
         {
             string eventGridTopicUri = _configuration["Arcus:Worker:EventGrid:TopicUri"];
             string eventGridAuthKey = _configuration["Arcus:Worker:EventGrid:AuthKey"];

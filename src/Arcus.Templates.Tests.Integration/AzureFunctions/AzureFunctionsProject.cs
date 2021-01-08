@@ -40,7 +40,8 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions
             Guard.NotNull(templateDirectory, nameof(templateDirectory), "Requires a file template directory where the .NET project template is located");
             Guard.NotNull(configuration, nameof(configuration), "Requires an configuration instance to retrieve Azure Functions specific test values");
             Guard.NotNull(outputWriter, nameof(outputWriter), "Requires an logger instance to write diagnostic trace messages during the lifetime of the project.");
-            
+
+            Configuration = configuration;
             RootEndpoint = configuration.GenerateRandomLocalhostUrl();
             AzureFunctionsConfig = configuration.GetAzureFunctionsConfig();
             ApplicationInsightsConfig = configuration.GetApplicationInsightsConfig();
@@ -61,6 +62,11 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions
         /// </summary>
         protected  ApplicationInsightsConfig ApplicationInsightsConfig { get; }
 
+        /// <summary>
+        /// Gets the test configuration that contains the current application configuration, used by this project.
+        /// </summary>
+        protected TestConfig Configuration { get; }
+        
         /// <summary>
         /// Adds an test Azure storage account connection string to the Azure Function project so the project can start up correctly.
         /// </summary>

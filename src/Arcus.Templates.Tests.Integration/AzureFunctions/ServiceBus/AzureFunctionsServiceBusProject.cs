@@ -8,6 +8,7 @@ using Arcus.Templates.Tests.Integration.Worker;
 using Arcus.Templates.Tests.Integration.Worker.Fixture;
 using Arcus.Templates.Tests.Integration.Worker.MessagePump;
 using GuardNet;
+using Microsoft.Azure.ServiceBus;
 using Xunit.Abstractions;
 
 namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
@@ -18,7 +19,8 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
     [DebuggerDisplay("Project = {ProjectDirectory.FullName}")]
     public class AzureFunctionsServiceBusProject : AzureFunctionsProject, IAsyncDisposable
     {
-        private const string AzureServiceBusConnectionString = "Arcus:ServiceBus:ConnectionString";
+        private const string AzureServiceBusConnectionString = "Arcus:ServiceBus:ConnectionString",
+                             AzureServiceBusQueueName = "QueueName";
         
         private readonly ServiceBusEntity _entity;
         
@@ -109,9 +111,12 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
 
         private async Task StartAsync()
         {
-            string serviceBusConnection = Configuration.GetServiceBusConnectionString(_entity);
-            Environment.SetEnvironmentVariable(AzureServiceBusConnectionString, serviceBusConnection);
-
+            string serviceBusConnectionString = Configuration.GetServiceBusConnectionString(_entity);
+            var serviceBusConnection = new ServiceBusConnectionStringBuilder(serviceBusConnectionString);
+            
+            Environment.SetEnvironmentVariable(AzureServiceBusConnectionString, serviceBusConnection.GetNamespaceConnectionString());
+            Environment.SetEnvironmentVariable(AzureServiceBusQueueName, serviceBusConnection.EntityPath);
+            
             Run(BuildConfiguration.Debug, TargetFramework.NetCoreApp31);
         }
 
@@ -122,6 +127,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
         public async ValueTask DisposeAsync()
         {
             Environment.SetEnvironmentVariable(AzureServiceBusConnectionString, null);
+            Environment.SetEnvironmentVariable(AzureServiceBusQueueName, null);
             
             Dispose();
 

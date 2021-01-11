@@ -91,7 +91,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
             
             return project;
         }
-        
+
         private void AddOrdersMessageHandling()
         {
             AddPackage("Arcus.EventGrid", "3.0.0");
@@ -109,10 +109,10 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
 
         private async Task StartAsync()
         {
-            Run(BuildConfiguration.Debug, TargetFramework.NetCoreApp31);
-            
             string serviceBusConnection = Configuration.GetServiceBusConnectionString(_entity);
             Environment.SetEnvironmentVariable(AzureServiceBusConnectionString, serviceBusConnection);
+
+            Run(BuildConfiguration.Debug, TargetFramework.NetCoreApp31);
         }
 
         /// <summary>

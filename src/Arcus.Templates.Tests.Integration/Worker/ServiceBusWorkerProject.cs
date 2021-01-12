@@ -157,8 +157,8 @@ namespace Arcus.Templates.Tests.Integration.Worker
 
         private void AddOrdersMessagePump()
         {
-            AddPackage("Arcus.EventGrid", "3.0.0");
-            AddPackage("Arcus.EventGrid.Publishing", "3.0.0");
+            AddPackage("Arcus.EventGrid", "3.1.0");
+            AddPackage("Arcus.EventGrid.Publishing", "3.1.0");
             AddTypeAsFile<Order>();
             AddTypeAsFile<OrderCreatedEvent>();
             AddTypeAsFile<OrderCreatedEventData>();
@@ -170,7 +170,7 @@ namespace Arcus.Templates.Tests.Integration.Worker
                 RemovesUserErrorsFromContents(contents)
                     .Replace("EmptyMessageHandler", nameof(OrdersMessageHandler))
                     .Replace("EmptyMessage", nameof(Order))
-                    .Replace("AddAzureKeyVaultWithManagedServiceIdentity(\"https://your-keyvault-vault.azure.net/\")", 
+                    .Replace("AddAzureKeyVaultWithManagedServiceIdentity(\"https://your-keyvault.vault.azure.net/\")", 
                              $"AddProvider(new {nameof(SingleValueSecretProvider)}(\"{connectionString}\"))"));
         }
 

@@ -73,7 +73,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics
 
             UpdateFileInProject("Startup.cs", contents =>
                 RemovesUserErrorsFromContents(contents)
-                    .Replace("AddAzureKeyVaultWithManagedServiceIdentity(\"https://your-keyvault-vault.azure.net/\")", 
+                    .Replace("AddAzureKeyVaultWithManagedServiceIdentity(\"https://your-keyvault.vault.azure.net/\")", 
                              $"AddProvider(new {nameof(SingleValueSecretProvider)}(\"{securityToken}\"))"));
         }
 

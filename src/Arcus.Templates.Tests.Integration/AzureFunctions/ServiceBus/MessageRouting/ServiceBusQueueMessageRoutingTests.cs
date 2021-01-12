@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Arcus.Templates.Tests.Integration.Fixture;
 using Xunit;
 using Xunit.Abstractions;
 

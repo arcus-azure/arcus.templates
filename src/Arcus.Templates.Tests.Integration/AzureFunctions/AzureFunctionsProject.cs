@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.AzureFunctions.Configuration;
 using Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics.Configuration;
 using Arcus.Templates.Tests.Integration.Fixture;
 using GuardNet;
+using Newtonsoft.Json.Linq;
 using Polly;
 using Polly.Retry;
 using Xunit.Abstractions;
@@ -80,6 +83,40 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions
                     $"\"Values\": {{ \"AzureWebJobsStorage\": \"{storageAccountConnectionString}\", \"FUNCTIONS_WORKER_RUNTIME\": \"dotnet\" }}, " +
                     $"\"Host\": {{ \"LocalHttpPort\": {RootEndpoint.Port} }}" +
                 $"}}");
+        }
+        
+        /// <summary>
+        /// Adds a local key/value setting to the 'local.settings.json' file of the Azure Functions application.
+        /// </summary>
+        /// <param name="name">The name of the new application setting.</param>
+        /// <param name="value">The value of the application setting.</param>
+        /// <exception cref="ArgumentException">Thrown when the <paramref name="name"/> is blank.</exception>
+        /// <exception cref="FileNotFoundException">Thrown when no 'local.settings.json' file can be found on the Azure Functions test project.</exception>
+        /// <exception cref="JsonException">Thrown when the 'local.settings.json' file doesn't contain the necessary JSON tokens to add the new application setting.</exception>
+        protected void AddLocalSetting(string name, string value)
+        {
+            Guard.NotNullOrWhitespace(name, nameof(name), "Requires a non-blank name for the local setting to be added to the 'local.settings.json' file");
+            
+            if (!File.Exists(Path.Combine(ProjectDirectory.FullName, "local.settings.json")))
+            {
+                throw new FileNotFoundException(
+                    "Cannot find 'local.settings.json' file in project directory. Make sure that such a file is present before trying to add local settings");
+            }
+            
+            UpdateFileInProject("local.settings.json",
+                contents =>
+                {
+                    JObject json = JObject.Parse(contents);
+                    JToken values = json["Values"];
+                    if (values is null)
+                    {
+                        throw new JsonException("Cannot add a local setting to the 'local.settings.json' file because the JSON 'Values' token is not present");
+                    }
+                    
+                    values[name] = value;
+
+                    return json.ToString();
+                });
         }
 
         /// <summary>

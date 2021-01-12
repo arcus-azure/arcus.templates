@@ -68,7 +68,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics
         private static async Task WaitUntilDatabricksJobRunIsCompleted(DatabricksClient client, int jobId)
         {
             AsyncRetryPolicy<RunList> retryPolicy =
-                Policy.HandleResult<RunList>(list => list.Runs.Any(r => !r.IsCompleted))
+                Policy.HandleResult<RunList>(list => list.Runs is null || list.Runs.Any(r => !r.IsCompleted))
                       .WaitAndRetryForeverAsync(index => TimeSpan.FromSeconds(10));
 
             await Policy.TimeoutAsync(TimeSpan.FromMinutes(7))

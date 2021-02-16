@@ -7,7 +7,8 @@
   "prHourlyLimit": 0,
   "prConcurrentLimit": 0,
   "extends": [
-    "config:base"
+    "config:base",
+    "default:disablePrControls"
   ],
   "nuget": {
     "enabled": true

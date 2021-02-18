@@ -5,8 +5,6 @@ layout: default
 
 # Installation
 
-* [Show .NET Core templates directly in Visual Studio](/features/show-dotnet-templates-in-visualstudio)
-
 ## Web API
 
 ```shell

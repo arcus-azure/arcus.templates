@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json.schemastore.org/vs-2017.3.host",
+  "name": {
+    "text": "Arcus Web API project template"
+  },
+  "description": {
+    "text": "Provide a template to easily build Web APIs running in Azure."
+  },
+  "learnMoreLink": "https://templates.arcus-azure.net/features/web-api-template",
+  "icon": "icon.jpg",
+  "isApi": true,
+  "symbolInfo": [
+    {
+      "id": "authentication",
+      "name": {
+        "text": "Authentication"
+      },
+      "isVisible": true
+    },
+    {
+      "id": "include-appsettings",
+      "name": {
+        "text": "Include appsettings.json"
+      },
+      "isVisible": true
+    },
+    {
+      "id": "exclude-correlation",
+      "name": {
+        "text": "Exclude correlation"
+      },
+      "isVisible": true
+    },
+    {
+      "id": "exclude-openapi",
+      "name": {
+        "text": "Exclude OpenApi"
+      },
+      "isVisible": true
+    },
+    {
+      "id": "logging",
+      "name": {
+        "text": "Logging"
+      },
+      "isVisible": true
+    }
+  ]
+}

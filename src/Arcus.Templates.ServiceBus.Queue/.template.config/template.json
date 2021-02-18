@@ -3,9 +3,12 @@
   "author": "Arcus",
   "classifications": [
     "Worker",
+    "Azure Service Bus",
     "Service Bus",
-    "Queue",
-    "BoilerPlate"
+    "Message Processing",
+    "Messaging",
+    "Azure",
+    "Queue"
   ],
   "name": "Arcus Service Bus Queue v#{Package.Version}#",
   "identity": "Arcus.Templates.ServiceBus.Queue",

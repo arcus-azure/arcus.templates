@@ -2,9 +2,9 @@
   "$schema": "http://json.schemastore.org/template",
   "author": "Arcus",
   "classifications": [
-    "WebAPI",
+    "Web API",
     "API",
-    "BoilerPlate"
+    "Http"
   ],
   "name": "Arcus WebAPI v#{Package.Version}#",
   "identity": "Arcus.Templates.WebApi",

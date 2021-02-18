@@ -3,9 +3,12 @@
   "author": "Arcus",
   "classifications": [
     "Worker",
+    "Azure Service Bus",
     "Service Bus",
-    "Topic",
-    "BoilerPlate"
+    "Message Processing",
+    "Messaging",
+    "Azure",
+    "Topic"
   ],
   "name": "Arcus Service Bus Topic v#{Package.Version}#",
   "identity": "Arcus.Templates.ServiceBus.Topic",

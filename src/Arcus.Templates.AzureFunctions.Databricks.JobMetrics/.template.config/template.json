@@ -2,9 +2,13 @@
   "$schema": "http://json.schemastore.org/template",
   "author": "Arcus",
   "classifications": [
-    "AzureFunctions",
+    "Azure Functions",
+    "Data Analytics",
+    "Observability",
     "Databricks",
-    "Metric"
+    "Serverless",
+    "Azure",
+    "Metrics"
   ],
   "name": "Arcus Azure Functions Databricks v#{Package.Version}#",
   "identity": "Arcus.Templates.AzureFunctions.Databricks.JobMetrics",

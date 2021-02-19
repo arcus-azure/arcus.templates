@@ -1,7 +1,7 @@
 {
   "$schema": "http://json.schemastore.org/vs-2017.3.host",
   "name": {
-    "text": "Arcus Azure Service Bus Queue project template"
+    "text": "Azure Service Bus Queue"
   },
   "description": {
     "text": "Provide a template to easily build workers on a Azure Service Bus Queue."

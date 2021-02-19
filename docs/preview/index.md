@@ -5,6 +5,8 @@ layout: default
 
 # Installation
 
+* [Show Arcus project templates in Visual Studio](features/show-arcus-templates-in-visualstudio)
+
 ## Web API
 
 ```shell

@@ -1,7 +1,7 @@
 {
   "$schema": "http://json.schemastore.org/vs-2017.3.host",
   "name": {
-    "text": "Arcus Azure Service Bus Topic project template"
+    "text": "Azure Service Bus Topic"
   },
   "description": {
     "text": "Provide a template to easily build workers on a Azure Service Bus Topic."

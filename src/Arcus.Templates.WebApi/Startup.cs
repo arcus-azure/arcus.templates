@@ -94,7 +94,7 @@ namespace Arcus.Templates.WebApi
                 options.RespectBrowserAcceptHeader = true;
 
                 RestrictToJsonContentType(options);
-                AddEnumAsStringRepresentation(options);
+                ConfigureJsonFormatters(options);
 
 #if SharedAccessKeyAuth
                 #warning Please provide a valid request header name and secret name to the shared access filter
@@ -247,17 +247,21 @@ namespace Arcus.Templates.WebApi
             options.OutputFormatters.RemoveType<StringOutputFormatter>();
         }
 
-        private static void AddEnumAsStringRepresentation(MvcOptions options)
+        private static void ConfigureJsonFormatters(MvcOptions options)
         {
             var onlyJsonInputFormatters = options.InputFormatters.OfType<SystemTextJsonInputFormatter>();
             foreach (SystemTextJsonInputFormatter inputFormatter in onlyJsonInputFormatters)
             {
+                inputFormatter.SerializerOptions.MaxDepth = 10;
+                inputFormatter.SerializerOptions.IgnoreNullValues = true;
                 inputFormatter.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
             }
             
             var onlyJsonOutputFormatters = options.OutputFormatters.OfType<SystemTextJsonOutputFormatter>();
             foreach (SystemTextJsonOutputFormatter outputFormatter in onlyJsonOutputFormatters)
             {
+                outputFormatter.SerializerOptions.MaxDepth = 10;
+                outputFormatter.SerializerOptions.IgnoreNullValues = true;
                 outputFormatter.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
             }
         }

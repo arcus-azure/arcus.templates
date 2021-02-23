@@ -35,5 +35,6 @@ And additional features available with options:
 
 ## Older Versions
 
-* [v0.2.0](../v0.2/features/servicebus-queue-worker)
-* [v0.3.0](../v0.3/features/servicebus-queue-worker)
+* [v0.4.0](../v0.4/servicebus-queue-worker-template)
+* [v0.3.0](../v0.3/servicebus-queue-worker-template)
+* [v0.2.0](../v0.2/servicebus-queue-worker-template)

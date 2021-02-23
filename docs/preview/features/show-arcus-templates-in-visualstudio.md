@@ -3,7 +3,7 @@ title: "Show Arcus project templates in Visual Studio"
 layout: default
 ---
 
-# Use Arcus project templates in Visual Studio
+# Using Arcus templates in Visual Studio
 
 The available .NET project templates in this repository are all available via the command line.
 For example:
@@ -25,4 +25,3 @@ However, you can also use our .NET templates in Visual Studio by following these
 3. Check the box **Show all .NET Core templates in the New project dialog**
 
 ![Show all .NET Core templates in the New project dialog via Tools > Options > Preview Features](img/show-dotnet-templates-in-vs.png)
-

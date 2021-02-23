@@ -252,7 +252,6 @@ namespace Arcus.Templates.WebApi
             var onlyJsonInputFormatters = options.InputFormatters.OfType<SystemTextJsonInputFormatter>();
             foreach (SystemTextJsonInputFormatter inputFormatter in onlyJsonInputFormatters)
             {
-                inputFormatter.SerializerOptions.MaxDepth = 10;
                 inputFormatter.SerializerOptions.IgnoreNullValues = true;
                 inputFormatter.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
             }
@@ -260,7 +259,6 @@ namespace Arcus.Templates.WebApi
             var onlyJsonOutputFormatters = options.OutputFormatters.OfType<SystemTextJsonOutputFormatter>();
             foreach (SystemTextJsonOutputFormatter outputFormatter in onlyJsonOutputFormatters)
             {
-                outputFormatter.SerializerOptions.MaxDepth = 10;
                 outputFormatter.SerializerOptions.IgnoreNullValues = true;
                 outputFormatter.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
             }

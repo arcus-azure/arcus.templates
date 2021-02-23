@@ -35,5 +35,5 @@ And additional features available with options:
 
 ## Older Versions
 
-* [v0.2.0](../v0.2/features/servicebus-topic-worker)
-* [v0.3.0](../v0.3/features/servicebus-topic-worker)
+* [v0.3.0](../v0.3/servicebus-topic-worker-template)
+* [v0.2.0](../v0.2/servicebus-topic-worker-template)

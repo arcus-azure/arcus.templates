@@ -3,11 +3,20 @@ title: "Home"
 layout: default
 ---
 
+# Using our templates
+
+The `Arcus.Templates` has several build-in project templates available:
+* [Web API](features/web-api-template)
+* [Azure Service Bus Queue](features/servicebus-queue-worker-template)
+* [Azure Service Bus Topic](features/servicebus-topic-worker-template)
+* [Databricks Job Metrics (Azure Functions)](features/azurefunctions-databricks-jobmetrics-template)
+* [HTTP Trigger](features/azurefunctions-http-template)
+
+[Using Arcus project templates in Visual Studio](features/using-arcus-templates-in-visualstudio)
+
 # Installation
 
-* [Show Arcus project templates in Visual Studio](features/show-arcus-templates-in-visualstudio)
-
-## Web API
+### Web API
 
 ```shell
 PM > dotnet new --install Arcus.Templates.WebApi
@@ -15,7 +24,7 @@ PM > dotnet new --install Arcus.Templates.WebApi
 
 Read [here](features/web-api-template) for standard and configurable features.
 
-## Azure Service Bus Queue
+### Azure Service Bus Queue
 
 ```shell
 PM > dotnet new --install Arcus.Templates.ServiceBus.Queue
@@ -23,7 +32,7 @@ PM > dotnet new --install Arcus.Templates.ServiceBus.Queue
 
 Read [here](features/servicebus-queue-worker-template) for standard and configurable features.
 
-## Azure Service Bus Topic
+### Azure Service Bus Topic
 
 ```shell
 PM > dotnet new --install Arcus.Templates.ServiceBus.Topic
@@ -31,7 +40,7 @@ PM > dotnet new --install Arcus.Templates.ServiceBus.Topic
 
 Read [here](features/servicebus-topic-worker-template) for standard and configurable features.
 
-## Databricks Job Metrics (Azure Functions)
+### Databricks Job Metrics (Azure Functions)
 
 ```shell
 PM > dotnet new --install Arcus.Templates.AzureFunctions.Databricks.JobMetrics
@@ -39,7 +48,7 @@ PM > dotnet new --install Arcus.Templates.AzureFunctions.Databricks.JobMetrics
 
 Read [here](features/azurefunctions-databricks-jobmetrics-template) for standard and configurable features.
 
-## HTTP Trigger (Azure Functions)
+### HTTP Trigger (Azure Functions)
 
 ```shell
 PM > dotnet new --install Arcus.Templates.AzureFunctions.Http

@@ -1,5 +1,5 @@
 ---
-title: "Show Arcus project templates in Visual Studio"
+title: "Using Arcus templates in Visual Studio"
 layout: default
 ---
 

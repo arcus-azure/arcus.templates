@@ -23,8 +23,6 @@ When installed, the template can be created with shortname: `arcus-webapi`:
 
 Creates a starter web API project with by default configured:
 
-![](https://img.shields.io/badge/Available%20starting-v0.1-green?link=https://github.com/arcus-azure/arcus.templates/releases/tag/v0.1.0)
-
 * [Exception middleware](https://webapi.arcus-azure.net/features/logging) to log unhandled exceptions thrown during request processing.
 * Content negotiation that only supports `application/json`.
 * OpenAPI docs generation and UI (only available locally).

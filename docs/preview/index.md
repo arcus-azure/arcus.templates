@@ -12,7 +12,7 @@ Arcus Templates provides various project templates:
 * [Databricks Job Metrics (Azure Functions)](features/azurefunctions-databricks-jobmetrics-template)
 * [HTTP Trigger (Azure Functions)](features/azurefunctions-http-template)
 
-[Using Arcus project templates in Visual Studio](features/using-arcus-templates-in-visualstudio)
+Want to use our Arcus project templates in Visual Studio? [Learn more in our documentation](features/using-arcus-templates-in-visualstudio)!
 
 # Installation
 

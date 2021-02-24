@@ -42,7 +42,7 @@ And additional features available with options:
 * `-ia|--include-appsettings` (default `false`): includes a `appsettings.json` file to the web API project.
 * `-ec|--exclude-correlation` (default `false`): excludes the [capability to correlate](https://webapi.arcus-azure.net/features/correlation) between HTTP requests/responses from the API project.
 * `-eo|--exclude-openApi` (default `false`): exclude the [ASP.NET OpenAPI docs generation and UI](https://docs.microsoft.com/en-us/aspnet/core/tutorials/getting-started-with-swashbuckle?view=aspnetcore-3.1&tabs=visual-studio) from API project.
-* `-lo|--logging` (default `Console`)
+* `-lo|--logging` (default `Serilog`)
   * `Console`: no extra logging mechanism except for the default console logging will be added to the web API project.
   * `Serilog`: adds [Serilog](https://serilog.net/) as logging mechanism with request logging, default enrichers ([version](https://observability.arcus-azure.net/features/telemetry-enrichment#version-enricher), [application](https://observability.arcus-azure.net/features/telemetry-enrichment#application-enricher), and [correlation](https://webapi.arcus-azure.net/features/telemetry) when appropriate), sinking to Application Insights to the web API project.
 
@@ -53,5 +53,8 @@ As part of this template the following HTTP header(s) are removed for security s
 
 ## Older Versions
 
-* [v0.1.0](../v0.1/features/web-api-template)
-* [v0.2.0](../v0.2/features/web-api-template)
+* [v0.5.0](../v0.5/web-api-template)
+* [v0.4.0](../v0.4/web-api-template)
+* [v0.3.0](../v0.3/web-api-template)
+* [v0.2.0](../v0.2/web-api-template)
+* [v0.1.0](../v0.1/web-api-template)

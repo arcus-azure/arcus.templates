@@ -43,7 +43,6 @@ namespace Arcus.Templates.AzureFunctions.Http
 
             var jsonSettings = new JsonSerializerSettings
             {
-                MaxDepth = 10,
                 NullValueHandling = NullValueHandling.Ignore,
                 TypeNameHandling = TypeNameHandling.None
             };
@@ -52,7 +51,6 @@ namespace Arcus.Templates.AzureFunctions.Http
 
             var jsonOptions = new JsonSerializerOptions
             {
-                MaxDepth = 10,
                 IgnoreNullValues = true
             };
             jsonOptions.Converters.Add(new JsonStringEnumConverter());

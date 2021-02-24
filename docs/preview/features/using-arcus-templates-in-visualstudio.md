@@ -25,3 +25,7 @@ However, you can also use our .NET templates in Visual Studio by following these
 3. Check the box **Show all .NET Core templates in the New project dialog**
 
 ![Show all .NET Core templates in the New project dialog via Tools > Options > Preview Features](img/show-dotnet-templates-in-vs.png)
+
+Once you've enabled it, you can create a new project by using one of our templates:
+
+![Demo of our templates in Visual Studio](img/templates-in-vs.gif)

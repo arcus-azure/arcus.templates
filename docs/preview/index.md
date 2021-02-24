@@ -5,7 +5,7 @@ layout: default
 
 # Using our templates
 
-The `Arcus.Templates` has several build-in project templates available:
+Arcus Templates provides various project templates:
 * [Web API](features/web-api-template)
 * [Azure Service Bus Queue](features/servicebus-queue-worker-template)
 * [Azure Service Bus Topic](features/servicebus-topic-worker-template)

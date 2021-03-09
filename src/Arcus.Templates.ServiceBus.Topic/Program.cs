@@ -1,6 +1,5 @@
 ﻿using System;
-using Arcus.Security.Core;
-using Arcus.Security.Core.Caching;
+using Arcus.Security.Core.Caching.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -67,8 +66,8 @@ namespace Arcus.Templates.ServiceBus.Topic
                            stores.AddConfiguration(config);
                            //[#endif]
 
-                           //#error Please provide a valid secret provider, for example Azure Key Vault: https: //security.arcus-azure.net/features/secrets/consume-from-key-vault
-                           stores.AddAzureKeyVaultWithManagedServiceIdentity("https://your-keyvault.vault.azure.net/");
+                           //#error Please provide a valid secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secret-store/provider/key-vault
+                           stores.AddAzureKeyVaultWithManagedIdentity("https://your-keyvault.vault.azure.net/", CacheConfiguration.Default);
                        })
 #if (ExcludeSerilog == false)
                        .UseSerilog(UpdateLoggerConfiguration)

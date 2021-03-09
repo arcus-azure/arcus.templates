@@ -217,7 +217,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi
         private static string InsertInMemorySecretStore(string contents, string secretName, string secretValue)
         {
             string newSecretProviderWithSecret = CreatesInMemorySecretProviderConstructor(secretName, secretValue);
-            return contents.Replace("AddAzureKeyVaultWithManagedServiceIdentity(\"https://your-keyvault.vault.azure.net/\")", $"AddProvider({newSecretProviderWithSecret})");
+            return contents.Replace("AddAzureKeyVaultWithManagedIdentity(\"https://your-keyvault.vault.azure.net/\", CacheConfiguration.Default)", $"AddProvider({newSecretProviderWithSecret})");
         }
 
         private static string InsertInMemorySecretProviderCode(string contents, string replacementToken, string secretName, string secretValue)

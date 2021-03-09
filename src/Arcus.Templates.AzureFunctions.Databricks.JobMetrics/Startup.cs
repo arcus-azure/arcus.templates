@@ -1,4 +1,5 @@
-﻿using Arcus.Templates.AzureFunctions.Databricks.JobMetrics;
+﻿using Arcus.Security.Core.Caching.Configuration;
+using Arcus.Templates.AzureFunctions.Databricks.JobMetrics;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -6,7 +7,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Configuration;
-using Serilog.Core;
 using Serilog.Events;
 
 [assembly: FunctionsStartup(typeof(Startup))]
@@ -35,8 +35,8 @@ namespace Arcus.Templates.AzureFunctions.Databricks.JobMetrics
 
                 stores.AddEnvironmentVariables();
 
-                //#error Please provide a valid secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secrets/consume-from-key-vault
-                stores.AddAzureKeyVaultWithManagedServiceIdentity("https://your-keyvault.vault.azure.net/");
+                //#error Please provide a valid secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secret-store/provider/key-vault
+                stores.AddAzureKeyVaultWithManagedIdentity("https://your-keyvault.vault.azure.net/", CacheConfiguration.Default);
             });
 
             var instrumentationKey = config.GetValue<string>("APPLICATIONINSIGHTS_INSTRUMENTATIONKEY");

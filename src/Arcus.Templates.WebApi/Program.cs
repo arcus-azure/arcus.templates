@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using Arcus.Security.Core.Caching.Configuration;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -82,8 +83,8 @@ namespace Arcus.Templates.WebApi
                         stores.AddConfiguration(config);
 //[#endif]
 
-                        //#error Please provide a valid secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secrets/consume-from-key-vault
-                        stores.AddAzureKeyVaultWithManagedServiceIdentity("https://your-keyvault.vault.azure.net/");
+                        //#error Please provide a valid secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secret-store/provider/key-vault
+                        stores.AddAzureKeyVaultWithManagedIdentity("https://your-keyvault.vault.azure.net/", CacheConfiguration.Default);
                     })
                     .ConfigureWebHostDefaults(webBuilder =>
                     {

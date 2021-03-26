@@ -168,6 +168,7 @@ namespace Arcus.Templates.Tests.Integration.Worker
             string connectionString = _configuration.GetServiceBusConnectionString(_entity);
             UpdateFileInProject("Program.cs", contents => 
                 RemovesUserErrorsFromContents(contents)
+                    .Replace(".MinimumLevel.Debug()", ".MinimumLevel.Verbose()")
                     .Replace("EmptyMessageHandler", nameof(OrdersMessageHandler))
                     .Replace("EmptyMessage", nameof(Order))
                     .Replace("AddAzureKeyVaultWithManagedIdentity(\"https://your-keyvault.vault.azure.net/\", CacheConfiguration.Default)", 

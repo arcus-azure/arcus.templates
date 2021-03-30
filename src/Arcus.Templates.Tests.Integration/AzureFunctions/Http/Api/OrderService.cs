@@ -43,7 +43,25 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Api
         /// <exception cref="ArgumentNullException">Thrown when the <paramref name="order"/> is <c>null</c>.</exception>
         public async Task<HttpResponseMessage> PostAsync(Order order)
         {
+            Guard.NotNull(order, nameof(order), $"Requires an '{nameof(Order)}' model to post to the Azure Functions HTTP trigger");
+
             string json = JsonConvert.SerializeObject(order);
+            HttpResponseMessage response = await PostAsync(json);
+
+            return response;
+        }
+        
+        /// <summary>
+        /// HTTP POST an <paramref name="json"/> to the 'Order' HTTP trigger of the Azure Functions test project.
+        /// </summary>
+        /// <param name="json">The order to send to the HTTP trigger.</param>
+        /// <returns>
+        ///     The HTTP response of the HTTP trigger.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">Thrown when the <paramref name="json"/> is <c>null</c>.</exception>
+        public async Task<HttpResponseMessage> PostAsync(string json)
+        {
+            Guard.NotNull(json, nameof(json), $"Requires a JSON content representation of an '{nameof(Order)}' model to post to the Azure Function HTTP trigger");
             var content = new StringContent(json);
             
             using (var request = new HttpRequestMessage(HttpMethod.Post, _orderEndpoint))

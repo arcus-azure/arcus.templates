@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.AzureFunctions.Http.Api;
 using Arcus.Templates.Tests.Integration.Fixture;
 using Flurl;
+using GuardNet;
 using Xunit.Abstractions;
 
 namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http
@@ -44,21 +45,37 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http
         /// Starts a newly created project from the Azure Functions HTTP project template.
         /// </summary>
         /// <param name="configuration">The configuration to control the hosting of the to-be-created project.</param>
-        /// <param name="outputWriter">The output logger to add telemetry information during the creation and startup process.</param>
+        /// <param name="outputWriter">The output logger to write telemetry information during the creation and startup process.</param>
         /// <returns>
-        ///     A Azure Functions HTTP project with a full set of endpoint services to interact with the Azure Function.
+        ///     An Azure Functions HTTP project with a full set of endpoint services to interact with.
         /// </returns>
+        /// <exception cref="ArgumentNullException">Thrown when the <paramref name="configuration"/> or <paramref name="outputWriter"/> is <c>null</c>.</exception>
         /// <exception cref="CannotStartTemplateProjectException">Thrown when the Azure Functions project cannot be started correctly.</exception>
         public static async Task<AzureFunctionsHttpProject> StartNewAsync(TestConfig configuration, ITestOutputHelper outputWriter)
         {
+            Guard.NotNull(configuration, nameof(configuration), "Requires a configuration instance to control the hosting of the to-be-created project");
+            Guard.NotNull(outputWriter, nameof(outputWriter), "Requires a test logger to write diagnostic information during the creation and startup process");
+
             AzureFunctionsHttpProject project = CreateNew(configuration, outputWriter);
             await project.StartAsync();
 
             return project;
         }
 
-        private static AzureFunctionsHttpProject CreateNew(TestConfig configuration, ITestOutputHelper outputWriter)
+        /// <summary>
+        /// Creates a new temporary project based on the Azure Functions HTTP trigger project template.
+        /// </summary>
+        /// <param name="configuration">The configuration to control the hosting of the to-be-created project.</param>
+        /// <param name="outputWriter">The output logger to write telemetry information during the creation and startup process.</param>
+        /// <returns>
+        ///     An Azure Functions HTTP trigger project with a full set of endpoint services to interact with.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">Thrown when the <paramref name="configuration"/> or <paramref name="outputWriter"/> is <c>null</c>.</exception>
+        public static AzureFunctionsHttpProject CreateNew(TestConfig configuration, ITestOutputHelper outputWriter)
         {
+            Guard.NotNull(configuration, nameof(configuration), "Requires a configuration instance to control the hosting of the to-be-created project");
+            Guard.NotNull(outputWriter, nameof(outputWriter), "Requires a test logger to write diagnostic information during the creation and startup process");
+            
             var project = new AzureFunctionsHttpProject(configuration, outputWriter);
             project.CreateNewProject(new ProjectOptions());
             project.AddStorageAccount();
@@ -66,9 +83,12 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http
             return project;
         }
 
-        private async Task StartAsync()
+        /// <summary>
+        /// Starts the Azure Functions HTTP trigger project, created from the template.
+        /// </summary>
+        public async Task StartAsync()
         {
-            Run(BuildConfiguration.Debug, TargetFramework.NetCoreApp31);
+            Run(BuildConfiguration.Release, TargetFramework.NetCoreApp31);
             await WaitUntilTriggerIsAvailableAsync(OrderFunctionEndpoint);
         }
     }

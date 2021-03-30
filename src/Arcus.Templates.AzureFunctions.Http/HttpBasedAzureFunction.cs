@@ -100,7 +100,7 @@ namespace Arcus.Templates.AzureFunctions.Http
             using (var streamReader = new StreamReader(request.Body))
             using (var jsonReader = new JsonTextReader(streamReader))
             {
-                JObject parsedOrder = await JObject.LoadAsync(jsonReader);
+                JToken parsedOrder = await JToken.LoadAsync(jsonReader);
                 var model = parsedOrder.ToObject<TMessage>(JsonSerializer);
                 Validator.ValidateObject(model, new ValidationContext(model), validateAllProperties: true);
                 

@@ -311,7 +311,7 @@ namespace Arcus.Templates.WebApi
             
             return new LoggerConfiguration()
                 .MinimumLevel.Debug()
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
                 .Enrich.FromLogContext()
                 .Enrich.WithVersion()
                 .Enrich.WithComponentName("API")

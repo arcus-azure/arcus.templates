@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Arcus.WebApi.Logging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -36,6 +37,7 @@ namespace Arcus.Templates.WebApi.Controllers
         /// <response code="200">API is healthy</response>
         /// <response code="503">API is unhealthy or in degraded state</response>
         [HttpGet(Name = "Health_Get")]
+        [RequestTracking(500, 599)]
         [ProducesResponseType(typeof(HealthReport), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(HealthReport), StatusCodes.Status503ServiceUnavailable)]
 #if (ExcludeOpenApi == false && ExcludeCorrelation == false)

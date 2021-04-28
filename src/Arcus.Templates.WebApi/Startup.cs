@@ -310,7 +310,11 @@ namespace Arcus.Templates.WebApi
             var instrumentationKey = Configuration.GetValue<string>(ApplicationInsightsInstrumentationKeyName);
             
             return new LoggerConfiguration()
+//[#if DEBUG]
                 .MinimumLevel.Debug()
+//[#else]
+                .MinimumLevel.Information()
+//[#endif]
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
                 .Enrich.FromLogContext()
                 .Enrich.WithVersion()

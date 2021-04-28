@@ -52,6 +52,14 @@
       },
       "replaces": "//[#if DEBUG]"
     },
+    "ElseDirective": {
+      "type": "generated",
+      "generator": "constant",
+      "parameters": {
+        "value": "#else"
+      },
+      "replaces": "//[#else]"
+    },
     "EndIf": {
       "type": "generated",
       "generator": "constant",

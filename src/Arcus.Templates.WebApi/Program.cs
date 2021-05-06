@@ -10,12 +10,20 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 #if Serilog
 using Serilog;
+using Serilog.Configuration;
+using Serilog.Events;
+using Arcus.Observability.Telemetry.Serilog.Sinks.ApplicationInsights;
 #endif
 
 namespace Arcus.Templates.WebApi
 {
     public class Program
     {
+#if Serilog
+        #warning Make sure that the appsettings.json is updated with your Azure Application Insights instrumentation key.
+        private const string ApplicationInsightsInstrumentationKeyName = "Telemetry:ApplicationInsights:InstrumentationKey";
+
+#endif
         public static int Main(string[] args)
         {
 #if Serilog
@@ -86,19 +94,42 @@ namespace Arcus.Templates.WebApi
                         //#error Please provide a valid secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secret-store/provider/key-vault
                         stores.AddAzureKeyVaultWithManagedIdentity("https://your-keyvault.vault.azure.net/", CacheConfiguration.Default);
                     })
+#if Serilog
+                    .UseSerilog((context, serviceProvider, config) => CreateLoggerConfiguration(context, serviceProvider, config)) 
+#endif
                     .ConfigureWebHostDefaults(webBuilder =>
                     {
                         webBuilder.ConfigureKestrel(kestrelServerOptions => kestrelServerOptions.AddServerHeader = false)
                                   .UseUrls(httpEndpointUrl)
 #if Console
                                   .ConfigureLogging(logging => logging.AddConsole())
-#elif Serilog
-                                  .UseSerilog()
-#endif                                  
+#endif
                                   .UseStartup<Startup>();
                     });
 
             return webHostBuilder;
         }
+#if Serilog
+
+        private static LoggerConfiguration CreateLoggerConfiguration(
+            HostBuilderContext context, 
+            IServiceProvider serviceProvider, 
+            LoggerConfiguration config)
+        {
+            var instrumentationKey = context.Configuration.GetValue<string>(ApplicationInsightsInstrumentationKeyName);
+            
+            return config
+                .ReadFrom.Configuration(context.Configuration)
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                .Enrich.FromLogContext()
+                .Enrich.WithVersion()
+                .Enrich.WithComponentName("API")
+#if (ExcludeCorrelation == false)
+                .Enrich.WithHttpCorrelationInfo(serviceProvider)
+#endif
+                .WriteTo.Console()
+                .WriteTo.AzureApplicationInsights(instrumentationKey);
+        }
+#endif
     }
 }

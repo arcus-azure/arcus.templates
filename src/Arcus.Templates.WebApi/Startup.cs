@@ -263,7 +263,7 @@ namespace Arcus.Templates.WebApi
             app.UseRequestTracking();
             app.UseExceptionHandling();
 
-#warning Please configure application with HTTPS transport layer security and set 'useSSL' in the Docker 'launchSettings.json' back to 'true'
+            #warning Please configure application with HTTPS transport layer security and set 'useSSL' in the Docker 'launchSettings.json' back to 'true'
 
 #if JwtAuth
             app.UseAuthentication();

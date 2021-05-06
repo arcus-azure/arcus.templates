@@ -24,7 +24,6 @@ namespace Arcus.Templates.WebApi
         private const string ApplicationInsightsInstrumentationKeyName = "Telemetry:ApplicationInsights:InstrumentationKey";
 
 #endif
-        
         public static int Main(string[] args)
         {
 #if Serilog

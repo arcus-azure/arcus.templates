@@ -11,12 +11,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-#if Serilog
-using Serilog;
-using Serilog.Configuration;
-using Serilog.Events;
-using Arcus.Observability.Telemetry.Serilog.Sinks.ApplicationInsights;
-#endif
 #if (ExcludeOpenApi == false)
 using Microsoft.OpenApi.Models;
 #endif
@@ -51,11 +45,6 @@ namespace Arcus.Templates.WebApi
     {
 #if SharedAccessKeyAuth
         private const string SharedAccessKeyHeaderName = "X-API-Key";
-
-#endif
-#if Serilog
-        #warning Make sure that the appsettings.json is updated with your Azure Application Insights instrumentation key.
-        private const string ApplicationInsightsInstrumentationKeyName = "Telemetry:ApplicationInsights:InstrumentationKey";
 
 #endif
         /// <summary>
@@ -298,33 +287,6 @@ namespace Arcus.Templates.WebApi
 //[#endif]
 #endif
             app.UseEndpoints(endpoints => endpoints.MapControllers());
-
-#if Serilog
-            Log.Logger = CreateLoggerConfiguration(app.ApplicationServices).CreateLogger();
-#endif
         }
-#if Serilog
-
-        private LoggerConfiguration CreateLoggerConfiguration(IServiceProvider serviceProvider)
-        {
-            var instrumentationKey = Configuration.GetValue<string>(ApplicationInsightsInstrumentationKeyName);
-            
-            return new LoggerConfiguration()
-//[#if DEBUG]
-                .MinimumLevel.Debug()
-//[#else]
-                .MinimumLevel.Information()
-//[#endif]
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-                .Enrich.FromLogContext()
-                .Enrich.WithVersion()
-                .Enrich.WithComponentName("API")
-#if (ExcludeCorrelation == false)
-                .Enrich.WithHttpCorrelationInfo(serviceProvider)
-#endif
-                .WriteTo.Console()
-                .WriteTo.AzureApplicationInsights(instrumentationKey);
-        }
-#endif
     }
 }

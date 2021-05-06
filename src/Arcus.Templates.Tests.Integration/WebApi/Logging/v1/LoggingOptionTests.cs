@@ -52,6 +52,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Logging.v1
             // Act
             using (HttpResponseMessage response = await project.Health.GetAsync())
             {
+                project.TearDownOptions = TearDownOptions.KeepProjectDirectory;
                 // Assert
                 Assert.NotNull(response);
                 Assert.Equal(HttpStatusCode.OK, response.StatusCode);

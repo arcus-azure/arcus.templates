@@ -41,7 +41,7 @@
     <PackageReference Include="Guard.NET" Version="1.2.0" />
     <PackageReference Include="Microsoft.Azure.ApplicationInsights.Query" Version="1.0.0" />
     <PackageReference Include="Microsoft.Azure.Databricks.Client" Version="1.1.1613.2" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.10.0" />
     <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.2.3" />
     <PackageReference Include="Polly" Version="7.2.2" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />

@@ -67,7 +67,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics
                 Policy.HandleResult<RunList>(list => list.Runs is null || list.Runs.Any(r => !r.IsCompleted))
                       .WaitAndRetryForeverAsync(index => TimeSpan.FromSeconds(10));
 
-            await Policy.TimeoutAsync(TimeSpan.FromMinutes(7))
+            await Policy.TimeoutAsync(TimeSpan.FromMinutes(10))
                         .WrapAsync(retryPolicy)
                         .ExecuteAsync(async () => await client.Jobs.RunsList(jobId, activeOnly: true));
 

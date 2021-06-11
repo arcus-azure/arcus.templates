@@ -160,6 +160,7 @@ namespace Arcus.Templates.Tests.Integration.Worker
             AddPackage("Arcus.EventGrid", "3.1.0");
             AddPackage("Arcus.EventGrid.Publishing", "3.1.0");
             AddTypeAsFile<Order>();
+            AddTypeAsFile<Customer>();
             AddTypeAsFile<OrderCreatedEvent>();
             AddTypeAsFile<OrderCreatedEventData>();
             AddTypeAsFile<OrdersMessageHandler>();

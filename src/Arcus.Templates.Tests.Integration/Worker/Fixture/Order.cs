@@ -12,5 +12,8 @@ namespace Arcus.Templates.Tests.Integration.Worker.Fixture
 
         [JsonProperty]
         public string ArticleNumber { get; set; }
+
+        [JsonProperty]
+        public Customer Customer { get; set; }
     }
 }

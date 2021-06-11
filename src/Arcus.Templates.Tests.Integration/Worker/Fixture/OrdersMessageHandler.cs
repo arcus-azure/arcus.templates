@@ -64,7 +64,9 @@ namespace Arcus.Templates.Tests.Integration.Worker.Fixture
                 orderMessage.Id,
                 orderMessage.Amount,
                 orderMessage.ArticleNumber,
+                $"{orderMessage.Customer.FirstName} {orderMessage.Customer.LastName}",
                 correlationInfo);
+
             var orderCreatedEvent = new CloudEvent(
                 CloudEventsSpecVersion.V1_0,
                 "OrderCreatedEvent",

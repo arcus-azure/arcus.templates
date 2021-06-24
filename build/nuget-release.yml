@@ -31,7 +31,7 @@ stages:
     jobs:
       - job: Compile
         pool:
-          vmImage: 'ubuntu-16.04'
+          vmImage: '$(Vm.Image)'
         steps:
           - task: qetza.replacetokens.replacetokens-task.replacetokens@3
             displayName: 'Replace .template.json version'
@@ -71,7 +71,7 @@ stages:
       - job: RunIntegrationTests
         displayName: 'Run integration tests'
         pool:
-          vmImage: 'ubuntu-16.04'
+          vmImage: '$(Vm.Image)'
         steps:
           - template: 'templates/install-azure-functions-core-tools.yml'
           - template: test/run-integration-tests.yml@templates
@@ -88,7 +88,7 @@ stages:
       - job: PushToNuGet
         displayName: 'Push to NuGet.org'
         pool:
-          vmImage: 'ubuntu-16.04'
+          vmImage: '$(Vm.Image)'
         steps:
           - task: DownloadPipelineArtifact@2
             displayName: 'Download build artifacts'

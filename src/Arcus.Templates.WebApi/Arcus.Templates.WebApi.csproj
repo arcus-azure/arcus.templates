@@ -56,8 +56,8 @@
     <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Sinks.ApplicationInsights" Version="2.2.1" Condition="'$(Serilog)' == 'true'" />
     <PackageReference Include="Arcus.Security.Core" Version="1.6.0" />
     <PackageReference Include="Arcus.Security.Providers.AzureKeyVault" Version="1.6.0" />
-    <PackageReference Include="Arcus.WebApi.Logging" Version="1.3.1" />
-    <PackageReference Include="Arcus.WebApi.Security" Version="1.3.1" Condition="'$(Auth)' == 'true'" />
+    <PackageReference Include="Arcus.WebApi.Logging" Version="1.4.0" />
+    <PackageReference Include="Arcus.WebApi.Security" Version="1.4.0" Condition="'$(Auth)' == 'true'" />
     <PackageReference Include="Guard.NET" Version="1.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.9" Condition="'$(JwtAuth)' == 'true'" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.11.1" />

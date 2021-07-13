@@ -101,6 +101,21 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         }
 
         /// <summary>
+        /// Gets the project directory of the Azure Functions Service Bus project template based on the given <paramref name="entity"/>.
+        /// </summary>
+        public DirectoryInfo GetAzureFunctionsServiceBusDirectory(ServiceBusEntity entity)
+        {
+            switch (entity)
+            {
+                case ServiceBusEntity.Queue: return PathCombineWithSourcesDirectory("Arcus.Templates.AzureFunctions.ServiceBus.Queue");
+                case ServiceBusEntity.Topic:
+                    throw new NotSupportedException("Not yet supported");
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(entity), entity, null);
+            }
+        }
+
+        /// <summary>
         /// Gets the project directory where the fixtures are located.
         /// </summary>
         public DirectoryInfo GetFixtureProjectDirectory()

@@ -26,6 +26,7 @@
     <ContentTargetFolders>content</ContentTargetFolders>
     <EnableDefaultContentItems>false</EnableDefaultContentItems>
     <DockerComposeProjectPath>..\Arcus.Templates.Orchestrator.dcproj</DockerComposeProjectPath>
+    <NoWarn>NU5048;NU5125;CS1030;CS1998</NoWarn>
     <!--#endif-->
   </PropertyGroup>
 

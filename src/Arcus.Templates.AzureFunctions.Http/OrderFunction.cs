@@ -40,7 +40,7 @@ namespace Arcus.Templates.AzureFunctions.Http
         {
             try
             {
-                Logger.LogInformation("C# HTTP trigger function processed a request.");
+                Logger.LogInformation("C# HTTP trigger 'order' function processed a request");
                 if (IsJson(request) == false || AcceptsJson(request) == false)
                 {
                     string accept = String.Join(", ", GetAcceptMediaTypes(request));

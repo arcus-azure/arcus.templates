@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.Fixture;
 using Arcus.Templates.Tests.Integration.WebApi.Fixture;
@@ -34,7 +35,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Health
         /// </summary>
         public async Task<HttpResponseMessage> GetAsync()
         {
-            return await GetAsync(_healthEndpoint);
+            return await GetAsync(_healthEndpoint, request => request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json")));
         }
 
         /// <summary>

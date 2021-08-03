@@ -27,6 +27,14 @@
         "**/*.filelist",
         "**/*.user",
         "**/*.lock.json"
+      ],
+      "modifiers": [
+        {
+          "condition": "IncludeHealthChecks",
+          "include": [
+            "HealthFunction.cs"
+          ]
+        }
       ]
     }
   ],
@@ -53,7 +61,17 @@
         "value": "#endif"
       },
       "replaces": "//[#endif]"
-    }
+    },
+    "include-healthchecks": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false",
+      "description": "Include a health checks Azure Function to verify if the running Azure Function is healthy"
+    },
+    "IncludeHealthChecks": {
+      "type": "computed",
+      "value": "include-healthchecks"
+    } 
   },
   "postActions": [
     {
@@ -68,7 +86,7 @@
       "args": {
         "referenceType": "package",
         "reference": "Microsoft.NET.Sdk.Functions",
-        "version": "3.0.9",
+        "version": "3.0.13",
         "projectFileExtensions": ".csproj"
       }
     }

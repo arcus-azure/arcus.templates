@@ -21,7 +21,6 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http
         /// <summary>
         /// Adds the project option to include the health checks Azure Function from the Azure Functions HTTP trigger project.
         /// </summary>
-        /// <returns></returns>
         public AzureFunctionsHttpProjectOptions WithIncludeHealthChecks()
         {
             ProjectOptions newOptions = AddOption("--include-healthchecks");

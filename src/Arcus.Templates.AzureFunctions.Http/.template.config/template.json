@@ -30,8 +30,8 @@
       ],
       "modifiers": [
         {
-          "condition": "IncludeHealthChecks",
-          "include": [
+          "condition": "!(IncludeHealthChecks)",
+          "exclude": [
             "HealthFunction.cs"
           ]
         }

@@ -62,7 +62,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Health
                 new AzureFunctionsHttpProjectOptions()
                     .WithIncludeHealthChecks();
             
-            using (var project = await AzureFunctionsHttpProject.StartNewAsync(_config, _outputWriter))
+            using (var project = await AzureFunctionsHttpProject.StartNewAsync(_config, options, _outputWriter))
             {
                 // Act
                 using (HttpResponseMessage response = await project.Health.GetAsync(request =>

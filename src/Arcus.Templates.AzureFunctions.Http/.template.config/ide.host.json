@@ -10,6 +10,12 @@
   "icon": "icon.jpg",
   "isApi": true,
   "symbolInfo": [
-
+    {
+      "id": "include-healthchecks",
+      "name": {
+        "text": "Include Health Checks"
+      },
+      "isVisible": true 
+    }
   ]
 }

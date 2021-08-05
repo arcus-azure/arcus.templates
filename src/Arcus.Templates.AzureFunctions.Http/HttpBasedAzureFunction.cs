@@ -51,7 +51,8 @@ namespace Arcus.Templates.AzureFunctions.Http
 
             var jsonOptions = new JsonSerializerOptions
             {
-                IgnoreNullValues = true
+                IgnoreNullValues = true,
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             };
             jsonOptions.Converters.Add(new JsonStringEnumConverter());
             OutputFormatters = new FormatterCollection<IOutputFormatter> {new SystemTextJsonOutputFormatter(jsonOptions)};

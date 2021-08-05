@@ -28,6 +28,10 @@ namespace Arcus.Templates.AzureFunctions.Http
             IConfiguration config = builder.GetContext().Configuration;
 
             builder.AddHttpCorrelation();
+#if IncludeHealthChecks
+            builder.Services.AddHealthChecks();
+#endif
+
             builder.ConfigureSecretStore(stores =>
             {
 //[#if DEBUG]

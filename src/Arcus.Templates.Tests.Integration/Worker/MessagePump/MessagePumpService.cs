@@ -7,11 +7,10 @@ using Arcus.EventGrid.Testing.Infrastructure.Hosts.ServiceBus;
 using Arcus.Templates.Tests.Integration.Fixture;
 using Arcus.Templates.Tests.Integration.Logging;
 using Arcus.Templates.Tests.Integration.Worker.Fixture;
+using Azure.Messaging.ServiceBus;
 using Bogus;
 using GuardNet;
-using Microsoft.Azure.EventGrid.Models;
 using Microsoft.Azure.ServiceBus;
-using Microsoft.Azure.ServiceBus.Core;
 using Microsoft.Extensions.Configuration;
 using Xunit;
 using Xunit.Abstractions;
@@ -76,36 +75,39 @@ namespace Arcus.Templates.Tests.Integration.Worker.MessagePump
             var transactionId = Guid.NewGuid().ToString();
 
             string connectionString = _configuration.GetServiceBusConnectionString(_entity);
-            var serviceBusConnectionStringBuilder = new ServiceBusConnectionStringBuilder(connectionString);
-            var messageSender = new MessageSender(serviceBusConnectionStringBuilder);
-
-            try
+            var connectionStringProperties = ServiceBusConnectionStringProperties.Parse(connectionString);
+            
+            await using (var client = new ServiceBusClient(connectionString))
+            await using (ServiceBusSender messageSender = client.CreateSender(connectionStringProperties.EntityPath))
             {
-                Order order = GenerateOrder();
-                Message orderMessage = order.AsServiceBusMessage(operationId, transactionId);
-                await messageSender.SendAsync(orderMessage);
+                try
+                {
+                    Order order = GenerateOrder();
+                    ServiceBusMessage orderMessage = order.AsServiceBusMessage(operationId, transactionId);
+                    await messageSender.SendMessageAsync(orderMessage);
 
-                string receivedEvent = _serviceBusEventConsumerHost.GetReceivedEvent(operationId);
-                Assert.NotEmpty(receivedEvent);
+                    string receivedEvent = _serviceBusEventConsumerHost.GetReceivedEvent(operationId);
+                    Assert.NotEmpty(receivedEvent);
 
-                EventBatch<Event> eventBatch = EventParser.Parse(receivedEvent);
-                Assert.NotNull(eventBatch);
-                Event orderCreatedEvent = Assert.Single(eventBatch.Events);
-                Assert.NotNull(orderCreatedEvent);
+                    EventBatch<Event> eventBatch = EventParser.Parse(receivedEvent);
+                    Assert.NotNull(eventBatch);
+                    Event orderCreatedEvent = Assert.Single(eventBatch.Events);
+                    Assert.NotNull(orderCreatedEvent);
 
-                var orderCreatedEventData = orderCreatedEvent.GetPayload<OrderCreatedEventData>();
-                Assert.NotNull(orderCreatedEventData);
-                Assert.NotNull(orderCreatedEventData.CorrelationInfo);
-                Assert.Equal(order.Id, orderCreatedEventData.Id);
-                Assert.Equal(order.Amount, orderCreatedEventData.Amount);
-                Assert.Equal(order.ArticleNumber, orderCreatedEventData.ArticleNumber);
-                Assert.Equal(transactionId, orderCreatedEventData.CorrelationInfo.TransactionId);
-                Assert.Equal(operationId, orderCreatedEventData.CorrelationInfo.OperationId);
-                Assert.NotEmpty(orderCreatedEventData.CorrelationInfo.CycleId);
-            }
-            finally
-            {
-                await messageSender.CloseAsync();
+                    var orderCreatedEventData = orderCreatedEvent.GetPayload<OrderCreatedEventData>();
+                    Assert.NotNull(orderCreatedEventData);
+                    Assert.NotNull(orderCreatedEventData.CorrelationInfo);
+                    Assert.Equal(order.Id, orderCreatedEventData.Id);
+                    Assert.Equal(order.Amount, orderCreatedEventData.Amount);
+                    Assert.Equal(order.ArticleNumber, orderCreatedEventData.ArticleNumber);
+                    Assert.Equal(transactionId, orderCreatedEventData.CorrelationInfo.TransactionId);
+                    Assert.Equal(operationId, orderCreatedEventData.CorrelationInfo.OperationId);
+                    Assert.NotEmpty(orderCreatedEventData.CorrelationInfo.CycleId);
+                }
+                finally
+                {
+                    await messageSender.CloseAsync();
+                }
             }
         }
 

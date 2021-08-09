@@ -15,10 +15,8 @@ Arcus Templates provides various project templates:
 * [Azure Service Bus Queue](servicebus-queue-worker-template)
 * [Azure Service Bus Topic](servicebus-topic-worker-template)
 * [Databricks Job Metrics (Azure Functions)](azurefunctions-databricks-jobmetrics-template)
-* [HTTP Trigger (Azure Functions)](azurefunctions-http-template)
+* [HTTP Trigger (Azure Functions)](azurefunctions-http-templates)
 * [Web API](web-api-template)
-
-Want to use our Arcus project templates in Visual Studio? [Learn more in our documentation](features/using-arcus-templates-in-visualstudio)!
 
 # Installation
 
@@ -52,7 +50,7 @@ Read [here](azurefunctions-databricks-jobmetrics-template) for standard and conf
 PM > dotnet new --install Arcus.Templates.AzureFunctions.Http
 ```
 
-Read [here](azurefunctions-http-template) for standard and configuratble features.
+Read [here](azurefunctions-http-templates) for standard and configuratble features.
 
 ### Web API
 

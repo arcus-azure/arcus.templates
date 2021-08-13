@@ -275,7 +275,12 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             return processInfo;
         }
 
-        private static string GetTargetFrameworkIdentifier(TargetFramework targetFramework)
+        /// <summary>
+        /// Gets the identifier for the given <paramref name="targetFramework"/> (ex: 'netcoreapp3.1').
+        /// </summary>
+        /// <param name="targetFramework">The target framework for which the end result project from the project template is build.</param>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when the <paramref name="targetFramework"/> is outside the bounds of the enumeration.</exception>
+        protected static string GetTargetFrameworkIdentifier(TargetFramework targetFramework)
         {
             switch (targetFramework)
             {

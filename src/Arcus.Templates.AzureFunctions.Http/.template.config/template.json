@@ -54,6 +54,14 @@
       },
       "replaces": "//[#if DEBUG]"
     },
+    "ElseDirective": {
+      "type": "generated",
+      "generator": "constant",
+      "parameters": {
+        "value": "#else"
+      },
+      "replaces": "//[#else]"
+    },
     "EndIf": {
       "type": "generated",
       "generator": "constant",
@@ -71,7 +79,17 @@
     "IncludeHealthChecks": {
       "type": "computed",
       "value": "include-healthchecks"
-    } 
+    },
+    "exclude-openApi": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false",
+      "description": "Exclude the OpenApi docs, UI generation from XML docs from the Azure Functions project"
+    },
+    "ExcludeOpenApi": {
+      "type": "computed",
+      "value": "exclude-openApi"
+    }
   },
   "postActions": [
     {

@@ -61,7 +61,9 @@
     <PackageReference Include="Arcus.Security.Providers.AzureKeyVault" Version="1.6.0" />
     <PackageReference Include="Arcus.WebApi.Logging.AzureFunctions" Version="1.4.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="4.0.1" />
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.0.12" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.0.12" Condition="'$(ExcludeOpenApi)' == 'true'" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.OpenApi" Version="0.8.1-preview" Condition="'$(ExcludeOpenApi)' == 'false'" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.OpenApi.Core" Version="0.8.1-preview" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.11.2" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
     <PackageReference Include="Serilog.Sinks.Console" Version="4.0.0" />

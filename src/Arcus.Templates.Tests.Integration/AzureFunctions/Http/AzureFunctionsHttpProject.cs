@@ -32,7 +32,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http
             OrderFunctionEndpoint = RootEndpoint.AppendPathSegments("api", "v1", "order").ToUri();
             Order = new OrderService(OrderFunctionEndpoint, outputWriter);
             Health = new HealthEndpointService(
-                RootEndpoint.AppendPathSegments("api", "v1", "health").ToUri(), 
+                RootEndpoint.AppendPathSegments("api", "v1").ToUri(), 
                 outputWriter);
             Swagger = new SwaggerEndpointService(
                 RootEndpoint.AppendPathSegments("api", "swagger", "ui"),

@@ -27,7 +27,7 @@ namespace Arcus.Templates.AzureFunctions.Http
                 new OpenApiHeader
                 {
                     Required = true,
-                    Description = "Operation ID is used to identity a single operation call."
+                    Description = "Operation ID is used to identify a single operation call."
                 }
             }
         };

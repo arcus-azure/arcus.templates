@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 #if (ExcludeOpenApi == false)
 using Microsoft.OpenApi.Models;
+using Arcus.Templates.WebApi.ExampleProviders;
 #endif
 #if (ExcludeOpenApi == false && ExcludeCorrelation == false)
 using Swashbuckle.AspNetCore.Filters;
@@ -146,6 +147,7 @@ namespace Arcus.Templates.WebApi
                 swaggerGenerationOptions.SwaggerDoc("v1", openApiInformation);
                 swaggerGenerationOptions.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "Arcus.Templates.WebApi.Open-Api.xml"));
 
+                swaggerGenerationOptions.ExampleFilters();
 #if (ExcludeCorrelation == false)
                 swaggerGenerationOptions.OperationFilter<AddHeaderOperationFilter>("X-Transaction-Id", "Transaction ID is used to correlate multiple operation calls. A new transaction ID will be generated if not specified.", false);
                 swaggerGenerationOptions.OperationFilter<AddResponseHeadersFilter>();
@@ -220,6 +222,7 @@ namespace Arcus.Templates.WebApi
                 });
 #endif
             });
+            services.AddSwaggerExamplesFromAssemblyOf<HealthReportExampleProvider>();
 //[#endif]
 #endif
         }

@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-
 using Swashbuckle.AspNetCore.Filters;
 
 namespace Arcus.Templates.WebApi.ExampleProviders
@@ -21,4 +18,3 @@ namespace Arcus.Templates.WebApi.ExampleProviders
         }
     }
 }
-

@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if (ExcludeOpenApi == false)
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -18,3 +19,5 @@ namespace Arcus.Templates.WebApi.ExampleProviders
         }
     }
 }
+
+#endif

@@ -32,6 +32,12 @@
           "exclude": [
             "appsettings*.json"
           ]
+        },
+        {
+          "condition": "ExcludeOpenApi",
+          "exclude": [
+            "ExampleProviders/HealthReportExampleProvider.cs"
+          ]
         }
       ]
     }

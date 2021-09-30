@@ -52,14 +52,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="ExampleProviders\HealthReportExampleProvider.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="ExampleProviders\HealthReportExampleProvider.cs" Condition="'$(ExcludeOpenApi)' == 'false'" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Arcus.Observability.Telemetry.AspNetCore" Version="2.2.2" />
     <PackageReference Include="Arcus.Observability.Telemetry.Core" Version="2.2.2" />
     <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Sinks.ApplicationInsights" Version="2.2.2" Condition="'$(Serilog)' == 'true'" />

@@ -12,9 +12,12 @@ namespace Arcus.Templates.WebApi.ExampleProviders
         {
             var entries = new Dictionary<string, HealthReportEntry>
             {
-                ["api"] = new HealthReportEntry(HealthStatus.Healthy, "Api is healthy", TimeSpan.FromMilliseconds(120), null, null)
+                ["api"] = new HealthReportEntry(status: HealthStatus.Healthy, description: "Api is healthy", duration: TimeSpan.FromMilliseconds(120), null, null)
             };
-            return new HealthReport(new ReadOnlyDictionary<string, HealthReportEntry>(new Dictionary<string, HealthReportEntry>()), TimeSpan.FromMilliseconds(201));
+
+            var healthReportEntries = new ReadOnlyDictionary<string, HealthReportEntry>(entries);
+
+            return new HealthReport(entries: healthReportEntries, totalDuration: TimeSpan.FromMilliseconds(201));
         }
     }
 }

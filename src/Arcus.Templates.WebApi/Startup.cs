@@ -222,7 +222,7 @@ namespace Arcus.Templates.WebApi
                 });
 #endif
             });
-            services.AddSwaggerExamplesFromAssemblyOf<HealthReportExampleProvider>();
+            services.AddSwaggerExamplesFromAssemblyOf<HealthReportResponseExampleProvider>();
 //[#endif]
 #endif
         }

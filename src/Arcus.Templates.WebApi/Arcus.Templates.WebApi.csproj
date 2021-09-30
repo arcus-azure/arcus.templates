@@ -67,8 +67,4 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="7.0.2" Condition="'$(ExcludeOpenApi)' == 'false' and '$(ExcludeCorrelation)' == 'false'" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="ExampleProviders\" />
-  </ItemGroup>
-
 </Project>

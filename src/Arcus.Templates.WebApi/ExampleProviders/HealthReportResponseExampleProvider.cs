@@ -6,8 +6,15 @@ using Swashbuckle.AspNetCore.Filters;
 
 namespace Arcus.Templates.WebApi.ExampleProviders
 {
-    public class HealthReportExampleProvider : IExamplesProvider<HealthReport>
+    /// <summary>
+    /// Generates an example response object for the health API endpoint that will be included in the OpenAPI documentation.
+    /// </summary>
+    public class HealthReportResponseExampleProvider : IExamplesProvider<HealthReport>
     {
+        /// <summary>
+        /// Build the HealthReport response example
+        /// </summary>
+        /// <returns>A populated HealthReport object that acts as the example included in the OpenAPI documentation.</returns>
         public HealthReport GetExamples()
         {
             var entries = new Dictionary<string, HealthReportEntry>

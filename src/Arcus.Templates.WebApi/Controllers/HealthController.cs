@@ -48,7 +48,7 @@ namespace Arcus.Templates.WebApi.Controllers
         [SwaggerResponseHeader(200, "RequestId", "string", "The header that has a request ID that uniquely identifies this operation call")]
         [SwaggerResponseHeader(200, "X-Transaction-Id", "string", "The header that has the transaction ID is used to correlate multiple operation calls.")]
 #endif
-        [SwaggerResponseExample(200, typeof(HealthReportExampleProvider))]
+        [SwaggerResponseExample(200, typeof(HealthReportResponseExampleProvider))]
 #endif
         public async Task<IActionResult> Get()
         {

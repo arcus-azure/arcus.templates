@@ -59,7 +59,9 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Swagger.v1
                 OpenApiDocument document = LoadOpenApiDocument(json);
 
                 var healthOperation = SelectGetHealthEndpoint(document);
-                var okResponse = healthOperation.Responses.Single(r => r.Key == "200").Value;
+                
+                var okResponse = healthOperation.Responses
+                                                .Single(r => r.Key == "200").Value;
 
                 var example = SelectHealthPointOkExample(okResponse);
 

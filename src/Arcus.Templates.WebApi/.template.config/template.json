@@ -36,7 +36,7 @@
         {
           "condition": "ExcludeOpenApi",
           "exclude": [
-            "ExampleProviders/HealthReportExampleProvider.cs"
+            "**/ExampleProviders/HealthReportResponseExampleProvider.cs"
           ]
         }
       ]

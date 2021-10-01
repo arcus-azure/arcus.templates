@@ -25,6 +25,26 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Swagger.v1
         }
 
         [Fact]
+        public async Task ExampleProvidersNotIncluded_WithExcludeOpenApiDocs()
+        {
+            var options = new WebApiProjectOptions().WithExcludeOpenApiDocs();
+            using (var project = await WebApiProject.StartNewAsync(options, _outputWriter))
+            {
+                Assert.False(project.ContainsFile("ExampleProviders\\HealthReportResponseExampleProvider.cs"));
+            }
+        }
+
+        [Fact]
+        public async Task ExampleProvidersIncluded_WithoutExcludeOpenApiDocs()
+        {
+            var options = new WebApiProjectOptions();
+            using (var project = await WebApiProject.StartNewAsync(options, _outputWriter))
+            {
+                Assert.True(project.ContainsFile("ExampleProviders\\HealthReportResponseExampleProvider.cs"));
+            }
+        }
+
+        [Fact]
         public async Task GetSwaggerDocs_ReturnsDocsWithHealthEndpointResponseExample()
         {
             // Arrange
@@ -41,9 +61,9 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Swagger.v1
                 var healthOperation = SelectGetHealthEndpoint(document);
                 var okResponse = healthOperation.Responses.Single(r => r.Key == "200").Value;
 
-                var example = SelectHealthPointOkExample(okResponse); 
+                var example = SelectHealthPointOkExample(okResponse);
 
-                Assert.Contains("entries",example.Keys);
+                Assert.Contains("entries", example.Keys);
 
                 var entriesCollection = (OpenApiObject)example["entries"];
 

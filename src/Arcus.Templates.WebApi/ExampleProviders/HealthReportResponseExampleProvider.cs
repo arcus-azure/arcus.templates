@@ -19,7 +19,8 @@ namespace Arcus.Templates.WebApi.ExampleProviders
         {
             var entries = new Dictionary<string, HealthReportEntry>
             {
-                ["api"] = new HealthReportEntry(status: HealthStatus.Healthy, description: "Api is healthy", duration: TimeSpan.FromMilliseconds(120), null, null)
+                ["api"] = new HealthReportEntry(status: HealthStatus.Healthy, description: "Api is healthy", duration: TimeSpan.FromMilliseconds(33), null, null),
+                ["database"]= new HealthReportEntry(status: HealthStatus.Healthy, description: "Database is available", duration: TimeSpan.FromMilliseconds(123), null, null),
             };
 
             var healthReportEntries = new ReadOnlyDictionary<string, HealthReportEntry>(entries);

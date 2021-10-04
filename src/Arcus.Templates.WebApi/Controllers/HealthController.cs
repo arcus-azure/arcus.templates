@@ -6,9 +6,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using GuardNet;
 #if (ExcludeOpenApi == false)
 using Arcus.Templates.WebApi.ExampleProviders;
-#if (ExcludeCorrelation == false)
 using Swashbuckle.AspNetCore.Filters;
-#endif
 #endif
 
 namespace Arcus.Templates.WebApi.Controllers

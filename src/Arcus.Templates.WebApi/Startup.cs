@@ -14,8 +14,6 @@ using Microsoft.Extensions.DependencyInjection;
 #if (ExcludeOpenApi == false)
 using Microsoft.OpenApi.Models;
 using Arcus.Templates.WebApi.ExampleProviders;
-#endif
-#if (ExcludeOpenApi == false && ExcludeCorrelation == false)
 using Swashbuckle.AspNetCore.Filters;
 #endif
 #if SharedAccessKeyAuth

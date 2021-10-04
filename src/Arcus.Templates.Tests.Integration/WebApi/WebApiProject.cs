@@ -203,6 +203,8 @@ namespace Arcus.Templates.Tests.Integration.WebApi
         /// <returns>True if the file is present, otherwise false.</returns>
         public bool ContainsFile(string filename)
         {
+            Console.WriteLine("Checking for file " + Path.Combine(ProjectDirectory.FullName, filename));
+
             return File.Exists(Path.Combine(ProjectDirectory.FullName, filename));
         }
 

@@ -58,12 +58,12 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Swagger.v1
                 string json = await response.Content.ReadAsStringAsync();
                 OpenApiDocument document = LoadOpenApiDocument(json);
 
-                var healthOperation = SelectGetHealthEndpoint(document);
+                OpenApiOperation healthOperation = SelectGetHealthEndpoint(document);
                 
-                var okResponse = healthOperation.Responses
+                OpenApiResponse okResponse = healthOperation.Responses
                                                 .Single(r => r.Key == "200").Value;
 
-                var example = SelectHealthPointOkExample(okResponse);
+                OpenApiObject example = SelectHealthPointOkExample(okResponse);
 
                 Assert.Contains("entries", example.Keys);
 

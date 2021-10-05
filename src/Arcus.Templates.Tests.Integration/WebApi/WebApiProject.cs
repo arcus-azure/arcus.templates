@@ -203,19 +203,21 @@ namespace Arcus.Templates.Tests.Integration.WebApi
         /// <returns>True if the file is present, otherwise false.</returns>
         public bool ContainsFile(string filename)
         {
-            Guard.NotNullOrWhitespace(filename, nameof(filename), "The filename parameter cannot be null or empty");
+            Guard.NotNullOrWhitespace(filename, nameof(filename), "The filename parameter cannot be blank");
 
-            Logger.WriteLine($"Checking if project contains file {Path.Combine(ProjectDirectory.FullName, filename)}");
+            string filePath = Path.Combine(ProjectDirectory.FullName, filename);
+
+            Logger.WriteLine("Checking if project contains file {FilePath}", filePath);
             
-            var projectContainsFile = File.Exists(Path.Combine(ProjectDirectory.FullName, filename));
+            var projectContainsFile = File.Exists(filePath);
 
             if (projectContainsFile)
             {
-                Logger.WriteLine($"Project contains file {Path.Combine(ProjectDirectory.FullName, filename)}");
+                Logger.WriteLine("Project contains file {FilePath}", filePath);
             }
             else
             {
-                Logger.WriteLine($"Project does not contain file {Path.Combine(ProjectDirectory.FullName, filename)}");
+                Logger.WriteLine("Project does not contain file {FilePath}", filePath);
             }
 
             return projectContainsFile;

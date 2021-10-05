@@ -1,4 +1,5 @@
-﻿using Microsoft.OpenApi.Any;
+﻿using System.IO;
+using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Readers;
 using System.Linq;
@@ -30,7 +31,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Swagger.v1
             var options = new WebApiProjectOptions().WithExcludeOpenApiDocs();
             using (var project = await WebApiProject.StartNewAsync(options, _outputWriter))
             {
-                Assert.False(project.ContainsFile("ExampleProviders\\HealthReportResponseExampleProvider.cs"));
+                Assert.False(project.ContainsFile(Path.Combine("ExampleProviders", "HealthReportResponseExampleProvider.cs")));
             }
         }
 
@@ -40,7 +41,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Swagger.v1
             var options = new WebApiProjectOptions();
             using (var project = await WebApiProject.StartNewAsync(options, _outputWriter))
             {
-                Assert.True(project.ContainsFile("ExampleProviders\\HealthReportResponseExampleProvider.cs"));
+                Assert.True(project.ContainsFile(Path.Combine("ExampleProviders", "HealthReportResponseExampleProvider.cs")));
             }
         }
 
@@ -59,7 +60,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Swagger.v1
                 OpenApiDocument document = LoadOpenApiDocument(json);
 
                 OpenApiOperation healthOperation = SelectGetHealthEndpoint(document);
-                
+
                 OpenApiResponse okResponse = healthOperation.Responses
                                                 .Single(r => r.Key == "200").Value;
 

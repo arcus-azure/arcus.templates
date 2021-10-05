@@ -207,17 +207,17 @@ namespace Arcus.Templates.Tests.Integration.WebApi
 
             string filePath = Path.Combine(ProjectDirectory.FullName, filename);
 
-            Logger.WriteLine("Checking if project contains file {FilePath}", filePath);
+            Logger.WriteLine("Checking if project contains file {0}", filePath);
             
             var projectContainsFile = File.Exists(filePath);
 
             if (projectContainsFile)
             {
-                Logger.WriteLine("Project contains file {FilePath}", filePath);
+                Logger.WriteLine("Project contains file {0}", filePath);
             }
             else
             {
-                Logger.WriteLine("Project does not contain file {FilePath}", filePath);
+                Logger.WriteLine("Project does not contain file {0}", filePath);
             }
 
             return projectContainsFile;

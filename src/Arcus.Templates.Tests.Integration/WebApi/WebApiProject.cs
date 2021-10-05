@@ -205,9 +205,20 @@ namespace Arcus.Templates.Tests.Integration.WebApi
         {
             Guard.NotNullOrWhitespace(filename, nameof(filename), "The filename parameter cannot be null or empty");
 
-            Console.WriteLine("Checking for file " + Path.Combine(ProjectDirectory.FullName, filename));
+            Logger.WriteLine($"Checking if project contains file {Path.Combine(ProjectDirectory.FullName, filename)}");
+            
+            var projectContainsFile = File.Exists(Path.Combine(ProjectDirectory.FullName, filename));
 
-            return File.Exists(Path.Combine(ProjectDirectory.FullName, filename));
+            if (projectContainsFile)
+            {
+                Logger.WriteLine($"Project contains file {Path.Combine(ProjectDirectory.FullName, filename)}");
+            }
+            else
+            {
+                Logger.WriteLine($"Project does not contain file {Path.Combine(ProjectDirectory.FullName, filename)}");
+            }
+
+            return projectContainsFile;
         }
 
         /// <summary>

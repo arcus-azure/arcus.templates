@@ -81,7 +81,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Swagger.v1
         private static OpenApiDocument LoadOpenApiDocument(string json)
         {
             var reader = new OpenApiStringReader();
-            OpenApiDocument document = reader.Read(json, out OpenApiDiagnostic diagnostic);
+            OpenApiDocument document = reader.Read(json, out OpenApiDiagnostic _);
             
             return document;
         }

@@ -48,16 +48,16 @@
   <ItemGroup>
     <PackageReference Include="Arcus.Messaging.Health" Version="1.0.1" />
     <PackageReference Include="Arcus.Messaging.Pumps.ServiceBus" Version="1.0.1" />
-    <PackageReference Include="Arcus.Observability.Telemetry.Core" Version="2.2.2" />
-    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Sinks.ApplicationInsights" Version="2.2.2" Condition="'$(ExcludeSerilog)' == 'false'" />
+    <PackageReference Include="Arcus.Observability.Telemetry.Core" Version="2.3.0" />
+    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Sinks.ApplicationInsights" Version="2.3.0" Condition="'$(ExcludeSerilog)' == 'false'" />
     <PackageReference Include="Arcus.Security.Core" Version="1.6.0" />
     <PackageReference Include="Arcus.Security.Providers.AzureKeyVault" Version="1.6.0" />
     <PackageReference Include="Guard.NET" Version="1.2.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.12.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Serilog" Version="2.10.0" Condition="'$(ExcludeSerilog)' == 'false'" />
-    <PackageReference Include="Serilog.Extensions.Hosting" Version="4.1.2" Condition="'$(ExcludeSerilog)' == 'false'" />
+    <PackageReference Include="Serilog.Extensions.Hosting" Version="4.2.0" Condition="'$(ExcludeSerilog)' == 'false'" />
     <PackageReference Include="Serilog.Sinks.Console" Version="4.0.0" />
   </ItemGroup>
 

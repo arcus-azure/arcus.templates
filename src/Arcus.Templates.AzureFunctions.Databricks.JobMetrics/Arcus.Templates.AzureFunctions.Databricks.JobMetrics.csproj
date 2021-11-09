@@ -54,14 +54,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Arcus.BackgroundJobs.Databricks" Version="0.2.0" />
-    <PackageReference Include="Arcus.Observability.Telemetry.AzureFunctions" Version="2.2.2" />
-    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Sinks.Applicationinsights" Version="2.2.2" />
+    <PackageReference Include="Arcus.BackgroundJobs.Databricks" Version="0.3.0" />
+    <PackageReference Include="Arcus.Observability.Telemetry.AzureFunctions" Version="2.3.0" />
+    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Sinks.Applicationinsights" Version="2.3.0" />
     <PackageReference Include="Arcus.Security.AzureFunctions" Version="1.6.0" />
     <PackageReference Include="Arcus.Security.Providers.AzureKeyVault" Version="1.6.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="4.0.1" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.12.0" />
-    <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="4.0.0" />
   </ItemGroup>
 </Project>

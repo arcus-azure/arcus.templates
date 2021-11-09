@@ -13,7 +13,7 @@ using GuardNet;
 using Polly;
 using Xunit.Abstractions;
 
-namespace Arcus.Templates.Tests.Integration.WebApi 
+namespace Arcus.Templates.Tests.Integration.WebApi
 {
     /// <summary>
     /// Project template to create new web API projects.
@@ -27,7 +27,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi
         private static readonly HttpClient HttpClient = new HttpClient();
 
         private WebApiProject(
-            Uri baseUrl, 
+            Uri baseUrl,
             TestConfig configuration,
             DirectoryInfo templateDirectory,
             DirectoryInfo fixturesDirectory,
@@ -197,14 +197,41 @@ namespace Arcus.Templates.Tests.Integration.WebApi
         }
 
         /// <summary>
+        /// Verifies if the specified file is part of the project.
+        /// </summary>
+        /// <param name="filename">The complete path and filename of the file, relative to the root folder of the project (without leading (back)slash).</param>
+        /// <returns>True if the file is present, otherwise false.</returns>
+        public bool ContainsFile(string filename)
+        {
+            Guard.NotNullOrWhitespace(filename, nameof(filename), "The filename parameter cannot be blank");
+
+            string filePath = Path.Combine(ProjectDirectory.FullName, filename);
+
+            Logger.WriteLine("Checking if project contains file {0}", filePath);
+            
+            var projectContainsFile = File.Exists(filePath);
+
+            if (projectContainsFile)
+            {
+                Logger.WriteLine("Project contains file {0}", filePath);
+            }
+            else
+            {
+                Logger.WriteLine("Project does not contain file {0}", filePath);
+            }
+
+            return projectContainsFile;
+        }
+
+        /// <summary>
         /// Starts the web API project on a previously configured endpoint.
         /// </summary>
         public async Task StartAsync()
         {
-            Run(_configuration.BuildConfiguration, 
+            Run(_configuration.BuildConfiguration,
                 _configuration.TargetFramework,
                 CommandArgument.CreateOpen("ARCUS_HTTP_PORT", _baseUrl.Port));
-            
+
             await WaitUntilWebProjectIsAvailable(_baseUrl.Port);
         }
 
@@ -214,7 +241,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi
                 Policy.Handle<Exception>()
                       .WaitAndRetryForeverAsync(_ => TimeSpan.FromSeconds(1));
 
-            var result = 
+            var result =
                 await Policy.TimeoutAsync(TimeSpan.FromSeconds(10))
                             .WrapAsync(waitAndRetryForeverAsync)
                             .ExecuteAndCaptureAsync(() => GetNonExistingEndpoint(httpPort));

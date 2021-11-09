@@ -4,7 +4,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using GuardNet;
-#if (ExcludeOpenApi == false && ExcludeCorrelation == false)
+#if (ExcludeOpenApi == false)
+using Arcus.Templates.WebApi.ExampleProviders;
 using Swashbuckle.AspNetCore.Filters;
 #endif
 
@@ -40,9 +41,12 @@ namespace Arcus.Templates.WebApi.Controllers
         [RequestTracking(500, 599)]
         [ProducesResponseType(typeof(HealthReport), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(HealthReport), StatusCodes.Status503ServiceUnavailable)]
-#if (ExcludeOpenApi == false && ExcludeCorrelation == false)
+#if (ExcludeOpenApi == false)
+#if (ExcludeCorrelation == false)
         [SwaggerResponseHeader(200, "RequestId", "string", "The header that has a request ID that uniquely identifies this operation call")]
         [SwaggerResponseHeader(200, "X-Transaction-Id", "string", "The header that has the transaction ID is used to correlate multiple operation calls.")]
+#endif
+        [SwaggerResponseExample(200, typeof(HealthReportResponseExampleProvider))]
 #endif
         public async Task<IActionResult> Get()
         {

@@ -63,7 +63,7 @@
     <PackageReference Include="Arcus.WebApi.Logging.AzureFunctions" Version="1.4.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="4.0.1" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.0.12" />
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.OpenApi" Version="0.8.1-preview" Condition="'$(ExcludeOpenApi)' == 'false'" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.OpenApi" Version="1.0.0" Condition="'$(ExcludeOpenApi)' == 'false'" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.12.0" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
     <PackageReference Include="Serilog.Sinks.Console" Version="4.0.0" />

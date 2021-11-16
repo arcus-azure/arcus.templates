@@ -60,7 +60,7 @@
     <PackageReference Include="Arcus.WebApi.Logging" Version="1.4.1" />
     <PackageReference Include="Arcus.WebApi.Security" Version="1.4.1" Condition="'$(Auth)' == 'true'" />
     <PackageReference Include="Guard.NET" Version="1.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.18" Condition="'$(JwtAuth)' == 'true'" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.0" Condition="'$(JwtAuth)' == 'true'" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="4.1.0" Condition="'$(Serilog)' == 'true'" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" Condition="'$(ExcludeOpenApi)' == 'false'" />

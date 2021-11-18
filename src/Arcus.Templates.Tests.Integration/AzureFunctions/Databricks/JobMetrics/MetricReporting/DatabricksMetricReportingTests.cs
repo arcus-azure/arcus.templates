@@ -67,7 +67,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics
         {
             var settings = new JobSettings
             {
-                Name = "(temp) Arcus Background Jobs - Integration Testing",
+                Name = "(temp) Arcus Templates - Integration Testing",
                 NewCluster = new ClusterInfo
                 {
                     RuntimeVersion = "8.3.x-scala2.12",

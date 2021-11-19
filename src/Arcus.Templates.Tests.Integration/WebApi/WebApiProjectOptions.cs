@@ -117,7 +117,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi
 
             ReplaceProjectFileContent(
                 projectDirectory,
-                "Startup.cs",
+                "Program.cs",
                 contents =>
                 {
                     contents = InsertInMemorySecretProviderCode(contents, "null", "JwtSigningKey", key);
@@ -165,7 +165,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi
 
             ReplaceProjectFileContent(
                 projectDirectory,
-                "Startup.cs",
+                "Program.cs",
                 contents => InsertSharedAccessAuthenticationHeaderSecretPair(contents, requestHeader, secretName));
 
             ReplaceProjectFileContent(

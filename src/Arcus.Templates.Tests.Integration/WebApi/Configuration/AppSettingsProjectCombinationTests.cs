@@ -35,7 +35,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Configuration
                     .WithSerilogLogging(instrumentationKey)
                     .WithCertificateSubjectAuthentication($"CN={subject}");
 
-            using (var project = await WebApiProject.StartNewAsync(_configuration, optionsWithSerilogAndCertificateAuth, _outputWriter))
+            using (var project = await WebApiProject.StartNewAsync(optionsWithSerilogAndCertificateAuth, _outputWriter))
             // Act
             using (HttpResponseMessage response = await project.Health.GetAsync())
             {

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -6,6 +8,7 @@ using System.Threading.Tasks;
 using GuardNet;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -53,7 +56,13 @@ namespace Arcus.Templates.Tests.Integration.Worker.Health
                     string healthReportJson = await reader.ReadToEndAsync();
 
                     Assert.False(String.IsNullOrWhiteSpace(healthReportJson), $"Probed health at TCP port {_healthPort} report cannot be blank");
-                    return JsonConvert.DeserializeObject<HealthReport>(healthReportJson);
+                    JObject json = JObject.Parse(healthReportJson);
+
+                    var status = Enum.Parse<HealthStatus>(json["status"].ToString());
+                    return new HealthReport(
+                        new ReadOnlyDictionary<string, HealthReportEntry>(new Dictionary<string, HealthReportEntry>()),
+                        status,
+                        TimeSpan.Zero);
                 }
             }
         }

@@ -18,6 +18,11 @@ stages:
             displayName: 'Import .NET Core SDK ($(DotNet.Sdk.Version))'
             inputs:
               version: '$(DotNet.Sdk.Version)'
+          - task: UseDotNet@2
+            displayName: 'Import .NET Core SDK ($(DotNet.Sdk.PreviousVersion))'
+            inputs:
+              packageType: 'sdk'
+              version: '$(DotNet.Sdk.PreviousVersion)'
           - task: DotNetCoreCLI@2
             displayName: 'Install template'
             inputs:

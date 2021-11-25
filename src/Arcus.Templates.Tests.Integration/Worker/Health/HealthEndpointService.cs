@@ -42,7 +42,7 @@ namespace Arcus.Templates.Tests.Integration.Worker.Health
         /// <summary>
         /// Probe for a health report at a worker's pre-configured local health port.
         /// </summary>
-        public async Task<HealthReport> ProbeHealthReportAsync()
+        public async Task<HealthStatus> ProbeHealthAsync()
         {
             using (var client = new TcpClient())
             {
@@ -59,10 +59,7 @@ namespace Arcus.Templates.Tests.Integration.Worker.Health
                     JObject json = JObject.Parse(healthReportJson);
 
                     var status = Enum.Parse<HealthStatus>(json["status"].ToString());
-                    return new HealthReport(
-                        new ReadOnlyDictionary<string, HealthReportEntry>(new Dictionary<string, HealthReportEntry>()),
-                        status,
-                        TimeSpan.Zero);
+                    return status;
                 }
             }
         }

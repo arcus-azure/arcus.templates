@@ -1,17 +1,20 @@
 ﻿using System;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using Arcus.Templates.Tests.Integration.Fixture;
 using Arcus.Templates.Tests.Integration.WebApi.Fixture;
 using Flurl;
 using GuardNet;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Newtonsoft.Json.Linq;
+using Xunit;
 using Xunit.Abstractions;
 
 namespace Arcus.Templates.Tests.Integration.WebApi.Health
 {
     /// <summary>
-    /// Service to collect operations on the health functionality of the API.
+    /// Service to collect operations on the health functionality of the application.
     /// </summary>
     public class HealthEndpointService : EndpointService
     {
@@ -31,7 +34,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Health
         }
 
         /// <summary>
-        /// Sends a GET request to the health endpoint of the API web application.
+        /// Sends a GET request to the health endpoint of the application.
         /// </summary>
         public async Task<HttpResponseMessage> GetAsync()
         {
@@ -39,12 +42,31 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Health
         }
 
         /// <summary>
-        /// Sends a GET request to the health endpoint of the API web application.
+        /// Sends a GET request to the health endpoint of the application.
         /// </summary>
         /// <param name="alterRequest">The custom function to alter the request before sending.</param>
         public async Task<HttpResponseMessage> GetAsync(Action<HttpRequestMessage> alterRequest)
         {
             return await GetAsync(_healthEndpoint, alterRequest);
+        }
+
+        /// <summary>
+        /// Sends a GET request to the health endpoint of the application, parsing the result as a valid <see cref="HealthStatus"/> value.
+        /// </summary>
+        public async Task<HealthStatus> GetHealthAsync()
+        {
+            using (HttpResponseMessage response = await GetAsync())
+            {
+                Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+                string json = await response.Content.ReadAsStringAsync();
+                var jobject = JObject.Parse(json);
+
+                JToken statusToken = Assert.Single(jobject["status"]);
+                Assert.NotNull(statusToken);
+                Assert.True(Enum.TryParse(statusToken.Value<string>(), out HealthStatus status));
+
+                return status;
+            }
         }
     }
 }

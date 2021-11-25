@@ -6,6 +6,8 @@ using Arcus.Templates.Tests.Integration.Fixture;
 using Arcus.Templates.Tests.Integration.WebApi.Health.v1;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
 using Xunit;
 using Xunit.Abstractions;
 
@@ -47,9 +49,8 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Health
                     
                     string healthReportJson = await response.Content.ReadAsStringAsync();
 
-                    var healthReport = JsonConvert.DeserializeObject<HealthReport>(healthReportJson, new TimeSpanConverter());
-                    Assert.NotNull(healthReport);
-                    Assert.Equal(HealthStatus.Healthy, healthReport.Status);
+                    var healthReport = JObject.Parse(healthReportJson);
+                    Assert.Equal(HealthStatus.Healthy.ToString(), healthReport["status"]);
                 }
             }
         }

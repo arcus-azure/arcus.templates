@@ -1,8 +1,5 @@
-﻿using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Newtonsoft.Json.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -26,17 +23,10 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Health.v1
             using (WebApiProject project = await WebApiProject.StartNewAsync(_outputWriter))
             {
                 // Act
-                using (HttpResponseMessage response = await project.Health.GetAsync())
-                {
-                    // Assert
-                    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+                HealthStatus status = await project.Health.GetHealthAsync();
 
-                    string healthReportJson = await response.Content.ReadAsStringAsync();
-
-                    JObject healthReport = JObject.Parse(healthReportJson);
-                    Assert.NotNull(healthReport);
-                    Assert.Equal(HealthStatus.Healthy.ToString(), healthReport["status"]);
-                }
+                // Assert
+                Assert.Equal(HealthStatus.Healthy, status);
             }
         }
     }

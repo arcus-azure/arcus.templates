@@ -100,3 +100,9 @@ stages:
               dotnetSdkVersion: '$(DotNet.Sdk.Version)'
               projectName: '$(Project).Tests.Integration'
               category: 'Docker'
+          - task: PowerShell@2
+            displayName: 'Get Docker container logs for Arcus.Demo.WebApi'
+            inputs:
+              targetType: 'inline'
+              script: 'docker logs Arcus.Demo.WebApi'
+            condition: failed()

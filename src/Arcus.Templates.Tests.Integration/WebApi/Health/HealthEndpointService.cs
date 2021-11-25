@@ -61,7 +61,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Health
                 string json = await response.Content.ReadAsStringAsync();
                 var jobject = JObject.Parse(json);
 
-                JToken statusToken = Assert.Single(jobject["status"]);
+                JToken statusToken = jobject["status"];
                 Assert.NotNull(statusToken);
                 Assert.True(Enum.TryParse(statusToken.Value<string>(), out HealthStatus status));
 

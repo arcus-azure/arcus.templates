@@ -52,3 +52,9 @@ steps:
       containerName: '${{ parameters.projectName }}'
       ports: '${{ parameters.ports }}'
       envVars: ${{ parameters.envVars }}
+  - task: PowerShell@2
+    displayName: 'Get Docker container logs for ${{ parameters.projectName }}'
+    inputs:
+      targetType: 'inline'
+      script: 'docker logs ${{ parameters.projectName }}'
+    condition: failed()

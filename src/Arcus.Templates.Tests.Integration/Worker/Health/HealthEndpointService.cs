@@ -53,12 +53,17 @@ namespace Arcus.Templates.Tests.Integration.Worker.Health
                 using (var reader = new StreamReader(clientStream))
                 {
                     _outputWriter.WriteLine("Probe for health report at TCP port {0}", _healthPort);
+                    
                     string healthReportJson = await reader.ReadToEndAsync();
-
                     Assert.False(String.IsNullOrWhiteSpace(healthReportJson), $"Probed health at TCP port {_healthPort} report cannot be blank");
+                    
                     JObject json = JObject.Parse(healthReportJson);
+                    Assert.NotNull(json);
 
-                    var status = Enum.Parse<HealthStatus>(json["status"].ToString());
+                    JToken statusToken = json["Status"];
+                    Assert.NotNull(statusToken);
+
+                    var status = Enum.Parse<HealthStatus>(statusToken.ToString());
                     return status;
                 }
             }

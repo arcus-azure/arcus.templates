@@ -20,7 +20,7 @@
     {
       "id": "exclude-openapi",
       "name": {
-        "text": "Exclude OpenApi"
+        "text": "Exclude OpenApi Documentation"
       },
       "isVisible": true
     }

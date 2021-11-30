@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Arcus.WebApi.Logging.Correlation;
@@ -7,8 +8,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Enums;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
 
 namespace Arcus.Templates.AzureFunctions.Http
 {
@@ -37,6 +41,17 @@ namespace Arcus.Templates.AzureFunctions.Http
         }
 
         [FunctionName("health")]
+#if (ExcludeOpenApi == false)
+        
+        [OpenApiOperation("Health_Get", tags: new[] { "health" }, Summary = "Gets the health report", Description = "Gets the current health report of the running Azure Function", Visibility = OpenApiVisibilityType.Important)]
+        [OpenApiSecurity("function_key", SecuritySchemeType.ApiKey, Name = "code", In = OpenApiSecurityLocationType.Header)]
+        [OpenApiParameter("X-Transaction-Id", In = ParameterLocation.Header, Type = typeof(string), Required = false, Summary = "The correlation transaction ID", Description = "The correlation transaction ID is used to correlate multiple operation calls")]
+        [OpenApiResponseWithBody(HttpStatusCode.OK, "application/json", typeof(string), Summary = "The health report summary", Description = "The health report summary of all the run health checks", CustomHeaderType = typeof(HttpCorrelationOpenApiResponseHeaders))]
+        [OpenApiResponseWithBody(HttpStatusCode.UnsupportedMediaType, "text/plain", typeof(string), Summary = "The faulted response for non-JSON requests", Description = "The faulted response (415) when the request doesn't accept JSON")]
+        [OpenApiResponseWithBody(HttpStatusCode.BadRequest, "text/plain", typeof(string), Summary = "The faulted response for invalid correlation requests", Description = "The faulted response (400) when the request doesn't correlate correctly")]
+        [OpenApiResponseWithBody(HttpStatusCode.InternalServerError, "text/plain", typeof(string), Summary = "The faulted response for general failures", Description = "The faulted response (500) for any general and unexpected server-related failure")]
+        [OpenApiResponseWithBody(HttpStatusCode.ServiceUnavailable, "application/json", typeof(string), Summary = "The faulted response for unhealthy reports", Description = "The faulted response (503) when the health checks results in an unhealthy report", CustomHeaderType = typeof(HttpCorrelationOpenApiResponseHeaders))]
+#endif
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = "v1/health")] HttpRequest request,
             CancellationToken cancellation)
@@ -63,10 +78,7 @@ namespace Arcus.Templates.AzureFunctions.Http
                     return Json(healthReport);
                 }
 
-                return new ObjectResult(healthReport)
-                {
-                    StatusCode = StatusCodes.Status503ServiceUnavailable
-                };
+                return Json(healthReport, statusCode: StatusCodes.Status503ServiceUnavailable);
             }
             catch (Exception exception)
             {

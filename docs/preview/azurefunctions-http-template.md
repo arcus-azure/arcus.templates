@@ -30,12 +30,14 @@ Creates a starter worker project with by default configured:
     * HTTP correlation (see more info [here](https://webapi.arcus-azure.net/features/correlation) on what this includes)
     * Request content and header to restrict to JSON content and JSON parsing with data model annotations validation
     * General exception handling that results in 500 Internal Server Error
+    * OpenAPI docs generation and UI (see more info [here](https://github.com/Azure/azure-functions-openapi-extension))
 
 ### Configuration
 
 And additional features available with options:
 
 * `--include-healthchecks` (default `false`): include a default Health Azure Function and health check services from the project
+* `--exclude-openapi` (default `false`): exclude the [Azure Functions OpenAPI docs generation and UI](https://github.com/Azure/azure-functions-openapi-extension) from the project.
 
 ### Security
 

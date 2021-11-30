@@ -36,6 +36,7 @@ stages:
               ports: '$(Http.Port):$(Http.Port)'
               envVars: |
                 ARCUS_HTTP_PORT=$(Http.Port)
+                ASPNETCORE_URLS=http://+:$(Http.Port)
           - template: 'run-new-project-from-template.yml'
             parameters:
               projectName: 'Arcus.Demo.ServiceBus.Queue'
@@ -104,5 +105,5 @@ stages:
             displayName: 'Get Docker container logs for Arcus.Demo.WebApi'
             inputs:
               targetType: 'inline'
-              script: 'docker logs Arcus.Demo.WebApi:$(Build.BuildId)'
+              script: 'docker logs Arcus.Demo.WebApi'
             condition: failed()

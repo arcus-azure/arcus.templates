@@ -1,4 +1,6 @@
-﻿using Arcus.Security.Core.Caching.Configuration;
+﻿using System;
+using System.Collections.Generic;
+using Arcus.Security.Core.Caching.Configuration;
 using Arcus.Templates.AzureFunctions.Http;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
@@ -18,6 +20,12 @@ namespace Arcus.Templates.AzureFunctions.Http
         // This method gets called by the runtime. Use this method to configure the app configuration.
         public override void ConfigureAppConfiguration(IFunctionsConfigurationBuilder builder)
         {
+//[#if DEBUG]
+            Environment.SetEnvironmentVariable("OpenApi__HideSwaggerUI", "false");
+//[#else]
+            Environment.SetEnvironmentVariable("OpenApi__HideSwaggerUI", "true");
+//[#endif]
+
             builder.ConfigurationBuilder.AddEnvironmentVariables();
         }
         

@@ -15,7 +15,14 @@
       "name": {
         "text": "Include Health Checks"
       },
-      "isVisible": true 
+      "isVisible": true
+    },
+    {
+      "id": "exclude-openapi",
+      "name": {
+        "text": "Exclude OpenApi Documentation"
+      },
+      "isVisible": true
     }
   ]
 }

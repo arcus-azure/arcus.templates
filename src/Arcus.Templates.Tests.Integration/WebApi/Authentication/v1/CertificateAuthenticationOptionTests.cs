@@ -17,7 +17,6 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Authentication.v1
     [Trait("Category", TestTraits.Integration)]
     public class CertificateAuthenticationOptionTests
     {
-        private readonly TestConfig _configuration;
         private readonly ITestOutputHelper _outputWriter;
 
         /// <summary>
@@ -25,7 +24,6 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Authentication.v1
         /// </summary>
         public CertificateAuthenticationOptionTests(ITestOutputHelper outputWriter)
         {
-            _configuration = TestConfig.Create();
             _outputWriter = outputWriter;
         }
 
@@ -39,7 +37,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Authentication.v1
                 new WebApiProjectOptions()
                     .WithCertificateSubjectAuthentication($"CN={subject}");
 
-            using (var project = await WebApiProject.StartNewAsync(_configuration, authenticatedProjectArguments, _outputWriter))
+            using (var project = await WebApiProject.StartNewAsync(authenticatedProjectArguments, _outputWriter))
             {
                 // Act
                 using (HttpResponseMessage response = await project.Health.GetAsync())
@@ -61,9 +59,10 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Authentication.v1
                 new WebApiProjectOptions()
                     .WithCertificateSubjectAuthentication($"CN={subject}");
 
-            using (var project = await WebApiProject.StartNewAsync(_configuration, authenticatedProjectArguments, _outputWriter))
+            using (var project = await WebApiProject.StartNewAsync(authenticatedProjectArguments, _outputWriter))
             using (var certificate = SelfSignedCertificate.CreateWithSubject(subject))
             {
+                project.TearDownOptions = TearDownOptions.KeepProjectDirectory;
                 var clientCertificate = Convert.ToBase64String(certificate.RawData);
 
                 // Act
@@ -88,7 +87,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Authentication.v1
                 new WebApiProjectOptions()
                     .WithCertificateSubjectAuthentication($"CN={subject}");
 
-            using (var project = await WebApiProject.StartNewAsync(_configuration, authenticatedProjectArguments, _outputWriter))
+            using (var project = await WebApiProject.StartNewAsync(authenticatedProjectArguments, _outputWriter))
             {
                 // Act
                 using (HttpResponseMessage response = await project.Swagger.GetSwaggerDocsAsync())

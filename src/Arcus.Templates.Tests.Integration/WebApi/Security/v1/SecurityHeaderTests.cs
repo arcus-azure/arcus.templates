@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Arcus.Templates.Tests.Integration.Fixture;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -12,12 +11,10 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Security.v1
     [Trait("Category", TestTraits.Integration)]
     public class SecurityHeaderTests
     {
-        private readonly TestConfig _configuration;
         private readonly ITestOutputHelper _outputWriter;
 
         public SecurityHeaderTests(ITestOutputHelper outputWriter)
         {
-            _configuration = TestConfig.Create();
             _outputWriter = outputWriter;
         }
 
@@ -25,7 +22,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Security.v1
         public async Task SecurityHeaders_BasicHttpCall_ServerHeaderNotReturned()
         {
             // Arrange
-            using (WebApiProject project = await WebApiProject.StartNewAsync(_configuration, _outputWriter))
+            using (WebApiProject project = await WebApiProject.StartNewAsync(_outputWriter))
             // Act
             using (HttpResponseMessage response = await project.Health.GetAsync())
             {

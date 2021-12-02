@@ -34,10 +34,10 @@ namespace Arcus.Templates.Tests.Integration.Worker.Logging
             using (var project = await ServiceBusWorkerProject.StartNewAsync(resourceEntity, config, options, _outputWriter))
             {
                 // Act
-                HealthReport report = await project.Health.ProbeHealthReportAsync();
+                HealthStatus status = await project.Health.ProbeHealthAsync();
                 
                 // Assert
-                Assert.Equal(HealthStatus.Healthy, report.Status);
+                Assert.Equal(HealthStatus.Healthy, status);
             }
         }
     }

@@ -1,5 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Newtonsoft.Json;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -23,10 +25,10 @@ namespace Arcus.Templates.Tests.Integration.Worker.Health
             await using (var project = await ServiceBusWorkerProject.StartNewWithQueueAsync(_outputWriter))
             {
                 // Act
-                HealthReport report = await project.Health.ProbeHealthReportAsync();
+                HealthStatus status = await project.Health.ProbeHealthAsync();
 
                 // Assert
-                Assert.Equal(HealthStatus.Healthy, report.Status);
+                Assert.Equal(HealthStatus.Healthy, status);
             }
         }
     }

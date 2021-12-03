@@ -46,7 +46,7 @@ namespace Arcus.Templates.AzureFunctions.Http
         }
 
         /// <summary>
-        /// Gets the serializer that's being used when incoming requests are being serialized or deserialized into JSON.
+        /// Gets the serializer options that's being used when incoming requests are being serialized or deserialized into JSON.
         /// </summary>
         protected JsonSerializerOptions JsonOptions { get; }
 

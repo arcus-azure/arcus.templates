@@ -30,10 +30,10 @@ namespace Arcus.Templates.Tests.Integration.Worker.Health
             var healthEndpointService = new HealthEndpointService(healthPort, _outputWriter);
 
             // Act
-            HealthReport report = await healthEndpointService.ProbeHealthReportAsync();
+            HealthStatus status = await healthEndpointService.ProbeHealthAsync();
 
             // Assert
-            Assert.Equal(HealthStatus.Healthy, report.Status);
+            Assert.Equal(HealthStatus.Healthy, status);
         }
 
         [Fact]
@@ -46,10 +46,10 @@ namespace Arcus.Templates.Tests.Integration.Worker.Health
             var healthEndpointService = new HealthEndpointService(healthPort, _outputWriter);
 
             // Act
-            HealthReport report = await healthEndpointService.ProbeHealthReportAsync();
+            HealthStatus status = await healthEndpointService.ProbeHealthAsync();
 
             // Assert
-            Assert.Equal(HealthStatus.Healthy, report.Status);
+            Assert.Equal(HealthStatus.Healthy, status);
         }
     }
 }

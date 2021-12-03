@@ -229,7 +229,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi
         public async Task StartAsync()
         {
             Run(_configuration.BuildConfiguration,
-                _configuration.TargetFramework,
+                TargetFramework.Net6_0,
                 CommandArgument.CreateOpen("ARCUS_HTTP_PORT", _baseUrl.Port));
 
             await WaitUntilWebProjectIsAvailable(_baseUrl.Port);

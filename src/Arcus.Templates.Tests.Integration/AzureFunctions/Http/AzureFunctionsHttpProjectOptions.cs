@@ -26,5 +26,15 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http
             ProjectOptions newOptions = AddOption("--include-healthchecks");
             return new AzureFunctionsHttpProjectOptions(newOptions);
         }
+        
+        /// <summary>
+        /// Adds the project option to exclude the correlation capability to the Azure Functions HTTP trigger project.
+        /// </summary>
+        public AzureFunctionsHttpProjectOptions WithExcludeOpenApiDocs()
+        {
+            ProjectOptions optionsWithExcludeOpenApi = AddOption("--exclude-openApi");
+
+            return new AzureFunctionsHttpProjectOptions(optionsWithExcludeOpenApi);
+        }
     }
 }

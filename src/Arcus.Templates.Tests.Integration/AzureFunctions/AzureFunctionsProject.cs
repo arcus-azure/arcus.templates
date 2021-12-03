@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.AzureFunctions.Configuration;
 using Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics.Configuration;
 using Arcus.Templates.Tests.Integration.Fixture;
+using Flurl;
 using GuardNet;
 using Polly;
 using Polly.Retry;
@@ -26,7 +27,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions
         /// Initializes a new instance of the <see cref="AzureFunctionsProject"/> class.
         /// </summary>
         /// <param name="templateDirectory">The file directory where the .NET project template is located.</param>
-        /// <param name="configuration">The configuration instance to retrieve Azure Functions specific test values.</param>
+        /// <param name="configuration">The configuration instance to retrieve Azure Functions-specific test values.</param>
         /// <param name="outputWriter">The logger instance to write diagnostic trace messages during the lifetime of the test project.</param>
         /// <exception cref="ArgumentNullException">Thrown when the <paramref name="templateDirectory"/>, <paramref name="configuration"/>, or <paramref name="outputWriter"/> is <c>null</c>.</exception>
         protected  AzureFunctionsProject(
@@ -40,8 +41,9 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions
             Guard.NotNull(templateDirectory, nameof(templateDirectory), "Requires a file template directory where the .NET project template is located");
             Guard.NotNull(configuration, nameof(configuration), "Requires an configuration instance to retrieve Azure Functions specific test values");
             Guard.NotNull(outputWriter, nameof(outputWriter), "Requires an logger instance to write diagnostic trace messages during the lifetime of the project.");
-            
-            RootEndpoint = configuration.GenerateRandomLocalhostUrl();
+
+            Configuration = configuration;
+            RootEndpoint = configuration.GenerateRandomLocalhostUrl().ResetToRoot().ToUri();
             AzureFunctionsConfig = configuration.GetAzureFunctionsConfig();
             ApplicationInsightsConfig = configuration.GetApplicationInsightsConfig();
         }
@@ -51,6 +53,11 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions
         /// </summary>
         protected Uri RootEndpoint { get; }
 
+        /// <summary>
+        /// Gets the entire test configuration of the integration test suite to retrieve Azure Function-specific test values.
+        /// </summary>
+        protected TestConfig Configuration { get; }
+        
         /// <summary>
         /// Gets the Azure Functions information from the current application configuration, used by this project.
         /// </summary>
@@ -90,19 +97,21 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions
             TargetFramework targetFramework,
             CommandArgument[] commandArguments)
         {
-            RunDotNet($"build {ProjectDirectory.FullName}");
+            RunDotNet($"build -c {buildConfiguration} {ProjectDirectory.FullName}");
 
-            var processInfo = new ProcessStartInfo("func", "start")
+            string targetFrameworkIdentifier = GetTargetFrameworkIdentifier(targetFramework);
+            var processInfo = new ProcessStartInfo("func", $"start --no-build --prefix bin/{buildConfiguration}/{targetFrameworkIdentifier}")
             {
                 UseShellExecute = false,
                 CreateNoWindow = true,
                 WorkingDirectory = ProjectDirectory.FullName,
             };
+            Logger.WriteLine("> {0} {1}", processInfo.FileName, processInfo.Arguments);
 
             Environment.SetEnvironmentVariable(ApplicationInsightsInstrumentationKeyVariable, ApplicationInsightsConfig.InstrumentationKey);
             return processInfo;
         }
-
+        
         /// <summary>
         /// Waits until the Azure Function project is fully running and ready to be interacted with.
         /// </summary>

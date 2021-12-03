@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Arcus.Templates.AzureFunctions.Http.Model;
 using Arcus.Templates.Tests.Integration.WebApi.Fixture;
 using GuardNet;
 using Microsoft.Rest;
-using Newtonsoft.Json;
 using Xunit.Abstractions;
 
 namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Api
@@ -19,6 +19,11 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Api
     public class OrderService : EndpointService
     {
         private readonly Uri _orderEndpoint;
+
+        private static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OrderService"/> class.
@@ -45,7 +50,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Api
         {
             Guard.NotNull(order, nameof(order), $"Requires an '{nameof(Order)}' model to post to the Azure Functions HTTP trigger");
 
-            string json = JsonConvert.SerializeObject(order);
+            string json = JsonSerializer.Serialize(order, JsonOptions);
             HttpResponseMessage response = await PostAsync(json);
 
             return response;

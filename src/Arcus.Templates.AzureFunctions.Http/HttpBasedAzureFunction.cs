@@ -14,10 +14,6 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Net.Http.Headers;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Linq;
-using JsonSerializer = Newtonsoft.Json.JsonSerializer;
 
 namespace Arcus.Templates.AzureFunctions.Http
 {
@@ -41,27 +37,18 @@ namespace Arcus.Templates.AzureFunctions.Http
 
             Logger = logger ?? NullLogger.Instance;
 
-            var jsonSettings = new JsonSerializerSettings
-            {
-                NullValueHandling = NullValueHandling.Ignore,
-                TypeNameHandling = TypeNameHandling.None
-            };
-            jsonSettings.Converters.Add(new StringEnumConverter());
-            JsonSerializer = JsonSerializer.Create(jsonSettings);
-
-            var jsonOptions = new JsonSerializerOptions
-            {
-                IgnoreNullValues = true,
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-            };
-            jsonOptions.Converters.Add(new JsonStringEnumConverter());
-            OutputFormatters = new FormatterCollection<IOutputFormatter> {new SystemTextJsonOutputFormatter(jsonOptions)};
+            var options = new JsonSerializerOptions();
+            options.IgnoreNullValues = true;
+            options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+            options.Converters.Add(new JsonStringEnumConverter());
+            JsonOptions = options;
+            OutputFormatters = new FormatterCollection<IOutputFormatter> { new SystemTextJsonOutputFormatter(JsonOptions) };
         }
 
         /// <summary>
         /// Gets the serializer that's being used when incoming requests are being serialized or deserialized into JSON.
         /// </summary>
-        protected JsonSerializer JsonSerializer { get; }
+        protected JsonSerializerOptions JsonOptions { get; }
 
         /// <summary>
         /// Gets the set of formatters that's being used when an outgoing response is being sent back to the sender.
@@ -98,15 +85,10 @@ namespace Arcus.Templates.AzureFunctions.Http
         /// <exception cref="ValidationException">Thrown when the deserialized request body <typeparamref name="TMessage"/> didn't correspond to the required validation rules.</exception>
         protected async Task<TMessage> GetJsonBodyAsync<TMessage>(HttpRequest request)
         {
-            using (var streamReader = new StreamReader(request.Body))
-            using (var jsonReader = new JsonTextReader(streamReader))
-            {
-                JToken parsedOrder = await JToken.LoadAsync(jsonReader);
-                var model = parsedOrder.ToObject<TMessage>(JsonSerializer);
-                Validator.ValidateObject(model, new ValidationContext(model), validateAllProperties: true);
-                
-                return model;
-            }
+            TMessage message = await JsonSerializer.DeserializeAsync<TMessage>(request.Body, JsonOptions);
+            Validator.ValidateObject(message, new ValidationContext(message), validateAllProperties: true);
+            
+            return message;
         }
 
         /// <summary>
@@ -202,7 +184,7 @@ namespace Arcus.Templates.AzureFunctions.Http
             return new ObjectResult(errorMessage)
             {
                 StatusCode = StatusCodes.Status500InternalServerError,
-                ContentTypes = {"text/plain"}
+                ContentTypes = { "text/plain" }
             };
         }
     }

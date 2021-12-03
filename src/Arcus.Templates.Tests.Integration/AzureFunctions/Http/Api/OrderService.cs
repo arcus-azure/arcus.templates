@@ -75,9 +75,9 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Api
                 request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
                 request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                Logger.WriteLine("POST {{{0}}} -> {1}", FormatHeaders(request.GetContentHeaders().Concat(request.Headers)), _orderEndpoint);
+                Logger.WriteLine("POST {0} -> {1}", FormatHeaders(request.GetContentHeaders().Concat(request.Headers)), _orderEndpoint);
                 HttpResponseMessage response = await HttpClient.SendAsync(request);
-                Logger.WriteLine("{0} {{{1}}} <- {2}", response.StatusCode, FormatHeaders(response.GetContentHeaders().Concat(response.Headers)), _orderEndpoint);
+                Logger.WriteLine("{0} {1} <- {2}", response.StatusCode, FormatHeaders(response.GetContentHeaders().Concat(response.Headers)), _orderEndpoint);
                 
                 return response;
             }

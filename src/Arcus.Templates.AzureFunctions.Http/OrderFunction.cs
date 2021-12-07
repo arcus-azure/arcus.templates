@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Arcus.Security.Core;
 using Arcus.WebApi.Logging.Correlation;
@@ -10,7 +11,6 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using Arcus.Templates.AzureFunctions.Http.Model;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Enums;
@@ -59,7 +59,7 @@ namespace Arcus.Templates.AzureFunctions.Http
                 {
                     string accept = String.Join(", ", GetAcceptMediaTypes(request));
                     Logger.LogError("Could not process current request because the request body is not JSON and/or could not accept JSON as response (Content-Type: {ContentType}, Accept: {Accept})", request.ContentType, accept);
-                    
+
                     return UnsupportedMediaType("Could not process current request because the request body is not JSON and/or could not accept JSON as response");
                 }
 

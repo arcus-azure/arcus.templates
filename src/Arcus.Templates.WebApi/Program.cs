@@ -220,7 +220,8 @@ namespace Arcus.Templates.WebApi
 #endif
 #if (ExcludeOpenApi == false)
             
-//[#if DEBUG]
+            #warning Be careful of exposing sensitive information with the OpenAPI document, only expose what's necessary and hide everything else.
+
             var openApiInformation = new OpenApiInfo
             {
                 Title = "Arcus.Templates.WebApi",
@@ -309,7 +310,6 @@ namespace Arcus.Templates.WebApi
             });
             
             builder.Services.AddSwaggerExamplesFromAssemblyOf<HealthReportResponseExampleProvider>();
-//[#endif]
 #endif
         }
         

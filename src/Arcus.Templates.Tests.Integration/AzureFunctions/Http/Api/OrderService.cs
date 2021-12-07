@@ -91,7 +91,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Api
                 return $"[{header.Key}] = {values}";
             });
 
-            return $"{{String.Join(", ", formattedHeaders)}}";
+            return $"{{{String.Join(", ", formattedHeaders)}}}";
         }
     }
 }

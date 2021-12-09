@@ -104,7 +104,7 @@
       "args": {
         "referenceType": "package",
         "reference": "Microsoft.NET.Sdk.Functions",
-        "version": "3.0.13",
+        "version": "4.0.1",
         "projectFileExtensions": ".csproj"
       }
     }

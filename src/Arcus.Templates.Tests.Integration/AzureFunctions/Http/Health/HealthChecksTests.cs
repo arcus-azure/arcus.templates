@@ -7,7 +7,6 @@ using Arcus.Templates.Tests.Integration.WebApi.Health.v1;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-
 using Xunit;
 using Xunit.Abstractions;
 

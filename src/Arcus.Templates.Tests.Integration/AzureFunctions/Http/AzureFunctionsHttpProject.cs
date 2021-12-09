@@ -193,7 +193,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http
         /// </summary>
         public async Task StartAsync()
         {
-            Run(Configuration.BuildConfiguration, TargetFramework.NetCoreApp31);
+            Run(Configuration.BuildConfiguration, TargetFramework.Net6_0);
             await WaitUntilTriggerIsAvailableAsync(OrderFunctionEndpoint);
         }
     }

@@ -48,4 +48,4 @@ And additional features available with options:
 As part of this template the following HTTP header(s) are removed for security sake:
 * `Server` header * Provides information concerning the Web API runtime
 
-The OpenAPI document is available by-default. Be careful of exposing sensitive information with the OpenAPI document, only expose what's necessary and hide everything else.
+The OpenAPI documentation is available by-default. Be careful of exposing sensitive information with the OpenAPI documentation, only expose what's necessary and hide everything else.

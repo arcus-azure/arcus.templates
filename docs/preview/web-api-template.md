@@ -19,7 +19,6 @@ When installed, the template can be created with shortname: `arcus-webapi`:
 > dotnet new arcus-webapi --name Arcus.Demo.WebAPI
 ```
 
-
 ## Features
 
 Creates a starter web API project with by default configured:
@@ -48,3 +47,5 @@ And additional features available with options:
 
 As part of this template the following HTTP header(s) are removed for security sake:
 * `Server` header * Provides information concerning the Web API runtime
+
+The OpenAPI documentation is available by-default. Be careful of exposing sensitive information with the OpenAPI documentation, only expose what's necessary and hide everything else.

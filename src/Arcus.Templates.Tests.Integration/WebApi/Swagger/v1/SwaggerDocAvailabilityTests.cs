@@ -1,7 +1,8 @@
-﻿using System.Net;
+﻿using Arcus.Templates.Tests.Integration.Fixture;
+
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Arcus.Templates.Tests.Integration.Fixture;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -27,31 +28,30 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Swagger.v1
         public async Task GetSwaggerUI_WithBuildConfiguration_Returns(BuildConfiguration buildConfiguration, HttpStatusCode expectedStatusCode)
         {
             // Arrange
-            var configuration = TestConfig.Create(buildConfiguration);
-            using (var project = await WebApiProject.StartNewAsync(configuration, _outputWriter)) 
-            // Act
-            using (HttpResponseMessage response = await project.Swagger.GetSwaggerUIAsync())
-            {
-                // Assert
-                Assert.NotNull(response);
-                Assert.Equal(expectedStatusCode, response.StatusCode);
+            var config = TestConfig.Create(buildConfiguration);
+            using (var project = await WebApiProject.StartNewAsync(config, _outputWriter))
+            { 
+                // Act
+                using (HttpResponseMessage response = await project.Swagger.GetSwaggerUIAsync())
+                {
+                    // Assert
+                    Assert.NotNull(response);
+                    Assert.Equal(expectedStatusCode, response.StatusCode);
+                }
             }
         }
 
-        [Theory]
-        [InlineData(BuildConfiguration.Debug, HttpStatusCode.OK)]
-        [InlineData(BuildConfiguration.Release, HttpStatusCode.NotFound)]
-        public async Task GetSwaggerDocs_WithBuildConfiguration_Returns(BuildConfiguration buildConfiguration, HttpStatusCode expectedStatusCode)
+        [Fact]
+        public async Task GetSwaggerDocs_WithBuildConfiguration_ReturnsOk()
         {
             // Arrange
-            var configuration = TestConfig.Create(buildConfiguration);
-            using (var project = await WebApiProject.StartNewAsync(configuration, _outputWriter))
+            using (var project = await WebApiProject.StartNewAsync(_outputWriter))
             // Act
             using (HttpResponseMessage response = await project.Swagger.GetSwaggerDocsAsync())
             {
                 // Assert
                 Assert.NotNull(response);
-                Assert.Equal(expectedStatusCode, response.StatusCode);
+                Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             }
         }
 

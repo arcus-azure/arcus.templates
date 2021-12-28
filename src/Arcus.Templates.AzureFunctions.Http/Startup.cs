@@ -72,7 +72,7 @@ namespace Arcus.Templates.AzureFunctions.Http
             }
 
             builder.ClearProvidersExceptFunctionProviders();
-            builder.AddSerilog(logConfiguration.CreateLogger());
+            builder.AddSerilog(logConfiguration.CreateLogger(), dispose: true);
         }
     }
 }

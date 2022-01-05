@@ -54,8 +54,8 @@ namespace Arcus.Templates.AzureFunctions.Databricks.JobMetrics
                 .WriteTo.Console()
                 .WriteTo.AzureApplicationInsights(instrumentationKey);
 
-            builder.ClearProvidersExceptFunctionProviders();
-            builder.AddSerilog(logConfiguration.CreateLogger(), dispose: true);
+            builder.ClearProvidersExceptFunctionProviders()
+                .AddSerilog(logConfiguration.CreateLogger(), dispose: true);
         }
     }
 }

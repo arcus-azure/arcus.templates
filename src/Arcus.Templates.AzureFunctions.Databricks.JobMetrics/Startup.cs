@@ -3,6 +3,7 @@ using Arcus.Templates.AzureFunctions.Databricks.JobMetrics;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyModel;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
@@ -45,8 +46,10 @@ namespace Arcus.Templates.AzureFunctions.Databricks.JobMetrics
 
         private static void ConfigureLogging(ILoggingBuilder builder, IConfiguration config)
         {
+            var functionDependencyContext = DependencyContext.Load(typeof(Startup).Assembly);
+
             var logConfiguration = new LoggerConfiguration()
-                                   .ReadFrom.Configuration(config, sectionName: "AzureFunctionsJobHost:Serilog")
+                                   .ReadFrom.Configuration(config, sectionName: "AzureFunctionsJobHost:Serilog", dependencyContext: functionDependencyContext)
                                    .Enrich.FromLogContext()
                                    .Enrich.WithComponentName("Azure Databricks Metrics Scraper")
                                    .Enrich.WithVersion()

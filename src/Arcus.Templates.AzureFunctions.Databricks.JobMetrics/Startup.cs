@@ -57,13 +57,13 @@ namespace Arcus.Templates.AzureFunctions.Databricks.JobMetrics
 
             var telemetryKey = config.GetValue<string>("APPINSIGHTS_INSTRUMENTATIONKEY");
 
-            if (!String.IsNullOrWhiteSpace(telemetryKey))
+            if (!string.IsNullOrWhiteSpace(telemetryKey))
             {
                 logConfiguration.WriteTo.AzureApplicationInsights(telemetryKey);
             }
 
-            builder.ClearProvidersExceptFunctionProviders();
-            builder.AddSerilog(logConfiguration.CreateLogger(), dispose: true);
+            builder.ClearProvidersExceptFunctionProviders()
+                .AddSerilog(logConfiguration.CreateLogger(), dispose: true);
         }
     }
 }

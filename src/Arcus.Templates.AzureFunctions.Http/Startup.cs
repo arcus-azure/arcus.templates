@@ -5,6 +5,7 @@ using Arcus.Templates.AzureFunctions.Http;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyModel;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
@@ -57,22 +58,24 @@ namespace Arcus.Templates.AzureFunctions.Http
 
         private static void ConfigureLogging(ILoggingBuilder builder, IConfiguration config)
         {
+            var functionDependencyContext = DependencyContext.Load(typeof(Startup).Assembly);
+
             var logConfiguration = new LoggerConfiguration()
-                                   .ReadFrom.Configuration(config)
+                                   .ReadFrom.Configuration(config, sectionName: "AzureFunctionsJobHost:Serilog", dependencyContext: functionDependencyContext)
                                    .Enrich.FromLogContext()
-                                   .Enrich.WithComponentName("Azure HTTP Trigger")
+                                   .Enrich.WithComponentName("Azure Databricks Metrics Scraper")
                                    .Enrich.WithVersion()
                                    .WriteTo.Console();
 
             var telemetryKey = config.GetValue<string>("APPINSIGHTS_INSTRUMENTATIONKEY");
 
-            if (!String.IsNullOrWhiteSpace(telemetryKey))
+            if (!string.IsNullOrWhiteSpace(telemetryKey))
             {
                 logConfiguration.WriteTo.AzureApplicationInsights(telemetryKey);
             }
 
-            builder.ClearProvidersExceptFunctionProviders();
-            builder.AddSerilog(logConfiguration.CreateLogger(), dispose: true);
+            builder.ClearProvidersExceptFunctionProviders()
+                .AddSerilog(logConfiguration.CreateLogger(), dispose: true);
         }
     }
 }

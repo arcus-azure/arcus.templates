@@ -46,7 +46,7 @@ namespace Arcus.Templates.AzureFunctions.Databricks.JobMetrics
         private static void ConfigureLogging(ILoggingBuilder builder, IConfiguration config)
         {
             var logConfiguration = new LoggerConfiguration()
-                                   .ReadFrom.Configuration(config)
+                                   .ReadFrom.Configuration(config, sectionName: "AzureFunctionsJobHost:Serilog")
                                    .Enrich.FromLogContext()
                                    .Enrich.WithComponentName("Azure Databricks Metrics Scraper")
                                    .Enrich.WithVersion()

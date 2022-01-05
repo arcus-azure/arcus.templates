@@ -29,9 +29,9 @@ namespace Arcus.Templates.AzureFunctions.Databricks.JobMetrics
 
             builder.ConfigureSecretStore(stores =>
             {
-//[#if DEBUG]
+                //[#if DEBUG]
                 stores.AddConfiguration(config);
-//[#endif]
+                //[#endif]
 
                 stores.AddEnvironmentVariables();
 
@@ -39,21 +39,29 @@ namespace Arcus.Templates.AzureFunctions.Databricks.JobMetrics
                 stores.AddAzureKeyVaultWithManagedIdentity("https://your-keyvault.vault.azure.net/", CacheConfiguration.Default);
             });
 
-            var instrumentationKey = config.GetValue<string>("APPLICATIONINSIGHTS_INSTRUMENTATIONKEY");
-            var configuration = new LoggerConfiguration()
-                .MinimumLevel.Debug()
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-                .Enrich.FromLogContext()
-                .Enrich.WithComponentName("Azure Databricks Metrics Scraper")
-                .Enrich.WithVersion()
-                .WriteTo.Console()
-                .WriteTo.AzureApplicationInsights(instrumentationKey);
+            builder.Services.AddLogging(loggingBuilder => ConfigureLogging(loggingBuilder, config));
+        }
 
-            builder.Services.AddLogging(logging =>
+        private static void ConfigureLogging(ILoggingBuilder builder, IConfiguration config)
+        {
+            var logConfiguration = new LoggerConfiguration()
+                                   //.ReadFrom.Configuration(config, sectionName: "AzureFunctionsJobHost:Serilog")
+                                   .MinimumLevel.Debug()
+                                   .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                                   .Enrich.FromLogContext()
+                                   .Enrich.WithComponentName("Azure Databricks Metrics Scraper")
+                                   .Enrich.WithVersion()
+                                   .WriteTo.Console();
+
+            var telemetryKey = config.GetValue<string>("APPINSIGHTS_INSTRUMENTATIONKEY");
+
+            if (!string.IsNullOrWhiteSpace(telemetryKey))
             {
-                logging.ClearProvidersExceptFunctionProviders()
-                       .AddSerilog(configuration.CreateLogger(), dispose: true);
-            });
+                logConfiguration.WriteTo.AzureApplicationInsights(telemetryKey);
+            }
+
+            builder.ClearProvidersExceptFunctionProviders()
+                .AddSerilog(logConfiguration.CreateLogger(), dispose: true);
         }
     }
 }

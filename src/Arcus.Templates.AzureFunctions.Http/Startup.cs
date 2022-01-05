@@ -63,7 +63,7 @@ namespace Arcus.Templates.AzureFunctions.Http
             var logConfiguration = new LoggerConfiguration()
                                    .ReadFrom.Configuration(config, sectionName: "AzureFunctionsJobHost:Serilog", dependencyContext: functionDependencyContext)
                                    .Enrich.FromLogContext()
-                                   .Enrich.WithComponentName("Azure Databricks Metrics Scraper")
+                                   .Enrich.WithComponentName("Azure HTTP Trigger")
                                    .Enrich.WithVersion()
                                    .WriteTo.Console();
 

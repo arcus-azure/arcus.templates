@@ -6,10 +6,6 @@
       "samplingSettings": {
         "isEnabled": true
       }
-    },
-    "logLevel": {
-      "default": "Debug",
-      "Microsoft": "Information"
     }
   },
   "Serilog": {

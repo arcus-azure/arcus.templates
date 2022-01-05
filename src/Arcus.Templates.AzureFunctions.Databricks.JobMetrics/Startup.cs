@@ -9,7 +9,6 @@ using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Configuration;
 using Serilog.Events;
-using System;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 

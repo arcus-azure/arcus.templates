@@ -44,15 +44,19 @@ namespace Arcus.Templates.AzureFunctions.Databricks.JobMetrics
 
         private static void ConfigureLogging(ILoggingBuilder builder, IConfiguration config)
         {
-            var instrumentationKey = config.GetValue<string>("APPLICATIONINSIGHTS_INSTRUMENTATIONKEY");
             var logConfiguration = new LoggerConfiguration()
-                .MinimumLevel.Debug()
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-                .Enrich.FromLogContext()
-                .Enrich.WithComponentName("Azure Databricks Metrics Scraper")
-                .Enrich.WithVersion()
-                .WriteTo.Console()
-                .WriteTo.AzureApplicationInsights(instrumentationKey);
+                                   .ReadFrom.Configuration(config, sectionName: "AzureFunctionsJobHost:Serilog")
+                                   .Enrich.FromLogContext()
+                                   .Enrich.WithComponentName("Azure Databricks Metrics Scraper")
+                                   .Enrich.WithVersion()
+                                   .WriteTo.Console();
+
+            var telemetryKey = config.GetValue<string>("APPINSIGHTS_INSTRUMENTATIONKEY");
+
+            if (!string.IsNullOrWhiteSpace(telemetryKey))
+            {
+                logConfiguration.WriteTo.AzureApplicationInsights(telemetryKey);
+            }
 
             builder.ClearProvidersExceptFunctionProviders()
                 .AddSerilog(logConfiguration.CreateLogger(), dispose: true);

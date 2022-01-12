@@ -1,79 +1,79 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-		<TargetFramework>netcoreapp3.1</TargetFramework>
-		<AzureFunctionsVersion>v3</AzureFunctionsVersion>
-		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-		<!--#if (AuthoringMode)-->
-		<Authors>Arcus</Authors>
-		<Company>Arcus</Company>
-		<RepositoryType>Git</RepositoryType>
-		<Description>Provide a template to easily build an Azure Functions that exposes an HTTP endpoint.</Description>
-		<IsPackable>true</IsPackable>
-		<PackageId>Arcus.Templates.AzureFunctions.Http</PackageId>
-		<Title>Template for Azure Functions HTTP project</Title>
-		<PackageType>Template</PackageType>
-		<PackageTags>Azure;Azure Functions;HTTP;API</PackageTags>
-		<Copyright>Copyright (c) Arcus</Copyright>
-		<PackageLicenseUrl>https://github.com/arcus-azure/arcus.templates/blob/master/LICENSE</PackageLicenseUrl>
-		<PackageProjectUrl>https://github.com/arcus-azure/arcus.templates</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/arcus-azure/arcus.templates</RepositoryUrl>
-		<PackageIconUrl>https://raw.githubusercontent.com/arcus-azure/arcus/master/media/arcus.png</PackageIconUrl>
-		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<IncludeContentInPack>true</IncludeContentInPack>
-		<IncludeBuildOutput>false</IncludeBuildOutput>
-		<ContentTargetFolders>content</ContentTargetFolders>
-		<EnableDefaultContentItems>false</EnableDefaultContentItems>
-		<DockerComposeProjectPath>..\Arcus.Templates.Orchestrator.dcproj</DockerComposeProjectPath>
-		<NoWarn>NU5048;NU5125;NU5119</NoWarn>
-		<!--#endif-->
-	</PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <AzureFunctionsVersion>v4</AzureFunctionsVersion>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <!--#if (AuthoringMode)-->
+    <Authors>Arcus</Authors>
+    <Company>Arcus</Company>
+    <RepositoryType>Git</RepositoryType>
+    <Description>Provide a template to easily build an Azure Functions that exposes an HTTP endpoint.</Description>
+    <IsPackable>true</IsPackable>
+    <PackageId>Arcus.Templates.AzureFunctions.Http</PackageId>
+    <Title>Template for Azure Functions HTTP project</Title>
+    <PackageType>Template</PackageType>
+    <PackageTags>Azure;Azure Functions;HTTP;API</PackageTags>
+    <Copyright>Copyright (c) Arcus</Copyright>
+    <PackageLicenseUrl>https://github.com/arcus-azure/arcus.templates/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/arcus-azure/arcus.templates</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/arcus-azure/arcus.templates</RepositoryUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/arcus-azure/arcus/master/media/arcus.png</PackageIconUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <IncludeContentInPack>true</IncludeContentInPack>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <ContentTargetFolders>content</ContentTargetFolders>
+    <EnableDefaultContentItems>false</EnableDefaultContentItems>
+    <DockerComposeProjectPath>..\Arcus.Templates.Orchestrator.dcproj</DockerComposeProjectPath>
+    <NoWarn>NU5048;NU5125;NU5119</NoWarn>
+    <!--#endif-->
+  </PropertyGroup>
 
-	<!--#if (AuthoringMode)-->
-	<ItemGroup>
-		<Content Include="**\*" Exclude="**\bin\**\*;**\obj\**\*;**\.vs\**\*;**\launchSettings.json" />
-	</ItemGroup>
+  <!--#if (AuthoringMode)-->
+  <ItemGroup>
+    <Content Include="**\*" Exclude="**\bin\**\*;**\obj\**\*;**\.vs\**\*;**\launchSettings.json" />
+  </ItemGroup>
 
-	<PropertyGroup>
-		<DefineConstants>$(DefineConstants);</DefineConstants>
-		<ExcludeOpenApi>false</ExcludeOpenApi>
-		<DockerFastModeProjectMountDirectory>/home/site/wwwroot</DockerFastModeProjectMountDirectory>
-	</PropertyGroup>
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);</DefineConstants>
+    <ExcludeOpenApi>false</ExcludeOpenApi>
+    <DockerFastModeProjectMountDirectory>/home/site/wwwroot</DockerFastModeProjectMountDirectory>
+  </PropertyGroup>
 
-	<ItemGroup>
-		<None Remove="Dockerfile" />
-	</ItemGroup>
-	<!--#endif-->
+  <ItemGroup>
+    <None Remove="Dockerfile" />
+  </ItemGroup>
+  <!--#endif-->
 
-	<ItemGroup>
-		<None Update="host.json">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
-		<None Update="local.settings.json">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-			<CopyToPublishDirectory>Never</CopyToPublishDirectory>
-		</None>
-	</ItemGroup>
+  <ItemGroup>
+    <None Update="host.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="local.settings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+    </None>
+  </ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Arcus.Observability.Telemetry.AspNetCore" Version="2.3.0" />
-		<PackageReference Include="Arcus.Observability.Telemetry.AzureFunctions" Version="2.3.0" />
-		<PackageReference Include="Arcus.Observability.Telemetry.Serilog.Sinks.Applicationinsights" Version="2.3.0" />
-		<PackageReference Include="Arcus.Security.AzureFunctions" Version="1.6.0" />
-		<PackageReference Include="Arcus.Security.Providers.AzureKeyVault" Version="1.6.0" />
-		<PackageReference Include="Arcus.WebApi.Logging.AzureFunctions" Version="1.4.1" />
-		<PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="4.0.1" />
-		<PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.0.12" />
-		<PackageReference Include="Microsoft.Azure.WebJobs.Extensions.OpenApi" Version="1.0.0" Condition="'$(ExcludeOpenApi)' == 'false'" />
-		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
-		<PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
-		<PackageReference Include="Serilog.Settings.Configuration" Version="3.1.0" />
-		<PackageReference Include="Serilog.Sinks.Console" Version="4.0.1" />
-	</ItemGroup>
-
-	<Target Name="FunctionsPostBuildDepsCopy" AfterTargets="PostBuildEvent">
-		<Copy SourceFiles="$(OutDir)$(AssemblyName).deps.json" DestinationFiles="$(OutDir)bin\$(AssemblyName).deps.json" />
-	</Target>
-	<Target Name="FunctionsPublishDepsCopy" AfterTargets="Publish">
-		<Copy SourceFiles="$(OutDir)$(AssemblyName).deps.json" DestinationFiles="$(PublishDir)bin\$(AssemblyName).deps.json" />
-	</Target>
+  <ItemGroup>
+    <PackageReference Include="Arcus.Observability.Telemetry.AspNetCore" Version="2.3.0" />
+    <PackageReference Include="Arcus.Observability.Telemetry.AzureFunctions" Version="2.3.0" />
+    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Sinks.Applicationinsights" Version="2.3.0" />
+    <PackageReference Include="Arcus.Security.AzureFunctions" Version="1.6.0" />
+    <PackageReference Include="Arcus.Security.Providers.AzureKeyVault" Version="1.6.0" />
+    <PackageReference Include="Arcus.WebApi.Logging.AzureFunctions" Version="1.4.1" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="4.0.1" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.0.12" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.OpenApi" Version="1.0.0" Condition="'$(ExcludeOpenApi)' == 'false'" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
+    <PackageReference Include="Serilog.Settings.Configuration" Version="3.1.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="4.0.1" />
+  </ItemGroup>
+  
+  <Target Name="FunctionsPostBuildDepsCopy" AfterTargets="PostBuildEvent">
+    <Copy SourceFiles="$(OutDir)$(AssemblyName).deps.json" DestinationFiles="$(OutDir)bin\$(AssemblyName).deps.json" />
+  </Target>
+  <Target Name="FunctionsPublishDepsCopy" AfterTargets="Publish">
+    <Copy SourceFiles="$(OutDir)$(AssemblyName).deps.json" DestinationFiles="$(PublishDir)bin\$(AssemblyName).deps.json" />
+  </Target>
 </Project>

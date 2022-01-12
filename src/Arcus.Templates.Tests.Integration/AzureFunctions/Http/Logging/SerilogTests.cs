@@ -10,15 +10,15 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Logging
 {
     [Collection(TestCollections.Integration)]
     [Trait("Category", TestTraits.Integration)]
-    public class LoggingOptionTests
+    public class SerilogTests
     {
         private readonly TestConfig _configuration;
         private readonly ITestOutputHelper _outputWriter;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="LoggingOptionTests"/> class.
+        /// Initializes a new instance of the <see cref="SerilogTests"/> class.
         /// </summary>
-        public LoggingOptionTests(ITestOutputHelper outputWriter)
+        public SerilogTests(ITestOutputHelper outputWriter)
         {
             _outputWriter = outputWriter;
             _configuration = TestConfig.Create();

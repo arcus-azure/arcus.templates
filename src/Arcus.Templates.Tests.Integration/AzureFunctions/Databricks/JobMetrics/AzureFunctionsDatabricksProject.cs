@@ -64,7 +64,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics
 
         private void Start()
         {
-            Run(BuildConfiguration.Debug, TargetFramework.NetCoreApp31);
+            Run(BuildConfiguration.Debug, TargetFramework.Net6_0);
         }
 
         private void AddDatabricksSecurityToken(string securityToken)

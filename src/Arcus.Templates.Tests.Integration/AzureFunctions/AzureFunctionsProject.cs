@@ -121,7 +121,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions
             return new CannotStartTemplateProjectException(
                 "Could start test project based on Azure Functions project template due to an exception occurred during the build/run process, "
                 + "please check if the Azure Functions Core Tools (https://docs.microsoft.com/en-us/azure/azure-functions/functions-run-local) are installed and are available through the PATH environment variable, "
-                + "or possible check for any compile errors or runtime failures in the created test project based on the project template", exception);
+                + "or possible check for any compile errors or runtime failures (via the 'TearDownOptions') in the created test project based on the project template", exception);
         }
 
         /// <summary>

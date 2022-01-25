@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -237,11 +238,18 @@ namespace Arcus.Templates.Tests.Integration.Fixture
 
             commandArguments = commandArguments ?? new CommandArgument[0];
 
-            ProcessStartInfo processInfo = PrepareProjectRun(buildConfiguration, targetFramework, commandArguments);
-            _process.StartInfo = processInfo;
+            try
+            {
+                ProcessStartInfo processInfo = PrepareProjectRun(buildConfiguration, targetFramework, commandArguments);
+                _process.StartInfo = processInfo;
 
-            _started = true;
-            _process.Start();
+                _started = true;
+                _process.Start();
+            }
+            catch (Exception exception)
+            {
+                throw CreateProjectStartupFailure(exception);
+            }
         }
 
         /// <summary>
@@ -273,6 +281,17 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             };
 
             return processInfo;
+        }
+
+        /// <summary>
+        /// Creates an user-friendly exception based on an occurred <paramref name="exception"/> to show and help the tester pinpoint the problem.
+        /// </summary>
+        /// <param name="exception">The occurred exception during the startup process of the test project based on the project template.</param>
+        protected virtual CannotStartTemplateProjectException CreateProjectStartupFailure(Exception exception)
+        {
+            return new CannotStartTemplateProjectException(
+                "Could start test project based on project template due to an exception occurred during the build/run process, " 
+                + "please check for any compile errors or runtime failures (via the 'TearDownOptions') in the created test project based on the project template", exception);
         }
 
         /// <summary>

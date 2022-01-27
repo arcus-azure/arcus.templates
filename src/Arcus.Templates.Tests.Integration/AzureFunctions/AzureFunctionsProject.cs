@@ -111,7 +111,19 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions
             Environment.SetEnvironmentVariable(ApplicationInsightsInstrumentationKeyVariable, ApplicationInsightsConfig.InstrumentationKey);
             return processInfo;
         }
-        
+
+        /// <summary>
+        /// Creates an user-friendly exception based on an occurred <paramref name="exception"/> to show and help the tester pinpoint the problem.
+        /// </summary>
+        /// <param name="exception">The occurred exception during the startup process of the test project based on the project template.</param>
+        protected override CannotStartTemplateProjectException CreateProjectStartupFailure(Exception exception)
+        {
+            return new CannotStartTemplateProjectException(
+                "Could start test project based on Azure Functions project template due to an exception occurred during the build/run process, "
+                + "please check if the Azure Functions Core Tools (https://docs.microsoft.com/en-us/azure/azure-functions/functions-run-local) are installed and are available through the PATH environment variable, "
+                + "or possible check for any compile errors or runtime failures (via the 'TearDownOptions') in the created test project based on the project template", exception);
+        }
+
         /// <summary>
         /// Waits until the Azure Function project is fully running and ready to be interacted with.
         /// </summary>

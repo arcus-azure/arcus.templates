@@ -5,6 +5,7 @@ using Arcus.Templates.AzureFunctions.Http;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyModel;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
@@ -52,21 +53,29 @@ namespace Arcus.Templates.AzureFunctions.Http
                 stores.AddAzureKeyVaultWithManagedIdentity("https://your-keyvault.vault.azure.net/", CacheConfiguration.Default);
             });
 
-            var instrumentationKey = config.GetValue<string>("APPLICATIONINSIGHTS_INSTRUMENTATIONKEY");
-            var configuration = new LoggerConfiguration()
-                .MinimumLevel.Debug()
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-                .Enrich.FromLogContext()
-                .Enrich.WithComponentName("Azure HTTP Trigger")
-                .Enrich.WithVersion()
-                .WriteTo.Console()
-                .WriteTo.AzureApplicationInsights(instrumentationKey);
+            builder.Services.AddLogging(loggingBuilder => ConfigureLogging(loggingBuilder, config));
+        }
 
-            builder.Services.AddLogging(logging =>
+        private static void ConfigureLogging(ILoggingBuilder builder, IConfiguration config)
+        {
+            var functionDependencyContext = DependencyContext.Load(typeof(Startup).Assembly);
+
+            var logConfiguration = new LoggerConfiguration()
+                                   .ReadFrom.Configuration(config, sectionName: "AzureFunctionsJobHost:Serilog", dependencyContext: functionDependencyContext)
+                                   .Enrich.FromLogContext()
+                                   .Enrich.WithComponentName("Azure HTTP Trigger")
+                                   .Enrich.WithVersion()
+                                   .WriteTo.Console();
+
+            var telemetryKey = config.GetValue<string>("APPINSIGHTS_INSTRUMENTATIONKEY");
+
+            if (!string.IsNullOrWhiteSpace(telemetryKey))
             {
-                logging.ClearProvidersExceptFunctionProviders()
-                       .AddSerilog(configuration.CreateLogger(), dispose: true);
-            });
+                logConfiguration.WriteTo.AzureApplicationInsights(telemetryKey);
+            }
+
+            builder.ClearProvidersExceptFunctionProviders()
+                .AddSerilog(logConfiguration.CreateLogger(), dispose: true);
         }
     }
 }

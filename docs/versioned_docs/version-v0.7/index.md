@@ -12,11 +12,11 @@ sidebar_position: 1
 # Using our templates
 
 Arcus Templates provides various project templates:
-* [Azure Service Bus Queue](./servicebus-queue-worker-template.md)
-* [Azure Service Bus Topic](./servicebus-topic-worker-template.md)
-* [Databricks Job Metrics (Azure Functions)](./azurefunctions-databricks-jobmetrics-template.md)
-* [HTTP Trigger (Azure Functions)](./azurefunctions-http-template.md)
-* [Web API](./web-api-template.md)
+* [Azure Service Bus Queue](./features/servicebus-queue-worker-template.md)
+* [Azure Service Bus Topic](./features/servicebus-topic-worker-template.md)
+* [Databricks Job Metrics (Azure Functions)](./features/azurefunctions-databricks-jobmetrics-template.md)
+* [HTTP Trigger (Azure Functions)](./features/azurefunctions-http-template.md)
+* [Web API](./features/web-api-template.md)
 
 Want to use our Arcus project templates in Visual Studio? [Learn more in our documentation](./features/using-arcus-templates-in-visualstudio.md)!
 
@@ -28,7 +28,7 @@ Want to use our Arcus project templates in Visual Studio? [Learn more in our doc
 PM > dotnet new --install Arcus.Templates.ServiceBus.Queue
 ```
 
-Read [here](./servicebus-queue-worker-template.md) for standard and configurable features.
+Read [here](./features/servicebus-queue-worker-template.md) for standard and configurable features.
 
 ### Azure Service Bus Topic
 
@@ -36,7 +36,7 @@ Read [here](./servicebus-queue-worker-template.md) for standard and configurable
 PM > dotnet new --install Arcus.Templates.ServiceBus.Topic
 ```
 
-Read [here](./servicebus-topic-worker-template.md) for standard and configurable features.
+Read [here](./features/servicebus-topic-worker-template.md) for standard and configurable features.
 
 ### Databricks Job Metrics (Azure Functions)
 
@@ -44,7 +44,7 @@ Read [here](./servicebus-topic-worker-template.md) for standard and configurable
 PM > dotnet new --install Arcus.Templates.AzureFunctions.Databricks.JobMetrics
 ```
 
-Read [here](./azurefunctions-databricks-jobmetrics-template.md) for standard and configurable features.
+Read [here](./features/azurefunctions-databricks-jobmetrics-template.md) for standard and configurable features.
 
 ### HTTP Trigger (Azure Functions)
 
@@ -52,7 +52,7 @@ Read [here](./azurefunctions-databricks-jobmetrics-template.md) for standard and
 PM > dotnet new --install Arcus.Templates.AzureFunctions.Http
 ```
 
-Read [here](./azurefunctions-http-template.md) for standard and configurable features.
+Read [here](./features/azurefunctions-http-template.md) for standard and configurable features.
 
 ### Web API
 

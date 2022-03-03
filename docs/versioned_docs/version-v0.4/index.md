@@ -12,9 +12,9 @@ sidebar_position: 1
 # Using our templates
 
 Arcus Templates provides various project templates:
-* [Azure Service Bus Queue](servicebus-queue-worker-template)
-* [Azure Service Bus Topic](servicebus-topic-worker-template)
-* [Web API](web-api-template)
+* [Azure Service Bus Queue](./servicebus-queue-worker-template.md)
+* [Azure Service Bus Topic](./servicebus-topic-worker-template.md)
+* [Web API](./web-api-template.md)
 
 # Installation
 
@@ -24,7 +24,7 @@ Arcus Templates provides various project templates:
 PM > dotnet new --install Arcus.Templates.ServiceBus.Queue
 ```
 
-Read [here](servicebus-queue-worker-template) for standard and configurable features.
+Read [here](./servicebus-queue-worker-template.md) for standard and configurable features.
 
 ### Azure Service Bus Topic
 
@@ -32,7 +32,7 @@ Read [here](servicebus-queue-worker-template) for standard and configurable feat
 PM > dotnet new --install Arcus.Templates.ServiceBus.Topic
 ```
 
-Read [here](servicebus-topic-worker-template) for standard and configurable features.
+Read [here](./servicebus-topic-worker-template.md) for standard and configurable features.
 
 ### Web API
 
@@ -40,7 +40,7 @@ Read [here](servicebus-topic-worker-template) for standard and configurable feat
 PM > dotnet new --install Arcus.Templates.WebApi
 ```
 
-Read [here](web-api-template) for standard and configurable features.
+Read [here](./web-api-template.md) for standard and configurable features.
 
 # License
 This is licensed under The MIT License (MIT). Which means that you can use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the web application. But you always need to state that Codit is the original author of this web application.

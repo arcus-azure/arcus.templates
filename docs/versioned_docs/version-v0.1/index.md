@@ -12,7 +12,7 @@ sidebar_position: 1
 # Using our templates
 
 Arcus Templates provides various project templates:
-* [Web API](web-api-template)
+* [Web API](./web-api-template.md)
 
 # Installation
 
@@ -22,7 +22,7 @@ Arcus Templates provides various project templates:
 PM > dotnet new --install Arcus.Templates.WebApi
 ```
 
-Read [here](web-api-template) for standard and configurable features.
+Read [here](./web-api-template.md) for standard and configurable features.
 
 # License
 This is licensed under The MIT License (MIT). Which means that you can use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the web application. But you always need to state that Codit is the original author of this web application.

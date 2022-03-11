@@ -34,3 +34,23 @@ ID = "37e42309-db08-474a-b7ad-c16ebbf6a8cc"
 # inherit these settings.
 # [context.deploy-preview]
   # publish = "dist/"
+
+[[redirects]]
+from = "/web-api-template"
+to = "/features/web-api-template"
+
+[[redirects]]
+from = "/servicebus-queue-worker-template"
+to = "/features/servicebus-queue-worker-template"
+
+[[redirects]]
+from = "/servicebus-topic-worker-template"
+to = "/features/servicebus-topic-worker-template"
+
+[[redirects]]
+from = "/azurefunctions-http-template"
+to = "/features/azurefunctions-http-template"
+
+[[redirects]]
+from = "/azurefunctions-databricks-jobmetrics-template"
+to = "/features/azurefunctions-databricks-jobmetrics-template"

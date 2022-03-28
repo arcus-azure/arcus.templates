@@ -1,13 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Collections.Generic;
+using System.Security.AccessControl;
 using System.Text.Json.Serialization;
 using Arcus.Security.Core.Caching.Configuration;
+#if (ExcludeCorrelation == false)
+using Arcus.WebApi.Logging.Core.Correlation;
+#endif
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -32,7 +35,6 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Arcus.WebApi.Security.Authentication.Certificates;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Primitives;
 #endif
@@ -117,36 +119,13 @@ namespace Arcus.Templates.WebApi
         
         private static WebApplicationBuilder CreateWebApplicationBuilder(string[] args, IConfiguration configuration)
         {
-            var builder = WebApplication.CreateBuilder(args);
+            WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
             
             builder.Configuration.AddConfiguration(configuration);
-            ConfigureHost(builder, configuration);
             ConfigureServices(builder, configuration);
+            ConfigureHost(builder, configuration);
             
             return builder;
-        }
-
-        private static void ConfigureHost(WebApplicationBuilder builder, IConfiguration configuration)
-        {
-            string httpEndpointUrl = "http://+:" + configuration["ARCUS_HTTP_PORT"];
-            builder.WebHost.ConfigureKestrel(options => options.AddServerHeader = false)
-                           .UseUrls(httpEndpointUrl);
-            
-            builder.Host.ConfigureSecretStore((context, config, stores) =>
-            {
-//[#if DEBUG]
-                stores.AddConfiguration(config);
-//[#endif]
-                
-                //#error Please provide a valid secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secret-store/provider/key-vault
-                stores.AddAzureKeyVaultWithManagedIdentity("https://your-keyvault.vault.azure.net/", CacheConfiguration.Default);
-            });
-#if Serilog
-            builder.Host.UseSerilog((context, serviceProvider, config) => CreateLoggerConfiguration(context, serviceProvider, config));
-#endif
-#if Console
-            builder.Host.ConfigureLogging(logging => logging.AddConsole());
-#endif
         }
         
         private static void ConfigureServices(WebApplicationBuilder builder, IConfiguration configuration)
@@ -169,12 +148,15 @@ namespace Arcus.Templates.WebApi
             {
                 options.ReturnHttpNotAcceptable = true;
                 options.RespectBrowserAcceptHeader = true;
-                
-                RestrictToJsonContentType(options);
-                ConfigureJsonFormatters(options);
-                
+                options.OnlyAllowJsonFormatting();
+                options.ConfigureJsonFormatting(json =>
+                {
+                    json.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+                    json.Converters.Add(new JsonStringEnumConverter());
+                });
+
 #if SharedAccessKeyAuth
-#warning Please provide a valid request header name and secret name to the shared access filter
+                #warning Please provide a valid request header name and secret name to the shared access filter
                 options.Filters.Add(new SharedAccessKeyAuthenticationFilter(headerName: SharedAccessKeyHeaderName, queryParameterName: null, secretName: "<your-secret-name>"));
 #endif
 #if CertificateAuth
@@ -192,18 +174,18 @@ namespace Arcus.Templates.WebApi
             });
 #if JwtAuth
 #error Use previously registered secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secrets/consume-from-key-vault
-            ISecretProvider secretProvider = null;
-            builder.Services.AddAuthentication(x =>
+            builder.Services.AddAuthentication(auth =>
             {
-                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                auth.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                auth.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-            .AddJwtBearer(x =>
+            .AddJwtBearer((jwt, serviceProvider) =>
             {
+                var secretProvider = serviceProvider.GetRequiredService<ISecretProvider>();
                 string key = secretProvider.GetRawSecretAsync("JwtSigningKey").GetAwaiter().GetResult();
                 
-                x.SaveToken = true;
-                x.TokenValidationParameters = new TokenValidationParameters
+                jwt.SaveToken = true;
+                jwt.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
@@ -216,12 +198,19 @@ namespace Arcus.Templates.WebApi
 #endif
             builder.Services.AddHealthChecks();
 #if (ExcludeCorrelation == false)
-            builder.Services.AddHttpCorrelation();
+            builder.Services.AddHttpCorrelation((HttpCorrelationInfoOptions options) => { });
 #endif
 #if (ExcludeOpenApi == false)
             
-            #warning Be careful of exposing sensitive information with the OpenAPI document, only expose what's necessary and hide everything else.
-
+            ConfigureOpenApi(builder);
+#endif
+        }
+#if (ExcludeOpenApi == false)
+        
+        private static void ConfigureOpenApi(WebApplicationBuilder builder)
+        {
+#warning Be careful of exposing sensitive information with the OpenAPI document, only expose what's necessary and hide everything else.
+            
             var openApiInformation = new OpenApiInfo
             {
                 Title = "Arcus.Templates.WebApi",
@@ -239,7 +228,7 @@ namespace Arcus.Templates.WebApi
                 swaggerGenerationOptions.OperationFilter<AddResponseHeadersFilter>();
 #endif
 #if SharedAccessKeyAuth
-
+                
                 swaggerGenerationOptions.AddSecurityDefinition("shared-access-key", new OpenApiSecurityScheme
                 {
                     Type = SecuritySchemeType.ApiKey,
@@ -262,7 +251,7 @@ namespace Arcus.Templates.WebApi
                 });
 #endif
 #if CertificateAuth
-
+                
                 swaggerGenerationOptions.AddSecurityDefinition("certificate", new OpenApiSecurityScheme
                 {
                     Type = SecuritySchemeType.ApiKey,
@@ -286,7 +275,7 @@ namespace Arcus.Templates.WebApi
                 });
 #endif
 #if JwtAuth
-
+                
                 swaggerGenerationOptions.AddSecurityDefinition("jwt", new OpenApiSecurityScheme
                 {
                     Type = SecuritySchemeType.Http,
@@ -310,11 +299,34 @@ namespace Arcus.Templates.WebApi
             });
             
             builder.Services.AddSwaggerExamplesFromAssemblyOf<HealthReportResponseExampleProvider>();
-#endif
         }
         
+#endif
+        private static void ConfigureHost(WebApplicationBuilder builder, IConfiguration configuration)
+        {
+            string httpEndpointUrl = "http://+:" + configuration["ARCUS_HTTP_PORT"];
+            builder.WebHost.ConfigureKestrel(options => options.AddServerHeader = false)
+                           .UseUrls(httpEndpointUrl);
+            
+            builder.Host.ConfigureSecretStore((context, config, stores) =>
+            {
+//[#if DEBUG]
+                stores.AddConfiguration(config);
+//[#endif]
+                
+                //#error Please provide a valid secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secret-store/provider/key-vault
+                stores.AddAzureKeyVaultWithManagedIdentity("https://your-keyvault.vault.azure.net/", CacheConfiguration.Default);
+            });
 #if Serilog
+            builder.Host.UseSerilog((context, serviceProvider, config) => CreateLoggerConfiguration(context, serviceProvider, config));
+#endif
+#if Console
+            builder.Host.ConfigureLogging(logging => logging.AddConsole());
+#endif
+        }
 
+#if Serilog
+        
         private static LoggerConfiguration CreateLoggerConfiguration(
             HostBuilderContext context, 
             IServiceProvider serviceProvider, 
@@ -322,50 +334,20 @@ namespace Arcus.Templates.WebApi
         {
             var instrumentationKey = context.Configuration.GetValue<string>(ApplicationInsightsInstrumentationKeyName);
             
-            return config
-                .ReadFrom.Configuration(context.Configuration)
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-                .Enrich.FromLogContext()
-                .Enrich.WithVersion()
-                .Enrich.WithComponentName("API")
+            return config.ReadFrom.Configuration(context.Configuration)
+                         .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                         .Enrich.FromLogContext()
+                         .Enrich.WithVersion()
+                         .Enrich.WithComponentName("API")
 #if (ExcludeCorrelation == false)
-                .Enrich.WithHttpCorrelationInfo(serviceProvider)
+                         .Enrich.WithHttpCorrelationInfo(serviceProvider)
 #endif
-                .WriteTo.Console()
-                .WriteTo.AzureApplicationInsights(instrumentationKey);
-        }
-#endif
-        
-        private static void RestrictToJsonContentType(MvcOptions options)
-        {
-            var allButJsonInputFormatters = options.InputFormatters.Where(formatter => !(formatter is SystemTextJsonInputFormatter));
-            foreach (IInputFormatter inputFormatter in allButJsonInputFormatters)
-            {
-                options.InputFormatters.Remove(inputFormatter);
-            }
-            
-            // Removing for text/plain, see https://docs.microsoft.com/en-us/aspnet/core/web-api/advanced/formatting?view=aspnetcore-3.0#special-case-formatters
-            options.OutputFormatters.RemoveType<StringOutputFormatter>();
-        }
-
-        private static void ConfigureJsonFormatters(MvcOptions options)
-        {
-            var onlyJsonInputFormatters = options.InputFormatters.OfType<SystemTextJsonInputFormatter>();
-            foreach (SystemTextJsonInputFormatter inputFormatter in onlyJsonInputFormatters)
-            {
-                inputFormatter.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-                inputFormatter.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
-            }
-            
-            var onlyJsonOutputFormatters = options.OutputFormatters.OfType<SystemTextJsonOutputFormatter>();
-            foreach (SystemTextJsonOutputFormatter outputFormatter in onlyJsonOutputFormatters)
-            {
-                outputFormatter.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-                outputFormatter.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
-            }
+                         .WriteTo.Console()
+                         .WriteTo.AzureApplicationInsights(instrumentationKey);
         }
         
-        public static void ConfigureApp(WebApplication app)
+#endif
+        private static void ConfigureApp(IApplicationBuilder app)
         {
 #if (ExcludeCorrelation == false)
             app.UseHttpCorrelation();

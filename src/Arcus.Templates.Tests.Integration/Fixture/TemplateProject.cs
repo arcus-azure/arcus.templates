@@ -166,7 +166,6 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             string destPath = Path.Combine(ProjectDirectory.FullName, fileName);
             if (!File.Exists(destPath))
             {
-                string files = String.Join(", ", ProjectDirectory.GetFiles().Select(f => f.FullName));
                 throw new FileNotFoundException($"No project file with the file name: '{fileName}' was found in the target project folder");
             }
 
@@ -185,7 +184,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         public void AddTypeAsFile<TFixture>(IDictionary<string, string> replacements = null, params string[] namespaces)
         {
             replacements = replacements ?? new Dictionary<string, string>();
-            namespaces = namespaces ?? new string[0];
+            namespaces = namespaces ?? Array.Empty<string>();
 
             string srcPath = FindFixtureTypeInDirectory(FixtureDirectory, typeof(TFixture));
             string destPath = Path.Combine(ProjectDirectory.FullName, Path.Combine(namespaces), typeof(TFixture).Name + ".cs");
@@ -236,7 +235,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
                 throw new InvalidOperationException("Test demo project from template is already started");
             }
 
-            commandArguments = commandArguments ?? new CommandArgument[0];
+            commandArguments = commandArguments ?? Array.Empty<CommandArgument>();
 
             try
             {

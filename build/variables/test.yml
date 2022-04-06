@@ -7,3 +7,4 @@ variables:
   Arcus.AzureFunctions.ApplicationInsights.MetricName: 'Databricks Job Completed'
   Arcus.AzureFunctions.Databricks.HttpPort: '5050'
   Arcus.AzureFunctions.Http.HttpPort: '6060'
+  Arcus.AzureFunctions.ServiceBus.Queue.HealthPort: '42067'

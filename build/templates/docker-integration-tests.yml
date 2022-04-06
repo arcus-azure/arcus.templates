@@ -50,7 +50,7 @@ stages:
                 ARCUS_HEALTH_PORT=$(Arcus.ServiceBus.Queue.Worker.HealthPort)
                 EVENTGRID_TOPIC_URI=$(Arcus.TestInfra.EventGrid.Topic.Uri)
                 EVENTGRID_AUTH_KEY=$(Arcus.TestInfra.EventGrid.Auth.Key)
-                ARCUS_SERVICEBUS_CONNECTIONSTRING=$(Arcus.ServiceBus.ConnectionStringWithQueue)
+                ARCUS_SERVICEBUS_CONNECTIONSTRING=$(Arcus.Worker.ServiceBus.Queue.ConnectionString)
                 TELEMETRY_APPLICATIONINSIGHTS_INSTRUMENTATIONKEY=$(Arcus.ApplicationInsights.InstrumentationKey)
           - template: 'run-new-project-from-template.yml'
             parameters:
@@ -65,7 +65,7 @@ stages:
                 ARCUS_HEALTH_PORT=$(Arcus.ServiceBus.Topic.Worker.HealthPort)
                 EVENTGRID_TOPIC_URI=$(Arcus.TestInfra.EventGrid.Topic.Uri)
                 EVENTGRID_AUTH_KEY=$(Arcus.TestInfra.EventGrid.Auth.Key)
-                ARCUS_SERVICEBUS_CONNECTIONSTRING=$(Arcus.ServiceBus.ConnectionStringWithTopic)
+                ARCUS_SERVICEBUS_CONNECTIONSTRING=$(Arcus.Worker.ServiceBus.Topic.ConnectionString)
                 TELEMETRY_APPLICATIONINSIGHTS_INSTRUMENTATIONKEY=$(Arcus.ApplicationInsights.InstrumentationKey)
           - template: 'run-new-project-from-template.yml'
             parameters:
@@ -91,6 +91,17 @@ stages:
                   Set-Content './Arcus.Demo.AzureFunctions.Http/Startup.cs'
               envVars: |
                 APPLICATIONINSIGHTS_INSTRUMENTATIONKEY=$(Arcus.ApplicationInsights.InstrumentationKey)
+          - template: 'run-new-project-from-template.yml'
+            parameters:
+              projectName: 'Arcus.Demo.AzureFunctions.ServiceBus.Queue'
+              projectAlias: 'arcus-az-func-servicebus-queue'
+              ports: '$(Arcus.AzureFunctions.ServiceBus.Queue.Port):$(Arcus.AzureFunctions.ServiceBus.Queue.Port)'
+              script: |
+                Get-Content './Arcus.Demo.AzureFunctions.ServiceBus.Queue/Startup.cs' |
+                  Where-Object { $_ -notmatch '#error' } |
+                  Set-Content './Arcus.Demo.AzureFunctions.ServiceBus.Queue/Startup.cs'
+              envVars: |
+                ServiceBusConnectionString=$(Arcus.Worker.ServiceBus.Queue.ConnectionString)
           - task: UseDotNet@2
             displayName: 'Import .NET Core SDK ($(DotNet.Sdk.PreviousVersion))'
             inputs:

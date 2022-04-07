@@ -37,15 +37,6 @@
     <DefineConstants>$(DefineConstants);</DefineConstants>
     <DockerFastModeProjectMountDirectory>/home/site/wwwroot</DockerFastModeProjectMountDirectory>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Content Remove="Order.cs" />
-    <Content Remove="OrdersAzureServiceBusMessageHandler.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="Dockerfile" />
-  </ItemGroup>
   <!--#endif-->
   
   <ItemGroup>

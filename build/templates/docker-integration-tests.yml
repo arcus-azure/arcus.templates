@@ -102,6 +102,7 @@ stages:
                   Set-Content './Arcus.Demo.AzureFunctions.ServiceBus.Queue/Startup.cs'
               envVars: |
                 ServiceBusConnectionString=$(Arcus.Worker.ServiceBus.Queue.ConnectionString)
+                APPINSIGHTS_INSTRUMENTATIONKEY=$(Arcus.ApplicationInsights.InstrumentationKey)
           - task: UseDotNet@2
             displayName: 'Import .NET Core SDK ($(DotNet.Sdk.PreviousVersion))'
             inputs:

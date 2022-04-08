@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Arcus.Security.Core.Caching.Configuration;
 using Arcus.Templates.AzureFunctions.Http;
+using Arcus.WebApi.Logging.Core.Correlation;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,7 +36,7 @@ namespace Arcus.Templates.AzureFunctions.Http
         {
             IConfiguration config = builder.GetContext().Configuration;
 
-            builder.AddHttpCorrelation();
+            builder.AddHttpCorrelation((HttpCorrelationInfoOptions options) => { });
 #if IncludeHealthChecks
             builder.Services.AddHealthChecks();
 #endif

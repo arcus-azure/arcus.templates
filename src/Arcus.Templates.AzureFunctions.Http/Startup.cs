@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Arcus.Security.Core.Caching.Configuration;
 using Arcus.Templates.AzureFunctions.Http;
+using Arcus.WebApi.Logging.Core.Correlation;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

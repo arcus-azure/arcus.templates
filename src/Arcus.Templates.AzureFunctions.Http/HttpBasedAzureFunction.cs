@@ -38,7 +38,7 @@ namespace Arcus.Templates.AzureFunctions.Http
             Logger = logger ?? NullLogger.Instance;
 
             var options = new JsonSerializerOptions();
-            options.IgnoreNullValues = true;
+            options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
             options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
             options.Converters.Add(new JsonStringEnumConverter());
             JsonOptions = options;

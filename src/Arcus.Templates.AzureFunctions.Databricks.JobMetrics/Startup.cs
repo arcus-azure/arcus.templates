@@ -39,7 +39,7 @@ namespace Arcus.Templates.AzureFunctions.Databricks.JobMetrics
                 stores.AddAzureKeyVaultWithManagedIdentity("https://your-keyvault.vault.azure.net/", CacheConfiguration.Default);
             });
 
-            var instrumentationKey = config.GetValue<string>("APPLICATIONINSIGHTS_INSTRUMENTATIONKEY");
+            var instrumentationKey = config.GetValue<string>("APPINSIGHTS_INSTRUMENTATIONKEY");
             var configuration = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
@@ -51,8 +51,7 @@ namespace Arcus.Templates.AzureFunctions.Databricks.JobMetrics
 
             builder.Services.AddLogging(logging =>
             {
-                logging.ClearProvidersExceptFunctionProviders()
-                       .AddSerilog(configuration.CreateLogger(), dispose: true);
+                logging.AddSerilog(configuration.CreateLogger(), dispose: true);
             });
         }
     }

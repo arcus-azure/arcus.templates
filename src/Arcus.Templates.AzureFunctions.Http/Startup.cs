@@ -36,7 +36,7 @@ namespace Arcus.Templates.AzureFunctions.Http
         {
             IConfiguration config = builder.GetContext().Configuration;
 
-            builder.AddHttpCorrelation((HttpCorrelationInfoOptions options) => { });
+            builder.AddHttpCorrelation();
 #if IncludeHealthChecks
             builder.Services.AddHealthChecks();
 #endif

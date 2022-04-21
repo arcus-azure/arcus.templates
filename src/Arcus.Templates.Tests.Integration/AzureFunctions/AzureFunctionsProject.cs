@@ -19,7 +19,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions
     /// </summary>
     public abstract class AzureFunctionsProject : TemplateProject
     {
-        protected const string ApplicationInsightsInstrumentationKeyVariable = "APPLICATIONINSIGHTS_INSTRUMENTATIONKEY";
+        protected const string ApplicationInsightsInstrumentationKeyVariable = "APPINSIGHTS_INSTRUMENTATIONKEY";
 
         private static readonly HttpClient HttpClient = new HttpClient();
         

@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.Fixture;
+using Arcus.Templates.Tests.Integration.Worker.Configuration;
 using Arcus.Templates.Tests.Integration.Worker.Fixture;
 using Arcus.Templates.Tests.Integration.Worker.Health;
 using Arcus.Templates.Tests.Integration.Worker.MessagePump;
@@ -189,15 +190,14 @@ namespace Arcus.Templates.Tests.Integration.Worker
 
         private IEnumerable<CommandArgument> CreateServiceBusQueueWorkerCommands()
         {
-            string eventGridTopicUri = _configuration["Arcus:Worker:EventGrid:TopicUri"];
-            string eventGridAuthKey = _configuration["Arcus:Worker:EventGrid:AuthKey"];
+            EventGridConfig eventGridConfig = _configuration.GetEventGridConfig();
             string serviceBusConnection = _configuration.GetServiceBusConnectionString(_entity);
 
             return new[]
             {
                 CommandArgument.CreateOpen("ARCUS_HEALTH_PORT", _healthPort),
-                CommandArgument.CreateSecret("EVENTGRID_TOPIC_URI", eventGridTopicUri),
-                CommandArgument.CreateSecret("EVENTGRID_AUTH_KEY", eventGridAuthKey),
+                CommandArgument.CreateSecret("EVENTGRID_TOPIC_URI", eventGridConfig.TopicUri),
+                CommandArgument.CreateSecret("EVENTGRID_AUTH_KEY", eventGridConfig.AuthenticationKey),
                 CommandArgument.CreateSecret("ARCUS_SERVICEBUS_CONNECTIONSTRING", serviceBusConnection)
             };
         }

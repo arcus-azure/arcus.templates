@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29230.47
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arcus.Templates.WebApi", "Arcus.Templates.WebApi\Arcus.Templates.WebApi.csproj", "{79A83256-D5AC-4080-9BCB-6208CA1B5777}"
 EndProject
@@ -17,7 +17,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arcus.Templates.ServiceBus.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arcus.Templates.AzureFunctions.Databricks.JobMetrics", "Arcus.Templates.AzureFunctions.Databricks.JobMetrics\Arcus.Templates.AzureFunctions.Databricks.JobMetrics.csproj", "{2A73C4DA-FCE4-41D3-B688-1D44A4E94958}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arcus.Templates.AzureFunctions.Http", "Arcus.Templates.AzureFunctions.Http\Arcus.Templates.AzureFunctions.Http.csproj", "{4DEFCD46-678C-4732-8595-A50E406C0A42}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arcus.Templates.AzureFunctions.Http", "Arcus.Templates.AzureFunctions.Http\Arcus.Templates.AzureFunctions.Http.csproj", "{4DEFCD46-678C-4732-8595-A50E406C0A42}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arcus.Templates.AzureFunctions.ServiceBus.Queue", "Arcus.Templates.AzureFunctions.ServiceBus.Queue\Arcus.Templates.AzureFunctions.ServiceBus.Queue.csproj", "{651CD421-8E6E-44B8-AF3B-E96DD6266B11}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,6 +55,10 @@ Global
 		{4DEFCD46-678C-4732-8595-A50E406C0A42}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4DEFCD46-678C-4732-8595-A50E406C0A42}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4DEFCD46-678C-4732-8595-A50E406C0A42}.Release|Any CPU.Build.0 = Release|Any CPU
+		{651CD421-8E6E-44B8-AF3B-E96DD6266B11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{651CD421-8E6E-44B8-AF3B-E96DD6266B11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{651CD421-8E6E-44B8-AF3B-E96DD6266B11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{651CD421-8E6E-44B8-AF3B-E96DD6266B11}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

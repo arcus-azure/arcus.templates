@@ -30,5 +30,18 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus.MessageHan
                 await project.MessagePump.SimulateMessageProcessingAsync();
             }
         }
+
+
+        [Fact]
+        public async Task ServiceBusTopicProject_WithOrderMessageHandlerImplementation_CorrectlyProcessesMessage()
+        {
+            // Arrange
+            var config = TestConfig.Create();
+            await using (var project = await AzureFunctionsServiceBusProject.StartNewTopicProjectAsync(config, _outputWriter))
+            {
+                // Act / Assert
+                await project.MessagePump.SimulateMessageProcessingAsync();
+            }
+        }
     }
 }

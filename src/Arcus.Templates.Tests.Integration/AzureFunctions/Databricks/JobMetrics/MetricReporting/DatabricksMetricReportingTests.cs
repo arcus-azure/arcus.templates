@@ -27,7 +27,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics
             _config = TestConfig.Create();
         }
 
-        [Fact]
+        [Fact(Skip = "Fails now because the Databricks cluster is removed on Azure")]
         public async Task MinimumAzureFunctionsDatabricksProject_WithEmbeddedTimer_ReportsAsMetricPeriodically()
         {
             var parameters = RunParameters.CreateNotebookParams(Enumerable.Empty<KeyValuePair<string, string>>());

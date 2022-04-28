@@ -49,17 +49,21 @@ namespace Arcus.Templates.AzureFunctions.ServiceBus.Topic
 
         private static LoggerConfiguration CreateLoggerConfiguration(IFunctionsHostBuilder builder)
         {
-            IConfiguration appConfig = builder.GetContext().Configuration;
-            var instrumentationKey = appConfig.GetValue<string>("APPINSIGHTS_INSTRUMENTATIONKEY");
             var logConfig = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .Enrich.FromLogContext()
                 .Enrich.WithComponentName("Service Bus Topic Trigger")
                 .Enrich.WithVersion()
-                .WriteTo.Console()
-                .WriteTo.AzureApplicationInsights(instrumentationKey);
-           
+                .WriteTo.Console();
+
+            IConfiguration appConfig = builder.GetContext().Configuration;
+            var instrumentationKey = appConfig.GetValue<string>("APPINSIGHTS_INSTRUMENTATIONKEY");
+            if (!string.IsNullOrWhiteSpace(instrumentationKey))
+            {
+                logConfig.WriteTo.AzureApplicationInsights(instrumentationKey);
+            }
+
             return logConfig;
         }
     }

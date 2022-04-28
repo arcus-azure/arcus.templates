@@ -31,7 +31,6 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus.MessageHan
             }
         }
 
-
         [Fact]
         public async Task ServiceBusTopicProject_WithOrderMessageHandlerImplementation_CorrectlyProcessesMessage()
         {

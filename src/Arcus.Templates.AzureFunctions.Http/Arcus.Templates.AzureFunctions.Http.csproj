@@ -15,7 +15,7 @@
     <PackageTags>Azure;Azure Functions;HTTP;API</PackageTags>
     <Copyright>Copyright (c) Arcus</Copyright>
     <PackageLicenseUrl>https://github.com/arcus-azure/arcus.templates/blob/master/LICENSE</PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/arcus-azure/arcus.templates</PackageProjectUrl>
+    <PackageProjectUrl>https://templates.arcus-azure.net/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/arcus-azure/arcus.templates</RepositoryUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/arcus-azure/arcus/master/media/arcus.png</PackageIconUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -41,7 +41,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Dockerfile" />
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
   <!--#endif-->
 

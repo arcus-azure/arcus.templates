@@ -92,6 +92,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             switch (entity)
             {
                 case ServiceBusEntity.Queue: return PathCombineWithSourcesDirectory("Arcus.Templates.AzureFunctions.ServiceBus.Queue");
+                case ServiceBusEntity.Topic: return PathCombineWithSourcesDirectory("Arcus.Templates.AzureFunctions.ServiceBus.Topic");
                 default:
                     throw new ArgumentOutOfRangeException(nameof(entity), entity, "Unknown Service Bus entity");
             }

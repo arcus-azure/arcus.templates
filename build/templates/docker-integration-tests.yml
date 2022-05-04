@@ -103,6 +103,18 @@ stages:
               envVars: |
                 ServiceBusConnectionString=$(Arcus.Worker.ServiceBus.Queue.ConnectionString)
                 APPINSIGHTS_INSTRUMENTATIONKEY=$(Arcus.ApplicationInsights.InstrumentationKey)
+          - template: 'run-new-project-from-template.yml'
+            parameters:
+              projectName: 'Arcus.Demo.AzureFunctions.ServiceBus.Topic'
+              projectAlias: 'arcus-az-func-servicebus-topic'
+              ports: '$(Arcus.AzureFunctions.ServiceBus.Topic.Port):$(Arcus.AzureFunctions.ServiceBus.Topic.Port)'
+              script: |
+                Get-Content './Arcus.Demo.AzureFunctions.ServiceBus.Topic/Startup.cs' |
+                  Where-Object { $_ -notmatch '#error' } |
+                  Set-Content './Arcus.Demo.AzureFunctions.ServiceBus.Topic/Startup.cs'
+              envVars: |
+                ServiceBusConnectionString=$(Arcus.Worker.ServiceBus.Topic.ConnectionString)
+                APPINSIGHTS_INSTRUMENTATIONKEY=$(Arcus.ApplicationInsights.InstrumentationKey)
           - task: UseDotNet@2
             displayName: 'Import .NET Core SDK ($(DotNet.Sdk.PreviousVersion))'
             inputs:

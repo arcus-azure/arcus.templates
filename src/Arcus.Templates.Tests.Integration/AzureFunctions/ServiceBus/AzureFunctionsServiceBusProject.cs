@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.Fixture;
@@ -6,7 +7,9 @@ using Arcus.Templates.Tests.Integration.Worker;
 using Arcus.Templates.Tests.Integration.Worker.Configuration;
 using Arcus.Templates.Tests.Integration.Worker.Fixture;
 using Arcus.Templates.Tests.Integration.Worker.MessagePump;
+using Azure;
 using Azure.Messaging.ServiceBus;
+using Azure.Messaging.ServiceBus.Administration;
 using GuardNet;
 using Xunit.Abstractions;
 
@@ -55,6 +58,24 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
             return project;
         }
 
+        /// <summary>
+        /// Starts a newly created project from the Azure Functions Service Bus Topic project template.
+        /// </summary>
+        /// <param name="configuration">The collection of configuration values to correctly initialize the resulting project with secret values.</param>
+        /// <param name="outputWriter">The output logger to add telemetry information during the creation and startup process.</param>
+        /// <returns>
+        ///     An Azure Functions Service Bus Topic project with a set of services to interact with the worker.
+        /// </returns>
+        public static async Task<AzureFunctionsServiceBusProject> StartNewTopicProjectAsync(TestConfig configuration, ITestOutputHelper outputWriter)
+        {
+            Guard.NotNull(outputWriter, nameof(outputWriter), "Requires a test logger to write diagnostic information during the creation and startup process");
+
+            AzureFunctionsServiceBusProject project = CreateNew(ServiceBusEntity.Topic, configuration, outputWriter);
+
+            await project.StartAsync(ServiceBusEntity.Topic);
+            return project;
+        }
+
         private static AzureFunctionsServiceBusProject CreateNew(ServiceBusEntity entity, TestConfig configuration, ITestOutputHelper outputWriter)
         {
             var project = new AzureFunctionsServiceBusProject(entity, configuration, outputWriter);
@@ -67,8 +88,8 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
 
         private void AddOrderMessageHandlerImplementation()
         {
-            AddPackage("Arcus.EventGrid", "3.1.0");
-            AddPackage("Arcus.EventGrid.Publishing", "3.1.0");
+            AddPackage("Arcus.EventGrid", "3.2.0");
+            AddPackage("Arcus.EventGrid.Publishing", "3.2.0");
 
             AddTypeAsFile<Order>();
             AddTypeAsFile<Customer>();
@@ -87,6 +108,11 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
             string namespaceConnectionString = $"Endpoint={properties.Endpoint};SharedAccessKeyName={properties.SharedAccessKeyName};SharedAccessKey={properties.SharedAccessKey}";
             Environment.SetEnvironmentVariable("ServiceBusConnectionString", namespaceConnectionString);
 
+            if (entity is ServiceBusEntity.Topic)
+            {
+                await AddServiceBusTopicSubscriptionAsync(properties.EntityPath, namespaceConnectionString);
+            }
+
             EventGridConfig eventGridConfig = Configuration.GetEventGridConfig();
             Environment.SetEnvironmentVariable("EVENTGRID_TOPIC_URI", eventGridConfig.TopicUri);
             Environment.SetEnvironmentVariable("EVENTGRID_AUTH_KEY", eventGridConfig.AuthenticationKey);
@@ -98,14 +124,53 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
             await MessagePump.StartAsync();
         }
 
+        private static async Task AddServiceBusTopicSubscriptionAsync(string topic, string connectionString)
+        {
+            var client = new ServiceBusAdministrationClient(connectionString);
+            var subscriptionName = "order-subscription";
+
+            Response<bool> subscriptionExists = await client.SubscriptionExistsAsync(topic, subscriptionName);
+            if (!subscriptionExists.Value)
+            {
+                await client.CreateSubscriptionAsync(topic, subscriptionName);
+            }
+        }
+
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources asynchronously.
         /// </summary>
         /// <returns>A task that represents the asynchronous dispose operation.</returns>
         public async ValueTask DisposeAsync()
         {
-            Dispose();
-            await MessagePump.DisposeAsync();
+            var exceptions = new Collection<Exception>();
+
+            try
+            {
+                Dispose();
+            }
+            catch (Exception exception)
+            {
+                exceptions.Add(exception);
+            }
+
+            try
+            {
+                await MessagePump.DisposeAsync();
+            }
+            catch (Exception exception)
+            {
+                exceptions.Add(exception);
+            }
+
+            if (exceptions.Count is 1)
+            {
+                throw exceptions[0];
+            }
+
+            if (exceptions.Count > 1)
+            {
+                throw new AggregateException(exceptions);
+            }
         }
 
         /// <summary>

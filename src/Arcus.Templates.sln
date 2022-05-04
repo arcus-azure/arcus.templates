@@ -19,7 +19,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arcus.Templates.AzureFuncti
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arcus.Templates.AzureFunctions.Http", "Arcus.Templates.AzureFunctions.Http\Arcus.Templates.AzureFunctions.Http.csproj", "{4DEFCD46-678C-4732-8595-A50E406C0A42}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arcus.Templates.AzureFunctions.ServiceBus.Queue", "Arcus.Templates.AzureFunctions.ServiceBus.Queue\Arcus.Templates.AzureFunctions.ServiceBus.Queue.csproj", "{651CD421-8E6E-44B8-AF3B-E96DD6266B11}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arcus.Templates.AzureFunctions.ServiceBus.Queue", "Arcus.Templates.AzureFunctions.ServiceBus.Queue\Arcus.Templates.AzureFunctions.ServiceBus.Queue.csproj", "{651CD421-8E6E-44B8-AF3B-E96DD6266B11}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arcus.Templates.AzureFunctions.ServiceBus.Topic", "Arcus.Templates.AzureFunctions.ServiceBus.Topic\Arcus.Templates.AzureFunctions.ServiceBus.Topic.csproj", "{869EDEC5-AF3F-4E41-A61E-235BD6232636}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,6 +61,10 @@ Global
 		{651CD421-8E6E-44B8-AF3B-E96DD6266B11}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{651CD421-8E6E-44B8-AF3B-E96DD6266B11}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{651CD421-8E6E-44B8-AF3B-E96DD6266B11}.Release|Any CPU.Build.0 = Release|Any CPU
+		{869EDEC5-AF3F-4E41-A61E-235BD6232636}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{869EDEC5-AF3F-4E41-A61E-235BD6232636}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{869EDEC5-AF3F-4E41-A61E-235BD6232636}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{869EDEC5-AF3F-4E41-A61E-235BD6232636}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

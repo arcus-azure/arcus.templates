@@ -8,3 +8,4 @@ variables:
   Arcus.AzureFunctions.Databricks.HttpPort: '5050'
   Arcus.AzureFunctions.Http.HttpPort: '6060'
   Arcus.AzureFunctions.ServiceBus.Queue.Port: '42067'
+  Arcus.AzureFunctions.ServiceBus.Topic.Port: '42068'

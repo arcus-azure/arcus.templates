@@ -17,6 +17,7 @@ Arcus Templates provides various project templates:
     * [(Worker) Azure Service Bus Queue](./features/servicebus-queue-worker-template.md)
     * [(Worker) Azure Service Bus Topic](./features/servicebus-topic-worker-template.md)
     * [(Azure Functions) Azure Service Bus Queue Trigger](./features/azurefunctions-servicebus-queue-template.md)
+    * [(Azure Functions) Azure Service Bus Topic Trigger](./features/azurefunctions-servicebus-topic-template.md)
 * **HTTP**
     * [Web API](./features/web-api-template.md)
     * [(Azure Functions) HTTP Trigger (Azure Functions)](./features/azurefunctions-http-template.md)

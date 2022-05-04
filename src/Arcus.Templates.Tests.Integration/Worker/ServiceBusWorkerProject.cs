@@ -158,8 +158,8 @@ namespace Arcus.Templates.Tests.Integration.Worker
 
         private void AddOrdersMessagePump()
         {
-            AddPackage("Arcus.EventGrid", "3.1.0");
-            AddPackage("Arcus.EventGrid.Publishing", "3.1.0");
+            AddPackage("Arcus.EventGrid", "3.2.0");
+            AddPackage("Arcus.EventGrid.Publishing", "3.2.0");
             AddTypeAsFile<Order>();
             AddTypeAsFile<Customer>();
             AddTypeAsFile<OrderCreatedEvent>();

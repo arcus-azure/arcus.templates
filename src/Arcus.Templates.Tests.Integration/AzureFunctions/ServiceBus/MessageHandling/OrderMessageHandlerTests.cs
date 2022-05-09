@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.Fixture;
+using Arcus.Templates.Tests.Integration.Worker;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -19,24 +20,14 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus.MessageHan
             _outputWriter = outputWriter;
         }
 
-        [Fact]
-        public async Task ServiceBusQueueProject_WithOrderMessageHandlerImplementation_CorrectlyProcessesMessage()
+        [Theory]
+        [InlineData(ServiceBusEntity.Queue)]
+        [InlineData(ServiceBusEntity.Topic)]
+        public async Task ServiceBusProject_WithOrderMessageHandlerImplementation_CorrectlyProcessesMessage(ServiceBusEntity entity)
         {
             // Arrange
             var config = TestConfig.Create();
-            await using (var project = await AzureFunctionsServiceBusProject.StartNewQueueProjectAsync(config, _outputWriter))
-            {
-                // Act / Assert
-                await project.MessagePump.SimulateMessageProcessingAsync();
-            }
-        }
-
-        [Fact]
-        public async Task ServiceBusTopicProject_WithOrderMessageHandlerImplementation_CorrectlyProcessesMessage()
-        {
-            // Arrange
-            var config = TestConfig.Create();
-            await using (var project = await AzureFunctionsServiceBusProject.StartNewTopicProjectAsync(config, _outputWriter))
+            await using (var project = await AzureFunctionsServiceBusProject.StartNewProjectAsync(entity, config, _outputWriter))
             {
                 // Act / Assert
                 await project.MessagePump.SimulateMessageProcessingAsync();

@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.Fixture;
+using Arcus.Templates.Tests.Integration.Worker;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -19,8 +20,10 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus.Logging
             _outputWriter = outputWriter;
         }
 
-        [Fact]
-        public async Task ServiceBusQueueProject_WithoutSerilog_CorrectlyProcessesMessage()
+        [Theory]
+        [InlineData(ServiceBusEntity.Queue)]
+        [InlineData(ServiceBusEntity.Topic)]
+        public async Task ServiceBusProject_WithoutSerilog_CorrectlyProcessesMessage(ServiceBusEntity entity)
         {
             // Arrange
             var config = TestConfig.Create();
@@ -28,9 +31,8 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus.Logging
                 new AzureFunctionsServiceBusProjectOptions()
                     .WithExcludeSerilog();
 
-            await using (var project = await AzureFunctionsServiceBusProject.StartNewQueueProjectAsync(options, config, _outputWriter))
+            await using (var project = await AzureFunctionsServiceBusProject.StartNewProjectAsync(entity, options, config, _outputWriter))
             {
-                project.TearDownOptions = TearDownOptions.KeepProjectDirectory;
                 // Act / Assert
                 await project.MessagePump.SimulateMessageProcessingAsync();
 

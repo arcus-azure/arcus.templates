@@ -9,5 +9,12 @@
   "learnMoreLink": "https://templates.arcus-azure.net/features/servicebus-queue-azurefunctions-template",
   "icon": "icon.jpg",
   "symbolInfo": [
+    {
+      "id": "exclude-serilog",
+      "name": {
+        "text": "Exclude Serilog"
+      },
+      "isVisible": true
+    }
   ]
 }

@@ -30,7 +30,6 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus.Logging
 
             await using (var project = await AzureFunctionsServiceBusProject.StartNewQueueProjectAsync(options, config, _outputWriter))
             {
-                project.TearDownOptions = TearDownOptions.KeepProjectDirectory;
                 // Act / Assert
                 await project.MessagePump.SimulateMessageProcessingAsync();
 

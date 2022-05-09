@@ -52,8 +52,27 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
         {
             Guard.NotNull(outputWriter, nameof(outputWriter), "Requires a test logger to write diagnostic information during the creation and startup process");
 
-            AzureFunctionsServiceBusProject project = CreateNew(ServiceBusEntity.Queue, configuration, outputWriter);
-            
+            return await StartNewQueueProjectAsync(new AzureFunctionsServiceBusProjectOptions(), configuration, outputWriter);
+        }
+
+        /// <summary>
+        /// Starts a newly created project from the Azure Functions Service Bus Queue project template.
+        /// </summary>
+        /// <param name="options">The additional project options to pass along to the project creation command.</param>
+        /// <param name="configuration">The collection of configuration values to correctly initialize the resulting project with secret values.</param>
+        /// <param name="outputWriter">The output logger to add telemetry information during the creation and startup process.</param>
+        /// <returns>
+        ///     An Azure Functions Service Bus Queue project with a set of services to interact with the worker.
+        /// </returns>
+        public static async Task<AzureFunctionsServiceBusProject> StartNewQueueProjectAsync(
+            AzureFunctionsServiceBusProjectOptions options, 
+            TestConfig configuration, 
+            ITestOutputHelper outputWriter)
+        {
+            Guard.NotNull(outputWriter, nameof(outputWriter), "Requires a test logger to write diagnostic information during the creation and startup process");
+
+            AzureFunctionsServiceBusProject project = CreateNew(ServiceBusEntity.Queue, options, configuration, outputWriter);
+
             await project.StartAsync(ServiceBusEntity.Queue);
             return project;
         }
@@ -70,16 +89,20 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
         {
             Guard.NotNull(outputWriter, nameof(outputWriter), "Requires a test logger to write diagnostic information during the creation and startup process");
 
-            AzureFunctionsServiceBusProject project = CreateNew(ServiceBusEntity.Topic, configuration, outputWriter);
+            AzureFunctionsServiceBusProject project = CreateNew(ServiceBusEntity.Topic, new AzureFunctionsServiceBusProjectOptions(), configuration, outputWriter);
 
             await project.StartAsync(ServiceBusEntity.Topic);
             return project;
         }
 
-        private static AzureFunctionsServiceBusProject CreateNew(ServiceBusEntity entity, TestConfig configuration, ITestOutputHelper outputWriter)
+        private static AzureFunctionsServiceBusProject CreateNew(
+            ServiceBusEntity entity, 
+            AzureFunctionsServiceBusProjectOptions options, 
+            TestConfig configuration, 
+            ITestOutputHelper outputWriter)
         {
             var project = new AzureFunctionsServiceBusProject(entity, configuration, outputWriter);
-            project.CreateNewProject(new ProjectOptions());
+            project.CreateNewProject(options);
             project.AddOrderMessageHandlerImplementation();
             project.AddStorageAccount();
 

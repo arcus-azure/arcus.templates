@@ -310,6 +310,37 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         }
 
         /// <summary>
+        /// Gets the file contents of the '.csproj' project file in the end-result project created from the project template.
+        /// </summary>
+        public string GetFileContentsOfProjectFile()
+        {
+            string fileContents = GetFileContentsInProject(ProjectName + ".csproj");
+            return fileContents;
+        }
+
+        /// <summary>
+        /// Gets the file contents of a <paramref name="fileName"/> located at the end-result project created from the project template.
+        /// </summary>
+        /// <param name="fileName">The file name to retrieve the file contents in the end-result project from the project template.</param>
+        /// <exception cref="ArgumentException">Thrown when the <paramref name="fileName"/> is blank.</exception>
+        /// <exception cref="FileNotFoundException">Thrown when the <paramref name="fileName"/> doesn't point to a existing file in the end-result project from the project template.</exception>
+        public string GetFileContentsInProject(string fileName)
+        {
+            Guard.NotNullOrWhitespace(fileName, nameof(fileName), "Requires a non-blank file name to retrieve the file contents in the end-result project from the project template");
+
+            string filePath = Path.Combine(ProjectDirectory.FullName, fileName);
+            if (!File.Exists(filePath))
+            {
+                throw new FileNotFoundException(
+                    $"Cannot find file within end-result project from project template at file path: '{filePath}', " 
+                    +  "please make sure that the project template includes this file or that the test suite adds this file afterwards");
+            }
+
+            string fileContents = File.ReadAllText(filePath);
+            return fileContents;
+        }
+
+        /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
         public void Dispose()

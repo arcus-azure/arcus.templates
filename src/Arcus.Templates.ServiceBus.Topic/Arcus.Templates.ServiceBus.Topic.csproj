@@ -15,7 +15,7 @@
     <PackageTags>Worker;Azure;Azure;ServiceBus;Topic</PackageTags>
     <Copyright>Copyright (c) Arcus</Copyright>
     <PackageLicenseUrl>https://github.com/arcus-azure/arcus.templates/blob/master/LICENSE</PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/arcus-azure/arcus.templates</PackageProjectUrl>
+    <PackageProjectUrl>https://templates.arcus-azure.net/</PackageProjectUrl>
     <PackageTags>Worker;Azure;ServiceBus;Topic</PackageTags>
     <RepositoryUrl>https://github.com/arcus-azure/arcus.templates</RepositoryUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/arcus-azure/arcus/master/media/arcus.png</PackageIconUrl>
@@ -42,7 +42,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Dockerfile" />
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
   <!--#endif-->
 
@@ -57,7 +57,7 @@
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.15.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="Serilog" Version="2.10.0" Condition="'$(ExcludeSerilog)' == 'false'" />
+    <PackageReference Include="Serilog" Version="2.11.0" Condition="'$(ExcludeSerilog)' == 'false'" />
     <PackageReference Include="Serilog.Extensions.Hosting" Version="4.2.0" Condition="'$(ExcludeSerilog)' == 'false'" />
     <PackageReference Include="Serilog.Sinks.Console" Version="4.0.1" />
   </ItemGroup>

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <AzureFunctionsVersion>v4</AzureFunctionsVersion>
@@ -7,15 +7,14 @@
     <Authors>Arcus</Authors>
     <Company>Arcus</Company>
     <RepositoryType>Git</RepositoryType>
-    <Description>Provide a template to easily build an Azure Functions that reports the completed Databricks job runs as metrics.</Description>
+    <Description>Provide a template to easily build Azure Functions on a Azure Service Bus Topic.</Description>
     <IsPackable>true</IsPackable>
-    <PackageId>Arcus.Templates.AzureFunctions.Databricks.JobMetrics</PackageId>
-    <Title>Template for Azure Functions Databricks project</Title>
+    <Title>Template for Azure Functions Service Bus topic project</Title>
     <PackageType>Template</PackageType>
-    <PackageTags>Azure;Azure Functions;Databricks;Metric</PackageTags>
+    <PackageTags>Azure;Azure Functions;Service Bus;Topic</PackageTags>
     <Copyright>Copyright (c) Arcus</Copyright>
     <PackageLicenseUrl>https://github.com/arcus-azure/arcus.templates/blob/master/LICENSE</PackageLicenseUrl>
-    <PackageProjectUrl>https://templates.arcus-azure.net/</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/arcus-azure/arcus.templates</PackageProjectUrl>
     <RepositoryUrl>https://github.com/arcus-azure/arcus.templates</RepositoryUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/arcus-azure/arcus/master/media/arcus.png</PackageIconUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -24,8 +23,7 @@
     <ContentTargetFolders>content</ContentTargetFolders>
     <EnableDefaultContentItems>false</EnableDefaultContentItems>
     <DockerComposeProjectPath>..\Arcus.Templates.Orchestrator.dcproj</DockerComposeProjectPath>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <NoWarn>NU5048;NU5125;NU5119;NU5128</NoWarn>
+    <NoWarn>NU5048;NU5125;NU5119</NoWarn>
     <!--#endif-->
   </PropertyGroup>
 
@@ -38,12 +36,22 @@
     <DefineConstants>$(DefineConstants);</DefineConstants>
     <DockerFastModeProjectMountDirectory>/home/site/wwwroot</DockerFastModeProjectMountDirectory>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
-  </ItemGroup>
   <!--#endif-->
-
+  
+  <ItemGroup>
+    <PackageReference Include="Arcus.Messaging.Abstractions.ServiceBus" Version="1.2.0" />
+    <PackageReference Include="Arcus.Messaging.AzureFunctions.ServiceBus" Version="1.2.0" />
+    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Sinks.ApplicationInsights" Version="2.3.0" />
+    <PackageReference Include="Arcus.Security.AzureFunctions" Version="1.7.0" />
+    <PackageReference Include="Arcus.Security.Providers.AzureKeyVault" Version="1.7.0" />
+    <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.ServiceBus" Version="5.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
+    <PackageReference Include="Serilog" Version="2.10.0" />
+    <PackageReference Include="Serilog.Extensions.Hosting" Version="4.2.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="4.0.1" />
+  </ItemGroup>
+  
   <ItemGroup>
     <None Update="host.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -52,17 +60,5 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>Never</CopyToPublishDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Arcus.BackgroundJobs.Databricks" Version="0.3.0" />
-    <PackageReference Include="Arcus.Observability.Telemetry.AzureFunctions" Version="2.4.0" />
-    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Sinks.Applicationinsights" Version="2.4.0" />
-    <PackageReference Include="Arcus.Security.AzureFunctions" Version="1.7.0" />
-    <PackageReference Include="Arcus.Security.Providers.AzureKeyVault" Version="1.7.0" />
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="4.0.1" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.15.1" />
-    <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
-    <PackageReference Include="Serilog.Sinks.Console" Version="4.0.1" />
   </ItemGroup>
 </Project>

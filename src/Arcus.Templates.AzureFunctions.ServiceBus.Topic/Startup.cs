@@ -1,0 +1,70 @@
+﻿using Arcus.Security.Core.Caching.Configuration;
+using Arcus.Templates.AzureFunctions.ServiceBus.Topic;
+using Arcus.Templates.AzureFunctions.ServiceBus.Topic.Model;
+using Microsoft.Azure.Functions.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Serilog;
+using Serilog.Configuration;
+using Serilog.Events;
+
+[assembly: FunctionsStartup(typeof(Startup))]
+
+namespace Arcus.Templates.AzureFunctions.ServiceBus.Topic
+{
+    public class Startup : FunctionsStartup
+    {
+        // This method gets called by the runtime. Use this method to configure the app configuration.
+        public override void ConfigureAppConfiguration(IFunctionsConfigurationBuilder builder)
+        {
+            builder.ConfigurationBuilder.AddEnvironmentVariables();
+        }
+
+        /// <summary>
+        /// This method gets called by the runtime. Use this method to add services to the container.
+        /// </summary>
+        /// <param name="builder">The instance to build the registered services inside the functions app.</param>
+        public override void Configure(IFunctionsHostBuilder builder)
+        {
+            builder.ConfigureSecretStore((context, config, stores) =>
+            { 
+//[#if DEBUG]
+                stores.AddConfiguration(config);
+//[#endif]
+
+                //#error Please provide a valid secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secret-store/provider/key-vault
+                stores.AddAzureKeyVaultWithManagedIdentity("https://your-keyvault.vault.azure.net/", CacheConfiguration.Default);
+            });
+
+            builder.AddServiceBusMessageRouting()
+                   .WithServiceBusMessageHandler<OrdersAzureServiceBusMessageHandler, Order>();
+
+            LoggerConfiguration logConfig = CreateLoggerConfiguration(builder);
+            builder.Services.AddLogging(logging =>
+            {
+                logging.AddSerilog(logConfig.CreateLogger(), dispose: true);
+            });
+        }
+
+        private static LoggerConfiguration CreateLoggerConfiguration(IFunctionsHostBuilder builder)
+        {
+            var logConfig = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                .Enrich.FromLogContext()
+                .Enrich.WithComponentName("Service Bus Topic Trigger")
+                .Enrich.WithVersion()
+                .WriteTo.Console();
+
+            IConfiguration appConfig = builder.GetContext().Configuration;
+            var instrumentationKey = appConfig.GetValue<string>("APPINSIGHTS_INSTRUMENTATIONKEY");
+            if (!string.IsNullOrWhiteSpace(instrumentationKey))
+            {
+                logConfig.WriteTo.AzureApplicationInsights(instrumentationKey);
+            }
+
+            return logConfig;
+        }
+    }
+}

@@ -1,8 +1,8 @@
-FROM mcr.microsoft.com/dotnet/aspnet:6.0.4-alpine3.14 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:6.0.5-alpine3.14 AS base
 WORKDIR /app
 EXPOSE 80
 
-FROM mcr.microsoft.com/dotnet/sdk:6.0.202-alpine3.14 AS build
+FROM mcr.microsoft.com/dotnet/sdk:6.0.300-alpine3.14 AS build
 WORKDIR /src
 COPY ["Arcus.Templates.WebApi.csproj", ""]
 

@@ -5,12 +5,14 @@ using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+#if Serilog
 using Serilog;
 using Serilog.Configuration;
-using Serilog.Events;
-
+using Serilog.Events; 
+#endif
+ 
 [assembly: FunctionsStartup(typeof(Startup))]
-
+ 
 namespace Arcus.Templates.AzureFunctions.ServiceBus.Topic
 {
     public class Startup : FunctionsStartup
@@ -20,7 +22,7 @@ namespace Arcus.Templates.AzureFunctions.ServiceBus.Topic
         {
             builder.ConfigurationBuilder.AddEnvironmentVariables();
         }
-
+        
         /// <summary>
         /// This method gets called by the runtime. Use this method to add services to the container.
         /// </summary>
@@ -36,17 +38,20 @@ namespace Arcus.Templates.AzureFunctions.ServiceBus.Topic
                 //#error Please provide a valid secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secret-store/provider/key-vault
                 stores.AddAzureKeyVaultWithManagedIdentity("https://your-keyvault.vault.azure.net/", CacheConfiguration.Default);
             });
-
+            
             builder.AddServiceBusMessageRouting()
                    .WithServiceBusMessageHandler<OrdersAzureServiceBusMessageHandler, Order>();
-
+#if Serilog
+            
             LoggerConfiguration logConfig = CreateLoggerConfiguration(builder);
             builder.Services.AddLogging(logging =>
             {
                 logging.AddSerilog(logConfig.CreateLogger(), dispose: true);
-            });
+            }); 
+#endif
         }
-
+#if Serilog
+        
         private static LoggerConfiguration CreateLoggerConfiguration(IFunctionsHostBuilder builder)
         {
             var logConfig = new LoggerConfiguration()
@@ -65,6 +70,7 @@ namespace Arcus.Templates.AzureFunctions.ServiceBus.Topic
             }
 
             return logConfig;
-        }
+        } 
+#endif
     }
 }

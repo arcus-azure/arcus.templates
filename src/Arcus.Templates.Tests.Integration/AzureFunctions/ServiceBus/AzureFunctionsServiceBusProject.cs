@@ -11,6 +11,7 @@ using Azure;
 using Azure.Messaging.ServiceBus;
 using Azure.Messaging.ServiceBus.Administration;
 using GuardNet;
+using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
 
 namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
@@ -41,57 +42,54 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
         public MessagePumpService MessagePump { get; }
 
         /// <summary>
-        /// Starts a newly created project from the Azure Functions Service Bus Queue project template.
+        /// Starts a newly created project from the Azure Functions Service Bus project template.
         /// </summary>
-        /// <param name="configuration">The collection of configuration values to correctly initialize the resulting project with secret values.</param>
-        /// <param name="outputWriter">The output logger to add telemetry information during the creation and startup process.</param>
-        /// <returns>
-        ///     An Azure Functions Service Bus Queue project with a set of services to interact with the worker.
-        /// </returns>
-        public static async Task<AzureFunctionsServiceBusProject> StartNewQueueProjectAsync(TestConfig configuration, ITestOutputHelper outputWriter)
-        {
-            Guard.NotNull(outputWriter, nameof(outputWriter), "Requires a test logger to write diagnostic information during the creation and startup process");
-
-            return await StartNewQueueProjectAsync(new AzureFunctionsServiceBusProjectOptions(), configuration, outputWriter);
-        }
-
-        /// <summary>
-        /// Starts a newly created project from the Azure Functions Service Bus Queue project template.
-        /// </summary>
-        /// <param name="options">The additional project options to pass along to the project creation command.</param>
-        /// <param name="configuration">The collection of configuration values to correctly initialize the resulting project with secret values.</param>
-        /// <param name="outputWriter">The output logger to add telemetry information during the creation and startup process.</param>
-        /// <returns>
-        ///     An Azure Functions Service Bus Queue project with a set of services to interact with the worker.
-        /// </returns>
-        public static async Task<AzureFunctionsServiceBusProject> StartNewQueueProjectAsync(
-            AzureFunctionsServiceBusProjectOptions options, 
-            TestConfig configuration, 
-            ITestOutputHelper outputWriter)
-        {
-            Guard.NotNull(outputWriter, nameof(outputWriter), "Requires a test logger to write diagnostic information during the creation and startup process");
-
-            AzureFunctionsServiceBusProject project = CreateNew(ServiceBusEntity.Queue, options, configuration, outputWriter);
-
-            await project.StartAsync(ServiceBusEntity.Queue);
-            return project;
-        }
-
-        /// <summary>
-        /// Starts a newly created project from the Azure Functions Service Bus Topic project template.
-        /// </summary>
+        /// <param name="entity">The type of the Azure Service Bus entity, to control the used project template.</param>
         /// <param name="configuration">The collection of configuration values to correctly initialize the resulting project with secret values.</param>
         /// <param name="outputWriter">The output logger to add telemetry information during the creation and startup process.</param>
         /// <returns>
         ///     An Azure Functions Service Bus Topic project with a set of services to interact with the worker.
         /// </returns>
-        public static async Task<AzureFunctionsServiceBusProject> StartNewTopicProjectAsync(TestConfig configuration, ITestOutputHelper outputWriter)
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown when the <paramref name="configuration"/>, or the <paramref name="outputWriter"/> is <c>null</c>.
+        /// </exception>
+        public static async Task<AzureFunctionsServiceBusProject> StartNewProjectAsync(
+            ServiceBusEntity entity,
+            TestConfig configuration,
+            ITestOutputHelper outputWriter)
         {
+            Guard.NotNull(configuration, nameof(configuration), "Requires a configuration instance to retrieve the configuration values to pass along to the to-be-created project");
             Guard.NotNull(outputWriter, nameof(outputWriter), "Requires a test logger to write diagnostic information during the creation and startup process");
 
-            AzureFunctionsServiceBusProject project = CreateNew(ServiceBusEntity.Topic, new AzureFunctionsServiceBusProjectOptions(), configuration, outputWriter);
+            return await StartNewProjectAsync(entity, new AzureFunctionsServiceBusProjectOptions(), configuration, outputWriter);
+        }
 
-            await project.StartAsync(ServiceBusEntity.Topic);
+        /// <summary>
+        /// Starts a newly created project from the Azure Functions Service Bus project template.
+        /// </summary>
+        /// <param name="entity">The type of the Azure Service Bus entity, to control the used project template.</param>
+        /// <param name="options">The additional project options to pass along to the project creation command.</param>
+        /// <param name="configuration">The collection of configuration values to correctly initialize the resulting project with secret values.</param>
+        /// <param name="outputWriter">The output logger to add telemetry information during the creation and startup process.</param>
+        /// <returns>
+        ///     An Azure Functions Service Bus Topic project with a set of services to interact with the worker.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown when the <paramref name="options"/>, the <paramref name="configuration"/>, or the <paramref name="outputWriter"/> is <c>null</c>.
+        /// </exception>
+        public static async Task<AzureFunctionsServiceBusProject> StartNewProjectAsync(
+            ServiceBusEntity entity,
+            AzureFunctionsServiceBusProjectOptions options,
+            TestConfig configuration,
+            ITestOutputHelper outputWriter)
+        {
+            Guard.NotNull(options, nameof(options), "Requires a set of project options to pass along to the project creation command");
+            Guard.NotNull(configuration, nameof(configuration), "Requires a configuration instance to retrieve the configuration values to pass along to the to-be-created project");
+            Guard.NotNull(outputWriter, nameof(outputWriter), "Requires a test logger to write diagnostic information during the creation and startup process");
+
+            AzureFunctionsServiceBusProject project = CreateNew(entity, options, configuration, outputWriter);
+
+            await project.StartAsync(entity);
             return project;
         }
 

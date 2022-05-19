@@ -3,7 +3,7 @@ using Arcus.Security.Core.Caching.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-#if (ExcludeSerilog == false)
+#if Serilog
 using Serilog;
 using Serilog.Configuration;
 using Serilog.Events;
@@ -13,25 +13,19 @@ namespace Arcus.Templates.ServiceBus.Queue
 {
     public class Program
     {
-#if (ExcludeSerilog == false)
+#if Serilog
         #warning Make sure that the appsettings.json is updated with your Azure Application Insights instrumentation key.
         private const string ApplicationInsightsInstrumentationKeyName = "TELEMETRY_APPLICATIONINSIGHTS_INSTRUMENTATIONKEY";
-
+        
 #endif
         public static int Main(string[] args)
         {
-#if ExcludeSerilog
-            CreateHostBuilder(args)
-                .Build()
-                .Run();
-
-            return 0;
-#else
+#if Serilog
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .WriteTo.Console()
                 .CreateLogger();
-
+            
             try
             {
                 CreateHostBuilder(args)
@@ -49,9 +43,15 @@ namespace Arcus.Templates.ServiceBus.Queue
             {
                 Log.CloseAndFlush();
             }
+#else
+            CreateHostBuilder(args)
+                .Build()
+                .Run();
+            
+            return 0;
 #endif
         }
-
+        
         public static IHostBuilder CreateHostBuilder(string[] args)
         {
             return Host.CreateDefaultBuilder(args)
@@ -69,7 +69,7 @@ namespace Arcus.Templates.ServiceBus.Queue
                            //#error Please provide a valid secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secret-store/provider/key-vault
                            stores.AddAzureKeyVaultWithManagedIdentity("https://your-keyvault.vault.azure.net/", CacheConfiguration.Default);
                        })
-#if (ExcludeSerilog == false)
+#if Serilog
                        .UseSerilog(UpdateLoggerConfiguration)
 #endif
                        .ConfigureServices((hostContext, services) =>
@@ -80,22 +80,24 @@ namespace Arcus.Templates.ServiceBus.Queue
                            services.AddTcpHealthProbes("ARCUS_HEALTH_PORT");
                        });
         }
-#if (ExcludeSerilog == false)
-
+#if Serilog
+        
         private static void UpdateLoggerConfiguration(
             HostBuilderContext hostContext,
-            LoggerConfiguration currentLoggerConfiguration)
+            LoggerConfiguration config)
         {
+            config.MinimumLevel.Debug()
+                  .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                  .Enrich.FromLogContext()
+                  .Enrich.WithVersion()
+                  .Enrich.WithComponentName("Service Bus Queue Worker")
+                  .WriteTo.Console();
+            
             var instrumentationKey = hostContext.Configuration.GetValue<string>(ApplicationInsightsInstrumentationKeyName);
-
-            currentLoggerConfiguration
-                .MinimumLevel.Debug()
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-                .Enrich.FromLogContext()
-                .Enrich.WithVersion()
-                .Enrich.WithComponentName("Service Bus Queue Worker")
-                .WriteTo.Console()   
-                .WriteTo.AzureApplicationInsights(instrumentationKey);
+            if (instrumentationKey != null)
+            {
+                config.WriteTo.AzureApplicationInsights(instrumentationKey);
+            }
         }
 #endif
     }

@@ -64,7 +64,7 @@ namespace Arcus.Templates.AzureFunctions.ServiceBus.Queue
             
             IConfiguration appConfig = builder.GetContext().Configuration;
             var instrumentationKey = appConfig.GetValue<string>("APPINSIGHTS_INSTRUMENTATIONKEY");
-            if (instrumentationKey != null)
+            if (!string.IsNullOrWhiteSpace(instrumentationKey))
             {
                 logConfig.WriteTo.AzureApplicationInsights(instrumentationKey);
             }

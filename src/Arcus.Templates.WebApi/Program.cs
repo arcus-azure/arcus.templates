@@ -54,7 +54,7 @@ namespace Arcus.Templates.WebApi
     {
 #if Serilog
         #warning Make sure that the appsettings.json is updated with your Azure Application Insights instrumentation key.
-        private const string ApplicationInsightsInstrumentationKeyName = "Telemetry:ApplicationInsights:InstrumentationKey";
+        private const string ApplicationInsightsInstrumentationKeyName = "APPINSIGHTS_INSTRUMENTATIONKEY";
         
 #endif
 #if SharedAccessKeyAuth
@@ -343,7 +343,7 @@ namespace Arcus.Templates.WebApi
                    .WriteTo.Console();
             
             var instrumentationKey = context.Configuration.GetValue<string>(ApplicationInsightsInstrumentationKeyName);
-            if (instrumentationKey != null)
+            if (!string.IsNullOrWhiteSpace(instrumentationKey))
             {
                 config.WriteTo.AzureApplicationInsights(instrumentationKey);
             }

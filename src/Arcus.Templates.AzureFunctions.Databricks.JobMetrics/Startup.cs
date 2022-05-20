@@ -57,7 +57,7 @@ namespace Arcus.Templates.AzureFunctions.Databricks.JobMetrics
             
             IConfiguration appConfig = builder.GetContext().Configuration;
             var instrumentationKey = appConfig.GetValue<string>("APPINSIGHTS_INSTRUMENTATIONKEY");
-            if (instrumentationKey != null)
+            if (!string.IsNullOrWhiteSpace(instrumentationKey))
             {
                 configuration.WriteTo.AzureApplicationInsights(instrumentationKey);
             }

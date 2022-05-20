@@ -67,7 +67,7 @@ namespace Arcus.Templates.AzureFunctions.Http
             
             IConfiguration appConfig = builder.GetContext().Configuration;
             var instrumentationKey = appConfig.GetValue<string>("APPINSIGHTS_INSTRUMENTATIONKEY");
-            if (instrumentationKey != null)
+            if (!string.IsNullOrWhiteSpace(instrumentationKey))
             {
                 configuration.WriteTo.AzureApplicationInsights(instrumentationKey);
             }

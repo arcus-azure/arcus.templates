@@ -15,7 +15,7 @@ namespace Arcus.Templates.ServiceBus.Topic
     {
 #if Serilog
         #warning Make sure that the appsettings.json is updated with your Azure Application Insights instrumentation key.
-        private const string ApplicationInsightsInstrumentationKeyName = "TELEMETRY_APPLICATIONINSIGHTS_INSTRUMENTATIONKEY";
+        private const string ApplicationInsightsInstrumentationKeyName = "APPINSIGHTS_INSTRUMENTATIONKEY";
 
 #endif
         public static int Main(string[] args)
@@ -81,7 +81,7 @@ namespace Arcus.Templates.ServiceBus.Topic
                        });
         }
 #if Serilog
-
+        
         private static void UpdateLoggerConfiguration(
             HostBuilderContext hostContext,
             LoggerConfiguration config)
@@ -92,9 +92,9 @@ namespace Arcus.Templates.ServiceBus.Topic
                   .Enrich.WithVersion()
                   .Enrich.WithComponentName("Service Bus Topic Worker")
                   .WriteTo.Console();
-
+            
             var instrumentationKey = hostContext.Configuration.GetValue<string>(ApplicationInsightsInstrumentationKeyName);
-            if (instrumentationKey != null)
+            if (!string.IsNullOrWhiteSpace(instrumentationKey))
             {
                 config.WriteTo.AzureApplicationInsights(instrumentationKey);
             }

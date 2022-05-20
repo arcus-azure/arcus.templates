@@ -9,23 +9,38 @@ namespace Arcus.Templates.WebApi.ExampleProviders
     /// <summary>
     /// Generates an example response object for the health API endpoint that will be included in the OpenAPI documentation.
     /// </summary>
-    public class HealthReportResponseExampleProvider : IExamplesProvider<HealthReport>
+    public class HealthReportResponseExampleProvider : IExamplesProvider<HealthReportJson>
     {
         /// <summary>
-        /// Build the HealthReport response example
+        /// Build the <see cref="HealthReportJson"/> response example
         /// </summary>
-        /// <returns>A populated HealthReport object that acts as the example included in the OpenAPI documentation.</returns>
-        public HealthReport GetExamples()
+        /// <returns>A populated <see cref="HealthReportJson"/> object that acts as the example included in the OpenAPI documentation.</returns>
+        public HealthReportJson GetExamples()
         {
-            var entries = new Dictionary<string, HealthReportEntry>
+            var healthyApiEntry = new HealthReportEntryJson()
             {
-                ["api"] = new HealthReportEntry(status: HealthStatus.Healthy, description: "Api is healthy", duration: TimeSpan.FromMilliseconds(33), null, null),
-                ["database"]= new HealthReportEntry(status: HealthStatus.Healthy, description: "Database is available", duration: TimeSpan.FromMilliseconds(123), null, null),
+                Status = HealthStatus.Healthy,
+                Description = "Api is healthy",
+                Duration = TimeSpan.FromMilliseconds(33)
+            };
+            var healthyDatabaseEntry = new HealthReportEntryJson()
+            {
+                Status = HealthStatus.Healthy,
+                Description = "Database is available",
+                Duration = TimeSpan.FromMilliseconds(123)
             };
 
-            var healthReportEntries = new ReadOnlyDictionary<string, HealthReportEntry>(entries);
+            var entries = new Dictionary<string, HealthReportEntryJson>
+            {
+                ["api"] = healthyApiEntry,
+                ["database"]= healthyDatabaseEntry,
+            };
 
-            return new HealthReport(entries: healthReportEntries, totalDuration: TimeSpan.FromMilliseconds(201));
+            return new HealthReportJson()
+            {
+                Entries = new ReadOnlyDictionary<string, HealthReportEntryJson>(entries),
+                TotalDuration = TimeSpan.FromMilliseconds(201)
+            };
         }
     }
 }

@@ -12,6 +12,7 @@
     <PackageId>Arcus.Templates.AzureFunctions.ServiceBus.Queue</PackageId>
     <Title>Template for Azure Functions Service Bus Queue project</Title>
     <PackageType>Template</PackageType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>Azure;Azure Functions;Service Bus;Queue</PackageTags>
     <Copyright>Copyright (c) Arcus</Copyright>
     <PackageLicenseUrl>https://github.com/arcus-azure/arcus.templates/blob/master/LICENSE</PackageLicenseUrl>

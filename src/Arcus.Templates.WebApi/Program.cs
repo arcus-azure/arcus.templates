@@ -358,7 +358,7 @@ namespace Arcus.Templates.WebApi
             app.UseHttpCorrelation();
 #endif
             app.UseRouting();
-            app.UseRequestTracking();
+            app.UseRequestTracking(options => options.OmittedRoutes.Add("/"));
             app.UseExceptionHandling();
             
 #if JwtAuth

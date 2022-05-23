@@ -23,9 +23,16 @@ When installed, the template can be created with shortname: `arcus-webapi`:
 
 Creates a starter web API project with by default configured:
 
-* Provides basic health endpoint with [ASP.NET Core health checks](https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-2.2) with [OpenAPI support](https://www.codit.eu/blog/documenting-asp-net-core-health-checks-with-openapi/).
-* Docker building file.
-* Default console logger.
+* Arcus secret store setup with Azure Key Vault secret source ([docs](https://security.arcus-azure.net/features/secret-store))
+* Application configuration with environment variables
+* Basic health endpoint with [ASP.NET Core health checks](https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-2.2) with [OpenAPI support](https://www.codit.eu/blog/documenting-asp-net-core-health-checks-with-openapi/).
+* HTTP request tracking with default route `/` omitted ([docs](https://webapi.arcus-azure.net/features/logging))
+* HTTP correlation ([docs]()https://webapi.arcus-azure.net/features/correlation)
+* Global exception handling ([docs](https://webapi.arcus-azure.net/features/logging))
+* Docker building file
+* Swagger OpenAPI setup
+* Serilog setup with Application Insights logging sink ([docs](https://observability.arcus-azure.net/Features/sinks/azure-application-insights))
+* Default JSON serialization
 
 ### Configuration
 

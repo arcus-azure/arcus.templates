@@ -3,7 +3,7 @@ using Arcus.Security.Core.Caching.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-#if (ExcludeSerilog == false)
+#if Serilog
 using Serilog;
 using Serilog.Configuration;
 using Serilog.Events;
@@ -13,20 +13,14 @@ namespace Arcus.Templates.ServiceBus.Topic
 {
     public class Program
     {
-#if (ExcludeSerilog == false)
+#if Serilog
         #warning Make sure that the appsettings.json is updated with your Azure Application Insights instrumentation key.
-        private const string ApplicationInsightsInstrumentationKeyName = "TELEMETRY_APPLICATIONINSIGHTS_INSTRUMENTATIONKEY";
+        private const string ApplicationInsightsInstrumentationKeyName = "APPINSIGHTS_INSTRUMENTATIONKEY";
 
 #endif
         public static int Main(string[] args)
         {
-#if ExcludeSerilog
-            CreateHostBuilder(args)
-                .Build()
-                .Run();
-
-            return 0;
-#else
+#if Serilog
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .WriteTo.Console()
@@ -49,6 +43,12 @@ namespace Arcus.Templates.ServiceBus.Topic
             {
                 Log.CloseAndFlush();
             }
+#else
+            CreateHostBuilder(args)
+                .Build()
+                .Run();
+
+            return 0;
 #endif
         }
 
@@ -69,7 +69,7 @@ namespace Arcus.Templates.ServiceBus.Topic
                            //#error Please provide a valid secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secret-store/provider/key-vault
                            stores.AddAzureKeyVaultWithManagedIdentity("https://your-keyvault.vault.azure.net/", CacheConfiguration.Default);
                        })
-#if (ExcludeSerilog == false)
+#if Serilog
                        .UseSerilog(UpdateLoggerConfiguration)
 #endif
                        .ConfigureServices((hostContext, services) =>
@@ -80,22 +80,24 @@ namespace Arcus.Templates.ServiceBus.Topic
                            services.AddTcpHealthProbes("ARCUS_HEALTH_PORT");
                        });
         }
-#if (ExcludeSerilog == false)
-
+#if Serilog
+        
         private static void UpdateLoggerConfiguration(
             HostBuilderContext hostContext,
-            LoggerConfiguration currentLoggerConfiguration)
+            LoggerConfiguration config)
         {
+            config.MinimumLevel.Debug()
+                  .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                  .Enrich.FromLogContext()
+                  .Enrich.WithVersion()
+                  .Enrich.WithComponentName("Service Bus Topic Worker")
+                  .WriteTo.Console();
+            
             var instrumentationKey = hostContext.Configuration.GetValue<string>(ApplicationInsightsInstrumentationKeyName);
-
-            currentLoggerConfiguration
-                .MinimumLevel.Debug()
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-                .Enrich.FromLogContext()
-                .Enrich.WithVersion()
-                .Enrich.WithComponentName("Service Bus Topic Worker")
-                .WriteTo.Console()
-                .WriteTo.AzureApplicationInsights(instrumentationKey);
+            if (!string.IsNullOrWhiteSpace(instrumentationKey))
+            {
+                config.WriteTo.AzureApplicationInsights(instrumentationKey);
+            }
         }
 #endif
     }

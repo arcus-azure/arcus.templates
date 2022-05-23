@@ -61,14 +61,14 @@ namespace Arcus.Templates.AzureFunctions.ServiceBus.Topic
                 .Enrich.WithComponentName("Service Bus Topic Trigger")
                 .Enrich.WithVersion()
                 .WriteTo.Console();
-
+            
             IConfiguration appConfig = builder.GetContext().Configuration;
             var instrumentationKey = appConfig.GetValue<string>("APPINSIGHTS_INSTRUMENTATIONKEY");
             if (!string.IsNullOrWhiteSpace(instrumentationKey))
             {
                 logConfig.WriteTo.AzureApplicationInsights(instrumentationKey);
             }
-
+            
             return logConfig;
         } 
 #endif

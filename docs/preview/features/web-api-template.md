@@ -27,7 +27,7 @@ Creates a starter web API project with by default configured:
 * Application configuration with environment variables
 * Basic health endpoint with [ASP.NET Core health checks](https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-2.2) with [OpenAPI support](https://www.codit.eu/blog/documenting-asp-net-core-health-checks-with-openapi/).
 * HTTP request tracking with default route `/` omitted ([docs](https://webapi.arcus-azure.net/features/logging))
-* HTTP correlation ([docs]()https://webapi.arcus-azure.net/features/correlation)
+* HTTP correlation ([docs](https://webapi.arcus-azure.net/features/correlation))
 * Global exception handling ([docs](https://webapi.arcus-azure.net/features/logging))
 * Docker building file
 * Swagger OpenAPI setup

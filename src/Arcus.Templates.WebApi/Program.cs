@@ -54,7 +54,7 @@ namespace Arcus.Templates.WebApi
     {
 #if Serilog
         #warning Make sure that the appsettings.json is updated with your Azure Application Insights instrumentation key.
-        private const string ApplicationInsightsInstrumentationKeyName = "Telemetry:ApplicationInsights:InstrumentationKey";
+        private const string ApplicationInsightsInstrumentationKeyName = "APPINSIGHTS_INSTRUMENTATIONKEY";
         
 #endif
 #if SharedAccessKeyAuth
@@ -332,18 +332,23 @@ namespace Arcus.Templates.WebApi
             IServiceProvider serviceProvider, 
             LoggerConfiguration config)
         {
-            var instrumentationKey = context.Configuration.GetValue<string>(ApplicationInsightsInstrumentationKeyName);
-            
-            return config.ReadFrom.Configuration(context.Configuration)
-                         .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-                         .Enrich.FromLogContext()
-                         .Enrich.WithVersion()
-                         .Enrich.WithComponentName("API")
+            config.ReadFrom.Configuration(context.Configuration)
+                  .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                  .Enrich.FromLogContext()
+                  .Enrich.WithVersion()
+                  .Enrich.WithComponentName("API")
 #if (ExcludeCorrelation == false)
-                         .Enrich.WithHttpCorrelationInfo(serviceProvider)
+                   .Enrich.WithHttpCorrelationInfo(serviceProvider)
 #endif
-                         .WriteTo.Console()
-                         .WriteTo.AzureApplicationInsights(instrumentationKey);
+                   .WriteTo.Console();
+            
+            var instrumentationKey = context.Configuration.GetValue<string>(ApplicationInsightsInstrumentationKeyName);
+            if (!string.IsNullOrWhiteSpace(instrumentationKey))
+            {
+                config.WriteTo.AzureApplicationInsights(instrumentationKey);
+            }
+
+            return config;
         }
         
 #endif
@@ -353,7 +358,7 @@ namespace Arcus.Templates.WebApi
             app.UseHttpCorrelation();
 #endif
             app.UseRouting();
-            app.UseRequestTracking();
+            app.UseRequestTracking(options => options.OmittedRoutes.Add("/"));
             app.UseExceptionHandling();
             
 #if JwtAuth

@@ -75,23 +75,24 @@ namespace Arcus.Templates.Tests.Integration.WebApi
         /// <summary>
         /// Adds the Serilog logging option to the web API project; writing both to the console and to Azure Application Insights.
         /// </summary>
+        public WebApiProjectOptions WithSerilogLogging()
+        {
+            ProjectOptions optionsWithSerilogLogging = AddOption("--logging Serilog");
+            
+            return new WebApiProjectOptions(optionsWithSerilogLogging);
+        }
+
+        /// <summary>
+        /// Adds the Serilog logging option to the web API project; writing both to the console and to Azure Application Insights.
+        /// </summary>
         /// <param name="applicationInsightsInstrumentationKey">The key to connect to the Azure Application Insights resource.</param>
         public WebApiProjectOptions WithSerilogLogging(string applicationInsightsInstrumentationKey)
         {
             ProjectOptions optionsWithSerilogLogging = 
                 AddOption("--logging Serilog", 
-                          (fixtureDirectory, projectDirectory) => ConfigureSerilogLogging(fixtureDirectory, projectDirectory, applicationInsightsInstrumentationKey));
-            
+                          CommandArgument.CreateSecret("APPINSIGHTS_INSTRUMENTATIONKEY", applicationInsightsInstrumentationKey));
+
             return new WebApiProjectOptions(optionsWithSerilogLogging);
-        }
-
-        private static void ConfigureSerilogLogging(DirectoryInfo fixtureDirectory, DirectoryInfo projectDirectory, string applicationInsightsInstrumentationKey)
-        {
-            ReplaceProjectFileContent(
-                projectDirectory, 
-                "appsettings.json", 
-                contents => contents.Replace("<your-application-insights-instrumentation-key>", applicationInsightsInstrumentationKey));
-
         }
 
         /// <summary>

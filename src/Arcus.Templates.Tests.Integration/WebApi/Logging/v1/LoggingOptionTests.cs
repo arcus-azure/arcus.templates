@@ -44,9 +44,8 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Logging.v1
         public async Task GetHealth_WithSerilogLoggingProjectOption_ReturnsOk()
         {
             // Arrange
-            string instrumentationKey = _configuration.GetApplicationInsightsInstrumentationKey();
             var optionsWithSerilogLogging =
-                new WebApiProjectOptions().WithSerilogLogging(instrumentationKey);
+                new WebApiProjectOptions().WithSerilogLogging();
 
             using (var project = await WebApiProject.StartNewAsync(optionsWithSerilogLogging, _outputWriter))
             // Act
@@ -62,10 +61,9 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Logging.v1
         public async Task GetHealth_WithSerilogLoggingWithoutCorrelationProjectOption_ReturnsOk()
         {
             // Arrange
-            string instrumentationKey = _configuration.GetApplicationInsightsInstrumentationKey();
             var optionsWithSerilogLogging =
                 new WebApiProjectOptions()
-                    .WithSerilogLogging(instrumentationKey)
+                    .WithSerilogLogging()
                     .WithExcludeCorrelation();
 
             using (var project = await WebApiProject.StartNewAsync(optionsWithSerilogLogging, _outputWriter))

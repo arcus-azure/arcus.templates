@@ -34,7 +34,7 @@
           ]
         },
         {
-          "condition": "ExcludeOpenApi",
+          "condition": "!(OpenApi)",
           "exclude": [
             "**/ExampleProviders/HealthReportResponseExampleProvider.cs"
           ]

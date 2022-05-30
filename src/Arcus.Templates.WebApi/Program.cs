@@ -191,7 +191,7 @@ namespace Arcus.Templates.WebApi
 #if Correlation
             builder.Services.AddHttpCorrelation((HttpCorrelationInfoOptions options) => { });
 #endif
-#if (ExcludeOpenApi == false)
+#if OpenApi
             
             ConfigureOpenApi(builder);
 #endif

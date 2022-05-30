@@ -39,13 +39,14 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <DefineConstants>$(DefineConstants);SharedAccessKeyAuth;CertificateAuth;Auth;Serilog;OpenApi;Correlation</DefineConstants>
+    <DefineConstants>$(DefineConstants);SharedAccessKeyAuth;CertificateAuth;Auth;Serilog;Console;OpenApi;Correlation</DefineConstants>
     <SharedAccessKeyAuth>true</SharedAccessKeyAuth>
     <CertificateAuth>true</CertificateAuth>
     <JwtAuth>false</JwtAuth>
     <Auth>true</Auth>
     <Correlation>true</Correlation>
     <Serilog>true</Serilog>
+    <Console>true</Console>
     <OpenApi>true</OpenApi>
   </PropertyGroup>
 

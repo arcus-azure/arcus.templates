@@ -14,6 +14,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+#if Console
+using Microsoft.Extensions.Logging; 
+#endif
 #if Serilog
 using Serilog;
 using Serilog.Configuration;

@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <GenerateDocumentationFile Condition="'$(ExcludeOpenApi)' == 'false'">true</GenerateDocumentationFile>
-    <DocumentationFile Condition="'$(ExcludeOpenApi)' == 'false'">Arcus.Templates.WebApi.Open-Api.xml</DocumentationFile>
+    <GenerateDocumentationFile Condition="'$(OpenApi)' == 'true'">true</GenerateDocumentationFile>
+    <DocumentationFile Condition="'$(OpenApi)' == 'true'">Arcus.Templates.WebApi.Open-Api.xml</DocumentationFile>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <!--#if (AuthoringMode)-->
     <Authors>Arcus</Authors>

@@ -39,9 +39,14 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <DefineConstants>$(DefineConstants);</DefineConstants>
-    <ExcludeCorrelation>false</ExcludeCorrelation>
-    <ExcludeOpenApi>false</ExcludeOpenApi>
+    <DefineConstants>$(DefineConstants);SharedAccessKeyAuth;CertificateAuth;Auth;Serilog;OpenApi;Correlation</DefineConstants>
+    <SharedAccessKeyAuth>true</SharedAccessKeyAuth>
+    <CertificateAuth>true</CertificateAuth>
+    <JwtAuth>false</JwtAuth>
+    <Auth>true</Auth>
+    <Correlation>true</Correlation>
+    <Serilog>true</Serilog>
+    <OpenApi>true</OpenApi>
   </PropertyGroup>
 
   <ItemGroup>
@@ -69,8 +74,8 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.5" Condition="'$(JwtAuth)' == 'true'" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.15.1" />
     <PackageReference Include="Serilog.AspNetCore" Version="5.0.0" Condition="'$(Serilog)' == 'true'" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.1" Condition="'$(ExcludeOpenApi)' == 'false'" />
-    <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="7.0.3" Condition="'$(ExcludeOpenApi)' == 'false' and '$(ExcludeCorrelation)' == 'false'" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.1" Condition="'$(OpenApi)' == 'true'" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="7.0.3" Condition="'$(OpenApi)' == 'true' and '$(Correlation)' == 'true'" />
   </ItemGroup>
 
 </Project>

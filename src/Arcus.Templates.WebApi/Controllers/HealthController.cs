@@ -40,8 +40,8 @@ namespace Arcus.Templates.WebApi.Controllers
         /// <response code="503">API is unhealthy or in degraded state</response>
         [HttpGet(Name = "Health_Get")]
         [RequestTracking(500, 599)]
-        [ProducesResponseType(typeof(HealthReportJson), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(HealthReportJson), StatusCodes.Status503ServiceUnavailable)]
+        [ProducesResponseType(typeof(ApiHealthReport), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiHealthReport), StatusCodes.Status503ServiceUnavailable)]
 #if (ExcludeOpenApi == false)
 #if (ExcludeCorrelation == false)
         [SwaggerResponseHeader(200, "RequestId", "string", "The header that has a request ID that uniquely identifies this operation call")]
@@ -52,7 +52,7 @@ namespace Arcus.Templates.WebApi.Controllers
         public async Task<IActionResult> Get()
         {
             HealthReport healthReport = await _healthCheckService.CheckHealthAsync();
-            HealthReportJson json = HealthReportJson.FromHealthReport(healthReport);
+            ApiHealthReport json = ApiHealthReport.FromHealthReport(healthReport);
 
             if (healthReport.Status == HealthStatus.Healthy)
             {

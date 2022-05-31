@@ -14,7 +14,7 @@ namespace Arcus.Templates.WebApi.Models
     ///     This model should not be used within the domain and is just available for the serialization between trust boundaries.
     ///     Use the <see cref="FromHealthReport"/> and <see cref="ToHealthReport"/> to switch between the two.
     /// </remarks>
-    public class HealthReportJson
+    public class ApiHealthReport
     {
         /// <summary>
         /// Gets a dictionary containing the results from each health check.
@@ -38,7 +38,7 @@ namespace Arcus.Templates.WebApi.Models
         /// </summary>
         /// <param name="report">The finalized health report.</param>
         /// <exception cref="ArgumentNullException">Thrown when the <paramref name="report"/> is <c>null</c>.</exception>
-        public static HealthReportJson FromHealthReport(HealthReport report)
+        public static ApiHealthReport FromHealthReport(HealthReport report)
         {
             Guard.NotNull(report, nameof(report), "Requires a Microsoft HealthReport instance to convert to a JSON instance without the exception details");
 
@@ -47,7 +47,7 @@ namespace Arcus.Templates.WebApi.Models
                     item => item.Key, 
                     item => HealthReportEntryJson.FromHealthReportEntry(item.Value));
             
-            return new HealthReportJson
+            return new ApiHealthReport
             {
                 Entries = entries,
                 Status = report.Status,
@@ -60,7 +60,7 @@ namespace Arcus.Templates.WebApi.Models
         /// </summary>
         /// <param name="report">The finalized health report.</param>
         /// <exception cref="ArgumentNullException">Thrown when the <paramref name="report"/> is <c>null</c>.</exception>
-        public static HealthReport ToHealthReport(HealthReportJson report)
+        public static HealthReport ToHealthReport(ApiHealthReport report)
         {
             Guard.NotNull(report, nameof(report), "Requires a Microsoft HealthReport instance to convert to a JSON instance without the exception details");
 

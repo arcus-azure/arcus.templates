@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Arcus.Templates.WebApi.Models;
 using Arcus.WebApi.Logging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

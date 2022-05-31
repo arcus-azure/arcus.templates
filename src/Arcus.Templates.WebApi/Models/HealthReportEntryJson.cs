@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
-// ReSharper disable once CheckNamespace
-namespace Microsoft.Extensions.Diagnostics.HealthChecks
+namespace Arcus.Templates.WebApi.Models
 {
     /// <summary>
     /// Represents an entry in a <see cref="HealthReportJson"/>.

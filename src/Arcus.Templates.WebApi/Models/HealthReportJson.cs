@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using GuardNet;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
-// ReSharper disable once CheckNamespace
-namespace Microsoft.Extensions.Diagnostics.HealthChecks
+namespace Arcus.Templates.WebApi.Models
 {
     /// <summary>
     /// Represents an alternative <see cref="HealthReport"/> model without the exception details so it can be exposed safely with OpenAPI.

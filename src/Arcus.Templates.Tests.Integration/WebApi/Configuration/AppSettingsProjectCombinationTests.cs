@@ -29,10 +29,9 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Configuration
         {
             // Arrange
             string subject = $"subject-{Guid.NewGuid()}";
-            string instrumentationKey = _configuration.GetApplicationInsightsInstrumentationKey();
             var optionsWithSerilogAndCertificateAuth =
                 new WebApiProjectOptions()
-                    .WithSerilogLogging(instrumentationKey)
+                    .WithSerilogLogging()
                     .WithCertificateSubjectAuthentication($"CN={subject}");
 
             using (var project = await WebApiProject.StartNewAsync(optionsWithSerilogAndCertificateAuth, _outputWriter))

@@ -22,6 +22,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         private readonly Process _process;
         private readonly DirectoryInfo _templateDirectory;
 
+        private ProjectOptions _options;
         private bool _created, _started, _disposed;
 
         /// <summary>
@@ -78,6 +79,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             }
 
             _created = true;
+            _options = projectOptions;
 
             string shortName = GetTemplateShortNameAtTemplateFolder();
             Logger.WriteLine($"Creates new project from template {shortName} at {ProjectDirectory.FullName}");
@@ -235,11 +237,11 @@ namespace Arcus.Templates.Tests.Integration.Fixture
                 throw new InvalidOperationException("Test demo project from template is already started");
             }
 
-            commandArguments = commandArguments ?? Array.Empty<CommandArgument>();
+            CommandArgument[] runCommandArguments = DetermineRunCommandArguments(commandArguments);
 
             try
             {
-                ProcessStartInfo processInfo = PrepareProjectRun(buildConfiguration, targetFramework, commandArguments);
+                ProcessStartInfo processInfo = PrepareProjectRun(buildConfiguration, targetFramework, runCommandArguments);
                 _process.StartInfo = processInfo;
 
                 _started = true;
@@ -249,6 +251,15 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             {
                 throw CreateProjectStartupFailure(exception);
             }
+        }
+
+        private CommandArgument[] DetermineRunCommandArguments(CommandArgument[] commandArguments)
+        {
+            CommandArgument[] defaultCommandArguments = commandArguments ?? Array.Empty<CommandArgument>();
+            IEnumerable<CommandArgument> optionsCommandArguments =
+                _options?.AdditionalRunArguments ?? Array.Empty<CommandArgument>();
+            
+            return defaultCommandArguments.Concat(optionsCommandArguments).ToArray();
         }
 
         /// <summary>

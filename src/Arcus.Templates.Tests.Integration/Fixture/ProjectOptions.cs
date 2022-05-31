@@ -19,7 +19,8 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         /// </summary>
         public ProjectOptions() 
             : this(Enumerable.Empty<string>(),
-                   Enumerable.Empty<Action<DirectoryInfo, DirectoryInfo>>())
+                   Enumerable.Empty<Action<DirectoryInfo, DirectoryInfo>>(),
+                   Enumerable.Empty<CommandArgument>())
         {
         }
 
@@ -28,44 +29,62 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         /// </summary>
         public ProjectOptions(ProjectOptions options) 
             : this(options?._arguments, 
-                  options?._updateProject)
+                   options?._updateProject,
+                   options?.AdditionalRunArguments.ToArray())
         {
         }
 
         private ProjectOptions(
             IEnumerable<string> arguments,
-            IEnumerable<Action<DirectoryInfo, DirectoryInfo>> updateProject)
+            IEnumerable<Action<DirectoryInfo, DirectoryInfo>> updateProject,
+            IEnumerable<CommandArgument> additionalRunArguments)
         {
             Guard.NotNull(arguments, nameof(arguments), "Cannot create web API project without project options");
             Guard.NotNull(updateProject, nameof(updateProject), "Cannot create web API project without post-project-created actions");
 
             _arguments = arguments;
             _updateProject = updateProject;
+            AdditionalRunArguments = additionalRunArguments;
         }
+
+        /// <summary>
+        /// Gets the additional console arguments to pass along the 'dotnet run' command.
+        /// These arguments are related to the project options that were configured for the project.
+        /// </summary>
+        public IEnumerable<CommandArgument> AdditionalRunArguments { get; }
 
         /// <summary>
         /// Adds an option to the project that should be added for a project template.
         /// </summary>
-        /// <param name="argument">The console argument to pass along the 'dotnet new' command.</param>
-        protected ProjectOptions AddOption(string argument)
+        /// <param name="optionArgument">The console argument to pass along the 'dotnet new' command.</param>
+        /// <param name="additionalRunArguments">The additional console arguments to pass along the 'dotnet run' command.</param>
+        /// <exception cref="ArgumentException">Thrown when the <paramref name="optionArgument"/> is blank.</exception>
+        protected ProjectOptions AddOption(string optionArgument, params CommandArgument[] additionalRunArguments)
         {
-            Guard.NotNullOrWhitespace(argument, nameof(argument));
-
-            return new ProjectOptions(_arguments.Append(argument), _updateProject);
-        }
-
-        /// <summary>
-        /// Adds an option to the project that should be added for a project template.
-        /// </summary>
-        /// <param name="argument">The console argument to pass along the 'dotnet new' command.</param>
-        /// <param name="updateProject">The custom action to be executed in order that the created project uses the project option correctly.</param>
-        protected ProjectOptions AddOption(string argument, Action<DirectoryInfo, DirectoryInfo> updateProject)
-        {
-            Guard.NotNullOrWhitespace(argument, nameof(argument));
+            Guard.NotNullOrWhitespace(optionArgument, nameof(optionArgument), "Requires a console argument to pass along to the 'dotnet new' command");
 
             return new ProjectOptions(
-                _arguments.Append(argument),
-                _updateProject.Append(updateProject));
+                _arguments.Append(optionArgument), 
+                _updateProject, 
+                AdditionalRunArguments.Concat(additionalRunArguments).ToArray());
+        }
+
+        /// <summary>
+        /// Adds an option to the project that should be added for a project template.
+        /// </summary>
+        /// <param name="optionArgument">The console argument to pass along the 'dotnet new' command.</param>
+        /// <param name="updateProject">The custom action to be executed in order that the created project uses the project option correctly.</param>
+        /// <param name="additionalRunArguments">The additional console arguments to pass along the 'dotnet run' command.</param>
+        /// <exception cref="ArgumentException">Thrown when the <paramref name="optionArgument"/> is blank.</exception>
+        protected ProjectOptions AddOption(string optionArgument, Action<DirectoryInfo, DirectoryInfo> updateProject, params CommandArgument[] additionalRunArguments)
+        {
+            Guard.NotNullOrWhitespace(optionArgument, nameof(optionArgument), "Requires a console argument to pass along to the 'dotnet new' command");
+            Guard.NotNull(updateProject, nameof(updateProject), "Requires an update action to alter the project's content so that the created project uses the project option correctly");
+
+            return new ProjectOptions(
+                _arguments.Append(optionArgument),
+                _updateProject.Append(updateProject),
+                AdditionalRunArguments.Concat(additionalRunArguments).ToArray());
         }
 
         /// <summary>

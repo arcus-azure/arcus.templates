@@ -12,6 +12,7 @@
     <PackageId>Arcus.Templates.AzureFunctions.Http</PackageId>
     <Title>Template for Azure Functions HTTP project</Title>
     <PackageType>Template</PackageType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>Azure;Azure Functions;HTTP;API</PackageTags>
     <Copyright>Copyright (c) Arcus</Copyright>
     <PackageLicenseUrl>https://github.com/arcus-azure/arcus.templates/blob/master/LICENSE</PackageLicenseUrl>

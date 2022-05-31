@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using Arcus.Security.Core.Caching.Configuration;
 using Arcus.Templates.AzureFunctions.Http;
-using Arcus.WebApi.Logging.Core.Correlation;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Configuration;
 using Serilog.Events;
@@ -26,7 +23,7 @@ namespace Arcus.Templates.AzureFunctions.Http
 //[#else]
             Environment.SetEnvironmentVariable("OpenApi__HideSwaggerUI", "true");
 //[#endif]
-
+            
             builder.ConfigurationBuilder.AddEnvironmentVariables();
         }
         
@@ -34,14 +31,12 @@ namespace Arcus.Templates.AzureFunctions.Http
         // For more information on how to configure your application, visit https://docs.microsoft.com/en-us/azure/azure-functions/functions-dotnet-dependency-injection
         public override void Configure(IFunctionsHostBuilder builder)
         {
-            IConfiguration config = builder.GetContext().Configuration;
-
             builder.AddHttpCorrelation();
 #if IncludeHealthChecks
             builder.Services.AddHealthChecks();
 #endif
-
-            builder.ConfigureSecretStore(stores =>
+            
+            builder.ConfigureSecretStore((context, config, stores) =>
             {
 //[#if DEBUG]
                 stores.AddConfiguration(config);
@@ -52,21 +47,32 @@ namespace Arcus.Templates.AzureFunctions.Http
                 //#error Please provide a valid secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secret-store/provider/key-vault
                 stores.AddAzureKeyVaultWithManagedIdentity("https://your-keyvault.vault.azure.net/", CacheConfiguration.Default);
             });
+            
+            LoggerConfiguration logConfig = CreateLoggerConfiguration(builder);
+            builder.Services.AddLogging(logging =>
+            {
+                logging.AddSerilog(logConfig.CreateLogger(), dispose: true);
+            });
+        }
 
-            var instrumentationKey = config.GetValue<string>("APPINSIGHTS_INSTRUMENTATIONKEY");
+        private static LoggerConfiguration CreateLoggerConfiguration(IFunctionsHostBuilder builder)
+        {
             var configuration = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .Enrich.FromLogContext()
                 .Enrich.WithComponentName("Azure HTTP Trigger")
                 .Enrich.WithVersion()
-                .WriteTo.Console()
-                .WriteTo.AzureApplicationInsights(instrumentationKey);
-
-            builder.Services.AddLogging(logging =>
+                .WriteTo.Console();
+            
+            IConfiguration appConfig = builder.GetContext().Configuration;
+            var instrumentationKey = appConfig.GetValue<string>("APPINSIGHTS_INSTRUMENTATIONKEY");
+            if (!string.IsNullOrWhiteSpace(instrumentationKey))
             {
-                logging.AddSerilog(configuration.CreateLogger(), dispose: true);
-            });
+                configuration.WriteTo.AzureApplicationInsights(instrumentationKey);
+            }
+            
+            return configuration;
         }
     }
 }

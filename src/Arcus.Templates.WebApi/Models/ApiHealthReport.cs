@@ -19,7 +19,7 @@ namespace Arcus.Templates.WebApi.Models
         /// <summary>
         /// Gets a dictionary containing the results from each health check.
         /// </summary>
-        public IDictionary<string, HealthReportEntryJson> Entries { get; set; }
+        public IDictionary<string, ApiHealthReportEntry> Entries { get; set; }
 
         /// <summary>
         /// Gets a <see cref="HealthStatus"/> representing the aggregate status of all the health checks.
@@ -42,10 +42,10 @@ namespace Arcus.Templates.WebApi.Models
         {
             Guard.NotNull(report, nameof(report), "Requires a Microsoft HealthReport instance to convert to a JSON instance without the exception details");
 
-            IDictionary<string, HealthReportEntryJson> entries = 
+            IDictionary<string, ApiHealthReportEntry> entries = 
                 report.Entries.ToDictionary(
                     item => item.Key, 
-                    item => HealthReportEntryJson.FromHealthReportEntry(item.Value));
+                    item => ApiHealthReportEntry.FromHealthReportEntry(item.Value));
             
             return new ApiHealthReport
             {
@@ -67,7 +67,7 @@ namespace Arcus.Templates.WebApi.Models
             IDictionary<string, HealthReportEntry> entries =
                 report.Entries.ToDictionary(
                     item => item.Key, 
-                    item => HealthReportEntryJson.ToHealthReportEntry(item.Value));
+                    item => ApiHealthReportEntry.ToHealthReportEntry(item.Value));
 
             return new HealthReport(
                 new ReadOnlyDictionary<string, HealthReportEntry>(entries),

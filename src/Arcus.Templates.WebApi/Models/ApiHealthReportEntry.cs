@@ -10,7 +10,7 @@ namespace Arcus.Templates.WebApi.Models
     /// Represents an entry in a <see cref="ApiHealthReport"/>.
     /// Corresponds to the result of a single <see cref="IHealthCheck"/>.
     /// </summary>
-    public struct HealthReportEntryJson
+    public struct ApiHealthReportEntry
     {
         /// <summary>
         /// Gets additional key-value pairs describing the health of the component.
@@ -41,9 +41,9 @@ namespace Arcus.Templates.WebApi.Models
         /// Creates a JSON data-transfer object from the given Microsoft <see cref="HealthReportEntry"/> <paramref name="entry"/>.
         /// </summary>
         /// <param name="entry">The entry of the created health report, representing a single <see cref="IHealthCheck"/> with exception details.</param>
-        public static HealthReportEntryJson FromHealthReportEntry(HealthReportEntry entry)
+        public static ApiHealthReportEntry FromHealthReportEntry(HealthReportEntry entry)
         {
-            return new HealthReportEntryJson
+            return new ApiHealthReportEntry
             {
                 Data = entry.Data.ToDictionary(item => item.Key, item => item.Value),
                 Description = entry.Description,
@@ -57,7 +57,7 @@ namespace Arcus.Templates.WebApi.Models
         /// Creates a Microsoft <see cref="HealthReportEntry"/> from the given JSON data-transfer object <paramref name="entry"/>.
         /// </summary>
         /// <param name="entry">The JSON data-transfer object, representing a single <see cref="IHealthCheck"/> without the exception details.</param>
-        public static HealthReportEntry ToHealthReportEntry(HealthReportEntryJson entry)
+        public static HealthReportEntry ToHealthReportEntry(ApiHealthReportEntry entry)
         {
             return new HealthReportEntry(
                 entry.Status,

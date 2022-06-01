@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Security.AccessControl;
 using System.Text.Json.Serialization;
 using Arcus.Security.Core.Caching.Configuration;
-#if (ExcludeCorrelation == false)
+#if Correlation
 using Arcus.WebApi.Logging.Core.Correlation;
 #endif
 using Microsoft.AspNetCore.Builder;
@@ -14,34 +14,28 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+#if Console
+using Microsoft.Extensions.Logging; 
+#endif
 #if Serilog
 using Serilog;
 using Serilog.Configuration;
 using Serilog.Events;
-using Arcus.Observability.Telemetry.Serilog.Sinks.ApplicationInsights;
 #endif
-#if (ExcludeOpenApi == false)
+#if OpenApi
 using Microsoft.OpenApi.Models;
 using Arcus.Templates.WebApi.ExampleProviders;
 using Swashbuckle.AspNetCore.Filters;
 #endif
-#if SharedAccessKeyAuth
-using Arcus.Security.Core.Caching;
-using Arcus.WebApi.Security.Authentication.SharedAccessKey;
+#if Auth
+using Microsoft.AspNetCore.Mvc.Filters;
 #endif
 #if CertificateAuth
-using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
 using Arcus.WebApi.Security.Authentication.Certificates;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.Extensions.Primitives;
 #endif
 #if JwtAuth
 using System.Text;
 using Arcus.Security.Core;
-using Arcus.Security.Core.Caching;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -157,10 +151,10 @@ namespace Arcus.Templates.WebApi
 
 #if SharedAccessKeyAuth
                 #warning Please provide a valid request header name and secret name to the shared access filter
-                options.Filters.Add(new SharedAccessKeyAuthenticationFilter(headerName: SharedAccessKeyHeaderName, queryParameterName: null, secretName: "<your-secret-name>"));
+                options.Filters.AddSharedAccessKeyAuthenticationOnHeader(SharedAccessKeyHeaderName, "<your-secret-name>");
 #endif
 #if CertificateAuth
-                options.Filters.Add(new CertificateAuthenticationFilter());
+                options.Filters.AddCertificateAuthentication();
 #endif
 #if JwtAuth
                 AuthorizationPolicy policy = 
@@ -173,7 +167,7 @@ namespace Arcus.Templates.WebApi
 #endif
             });
 #if JwtAuth
-#error Use previously registered secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secrets/consume-from-key-vault
+            #error Use previously registered secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secrets/consume-from-key-vault
             builder.Services.AddAuthentication(auth =>
             {
                 auth.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -197,20 +191,19 @@ namespace Arcus.Templates.WebApi
             });
 #endif
             builder.Services.AddHealthChecks();
-#if (ExcludeCorrelation == false)
+#if Correlation
             builder.Services.AddHttpCorrelation((HttpCorrelationInfoOptions options) => { });
 #endif
-#if (ExcludeOpenApi == false)
+#if OpenApi
             
             ConfigureOpenApi(builder);
 #endif
         }
-#if (ExcludeOpenApi == false)
+#if OpenApi
         
         private static void ConfigureOpenApi(WebApplicationBuilder builder)
         {
-#warning Be careful of exposing sensitive information with the OpenAPI document, only expose what's necessary and hide everything else.
-            
+            #warning Be careful of exposing sensitive information with the OpenAPI document, only expose what's necessary and hide everything else.
             var openApiInformation = new OpenApiInfo
             {
                 Title = "Arcus.Templates.WebApi",
@@ -223,7 +216,7 @@ namespace Arcus.Templates.WebApi
                 swaggerGenerationOptions.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "Arcus.Templates.WebApi.Open-Api.xml"));
 
                 swaggerGenerationOptions.ExampleFilters();
-#if (ExcludeCorrelation == false)
+#if Correlation
                 swaggerGenerationOptions.OperationFilter<AddHeaderOperationFilter>("X-Transaction-Id", "Transaction ID is used to correlate multiple operation calls. A new transaction ID will be generated if not specified.", false);
                 swaggerGenerationOptions.OperationFilter<AddResponseHeadersFilter>();
 #endif
@@ -318,7 +311,7 @@ namespace Arcus.Templates.WebApi
                 stores.AddAzureKeyVaultWithManagedIdentity("https://your-keyvault.vault.azure.net/", CacheConfiguration.Default);
             });
 #if Serilog
-            builder.Host.UseSerilog((context, serviceProvider, config) => CreateLoggerConfiguration(context, serviceProvider, config));
+            builder.Host.UseSerilog(ConfigureLoggerConfiguration);
 #endif
 #if Console
             builder.Host.ConfigureLogging(logging => logging.AddConsole());
@@ -327,7 +320,7 @@ namespace Arcus.Templates.WebApi
 
 #if Serilog
         
-        private static LoggerConfiguration CreateLoggerConfiguration(
+        private static void ConfigureLoggerConfiguration(
             HostBuilderContext context, 
             IServiceProvider serviceProvider, 
             LoggerConfiguration config)
@@ -337,7 +330,7 @@ namespace Arcus.Templates.WebApi
                   .Enrich.FromLogContext()
                   .Enrich.WithVersion()
                   .Enrich.WithComponentName("API")
-#if (ExcludeCorrelation == false)
+#if Correlation
                    .Enrich.WithHttpCorrelationInfo(serviceProvider)
 #endif
                    .WriteTo.Console();
@@ -347,14 +340,12 @@ namespace Arcus.Templates.WebApi
             {
                 config.WriteTo.AzureApplicationInsights(instrumentationKey);
             }
-
-            return config;
         }
         
 #endif
         private static void ConfigureApp(IApplicationBuilder app)
         {
-#if (ExcludeCorrelation == false)
+#if Correlation
             app.UseHttpCorrelation();
 #endif
             app.UseRouting();
@@ -369,7 +360,7 @@ namespace Arcus.Templates.WebApi
             #warning Please configure application with authentication mechanism: https://webapi.arcus-azure.net/features/security/auth/shared-access-key
 #endif
 
-#if (ExcludeOpenApi == false)
+#if OpenApi
             app.UseSwagger(swaggerOptions =>
             {
                 swaggerOptions.RouteTemplate = "api/{documentName}/docs.json";

@@ -40,17 +40,10 @@ namespace Arcus.Templates.WebApi.Controllers
         /// <response code="503">API is unhealthy or in degraded state</response>
         [HttpGet(Name = "Health_Get")]
         [RequestTracking(500, 599)]
-<<<<<<< HEAD
-        [ProducesResponseType(typeof(HealthReport), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(HealthReport), StatusCodes.Status503ServiceUnavailable)]
-#if OpenApi
-#if Correlation
-=======
         [ProducesResponseType(typeof(ApiHealthReport), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiHealthReport), StatusCodes.Status503ServiceUnavailable)]
-#if (ExcludeOpenApi == false)
-#if (ExcludeCorrelation == false)
->>>>>>> master
+#if OpenApi
+#if Correlation
         [SwaggerResponseHeader(200, "RequestId", "string", "The header that has a request ID that uniquely identifies this operation call")]
         [SwaggerResponseHeader(200, "X-Transaction-Id", "string", "The header that has the transaction ID is used to correlate multiple operation calls.")]
 #endif

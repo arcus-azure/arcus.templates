@@ -56,3 +56,11 @@ As part of this template the following HTTP header(s) are removed for security s
 * `Server` header * Provides information concerning the Web API runtime
 
 The OpenAPI documentation is available by-default. Be careful of exposing sensitive information with the OpenAPI documentation, only expose what's necessary and hide everything else.
+
+### Health
+
+A default health controller is available that exposes the configured health checks as an aggregated health report. 
+For more information on application health, see [Microsoft's documentation](https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks).
+
+The controller doesn't directly exposes Microsoft's `HealthReport` model but uses a custom `ApiHealthReport`  model which eliminates the exception details from the original report.
+This way the application's health can be exposed in a safe manner without also exposing exception and assembly information to the user.

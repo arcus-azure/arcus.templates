@@ -14,6 +14,7 @@
     <PackageId>Arcus.Templates.WebApi</PackageId>
     <Title>Template for web API project</Title>
     <PackageType>Template</PackageType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>Azure;WebAPI;App Services;Web App;Web;API</PackageTags>
     <Copyright>Copyright (c) Arcus</Copyright>
     <PackageLicenseUrl>https://github.com/arcus-azure/arcus.templates/blob/master/LICENSE</PackageLicenseUrl>

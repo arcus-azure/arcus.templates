@@ -42,9 +42,9 @@ namespace Arcus.Templates.AzureFunctions.Databricks.JobMetrics
             LoggerConfiguration logConfig = CreateLoggerConfiguration(builder);
             builder.Services.AddLogging(logging =>
             {
-                logging.RemoveMicrosoftApplicationInsightsLoggerProvider().AddSerilog(logConfig.CreateLogger(), dispose: true);
+                logging.RemoveMicrosoftApplicationInsightsLoggerProvider()
+                       .AddSerilog(logConfig.CreateLogger(), dispose: true);
             });
-            
         }
         
         private static LoggerConfiguration CreateLoggerConfiguration(IFunctionsHostBuilder builder)

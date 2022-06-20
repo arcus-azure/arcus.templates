@@ -37,7 +37,6 @@
     <DefineConstants>$(DefineConstants);Serilog</DefineConstants>
     <Serilog>true</Serilog>
     <DockerFastModeProjectMountDirectory>/home/site/wwwroot</DockerFastModeProjectMountDirectory>
-	<Version>$(VersionPrefix)</Version>
   </PropertyGroup>
 
   <ItemGroup>

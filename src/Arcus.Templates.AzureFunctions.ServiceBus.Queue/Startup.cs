@@ -47,7 +47,8 @@ namespace Arcus.Templates.AzureFunctions.ServiceBus.Queue
             LoggerConfiguration logConfig = CreateLoggerConfiguration(builder);
             builder.Services.AddLogging(logging =>
             {
-                logging.RemoveMicrosoftApplicationInsightsLoggerProvider().AddSerilog(logConfig.CreateLogger(), dispose: true);
+                logging.RemoveMicrosoftApplicationInsightsLoggerProvider()
+                    .AddSerilog(logConfig.CreateLogger(), dispose: true);
             }); 
 #endif
         }

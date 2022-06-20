@@ -39,6 +39,8 @@
     <DefineConstants>$(DefineConstants);</DefineConstants>
     <ExcludeOpenApi>false</ExcludeOpenApi>
     <DockerFastModeProjectMountDirectory>/home/site/wwwroot</DockerFastModeProjectMountDirectory>
+	<Version>$(VersionPrefix)</Version>
+	<VersionSuffix>preview</VersionSuffix>
   </PropertyGroup>
 
   <ItemGroup>

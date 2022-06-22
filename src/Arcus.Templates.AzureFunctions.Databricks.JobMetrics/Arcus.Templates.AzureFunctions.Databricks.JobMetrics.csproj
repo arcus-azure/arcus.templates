@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <AzureFunctionsVersion>v4</AzureFunctionsVersion>
@@ -25,7 +25,6 @@
     <ContentTargetFolders>content</ContentTargetFolders>
     <EnableDefaultContentItems>false</EnableDefaultContentItems>
     <DockerComposeProjectPath>..\Arcus.Templates.Orchestrator.dcproj</DockerComposeProjectPath>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>NU5048;NU5125;NU5119;NU5128</NoWarn>
     <!--#endif-->
   </PropertyGroup>
@@ -58,7 +57,7 @@
   <ItemGroup>
     <PackageReference Include="Arcus.BackgroundJobs.Databricks" Version="0.4.0" />
     <PackageReference Include="Arcus.Observability.Telemetry.Core" Version="2.4.0" />
-    <PackageReference Include="Arcus.Observability.Telemetry.AzureFunctions" Version="2.4.0" />
+    <PackageReference Include="Arcus.Observability.Telemetry.AzureFunctions" Version="2.5.0-preview-1" />
     <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Filters" Version="2.4.0" />
     <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Sinks.Applicationinsights" Version="2.4.0" />
     <PackageReference Include="Arcus.Security.AzureFunctions" Version="1.7.0" />

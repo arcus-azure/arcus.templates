@@ -5,6 +5,7 @@ using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 #if Serilog
 using Serilog;
 using Serilog.Configuration;
@@ -46,7 +47,8 @@ namespace Arcus.Templates.AzureFunctions.ServiceBus.Queue
             LoggerConfiguration logConfig = CreateLoggerConfiguration(builder);
             builder.Services.AddLogging(logging =>
             {
-                logging.AddSerilog(logConfig.CreateLogger(), dispose: true);
+                logging.RemoveMicrosoftApplicationInsightsLoggerProvider()
+                    .AddSerilog(logConfig.CreateLogger(), dispose: true);
             }); 
 #endif
         }

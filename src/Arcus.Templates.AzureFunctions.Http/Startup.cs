@@ -53,7 +53,7 @@ namespace Arcus.Templates.AzureFunctions.Http
             builder.Services.AddLogging(logging =>
             {
                 logging.RemoveMicrosoftApplicationInsightsLoggerProvider()
-                    .AddSerilog(logConfig.CreateLogger(), dispose: true);
+                       .AddSerilog(logConfig.CreateLogger(), dispose: true);
             });
         }
 

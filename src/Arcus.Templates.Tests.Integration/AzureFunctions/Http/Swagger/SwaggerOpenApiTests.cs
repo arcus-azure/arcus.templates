@@ -112,7 +112,6 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Swagger
 
             using (var project = await AzureFunctionsHttpProject.StartNewAsync(options, _outputWriter))
             {
-                project.TearDownOptions = TearDownOptions.KeepProjectDirectory;
                 // Assert
                 Assert.True(project.ContainsFile("HttpCorrelationOpenApiResponseHeaders.cs"), "should contain OpenApi response headers file");
                 Assert.True(project.ContainsFile("OpenApiConfigurationOptions.cs"), "should contain OpenApi configuration options file");

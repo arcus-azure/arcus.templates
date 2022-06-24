@@ -352,6 +352,19 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         }
 
         /// <summary>
+        /// Determines whether or not a file is present in the resulting project directory.
+        /// </summary>
+        /// <param name="fileName">The file name (without path) that should be present in the resulting project directory.</param>
+        /// <exception cref="ArgumentException">Thrown when the <paramref name="fileName"/> is blank.</exception>
+        public bool ContainsFile(string fileName)
+        {
+            Guard.NotNullOrWhitespace(fileName, nameof(fileName), "Requires a non-blank file name to determine whether the file is present in the resulting project directory");
+
+            string filePath = Path.Combine(ProjectDirectory.FullName, fileName);
+            return File.Exists(filePath);
+        }
+
+        /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
         public void Dispose()

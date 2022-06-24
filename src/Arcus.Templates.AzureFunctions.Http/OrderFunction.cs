@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Arcus.Observability.Telemetry.Core;
 using Arcus.Security.Core;
 using Arcus.WebApi.Logging.Correlation;
 using GuardNet;
@@ -52,39 +54,55 @@ namespace Arcus.Templates.AzureFunctions.Http
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = "v1/order")] HttpRequest request)
         {
-            try
+            using (var measurement = DurationMeasurement.Start())
             {
-                Logger.LogInformation("C# HTTP trigger 'order' function processed a request");
-                if (IsJson(request) == false || AcceptsJson(request) == false)
+                var statusCode = -1;
+                var telemetryContext = new Dictionary<string, object>();
+
+                try
                 {
-                    string accept = String.Join(", ", GetAcceptMediaTypes(request));
-                    Logger.LogError("Could not process current request because the request body is not JSON and/or could not accept JSON as response (Content-Type: {ContentType}, Accept: {Accept})", request.ContentType, accept);
+                    Logger.LogInformation("C# HTTP trigger 'order' function processed a request");
+                    if (IsJson(request) == false || AcceptsJson(request) == false)
+                    {
+                        string accept = string.Join(", ", GetAcceptMediaTypes(request));
+                        Logger.LogError("Could not process current request because the request body is not JSON and/or could not accept JSON as response (Content-Type: {ContentType}, Accept: {Accept})", request.ContentType, accept);
 
-                    return UnsupportedMediaType("Could not process current request because the request body is not JSON and/or could not accept JSON as response");
+                        statusCode = StatusCodes.Status415UnsupportedMediaType;
+                        return Error(statusCode, "Could not process current request because the request body is not JSON and/or could not accept JSON as response");
+                    }
+
+                    if (TryHttpCorrelate(telemetryContext, out string errorMessage) == false)
+                    {
+                        statusCode = StatusCodes.Status400BadRequest;
+                        return Error(statusCode, errorMessage);
+                    }
+                    
+                    var order = await GetJsonBodyAsync<Order>(request);
+                    statusCode = StatusCodes.Status200OK;
+                    return Json(order, statusCode);
                 }
-
-                if (TryHttpCorrelate(out string errorMessage) == false)
+                catch (JsonException exception)
                 {
-                    return BadRequest(errorMessage);
+                    Logger.LogError(exception, exception.Message);
+                    statusCode = StatusCodes.Status400BadRequest;
+                    return Error(statusCode, "Could not process the current request due to an JSON deserialization failure");
                 }
-
-                var order = await GetJsonBodyAsync<Order>(request);
-                return Json(order);
-            }
-            catch (JsonException exception)
-            {
-                Logger.LogError(exception, exception.Message);
-                return BadRequest("Could not process the current request due to an JSON deserialization failure");
-            }
-            catch (ValidationException exception)
-            {
-                Logger.LogError(exception, exception.Message);
-                return BadRequest(exception.ValidationResult);
-            }
-            catch (Exception exception)
-            {
-                Logger.LogCritical(exception, exception.Message);
-                return InternalServerError("Could not process the current request due to an unexpected exception");
+                catch (ValidationException exception)
+                {
+                    Logger.LogError(exception, exception.Message);
+                    statusCode = StatusCodes.Status400BadRequest;
+                    return Error(statusCode, exception.ValidationResult);
+                }
+                catch (Exception exception)
+                {
+                    Logger.LogCritical(exception, exception.Message);
+                    statusCode = StatusCodes.Status500InternalServerError;
+                    return Error(statusCode, "Could not process the current request due to an unexpected exception");
+                }
+                finally
+                {
+                    Logger.LogRequest(request, statusCode, measurement, telemetryContext);
+                }
             }
         }
     }

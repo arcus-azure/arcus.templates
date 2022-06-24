@@ -31,8 +31,8 @@
   <ItemGroup>
     <PackageReference Include="Arcus.EventGrid.Publishing" Version="3.2.0" />
     <PackageReference Include="Arcus.EventGrid.Testing" Version="3.2.0" />
-    <PackageReference Include="Arcus.Observability.Telemetry.Core" Version="2.4.0" />
-    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Sinks.ApplicationInsights" Version="2.4.0" />
+    <PackageReference Include="Arcus.Observability.Telemetry.Core" Version="2.5.0" />
+    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Sinks.ApplicationInsights" Version="2.5.0" />
     <PackageReference Include="Arcus.WebApi.Security" Version="1.5.0" />
     <PackageReference Include="Arcus.Messaging.Pumps.ServiceBus" Version="1.2.0" />
     <PackageReference Include="Bogus" Version="34.0.2" />

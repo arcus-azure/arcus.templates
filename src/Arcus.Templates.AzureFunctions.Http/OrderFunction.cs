@@ -12,9 +12,11 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Arcus.Templates.AzureFunctions.Http.Model;
+#if OpenApi
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Enums;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Models; 
+#endif
 
 namespace Arcus.Templates.AzureFunctions.Http
 {
@@ -39,7 +41,7 @@ namespace Arcus.Templates.AzureFunctions.Http
         }
 
         [FunctionName("order")]
-#if (ExcludeOpenApi == false)
+#if OpenApi
         [OpenApiOperation("Order_Get", tags: new[] { "order" }, Summary = "Gets the order", Description = "Gets the order from the request", Visibility = OpenApiVisibilityType.Important)]
         [OpenApiSecurity("function_key", SecuritySchemeType.ApiKey, Name = "code", In = OpenApiSecurityLocationType.Header)]
         [OpenApiRequestBody("application/json", typeof(Order), Description = "The to-be-processed order")]

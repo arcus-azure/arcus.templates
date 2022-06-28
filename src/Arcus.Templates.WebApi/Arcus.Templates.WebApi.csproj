@@ -64,11 +64,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Arcus.Observability.Correlation" Version="2.4.0" />
-    <PackageReference Include="Arcus.Observability.Telemetry.AspNetCore" Version="2.4.0" />
-    <PackageReference Include="Arcus.Observability.Telemetry.Core" Version="2.4.0" />
-    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Filters" Version="2.4.0" Condition="'$(Serilog)' == 'true'" />
-    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Sinks.ApplicationInsights" Version="2.4.0" Condition="'$(Serilog)' == 'true'" />
+    <PackageReference Include="Arcus.Observability.Correlation" Version="2.5.0" />
+    <PackageReference Include="Arcus.Observability.Telemetry.AspNetCore" Version="2.5.0" />
+    <PackageReference Include="Arcus.Observability.Telemetry.Core" Version="2.5.0" />
+    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Filters" Version="2.5.0" Condition="'$(Serilog)' == 'true'" />
+    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Sinks.ApplicationInsights" Version="2.5.0" Condition="'$(Serilog)' == 'true'" />
     <PackageReference Include="Arcus.Security.Core" Version="1.7.0" />
     <PackageReference Include="Arcus.Security.Providers.AzureKeyVault" Version="1.7.0" />
     <PackageReference Include="Arcus.WebApi.Hosting" Version="1.5.0" />

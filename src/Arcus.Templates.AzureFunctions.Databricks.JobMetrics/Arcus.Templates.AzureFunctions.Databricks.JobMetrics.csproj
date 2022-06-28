@@ -57,10 +57,10 @@
 
   <ItemGroup>
     <PackageReference Include="Arcus.BackgroundJobs.Databricks" Version="0.4.0" />
-    <PackageReference Include="Arcus.Observability.Telemetry.Core" Version="2.4.0" />
-    <PackageReference Include="Arcus.Observability.Telemetry.AzureFunctions" Version="2.4.0" />
-    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Filters" Version="2.4.0" />
-    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Sinks.Applicationinsights" Version="2.4.0" />
+    <PackageReference Include="Arcus.Observability.Telemetry.Core" Version="2.5.0" />
+    <PackageReference Include="Arcus.Observability.Telemetry.AzureFunctions" Version="2.5.0" />
+    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Filters" Version="2.5.0" />
+    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Sinks.Applicationinsights" Version="2.5.0" />
     <PackageReference Include="Arcus.Security.AzureFunctions" Version="1.7.0" />
     <PackageReference Include="Arcus.Security.Providers.AzureKeyVault" Version="1.7.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="4.0.1" />

@@ -47,11 +47,11 @@
   <ItemGroup>
     <PackageReference Include="Arcus.Messaging.Abstractions.ServiceBus" Version="1.2.0" />
     <PackageReference Include="Arcus.Messaging.AzureFunctions.ServiceBus" Version="1.2.0" />
-    <PackageReference Include="Arcus.Observability.Correlation" Version="2.4.0" />
-    <PackageReference Include="Arcus.Observability.Telemetry.AzureFunctions" Version="2.4.0" />
-    <PackageReference Include="Arcus.Observability.Telemetry.Core" Version="2.4.0" />
-    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Filters" Version="2.4.0" Condition="'$(Serilog)' == 'true'" />
-    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Sinks.ApplicationInsights" Version="2.4.0" Condition="'$(Serilog)' == 'true'" />
+    <PackageReference Include="Arcus.Observability.Correlation" Version="2.5.0" />
+    <PackageReference Include="Arcus.Observability.Telemetry.AzureFunctions" Version="2.5.0" />
+    <PackageReference Include="Arcus.Observability.Telemetry.Core" Version="2.5.0" />
+    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Filters" Version="2.5.0" Condition="'$(Serilog)' == 'true'" />
+    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Sinks.ApplicationInsights" Version="2.5.0" Condition="'$(Serilog)' == 'true'" />
     <PackageReference Include="Arcus.Security.AzureFunctions" Version="1.7.0" />
     <PackageReference Include="Arcus.Security.Providers.AzureKeyVault" Version="1.7.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />

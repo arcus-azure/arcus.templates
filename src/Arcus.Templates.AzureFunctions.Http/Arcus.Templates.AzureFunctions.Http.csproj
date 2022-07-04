@@ -42,6 +42,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Model\ApiHealthReport.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
   <!--#endif-->

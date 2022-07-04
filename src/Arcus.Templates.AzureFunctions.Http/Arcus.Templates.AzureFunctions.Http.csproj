@@ -42,7 +42,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Model\ApiHealthReport.cs" />
   </ItemGroup>
 
   <ItemGroup>

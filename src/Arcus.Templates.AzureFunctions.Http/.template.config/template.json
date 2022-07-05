@@ -34,6 +34,13 @@
           "exclude": [
             "HealthFunction.cs"
           ]
+        },
+        {
+          "condition": "!(OpenApi)",
+          "exclude": [
+            "HttpCorrelationOpenApiResponseHeaders.cs",
+            "OpenApiConfigurationOptions.cs"
+          ]
         }
       ]
     }
@@ -86,9 +93,9 @@
       "defaultValue": "false",
       "description": "Exclude the OpenApi docs, UI generation from XML docs from the Azure Functions project"
     },
-    "ExcludeOpenApi": {
+    "OpenApi": {
       "type": "computed",
-      "value": "exclude-openApi"
+      "value": "!(exclude-openApi)"
     }
   },
   "postActions": [

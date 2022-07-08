@@ -132,6 +132,7 @@ stages:
             inputs:
               targetType: 'inline'
               script: 'docker logs Arcus.Demo.WebApi'
+            condition: failed()
           - task: PowerShell@2
             displayName: 'Get Docker container logs for Arcus.Demo.ServiceBus.Topic'
             inputs:

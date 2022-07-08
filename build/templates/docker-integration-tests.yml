@@ -51,7 +51,7 @@ stages:
                 EVENTGRID_TOPIC_URI=$(Arcus.Worker.EventGrid.TopicUri)
                 EVENTGRID_AUTH_KEY=$(Arcus.Worker.EventGrid.AuthKey)
                 ARCUS_SERVICEBUS_CONNECTIONSTRING=$(Arcus.Worker.ServiceBus.Queue.ConnectionString)
-                TELEMETRY_APPLICATIONINSIGHTS_INSTRUMENTATIONKEY=$(Arcus.ApplicationInsights.InstrumentationKey)
+                APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=$(Arcus.ApplicationInsights.InstrumentationKey)
           - template: 'run-new-project-from-template.yml'
             parameters:
               projectName: 'Arcus.Demo.ServiceBus.Topic'
@@ -66,7 +66,7 @@ stages:
                  EVENTGRID_TOPIC_URI=$(Arcus.Worker.EventGrid.TopicUri)
                 EVENTGRID_AUTH_KEY=$(Arcus.Worker.EventGrid.AuthKey)
                 ARCUS_SERVICEBUS_CONNECTIONSTRING=$(Arcus.Worker.ServiceBus.Topic.ConnectionString)
-                TELEMETRY_APPLICATIONINSIGHTS_INSTRUMENTATIONKEY=$(Arcus.ApplicationInsights.InstrumentationKey)
+                APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=$(Arcus.ApplicationInsights.InstrumentationKey)
           - template: 'run-new-project-from-template.yml'
             parameters:
               projectName: 'Arcus.Demo.AzureFunctions.Databricks.JobMetrics'

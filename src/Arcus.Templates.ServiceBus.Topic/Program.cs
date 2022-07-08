@@ -17,7 +17,7 @@ namespace Arcus.Templates.ServiceBus.Topic
     public class Program
     {
 #if Serilog
-        #warning Make sure that the your Azure Application Insights connection string key is available as a secret.
+        #warning Make sure that the Azure Application Insights connection string key is available as a secret.
         private const string ApplicationInsightsConnectionStringKeyName = "APPLICATIONINSIGHTS_CONNECTION_STRING";
         
 #endif

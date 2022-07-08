@@ -45,7 +45,7 @@ stages:
               script: |
                 Get-Content './Arcus.Demo.ServiceBus.Queue/Program.cs' | 
                   Where-Object { $_ -notmatch '#error' -and $_ -notmatch 'secretProvider: null' -and $_ -notmatch 'EmptyMessageHandler' -and $_ -notmatch 'AddServiceBusQueueMessagePump' } | 
-                  Where-Object { $_ -notmatch 'AddAzureKeyVaultWithManagedIdentity' } |
+                  Where-Object { $_ -notmatch 'AddAzureKeyVaultWithManagedIdentity' -notmatch '#if DEBUG' -and -notmatch '#endif' } |
                   Set-Content './Arcus.Demo.ServiceBus.Queue/Program.cs'
               envVars: |
                 ARCUS_HEALTH_PORT=$(Arcus.ServiceBus.Queue.Worker.HealthPort)
@@ -61,7 +61,7 @@ stages:
               script: |
                 Get-Content './Arcus.Demo.ServiceBus.Topic/Program.cs' | 
                   Where-Object { $_ -notmatch '#error' -and $_ -notmatch 'secretProvider: null' -and $_ -notmatch 'EmptyMessageHandler' -and $_ -notmatch 'AddServiceBusTopicMessagePump' } | 
-                  Where-Object { $_ -notmatch 'AddAzureKeyVaultWithManagedIdentity' } |
+                  Where-Object { $_ -notmatch 'AddAzureKeyVaultWithManagedIdentity' -notmatch '#if DEBUG' -and -notmatch '#endif' } |
                   Set-Content './Arcus.Demo.ServiceBus.Topic/Program.cs'
               envVars: |
                 ARCUS_HEALTH_PORT=$(Arcus.ServiceBus.Topic.Worker.HealthPort)

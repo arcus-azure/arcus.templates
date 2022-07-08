@@ -45,6 +45,7 @@ stages:
               script: |
                 Get-Content './Arcus.Demo.ServiceBus.Queue/Program.cs' | 
                   Where-Object { $_ -notmatch '#error' -and $_ -notmatch 'secretProvider: null' -and $_ -notmatch 'EmptyMessageHandler' -and $_ -notmatch 'AddServiceBusQueueMessagePump' } | 
+                  Where-Object { $_ -notmatch 'AddAzureKeyVaultWithManagedIdentity' } |
                   Set-Content './Arcus.Demo.ServiceBus.Queue/Program.cs'
               envVars: |
                 ARCUS_HEALTH_PORT=$(Arcus.ServiceBus.Queue.Worker.HealthPort)
@@ -60,10 +61,11 @@ stages:
               script: |
                 Get-Content './Arcus.Demo.ServiceBus.Topic/Program.cs' | 
                   Where-Object { $_ -notmatch '#error' -and $_ -notmatch 'secretProvider: null' -and $_ -notmatch 'EmptyMessageHandler' -and $_ -notmatch 'AddServiceBusTopicMessagePump' } | 
+                  Where-Object { $_ -notmatch 'AddAzureKeyVaultWithManagedIdentity' } |
                   Set-Content './Arcus.Demo.ServiceBus.Topic/Program.cs'
               envVars: |
                 ARCUS_HEALTH_PORT=$(Arcus.ServiceBus.Topic.Worker.HealthPort)
-                 EVENTGRID_TOPIC_URI=$(Arcus.Worker.EventGrid.TopicUri)
+                EVENTGRID_TOPIC_URI=$(Arcus.Worker.EventGrid.TopicUri)
                 EVENTGRID_AUTH_KEY=$(Arcus.Worker.EventGrid.AuthKey)
                 ARCUS_SERVICEBUS_CONNECTIONSTRING=$(Arcus.Worker.ServiceBus.Topic.ConnectionString)
                 APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=$(Arcus.ApplicationInsights.InstrumentationKey)
@@ -130,4 +132,13 @@ stages:
             inputs:
               targetType: 'inline'
               script: 'docker logs Arcus.Demo.WebApi'
-            condition: failed()
+          - task: PowerShell@2
+            displayName: 'Get Docker container logs for Arcus.Demo.ServiceBus.Topic'
+            inputs:
+              targetType: 'inline'
+              script: 'docker logs Arcus.Demo.ServiceBus.Topic'
+          - task: PowerShell@2
+            displayName: 'Get Docker container logs for Arcus.Demo.ServiceBus.Queue'
+            inputs:
+              targetType: 'inline'
+              script: 'docker logs Arcus.Demo.ServiceBus.Queue'

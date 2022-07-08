@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Arcus.Security.Core;
 using Arcus.Security.Core.Caching.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Serilog.Extensions.Hosting;
 #if Serilog
-using Arcus.Security.Core;
 using Serilog;
 using Serilog.Configuration;
 using Serilog.Events;
+using Serilog.Extensions.Hosting;
 #endif
 
 namespace Arcus.Templates.ServiceBus.Topic

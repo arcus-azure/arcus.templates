@@ -156,10 +156,27 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         }
 
         /// <summary>
+        /// Updates a file in the target project folder with a 'using' statement for a given <paramref name="type"/>.
+        /// </summary>
+        /// <param name="fileName">The target file name to change its contents.</param>
+        /// <param name="type">The type for which the namespace should be added as a 'using' statement.</param>
+        /// <exception cref="ArgumentException">Thrown when the <paramref name="fileName"/> is blank.</exception>
+        /// <exception cref="ArgumentNullException">Thrown when the <paramref name="type"/> is <c>null</c>.</exception>
+        public void UpdateFileWithUsingStatement(string fileName, Type type)
+        {
+            Guard.NotNullOrWhitespace(fileName, nameof(fileName), "Requires a non-blank file name (no file path) to update the contents with a 'using' statement");
+            Guard.NotNull(type, nameof(type), "Requires a type definition to retrieve the namespace for the 'using' statement");
+
+            UpdateFileInProject(fileName, contents => $"using {type.Namespace};{Environment.NewLine}" + contents);
+        }
+
+        /// <summary>
         /// Updates a file in the target project folder, using the given <paramref name="updateContents"/> function.
         /// </summary>
-        /// <param name="fileName">The target file name to change it's contents.</param>
+        /// <param name="fileName">The target file name to change its contents.</param>
         /// <param name="updateContents">The function that changes the contents of the file.</param>
+        /// <exception cref="ArgumentException">Thrown when the <paramref name="fileName"/> is blank.</exception>
+        /// <exception cref="ArgumentNullException">Thrown when the <paramref name="updateContents"/> is <c>null</c>.</exception>
         public void UpdateFileInProject(string fileName, Func<string, string> updateContents)
         {
             Guard.NotNullOrWhitespace(fileName, nameof(fileName), "Requires a non-blank file name (no file path) to update the contents");

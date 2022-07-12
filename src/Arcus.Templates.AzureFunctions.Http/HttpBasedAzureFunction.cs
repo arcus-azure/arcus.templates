@@ -6,6 +6,8 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Arcus.Observability.Correlation;
+using Arcus.Observability.Telemetry.Core;
 using Arcus.WebApi.Logging.Correlation;
 using GuardNet;
 using Microsoft.AspNetCore.Http;
@@ -75,13 +77,40 @@ namespace Arcus.Templates.AzureFunctions.Http
         }
 
         /// <summary>
+        /// Correlate the current HTTP request according to the previously configured <see cref="T:Arcus.Observability.Correlation.CorrelationInfoOptions" />;
+        /// returning an <paramref name="errorMessage" /> when the correlation failed.
+        /// </summary>
+        /// <param name="telemetryContext">The telemetry context that will be enriched upon successful correlation.</param>
+        /// <param name="errorMessage">The failure message that describes why the correlation of the HTTP request wasn't successful.</param>
+        /// <returns>
+        ///     <para>[true] when the HTTP request was successfully correlated and the HTTP response was altered accordingly;</para>
+        ///     <para>[false] there was a problem with the correlation, describing the failure in the <paramref name="errorMessage" />.</para>
+        /// </returns>
+        protected bool TryHttpCorrelate(IDictionary<string, object> telemetryContext, out string errorMessage)
+        {
+            Guard.NotNull(telemetryContext, nameof(telemetryContext), "Requires a telemetry context for it to be enriched with correlation information");
+
+            if (_httpCorrelation.TryHttpCorrelate(out errorMessage))
+            {
+                CorrelationInfo correlation = _httpCorrelation.GetCorrelationInfo();
+                telemetryContext[ContextProperties.Correlation.OperationId] = correlation.OperationId;
+                telemetryContext[ContextProperties.Correlation.TransactionId] = correlation.TransactionId;
+                telemetryContext[ContextProperties.Correlation.OperationParentId] = correlation.OperationParentId;
+
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// Reads the body of the incoming request as JSON to deserialize it into a given <typeparamref name="TMessage"/> type.
         /// </summary>
         /// <typeparam name="TMessage">The type of the request's body that's being deserialized.</typeparam>
         /// <param name="request">The incoming request which body will be deserialized.</param>
         /// <returns>The deserialized request body into the <typeparamref name="TMessage"/> model.</returns>
         /// <exception cref="ArgumentNullException">Thrown when the <paramref name="request"/> is <c>null</c></exception>
-        /// <exception cref="JsonReaderException">Thrown when the deserialization of the request body to a JSON representation fails.</exception>
+        /// <exception cref="Newtonsoft.Json.JsonReaderException">Thrown when the deserialization of the request body to a JSON representation fails.</exception>
         /// <exception cref="ValidationException">Thrown when the deserialized request body <typeparamref name="TMessage"/> didn't correspond to the required validation rules.</exception>
         protected async Task<TMessage> GetJsonBodyAsync<TMessage>(HttpRequest request)
         {
@@ -185,6 +214,20 @@ namespace Arcus.Templates.AzureFunctions.Http
             {
                 StatusCode = StatusCodes.Status500InternalServerError,
                 ContentTypes = { "text/plain" }
+            };
+        }
+
+        /// <summary>
+        /// creates an <see cref="IActionResult"/> instance for a failure with an accompanied <paramref name="errorResult"/>.
+        /// </summary>
+        /// <param name="statusCode">The status code representing the failure.</param>
+        /// <param name="errorResult">The error result that is sent back to the user.</param>
+        protected IActionResult Error(int statusCode, object errorResult, string contentType = "text/plain")
+        {
+            return new ObjectResult(errorResult)
+            {
+                StatusCode = statusCode,
+                ContentTypes = { contentType }
             };
         }
     }

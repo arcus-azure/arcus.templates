@@ -5,6 +5,7 @@ using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Configuration;
 using Serilog.Events;
@@ -18,12 +19,13 @@ namespace Arcus.Templates.AzureFunctions.Http
         // This method gets called by the runtime. Use this method to configure the app configuration.
         public override void ConfigureAppConfiguration(IFunctionsConfigurationBuilder builder)
         {
+#if OpenApi
 //[#if DEBUG]
             Environment.SetEnvironmentVariable("OpenApi__HideSwaggerUI", "false");
 //[#else]
             Environment.SetEnvironmentVariable("OpenApi__HideSwaggerUI", "true");
 //[#endif]
-            
+#endif
             builder.ConfigurationBuilder.AddEnvironmentVariables();
         }
         
@@ -51,7 +53,8 @@ namespace Arcus.Templates.AzureFunctions.Http
             LoggerConfiguration logConfig = CreateLoggerConfiguration(builder);
             builder.Services.AddLogging(logging =>
             {
-                logging.AddSerilog(logConfig.CreateLogger(), dispose: true);
+                logging.RemoveMicrosoftApplicationInsightsLoggerProvider()
+                       .AddSerilog(logConfig.CreateLogger(), dispose: true);
             });
         }
 

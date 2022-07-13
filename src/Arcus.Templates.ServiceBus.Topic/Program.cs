@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading.Tasks;
+using Arcus.Security.Core;
 using Arcus.Security.Core.Caching.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Configuration;
 using Serilog.Events;
+using Serilog.Extensions.Hosting;
 #endif
 
 namespace Arcus.Templates.ServiceBus.Topic
@@ -14,24 +17,24 @@ namespace Arcus.Templates.ServiceBus.Topic
     public class Program
     {
 #if Serilog
-        #warning Make sure that the appsettings.json is updated with your Azure Application Insights instrumentation key.
-        private const string ApplicationInsightsInstrumentationKeyName = "APPINSIGHTS_INSTRUMENTATIONKEY";
-
+        #warning Make sure that the Azure Application Insights connection string key is available as a secret.
+        private const string ApplicationInsightsConnectionStringKeyName = "APPLICATIONINSIGHTS_CONNECTION_STRING";
+        
 #endif
-        public static int Main(string[] args)
+        public static async Task<int> Main(string[] args)
         {
 #if Serilog
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .WriteTo.Console()
-                .CreateLogger();
-
+                .CreateBootstrapLogger();
+            
             try
             {
-                CreateHostBuilder(args)
-                    .Build()
-                    .Run();
-
+                IHost host = CreateHostBuilder(args).Build();
+                await ConfigureSerilogAsync(host);
+                await host.RunAsync();
+                
                 return 0;
             }
             catch (Exception exception)
@@ -44,14 +47,13 @@ namespace Arcus.Templates.ServiceBus.Topic
                 Log.CloseAndFlush();
             }
 #else
-            CreateHostBuilder(args)
-                .Build()
-                .Run();
-
+            IHost host = CreateHostBuilder(args).Build();
+            await host.RunAsync();
+            
             return 0;
 #endif
         }
-
+        
         public static IHostBuilder CreateHostBuilder(string[] args)
         {
             return Host.CreateDefaultBuilder(args)
@@ -65,12 +67,12 @@ namespace Arcus.Templates.ServiceBus.Topic
 //[#if DEBUG]
                            stores.AddConfiguration(config);
 //[#endif]
-
+                            
                            //#error Please provide a valid secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secret-store/provider/key-vault
                            stores.AddAzureKeyVaultWithManagedIdentity("https://your-keyvault.vault.azure.net/", CacheConfiguration.Default);
                        })
 #if Serilog
-                       .UseSerilog(UpdateLoggerConfiguration)
+                       .UseSerilog(Log.Logger)
 #endif
                        .ConfigureServices((hostContext, services) =>
                        {
@@ -82,22 +84,28 @@ namespace Arcus.Templates.ServiceBus.Topic
         }
 #if Serilog
         
-        private static void UpdateLoggerConfiguration(
-            HostBuilderContext hostContext,
-            LoggerConfiguration config)
+        private static async Task ConfigureSerilogAsync(IHost host)
         {
-            config.MinimumLevel.Debug()
-                  .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-                  .Enrich.FromLogContext()
-                  .Enrich.WithVersion()
-                  .Enrich.WithComponentName("Service Bus Topic Worker")
-                  .WriteTo.Console();
+            var secretProvider = host.Services.GetRequiredService<ISecretProvider>();
+            string connectionString = await secretProvider.GetRawSecretAsync(ApplicationInsightsConnectionStringKeyName);
             
-            var instrumentationKey = hostContext.Configuration.GetValue<string>(ApplicationInsightsInstrumentationKeyName);
-            if (!string.IsNullOrWhiteSpace(instrumentationKey))
+            var reloadLogger = (ReloadableLogger) Log.Logger;
+            reloadLogger.Reload(config =>
             {
-                config.WriteTo.AzureApplicationInsights(instrumentationKey);
-            }
+                config.MinimumLevel.Debug()
+                      .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                      .Enrich.FromLogContext()
+                      .Enrich.WithVersion()
+                      .Enrich.WithComponentName("Service Bus Topic Worker")
+                      .WriteTo.Console();
+                
+                if (!string.IsNullOrWhiteSpace(connectionString))
+                {
+                    config.WriteTo.AzureApplicationInsightsWithConnectionString(connectionString);
+                }
+                
+                return config;
+            });
         }
 #endif
     }

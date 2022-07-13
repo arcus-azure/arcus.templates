@@ -11,7 +11,7 @@ namespace Arcus.Templates.Tests.Integration.Worker
     /// </summary>
     public class ServiceBusWorkerProjectOptions : ProjectOptions
     {
-        private const string SerilogTelemetryInstrumentationKey = "TELEMETRY_APPLICATIONINSIGHTS_INSTRUMENTATIONKEY";
+        private const string ApplicationInsightsConnectionStringKey = "APPLICATIONINSIGHTS_CONNECTION_STRING";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ServiceBusWorkerProjectOptions"/> class.
@@ -43,14 +43,16 @@ namespace Arcus.Templates.Tests.Integration.Worker
         public IEnumerable<CommandArgument> AdditionalArguments { get; }
 
         /// <summary>
-        /// 
+        /// Creates an <see cref="ServiceBusWorkerProjectOptions"/> instance that provides additional user-configurable options for the Azure Service Bus .NET Worker projects.
         /// </summary>
-        /// <param name="configuration"></param>
-        /// <returns></returns>
+        /// <param name="configuration">The integration test configuration instance to retrieve connection secrets.</param>
+        /// <exception cref="ArgumentNullException">Thrown when the <paramref name="configuration"/> is <c>null</c>.</exception>
         public static ServiceBusWorkerProjectOptions Create(TestConfig configuration)
         {
+            Guard.NotNull(configuration, nameof(configuration), "Requires a test configuration instance to retrieve additional connection secrets");
+
             string instrumentationKey = configuration.GetApplicationInsightsInstrumentationKey();
-            var commandArgument = CommandArgument.CreateSecret(SerilogTelemetryInstrumentationKey, instrumentationKey);
+            var commandArgument = CommandArgument.CreateSecret(ApplicationInsightsConnectionStringKey, $"InstrumentationKey={instrumentationKey}");
 
             return new ServiceBusWorkerProjectOptions(new[] { commandArgument });
         }
@@ -61,7 +63,7 @@ namespace Arcus.Templates.Tests.Integration.Worker
         public ServiceBusWorkerProjectOptions WithExcludeSerilog()
         {
             ProjectOptions optionsWithoutSerilog = AddOption("--exclude-serilog");
-            IEnumerable<CommandArgument> argumentsWithoutSerilog = AdditionalArguments.Where(arg => arg.Name != SerilogTelemetryInstrumentationKey);
+            IEnumerable<CommandArgument> argumentsWithoutSerilog = AdditionalArguments.Where(arg => arg.Name != ApplicationInsightsConnectionStringKey);
             
             return new ServiceBusWorkerProjectOptions(argumentsWithoutSerilog, optionsWithoutSerilog);
         }

@@ -9,6 +9,7 @@ using Arcus.Templates.Tests.Integration.Worker.Configuration;
 using Arcus.Templates.Tests.Integration.Worker.Fixture;
 using Arcus.Templates.Tests.Integration.Worker.Health;
 using Arcus.Templates.Tests.Integration.Worker.MessagePump;
+using Azure.Messaging.ServiceBus;
 using GuardNet;
 using Polly;
 using Xunit.Abstractions;
@@ -165,16 +166,13 @@ namespace Arcus.Templates.Tests.Integration.Worker
             AddTypeAsFile<OrderCreatedEvent>();
             AddTypeAsFile<OrderCreatedEventData>();
             AddTypeAsFile<OrdersMessageHandler>();
-            AddTypeAsFile<SingleValueSecretProvider>();
-
-            string connectionString = _configuration.GetServiceBusConnectionString(_entity);
+            
             UpdateFileInProject("Program.cs", contents => 
                 RemovesUserErrorsFromContents(contents)
                     .Replace(".MinimumLevel.Debug()", ".MinimumLevel.Verbose()")
                     .Replace("EmptyMessageHandler", nameof(OrdersMessageHandler))
                     .Replace("EmptyMessage", nameof(Order))
-                    .Replace("AddAzureKeyVaultWithManagedIdentity(\"https://your-keyvault.vault.azure.net/\", CacheConfiguration.Default)", 
-                             $"AddProvider(new {nameof(SingleValueSecretProvider)}(\"{connectionString}\"))"));
+                    .Replace("stores.AddAzureKeyVaultWithManagedIdentity(\"https://your-keyvault.vault.azure.net/\", CacheConfiguration.Default);", ""));
         }
 
         private async Task StartAsync(ServiceBusWorkerProjectOptions options)

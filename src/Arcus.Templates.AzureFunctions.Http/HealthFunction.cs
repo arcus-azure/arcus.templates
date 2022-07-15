@@ -2,6 +2,7 @@
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Arcus.Templates.AzureFunctions.Http.Model;
 using Arcus.WebApi.Logging.Correlation;
 using GuardNet;
 using Microsoft.AspNetCore.Http;
@@ -76,12 +77,14 @@ namespace Arcus.Templates.AzureFunctions.Http
                 }
 
                 HealthReport healthReport = await _healthCheckService.CheckHealthAsync(cancellation);
+                ApiHealthReport apiHealthReport = ApiHealthReport.FromHealthReport(healthReport);
+                
                 if (healthReport?.Status == HealthStatus.Healthy)
                 {
-                    return Json(healthReport);
+                    return Json(apiHealthReport);
                 }
 
-                return Json(healthReport, statusCode: StatusCodes.Status503ServiceUnavailable);
+                return Json(apiHealthReport, statusCode: StatusCodes.Status503ServiceUnavailable);
             }
             catch (Exception exception)
             {

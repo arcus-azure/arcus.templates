@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 #if Console
 using Microsoft.Extensions.Logging; 
@@ -269,7 +270,7 @@ namespace Arcus.Templates.WebApi
 #endif
 #if JwtAuth
                 
-                swaggerGenerationOptions.AddSecurityDefinition("jwt", new OpenApiSecurityScheme
+                swaggerGenerationOptions.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Type = SecuritySchemeType.Http,
                     Description = "Authentication scheme based on JWT"
@@ -279,10 +280,11 @@ namespace Arcus.Templates.WebApi
                     {
                         new OpenApiSecurityScheme
                         {
+                            Scheme = "bearer",
                             Description = "Globally authentication scheme based on JWT",
                             Reference = new OpenApiReference
                             {
-                                Id = "jwt",
+                                Id = "Bearer",
                                 Type = ReferenceType.SecurityScheme
                             }
                         }, new List<string>()

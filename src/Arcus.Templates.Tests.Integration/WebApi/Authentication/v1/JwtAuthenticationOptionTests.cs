@@ -98,12 +98,13 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Authentication.v1
 
                         Assert.NotNull(document.Components);
                         (string schemeName, OpenApiSecurityScheme componentScheme) = Assert.Single(document.Components.SecuritySchemes);
+                        Assert.Equal("Bearer", schemeName);
                         Assert.Equal(SecuritySchemeType.Http, componentScheme.Type);
                         
                         OpenApiSecurityRequirement requirement = Assert.Single(document.SecurityRequirements);
                         Assert.NotNull(requirement);
                         (OpenApiSecurityScheme requirementScheme, IList<string> scopes) = Assert.Single(requirement);
-                        Assert.Equal("jwt", requirementScheme.Reference.Id);
+                        Assert.Equal("Bearer", requirementScheme.Reference.Id);
                     }
                 }
             }

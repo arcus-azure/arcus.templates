@@ -37,6 +37,7 @@ stages:
               envVars: |
                 ARCUS_HTTP_PORT=$(Http.Port)
                 ASPNETCORE_URLS=http://+:$(Http.Port)
+                APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=$(Arcus.ApplicationInsights.InstrumentationKey)
           - template: 'run-new-project-from-template.yml'
             parameters:
               projectName: 'Arcus.Demo.ServiceBus.Queue'

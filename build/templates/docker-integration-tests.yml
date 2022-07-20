@@ -33,7 +33,7 @@ stages:
                 $contents = 
                   Get-Content './Arcus.Demo.WebApi/Program.cs' |
                   % { $_ -replace 'DEBUG', 'RELEASE' }
-                Write-Host $contents
+                Write-Host "Contents: $($contents)"
                 $contents | Set-Content './Arcus.Demo.WebApi/Program.cs'
               envVars: |
                 ARCUS_HTTP_PORT=$(Http.Port)

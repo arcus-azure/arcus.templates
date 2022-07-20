@@ -31,7 +31,7 @@ stages:
               ports: '$(Http.Port):$(Http.Port)'
               script: |
                 $contents = 
-                  Get-Content './Arcus.Demo.WebApi/Program.cs' |
+                  Get-Content './Arcus.Demo.WebApi/Program.cs' -Raw |
                   % { $_ -replace 'DEBUG', 'RELEASE' }
                 Write-Host "Contents: $($contents)"
                 $contents | Set-Content './Arcus.Demo.WebApi/Program.cs'

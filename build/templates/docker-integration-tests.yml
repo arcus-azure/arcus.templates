@@ -30,8 +30,11 @@ stages:
               projectAlias: 'arcus-webapi'
               ports: '$(Http.Port):$(Http.Port)'
               script: |
-                Get-Content './Arcus.Demo.WebApi/Program.cs' |
-                  Set-Content './Arcus.Demo.WebApi/Program.cs'
+                $contents = 
+                  Get-Content './Arcus.Demo.WebApi/Program.cs' |
+                  % { $_ -replace 'DEBUG', 'RELEASE' } |
+                Write-Host $contents
+                $contents | Set-Content './Arcus.Demo.WebApi/Program.cs'
               envVars: |
                 ARCUS_HTTP_PORT=$(Http.Port)
                 ASPNETCORE_URLS=http://+:$(Http.Port)

@@ -58,7 +58,6 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Swagger
                     
                     IEnumerable<string> responseHeaderNames = response.Headers.Select(header => header.Key).ToArray();
                     Assert.Contains("X-Transaction-ID", responseHeaderNames);
-                    Assert.Contains("RequestId", responseHeaderNames);
                 }
             }
         }
@@ -79,7 +78,6 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Swagger
                 {
                     // Assert
                     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-                    Assert.NotEmpty(response.Headers.GetValues("RequestId"));
                     Assert.NotEmpty(response.Headers.GetValues("X-Transaction-Id"));
                     
                     string healthReportJson = await response.Content.ReadAsStringAsync();
@@ -219,7 +217,6 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Swagger
                 res =>
                 {
                     Assert.Equal("200", res.Key);
-                    Assert.Contains("RequestId", res.Value.Headers);
                     Assert.Contains("X-Transaction-Id", res.Value.Headers);
                     Assert.Single(res.Value.Content, content => content.Key == "application/json");
                 },
@@ -235,7 +232,6 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Swagger
                 res =>
                 {
                     Assert.Equal("200", res.Key);
-                    Assert.Contains("RequestId", res.Value.Headers);
                     Assert.Contains("X-Transaction-Id", res.Value.Headers);
                     Assert.Single(res.Value.Content, content => content.Key == "application/json");
                 },

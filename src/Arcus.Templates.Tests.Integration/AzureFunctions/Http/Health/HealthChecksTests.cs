@@ -43,7 +43,6 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Health
                 {
                     // Assert
                     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-                    Assert.NotEmpty(response.Headers.GetValues("RequestId"));
                     Assert.NotEmpty(response.Headers.GetValues("X-Transaction-Id"));
                     
                     string healthReportJson = await response.Content.ReadAsStringAsync();

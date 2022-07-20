@@ -54,7 +54,6 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Api
                     
                     IEnumerable<string> responseHeaderNames = response.Headers.Select(header => header.Key).ToArray();
                     Assert.Contains("X-Transaction-ID", responseHeaderNames);
-                    Assert.Contains("RequestId", responseHeaderNames);
                 }
             }
         }

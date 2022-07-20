@@ -26,7 +26,7 @@
     <EnableDefaultContentItems>false</EnableDefaultContentItems>
     <DockerComposeProjectPath>..\Arcus.Templates.Orchestrator.dcproj</DockerComposeProjectPath>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <NoWarn>NU5048;NU5125;NU5119;NU5128;CS0618</NoWarn>
+    <NoWarn>NU5048;NU5125;NU5119;NU5128</NoWarn>
     <!--#endif-->
   </PropertyGroup>
 
@@ -65,7 +65,7 @@
     <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Sinks.Applicationinsights" Version="2.5.0" />
     <PackageReference Include="Arcus.Security.AzureFunctions" Version="1.7.0" />
     <PackageReference Include="Arcus.Security.Providers.AzureKeyVault" Version="1.7.0" />
-    <PackageReference Include="Arcus.WebApi.Logging.AzureFunctions" Version="1.5.0" />
+    <PackageReference Include="Arcus.WebApi.Logging.AzureFunctions" Version="1.6.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="4.0.1" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.0.12" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.OpenApi" Version="1.3.0" Condition="'$(OpenApi)' == 'true'" />

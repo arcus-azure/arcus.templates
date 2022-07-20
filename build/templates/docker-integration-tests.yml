@@ -31,7 +31,6 @@ stages:
               ports: '$(Http.Port):$(Http.Port)'
               script: |
                 Get-Content './Arcus.Demo.WebApi/Program.cs' |
-                  Where-Object { $_ -notmatch 'AddAzureKeyVaultWithManagedIdentity' } |
                   % { $_ -replace 'DEBUG', 'RELEASE' } |
                   Set-Content './Arcus.Demo.WebApi/Program.cs'
               envVars: |

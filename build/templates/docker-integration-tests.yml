@@ -32,7 +32,7 @@ stages:
               script: |
                 $contents = 
                   Get-Content './Arcus.Demo.WebApi/Program.cs' |
-                  % { $_ -replace 'DEBUG', 'RELEASE' } |
+                  % { $_ -replace 'DEBUG', 'RELEASE' }
                 Write-Host $contents
                 $contents | Set-Content './Arcus.Demo.WebApi/Program.cs'
               envVars: |

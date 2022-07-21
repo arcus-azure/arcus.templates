@@ -89,8 +89,8 @@ namespace Arcus.Templates.Tests.Integration.WebApi
         public WebApiProjectOptions WithSerilogLogging(string applicationInsightsInstrumentationKey)
         {
             ProjectOptions optionsWithSerilogLogging = 
-                AddOption("--logging Serilog", 
-                          CommandArgument.CreateSecret("APPINSIGHTS_INSTRUMENTATIONKEY", applicationInsightsInstrumentationKey));
+                AddOption("--logging Serilog",
+                          CommandArgument.CreateSecret("APPLICATIONINSIGHTS_CONNECTION_STRING", $"InstrumentationKey={applicationInsightsInstrumentationKey}"));
 
             return new WebApiProjectOptions(optionsWithSerilogLogging);
         }

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Security.AccessControl;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
+using Arcus.Security.Core;
 using Arcus.Security.Core.Caching.Configuration;
 #if Correlation
 using Arcus.WebApi.Logging.Core.Correlation;
@@ -21,6 +23,7 @@ using Microsoft.Extensions.Logging;
 #if Serilog
 using Serilog;
 using Serilog.Configuration;
+using Serilog.Extensions.Hosting;
 using Serilog.Events;
 #endif
 #if OpenApi
@@ -36,7 +39,6 @@ using Arcus.WebApi.Security.Authentication.Certificates;
 #endif
 #if JwtAuth
 using System.Text;
-using Arcus.Security.Core;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -48,25 +50,27 @@ namespace Arcus.Templates.WebApi
     public class Program
     {
 #if Serilog
-        #warning Make sure that the appsettings.json is updated with your Azure Application Insights instrumentation key.
-        private const string ApplicationInsightsInstrumentationKeyName = "APPINSIGHTS_INSTRUMENTATIONKEY";
+        #warning Make sure that the Azure Application Insights connection string key is available as a secret.
+        private const string ApplicationInsightsConnectionStringKeyName = "APPLICATIONINSIGHTS_CONNECTION_STRING";
         
 #endif
 #if SharedAccessKeyAuth
         private const string SharedAccessKeyHeaderName = "X-API-Key";
         
 #endif
-        public static int Main(string[] args)
+        public static async Task<int> Main(string[] args)
         {
 #if Serilog
             Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
                 .WriteTo.Console()
-                .CreateLogger();
+                .CreateBootstrapLogger();
             
             try
             {
-                CreateWebApplication(args)
-                    .Run();
+                WebApplication app = CreateWebApplication(args);
+                await ConfigureSerilogAsync(app);
+                await app.RunAsync();
                 
                 return 0;
             }
@@ -80,8 +84,8 @@ namespace Arcus.Templates.WebApi
                 Log.CloseAndFlush();
             }
 #else
-            CreateWebApplication(args)
-                .Run();
+            WebApplication app = CreateWebApplication(args);
+            await app.RunAsync();
             
             return 0;
 #endif
@@ -152,10 +156,10 @@ namespace Arcus.Templates.WebApi
 
 #if SharedAccessKeyAuth
                 #warning Please provide a valid request header name and secret name to the shared access filter
-                options.Filters.AddSharedAccessKeyAuthenticationOnHeader(SharedAccessKeyHeaderName, "<your-secret-name>");
+                options.AddSharedAccessKeyAuthenticationFilterOnHeader(SharedAccessKeyHeaderName, "<your-secret-name>");
 #endif
 #if CertificateAuth
-                options.Filters.AddCertificateAuthentication();
+                options.AddCertificateAuthenticationFilter();
 #endif
 #if JwtAuth
                 AuthorizationPolicy policy = 
@@ -193,7 +197,7 @@ namespace Arcus.Templates.WebApi
 #endif
             builder.Services.AddHealthChecks();
 #if Correlation
-            builder.Services.AddHttpCorrelation((HttpCorrelationInfoOptions options) => { });
+            builder.Services.AddHttpCorrelation();
 #endif
 #if OpenApi
             
@@ -313,7 +317,7 @@ namespace Arcus.Templates.WebApi
                 stores.AddAzureKeyVaultWithManagedIdentity("https://your-keyvault.vault.azure.net/", CacheConfiguration.Default);
             });
 #if Serilog
-            builder.Host.UseSerilog(ConfigureLoggerConfiguration);
+            builder.Host.UseSerilog(Log.Logger);
 #endif
 #if Console
             builder.Host.ConfigureLogging(logging => logging.AddConsole());
@@ -322,26 +326,31 @@ namespace Arcus.Templates.WebApi
 
 #if Serilog
         
-        private static void ConfigureLoggerConfiguration(
-            HostBuilderContext context, 
-            IServiceProvider serviceProvider, 
-            LoggerConfiguration config)
+        private static async Task ConfigureSerilogAsync(WebApplication app)
         {
-            config.ReadFrom.Configuration(context.Configuration)
-                  .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-                  .Enrich.FromLogContext()
-                  .Enrich.WithVersion()
-                  .Enrich.WithComponentName("API")
-#if Correlation
-                   .Enrich.WithHttpCorrelationInfo(serviceProvider)
-#endif
-                   .WriteTo.Console();
+            var secretProvider = app.Services.GetRequiredService<ISecretProvider>();
+            string connectionString = await secretProvider.GetRawSecretAsync(ApplicationInsightsConnectionStringKeyName);
             
-            var instrumentationKey = context.Configuration.GetValue<string>(ApplicationInsightsInstrumentationKeyName);
-            if (!string.IsNullOrWhiteSpace(instrumentationKey))
+            var reloadLogger = (ReloadableLogger) Log.Logger;
+            reloadLogger.Reload(config =>
             {
-                config.WriteTo.AzureApplicationInsights(instrumentationKey);
-            }
+                config.ReadFrom.Configuration(app.Configuration)
+                      .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                      .Enrich.FromLogContext()
+                      .Enrich.WithVersion()
+                      .Enrich.WithComponentName("API")
+#if Correlation
+                      .Enrich.WithHttpCorrelationInfo(app.Services)
+#endif
+                      .WriteTo.Console();
+            
+                if (!string.IsNullOrWhiteSpace(connectionString))
+                {
+                    config.WriteTo.AzureApplicationInsightsWithConnectionString(connectionString);
+                }
+                
+                return config;
+            });
         }
         
 #endif

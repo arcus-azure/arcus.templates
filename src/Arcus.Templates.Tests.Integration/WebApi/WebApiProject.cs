@@ -12,6 +12,7 @@ using Flurl;
 using GuardNet;
 using Polly;
 using Xunit.Abstractions;
+using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace Arcus.Templates.Tests.Integration.WebApi
 {
@@ -191,36 +192,13 @@ namespace Arcus.Templates.Tests.Integration.WebApi
             Uri baseUrl = configuration.GenerateRandomLocalhostUrl();
             var project = new WebApiProject(baseUrl, configuration, templateDirectory, fixtureDirectory, outputWriter);
             project.CreateNewProject(projectOptions);
-            project.UpdateFileInProject("Program.cs", contents => project.RemovesUserErrorsFromContents(contents));
+            project.UpdateFileInProject("Program.cs", contents =>
+            {
+                return project.RemovesUserErrorsFromContents(contents)
+                              .Replace("stores.AddAzureKeyVaultWithManagedIdentity(\"https://your-keyvault.vault.azure.net/\", CacheConfiguration.Default);", "stores.AddConfiguration(config);");
+            });
 
             return project;
-        }
-
-        /// <summary>
-        /// Verifies if the specified file is part of the project.
-        /// </summary>
-        /// <param name="filename">The complete path and filename of the file, relative to the root folder of the project (without leading (back)slash).</param>
-        /// <returns>True if the file is present, otherwise false.</returns>
-        public bool ContainsFile(string filename)
-        {
-            Guard.NotNullOrWhitespace(filename, nameof(filename), "The filename parameter cannot be blank");
-
-            string filePath = Path.Combine(ProjectDirectory.FullName, filename);
-
-            Logger.WriteLine("Checking if project contains file {0}", filePath);
-            
-            var projectContainsFile = File.Exists(filePath);
-
-            if (projectContainsFile)
-            {
-                Logger.WriteLine("Project contains file {0}", filePath);
-            }
-            else
-            {
-                Logger.WriteLine("Project does not contain file {0}", filePath);
-            }
-
-            return projectContainsFile;
         }
 
         /// <summary>

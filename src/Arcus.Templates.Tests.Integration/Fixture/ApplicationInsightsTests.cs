@@ -16,9 +16,9 @@ namespace Arcus.Templates.Tests.Integration.Fixture
     public abstract class ApplicationInsightsTests
     {
         /// <summary>
-        /// Gets the filter statement that limits the query result to only telemetry from the last hour.
+        /// Gets the timespan statement that limits the query result to only telemetry from the last hour.
         /// </summary>
-        protected const string OnlyLastHourFilter = "timestamp gt now() sub duration'PT1H'";
+        protected const string PastHalfHourTimeSpan = "PT30M";
         
         /// <summary>
         /// Initializes a new instance of the <see cref="ApplicationInsightsTests" /> class.

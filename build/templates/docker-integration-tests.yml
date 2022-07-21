@@ -18,11 +18,6 @@ stages:
             displayName: 'Import .NET Core SDK ($(DotNet.Sdk.Version))'
             inputs:
               version: '$(DotNet.Sdk.Version)'
-          - task: UseDotNet@2
-            displayName: 'Import .NET Core SDK ($(DotNet.Sdk.PreviousVersion))'
-            inputs:
-              packageType: 'sdk'
-              version: '$(DotNet.Sdk.PreviousVersion)'
           - task: DotNetCoreCLI@2
             displayName: 'Install template'
             inputs:
@@ -34,9 +29,14 @@ stages:
               projectName: 'Arcus.Demo.WebApi'
               projectAlias: 'arcus-webapi'
               ports: '$(Http.Port):$(Http.Port)'
+              script: |
+                Get-Content './Arcus.Demo.WebApi/Program.cs' -Raw |
+                  % { $_ -replace '#if DEBUG', '#if RELEASE' } |
+                  Set-Content './Arcus.Demo.WebApi/Program.cs'
               envVars: |
                 ARCUS_HTTP_PORT=$(Http.Port)
                 ASPNETCORE_URLS=http://+:$(Http.Port)
+                APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=$(Arcus.ApplicationInsights.InstrumentationKey)
           - template: 'run-new-project-from-template.yml'
             parameters:
               projectName: 'Arcus.Demo.ServiceBus.Queue'

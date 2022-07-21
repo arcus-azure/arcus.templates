@@ -57,7 +57,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Swagger.v1
                 OpenApiDocument document = LoadOpenApiDocument(json);
 
                 IDictionary<string, OpenApiHeader> headers = SelectHealthCorrelationResponseHeaders(document);
-                Assert.Contains("RequestId", headers);
+                Assert.Contains("Request-Id", headers);
                 Assert.Contains("X-Transaction-Id", headers);
                 IList<OpenApiParameter> parameters = SelectHealthCorrelationParameters(document);
                 Assert.Single(parameters, parameter => parameter.Name == "X-Transaction-Id");

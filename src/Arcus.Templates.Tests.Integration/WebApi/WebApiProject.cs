@@ -12,6 +12,7 @@ using Flurl;
 using GuardNet;
 using Polly;
 using Xunit.Abstractions;
+using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace Arcus.Templates.Tests.Integration.WebApi
 {
@@ -194,7 +195,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi
             project.UpdateFileInProject("Program.cs", contents =>
             {
                 return project.RemovesUserErrorsFromContents(contents)
-                              .Replace("stores.AddAzureKeyVaultWithManagedIdentity(\"https://your-keyvault.vault.azure.net/\", CacheConfiguration.Default);", "");
+                              .Replace("stores.AddAzureKeyVaultWithManagedIdentity(\"https://your-keyvault.vault.azure.net/\", CacheConfiguration.Default);", "stores.AddConfiguration(config);");
             });
 
             return project;

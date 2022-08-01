@@ -49,7 +49,9 @@ namespace Arcus.Templates.AzureFunctions.Databricks.JobMetrics
         
         private static LoggerConfiguration CreateLoggerConfiguration(IFunctionsHostBuilder builder)
         {
+            IConfiguration appConfig = builder.GetContext().Configuration;
             var configuration = new LoggerConfiguration()
+                .ReadFrom.Configuration(appConfig)
                 .MinimumLevel.Information()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .Enrich.FromLogContext()
@@ -57,11 +59,10 @@ namespace Arcus.Templates.AzureFunctions.Databricks.JobMetrics
                 .Enrich.WithVersion()
                 .WriteTo.Console();
             
-            IConfiguration appConfig = builder.GetContext().Configuration;
-            var instrumentationKey = appConfig.GetValue<string>("APPINSIGHTS_INSTRUMENTATIONKEY");
-            if (!string.IsNullOrWhiteSpace(instrumentationKey))
+            var connectionString = appConfig.GetValue<string>("APPLICATIONINSIGHTS_CONNECTION_STRING");
+            if (!string.IsNullOrWhiteSpace(connectionString))
             {
-                configuration.WriteTo.AzureApplicationInsights(instrumentationKey);
+                configuration.WriteTo.AzureApplicationInsightsWithConnectionString(connectionString);
             }
             
             return configuration;

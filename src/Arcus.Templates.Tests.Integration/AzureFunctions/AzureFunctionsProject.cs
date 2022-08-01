@@ -19,8 +19,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions
     /// </summary>
     public abstract class AzureFunctionsProject : TemplateProject
     {
-        protected const string ApplicationInsightsInstrumentationKeyVariable = "APPINSIGHTS_INSTRUMENTATIONKEY",
-                               ApplicationInsightsConnectionStringKeyVariable = "APPLICATIONINSIGHTS_CONNECTION_STRING";
+        protected const string ApplicationInsightsConnectionStringKeyVariable = "APPLICATIONINSIGHTS_CONNECTION_STRING";
 
         private static readonly HttpClient HttpClient = new HttpClient();
         
@@ -109,7 +108,6 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions
             };
             Logger.WriteLine("> {0} {1}", processInfo.FileName, processInfo.Arguments);
 
-            Environment.SetEnvironmentVariable(ApplicationInsightsInstrumentationKeyVariable, ApplicationInsightsConfig.InstrumentationKey);
             Environment.SetEnvironmentVariable(ApplicationInsightsConnectionStringKeyVariable, $"InstrumentationKey={ApplicationInsightsConfig.InstrumentationKey}");
             return processInfo;
         }
@@ -164,7 +162,6 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions
         /// <param name="disposing">The flag indicating whether or not the additional tasks should be disposed.</param>
         protected override void Disposing(bool disposing)
         {
-            Environment.SetEnvironmentVariable(ApplicationInsightsInstrumentationKeyVariable, null);
             Environment.SetEnvironmentVariable(ApplicationInsightsConnectionStringKeyVariable, null);
         }
     }

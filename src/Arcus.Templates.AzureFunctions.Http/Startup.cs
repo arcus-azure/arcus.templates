@@ -60,7 +60,9 @@ namespace Arcus.Templates.AzureFunctions.Http
 
         private static LoggerConfiguration CreateLoggerConfiguration(IFunctionsHostBuilder builder)
         {
+            IConfiguration appConfig = builder.GetContext().Configuration;
             var configuration = new LoggerConfiguration()
+                .ReadFrom.Configuration(appConfig)
                 .MinimumLevel.Information()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .Enrich.FromLogContext()
@@ -68,7 +70,6 @@ namespace Arcus.Templates.AzureFunctions.Http
                 .Enrich.WithVersion()
                 .WriteTo.Console();
             
-            IConfiguration appConfig = builder.GetContext().Configuration;
             var connectionString = appConfig.GetValue<string>("APPLICATIONINSIGHTS_CONNECTION_STRING");
             if (!string.IsNullOrWhiteSpace(connectionString))
             {

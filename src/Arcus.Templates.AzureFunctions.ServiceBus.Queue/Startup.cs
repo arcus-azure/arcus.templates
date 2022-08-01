@@ -56,7 +56,9 @@ namespace Arcus.Templates.AzureFunctions.ServiceBus.Queue
         
         private static LoggerConfiguration CreateLoggerConfiguration(IFunctionsHostBuilder builder)
         {
+            IConfiguration appConfig = builder.GetContext().Configuration;
             var logConfig = new LoggerConfiguration()
+                .ReadFrom.Configuration(appConfig)
                 .MinimumLevel.Information()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .Enrich.FromLogContext()
@@ -64,11 +66,10 @@ namespace Arcus.Templates.AzureFunctions.ServiceBus.Queue
                 .Enrich.WithVersion()
                 .WriteTo.Console();
             
-            IConfiguration appConfig = builder.GetContext().Configuration;
-            var instrumentationKey = appConfig.GetValue<string>("APPINSIGHTS_INSTRUMENTATIONKEY");
-            if (!string.IsNullOrWhiteSpace(instrumentationKey))
+            var connectionString = appConfig.GetValue<string>("APPLICATIONINSIGHTS_CONNECTION_STRING");
+            if (!string.IsNullOrWhiteSpace(connectionString))
             {
-                logConfig.WriteTo.AzureApplicationInsights(instrumentationKey);
+                logConfig.WriteTo.AzureApplicationInsightsWithConnectionString(connectionString);
             }
             
             return logConfig;

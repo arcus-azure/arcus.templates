@@ -43,7 +43,7 @@ stages:
               projectAlias: 'arcus-servicebus-queue'
               ports: '$(Arcus.ServiceBus.Queue.Worker.HealthPort):$(Arcus.ServiceBus.Queue.Worker.HealthPort)'
               script: |
-                Get-Content './Arcus.Demo.ServiceBus.Queue/Program.cs' | 
+                Get-Content './Arcus.Demo.ServiceBus.Queue/Program.cs' -Raw | 
                   Where-Object { $_ -notmatch '#error' -and $_ -notmatch 'secretProvider: null' -and $_ -notmatch 'EmptyMessageHandler' -and $_ -notmatch 'AddServiceBusQueueMessagePump' } | 
                   Where-Object { $_ -notmatch 'AddAzureKeyVaultWithManagedIdentity' -and $_ -notmatch '#if DEBUG' -and $_ -notmatch '#endif' } |
                   Set-Content './Arcus.Demo.ServiceBus.Queue/Program.cs'
@@ -59,7 +59,7 @@ stages:
               projectAlias: 'arcus-servicebus-topic'
               ports: '$(Arcus.ServiceBus.Topic.Worker.HealthPort):$(Arcus.ServiceBus.Topic.Worker.HealthPort)'
               script: |
-                Get-Content './Arcus.Demo.ServiceBus.Topic/Program.cs' | 
+                Get-Content './Arcus.Demo.ServiceBus.Topic/Program.cs' -Raw | 
                   Where-Object { $_ -notmatch '#error' -and $_ -notmatch 'secretProvider: null' -and $_ -notmatch 'EmptyMessageHandler' -and $_ -notmatch 'AddServiceBusTopicMessagePump' } | 
                   Where-Object { $_ -notmatch 'AddAzureKeyVaultWithManagedIdentity' -and $_ -notmatch '#if DEBUG' -and $_ -notmatch '#endif' } |
                   Set-Content './Arcus.Demo.ServiceBus.Topic/Program.cs'
@@ -75,7 +75,7 @@ stages:
               projectAlias: 'arcus-az-databricks-jobmetrics'
               ports: '$(Arcus.AzureFunctions.Databricks.HttpPort):80'
               script: |
-                Get-Content './Arcus.Demo.AzureFunctions.Databricks.JobMetrics/Startup.cs' |
+                Get-Content './Arcus.Demo.AzureFunctions.Databricks.JobMetrics/Startup.cs' -Raw |
                   Where-Object { $_ -notmatch '#error' } |
                   Set-Content './Arcus.Demo.AzureFunctions.Databricks.JobMetrics/Startup.cs'
               envVars: |
@@ -88,7 +88,7 @@ stages:
               projectAlias: 'arcus-az-func-http'
               ports: '$(Arcus.AzureFunctions.Http.HttpPort):80'
               script: |
-                Get-Content './Arcus.Demo.AzureFunctions.Http/Startup.cs' |
+                Get-Content './Arcus.Demo.AzureFunctions.Http/Startup.cs' -Raw |
                   Where-Object { $_ -notmatch '#error' } |
                   Set-Content './Arcus.Demo.AzureFunctions.Http/Startup.cs'
               envVars: |
@@ -99,7 +99,7 @@ stages:
               projectAlias: 'arcus-az-func-servicebus-queue'
               ports: '$(Arcus.AzureFunctions.ServiceBus.Queue.Port):$(Arcus.AzureFunctions.ServiceBus.Queue.Port)'
               script: |
-                Get-Content './Arcus.Demo.AzureFunctions.ServiceBus.Queue/Startup.cs' |
+                Get-Content './Arcus.Demo.AzureFunctions.ServiceBus.Queue/Startup.cs' -Raw |
                   Where-Object { $_ -notmatch '#error' } |
                   Set-Content './Arcus.Demo.AzureFunctions.ServiceBus.Queue/Startup.cs'
               envVars: |
@@ -111,7 +111,7 @@ stages:
               projectAlias: 'arcus-az-func-servicebus-topic'
               ports: '$(Arcus.AzureFunctions.ServiceBus.Topic.Port):$(Arcus.AzureFunctions.ServiceBus.Topic.Port)'
               script: |
-                Get-Content './Arcus.Demo.AzureFunctions.ServiceBus.Topic/Startup.cs' |
+                Get-Content './Arcus.Demo.AzureFunctions.ServiceBus.Topic/Startup.cs' -Raw |
                   Where-Object { $_ -notmatch '#error' } |
                   Set-Content './Arcus.Demo.AzureFunctions.ServiceBus.Topic/Startup.cs'
               envVars: |

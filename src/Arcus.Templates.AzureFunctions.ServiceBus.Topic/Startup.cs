@@ -65,12 +65,12 @@ namespace Arcus.Templates.AzureFunctions.ServiceBus.Topic
                 .WriteTo.Console();
             
             IConfiguration appConfig = builder.GetContext().Configuration;
-            var instrumentationKey = appConfig.GetValue<string>("APPINSIGHTS_INSTRUMENTATIONKEY");
-            if (!string.IsNullOrWhiteSpace(instrumentationKey))
+            var connectionString = appConfig.GetValue<string>("APPLICATIONINSIGHTS_CONNECTION_STRING");
+            if (!string.IsNullOrWhiteSpace(connectionString))
             {
-                logConfig.WriteTo.AzureApplicationInsights(instrumentationKey);
+                logConfig.WriteTo.AzureApplicationInsightsWithConnectionString(connectionString);
             }
-            
+
             return logConfig;
         } 
 #endif

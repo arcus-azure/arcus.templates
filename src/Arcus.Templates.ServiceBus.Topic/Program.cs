@@ -92,7 +92,7 @@ namespace Arcus.Templates.ServiceBus.Topic
             var reloadLogger = (ReloadableLogger) Log.Logger;
             reloadLogger.Reload(config =>
             {
-                config.MinimumLevel.Debug()
+                config.MinimumLevel.Information()
                       .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                       .Enrich.FromLogContext()
                       .Enrich.WithVersion()

@@ -57,7 +57,7 @@ namespace Arcus.Templates.AzureFunctions.ServiceBus.Queue
         private static LoggerConfiguration CreateLoggerConfiguration(IFunctionsHostBuilder builder)
         {
             var logConfig = new LoggerConfiguration()
-                .MinimumLevel.Debug()
+                .MinimumLevel.Information()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .Enrich.FromLogContext()
                 .Enrich.WithComponentName("Service Bus Queue Trigger")

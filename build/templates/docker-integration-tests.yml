@@ -44,8 +44,7 @@ stages:
               ports: '$(Arcus.ServiceBus.Queue.Worker.HealthPort):$(Arcus.ServiceBus.Queue.Worker.HealthPort)'
               script: |
                 Get-Content './Arcus.Demo.ServiceBus.Queue/Program.cs' -Raw |
-                  Where-Object { $_ -notmatch '#error' -and $_ -notmatch 'secretProvider: null' -and $_ -notmatch 'EmptyMessageHandler' -and $_ -notmatch 'AddServiceBusQueueMessagePump' } | 
-                  Where-Object { $_ -notmatch 'AddAzureKeyVaultWithManagedIdentity' -and $_ -notmatch '#if DEBUG' -and $_ -notmatch '#endif' } |
+                  % { $_ -replace '#error', '#warning' -replace '#if DEBUG', '#if RELEASE' } |
                   Set-Content './Arcus.Demo.ServiceBus.Queue/Program.cs'
               envVars: |
                 ARCUS_HEALTH_PORT=$(Arcus.ServiceBus.Queue.Worker.HealthPort)
@@ -60,8 +59,7 @@ stages:
               ports: '$(Arcus.ServiceBus.Topic.Worker.HealthPort):$(Arcus.ServiceBus.Topic.Worker.HealthPort)'
               script: |
                 Get-Content './Arcus.Demo.ServiceBus.Topic/Program.cs' -Raw |
-                  Where-Object { $_ -notmatch '#error' -and $_ -notmatch 'secretProvider: null' -and $_ -notmatch 'EmptyMessageHandler' -and $_ -notmatch 'AddServiceBusTopicMessagePump' } | 
-                  Where-Object { $_ -notmatch 'AddAzureKeyVaultWithManagedIdentity' -and $_ -notmatch '#if DEBUG' -and $_ -notmatch '#endif' } |
+                  % { $_ -replace '#error', '#warning' -replace '#if DEBUG', '#if RELEASE' } |
                   Set-Content './Arcus.Demo.ServiceBus.Topic/Program.cs'
               envVars: |
                 ARCUS_HEALTH_PORT=$(Arcus.ServiceBus.Topic.Worker.HealthPort)

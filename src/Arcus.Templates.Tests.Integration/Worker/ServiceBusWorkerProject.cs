@@ -11,6 +11,7 @@ using Arcus.Templates.Tests.Integration.Worker.Health;
 using Arcus.Templates.Tests.Integration.Worker.MessagePump;
 using Azure.Messaging.ServiceBus;
 using GuardNet;
+using Microsoft.Extensions.Logging;
 using Polly;
 using Xunit.Abstractions;
 
@@ -21,12 +22,12 @@ namespace Arcus.Templates.Tests.Integration.Worker
     /// </summary>
     public class ServiceBusWorkerProject : TemplateProject, IAsyncDisposable
     {
-        private readonly ServiceBusEntity _entity;
+        private readonly ServiceBusEntityType _entity;
         private readonly int _healthPort;
         private readonly TestConfig _configuration;
 
         private ServiceBusWorkerProject(
-            ServiceBusEntity entity,
+            ServiceBusEntityType entity,
             TestConfig configuration,
             ITestOutputHelper outputWriter)
             : base(configuration.GetServiceBusProjectDirectory(entity), 
@@ -77,7 +78,7 @@ namespace Arcus.Templates.Tests.Integration.Worker
             Guard.NotNull(options, nameof(options));
             Guard.NotNull(outputWriter, nameof(outputWriter));
 
-            ServiceBusWorkerProject project = await StartNewAsync(ServiceBusEntity.Queue, config, options, outputWriter);
+            ServiceBusWorkerProject project = await StartNewAsync(ServiceBusEntityType.Queue, config, options, outputWriter);
             return project;
         }
 
@@ -117,7 +118,7 @@ namespace Arcus.Templates.Tests.Integration.Worker
             Guard.NotNull(options, nameof(options));
             Guard.NotNull(outputWriter, nameof(outputWriter));
 
-            ServiceBusWorkerProject project = await StartNewAsync(ServiceBusEntity.Topic, config, options, outputWriter);
+            ServiceBusWorkerProject project = await StartNewAsync(ServiceBusEntityType.Topic, config, options, outputWriter);
             return project;
         }
 
@@ -132,7 +133,7 @@ namespace Arcus.Templates.Tests.Integration.Worker
         ///     A ServiceBus Queue project with a set of services to interact with the worker.
         /// </returns>
         public static async Task<ServiceBusWorkerProject> StartNewAsync(
-            ServiceBusEntity entity, 
+            ServiceBusEntityType entity, 
             TestConfig configuration, 
             ServiceBusWorkerProjectOptions options, 
             ITestOutputHelper outputWriter)
@@ -145,7 +146,7 @@ namespace Arcus.Templates.Tests.Integration.Worker
         }
 
         private static ServiceBusWorkerProject CreateNew(
-            ServiceBusEntity entity, 
+            ServiceBusEntityType entity, 
             TestConfig configuration, 
             ServiceBusWorkerProjectOptions options,
             ITestOutputHelper outputWriter)

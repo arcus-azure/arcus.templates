@@ -9,6 +9,7 @@ using Arcus.Templates.Tests.Integration.Worker.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Primitives;
 using GuardNet;
+using Microsoft.Extensions.Logging;
 
 namespace Arcus.Templates.Tests.Integration.Fixture
 {
@@ -72,12 +73,12 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         /// <summary>
         /// Gets the project directory of the Service Bus project based on the given <paramref name="entity"/>.
         /// </summary>
-        public DirectoryInfo GetServiceBusProjectDirectory(ServiceBusEntity entity)
+        public DirectoryInfo GetServiceBusProjectDirectory(ServiceBusEntityType entity)
         {
             switch (entity)
             {
-                case ServiceBusEntity.Queue: return PathCombineWithSourcesDirectory("Arcus.Templates.ServiceBus.Queue");
-                case ServiceBusEntity.Topic: return PathCombineWithSourcesDirectory("Arcus.Templates.ServiceBus.Topic");
+                case ServiceBusEntityType.Queue: return PathCombineWithSourcesDirectory("Arcus.Templates.ServiceBus.Queue");
+                case ServiceBusEntityType.Topic: return PathCombineWithSourcesDirectory("Arcus.Templates.ServiceBus.Topic");
                 default:
                     throw new ArgumentOutOfRangeException(nameof(entity), entity, "Unknown Service Bus entity");
             }
@@ -87,12 +88,12 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         /// Gets the project directory of the Azure Functions Service Bus project based on the given <paramref name="entity"/>.
         /// </summary>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when no project directory can be found for the given <paramref name="entity"/>.</exception>
-        public DirectoryInfo GetAzureFunctionsServiceBusProjectDirectory(ServiceBusEntity entity)
+        public DirectoryInfo GetAzureFunctionsServiceBusProjectDirectory(ServiceBusEntityType entity)
         {
             switch (entity)
             {
-                case ServiceBusEntity.Queue: return PathCombineWithSourcesDirectory("Arcus.Templates.AzureFunctions.ServiceBus.Queue");
-                case ServiceBusEntity.Topic: return PathCombineWithSourcesDirectory("Arcus.Templates.AzureFunctions.ServiceBus.Topic");
+                case ServiceBusEntityType.Queue: return PathCombineWithSourcesDirectory("Arcus.Templates.AzureFunctions.ServiceBus.Queue");
+                case ServiceBusEntityType.Topic: return PathCombineWithSourcesDirectory("Arcus.Templates.AzureFunctions.ServiceBus.Topic");
                 default:
                     throw new ArgumentOutOfRangeException(nameof(entity), entity, "Unknown Service Bus entity");
             }
@@ -221,12 +222,12 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public string GetServiceBusConnectionString(ServiceBusEntity entity)
+        public string GetServiceBusConnectionString(ServiceBusEntityType entity)
         {
             switch (entity)
             {
-                case ServiceBusEntity.Queue: return _configuration["Arcus:Worker:ServiceBus:Queue:ConnectionString"];
-                case ServiceBusEntity.Topic: return _configuration["Arcus:Worker:ServiceBus:Topic:ConnectionString"];
+                case ServiceBusEntityType.Queue: return _configuration["Arcus:Worker:ServiceBus:Queue:ConnectionString"];
+                case ServiceBusEntityType.Topic: return _configuration["Arcus:Worker:ServiceBus:Topic:ConnectionString"];
                 default:
                     throw new ArgumentOutOfRangeException(nameof(entity), entity, "Unknown Service Bus entity");
             }

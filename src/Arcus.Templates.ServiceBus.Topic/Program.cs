@@ -86,16 +86,13 @@ namespace Arcus.Templates.ServiceBus.Topic
         
         private static async Task ConfigureSerilogAsync(IHost host)
         {
-            var appConfiguration = host.Services.GetRequiredService<IConfiguration>();
             var secretProvider = host.Services.GetRequiredService<ISecretProvider>();
             string connectionString = await secretProvider.GetRawSecretAsync(ApplicationInsightsConnectionStringKeyName);
             
-
             var reloadLogger = (ReloadableLogger) Log.Logger;
             reloadLogger.Reload(config =>
             {
-                config.ReadFrom.Configuration(appConfiguration)
-                      .MinimumLevel.Information()
+                config.MinimumLevel.Information()
                       .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                       .Enrich.FromLogContext()
                       .Enrich.WithVersion()

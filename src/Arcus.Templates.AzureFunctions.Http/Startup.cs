@@ -62,7 +62,6 @@ namespace Arcus.Templates.AzureFunctions.Http
         {
             IConfiguration appConfig = builder.GetContext().Configuration;
             var configuration = new LoggerConfiguration()
-                .ReadFrom.Configuration(appConfig)
                 .MinimumLevel.Information()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .Enrich.FromLogContext()

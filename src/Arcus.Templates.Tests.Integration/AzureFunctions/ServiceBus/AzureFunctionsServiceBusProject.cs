@@ -23,7 +23,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
     public class AzureFunctionsServiceBusProject : AzureFunctionsProject, IAsyncDisposable
     {
         private AzureFunctionsServiceBusProject(
-            ServiceBusEntity entity, 
+            ServiceBusEntityType entity, 
             TestConfig configuration, 
             ITestOutputHelper outputWriter) 
             : base(configuration.GetAzureFunctionsServiceBusProjectDirectory(entity), 
@@ -54,7 +54,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
         ///     Thrown when the <paramref name="configuration"/>, or the <paramref name="outputWriter"/> is <c>null</c>.
         /// </exception>
         public static async Task<AzureFunctionsServiceBusProject> StartNewProjectAsync(
-            ServiceBusEntity entity,
+            ServiceBusEntityType entity,
             TestConfig configuration,
             ITestOutputHelper outputWriter)
         {
@@ -78,7 +78,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
         ///     Thrown when the <paramref name="options"/>, the <paramref name="configuration"/>, or the <paramref name="outputWriter"/> is <c>null</c>.
         /// </exception>
         public static async Task<AzureFunctionsServiceBusProject> StartNewProjectAsync(
-            ServiceBusEntity entity,
+            ServiceBusEntityType entity,
             AzureFunctionsServiceBusProjectOptions options,
             TestConfig configuration,
             ITestOutputHelper outputWriter)
@@ -94,7 +94,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
         }
 
         private static AzureFunctionsServiceBusProject CreateNew(
-            ServiceBusEntity entity, 
+            ServiceBusEntityType entity, 
             AzureFunctionsServiceBusProjectOptions options, 
             TestConfig configuration, 
             ITestOutputHelper outputWriter)
@@ -122,14 +122,14 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
                     .Replace("OrdersAzureServiceBusMessageHandler", nameof(OrdersMessageHandler)));
         }
 
-        private async Task StartAsync(ServiceBusEntity entity)
+        private async Task StartAsync(ServiceBusEntityType entity)
         {
             string serviceBusConnectionString = Configuration.GetServiceBusConnectionString(entity);
             var properties = ServiceBusConnectionStringProperties.Parse(serviceBusConnectionString);
             string namespaceConnectionString = $"Endpoint={properties.Endpoint};SharedAccessKeyName={properties.SharedAccessKeyName};SharedAccessKey={properties.SharedAccessKey}";
             Environment.SetEnvironmentVariable("ServiceBusConnectionString", namespaceConnectionString);
 
-            if (entity is ServiceBusEntity.Topic)
+            if (entity is ServiceBusEntityType.Topic)
             {
                 await AddServiceBusTopicSubscriptionAsync(properties.EntityPath, namespaceConnectionString);
             }

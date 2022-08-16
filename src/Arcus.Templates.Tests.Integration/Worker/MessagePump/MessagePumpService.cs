@@ -12,6 +12,7 @@ using Bogus;
 using GuardNet;
 using Microsoft.Azure.ServiceBus;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -22,7 +23,7 @@ namespace Arcus.Templates.Tests.Integration.Worker.MessagePump
     /// </summary>
     public class MessagePumpService : IAsyncDisposable
     {
-        private readonly ServiceBusEntity _entity;
+        private readonly ServiceBusEntityType _entity;
         private readonly ITestOutputHelper _outputWriter;
         private readonly TestConfig _configuration;
 
@@ -31,7 +32,7 @@ namespace Arcus.Templates.Tests.Integration.Worker.MessagePump
         /// <summary>
         /// Initializes a new instance of the <see cref="MessagePumpService"/> class.
         /// </summary>
-        public MessagePumpService(ServiceBusEntity entity, TestConfig configuration, ITestOutputHelper outputWriter)
+        public MessagePumpService(ServiceBusEntityType entity, TestConfig configuration, ITestOutputHelper outputWriter)
         {
             Guard.NotNull(configuration, nameof(configuration));
             Guard.NotNull(outputWriter, nameof(outputWriter));

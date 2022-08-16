@@ -7,17 +7,17 @@
     <Authors>Arcus</Authors>
     <Company>Arcus</Company>
     <RepositoryType>Git</RepositoryType>
-    <Description>Provide a template to easily build workers on a Azure Service Bus Topic.</Description>
+    <Description>Provide a template to easily build workers with a messaging source system.</Description>
     <IsPackable>true</IsPackable>
-    <PackageId>Arcus.Templates.ServiceBus.Topic</PackageId>
-    <Title>Template for worker Azure Service Bus Topic project</Title>
+    <PackageId>Arcus.Templates.Worker.Messaging</PackageId>
+    <Title>Template for worker with messaging source system project</Title>
     <PackageType>Template</PackageType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageTags>Worker;Azure;Azure;ServiceBus;Topic</PackageTags>
+    <PackageTags>Worker;Azure;Azure;ServiceBus;Queue;Topic</PackageTags>
     <Copyright>Copyright (c) Arcus</Copyright>
     <PackageLicenseUrl>https://github.com/arcus-azure/arcus.templates/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://templates.arcus-azure.net/</PackageProjectUrl>
-    <PackageTags>Worker;Azure;ServiceBus;Topic</PackageTags>
+    <PackageTags>Worker;Azure;ServiceBus;Queue</PackageTags>
     <RepositoryUrl>https://github.com/arcus-azure/arcus.templates</RepositoryUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/arcus-azure/arcus/master/media/arcus.png</PackageIconUrl>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
@@ -38,8 +38,10 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <DefineConstants>$(DefineConstants);Serilog</DefineConstants>
+    <DefineConstants>$(DefineConstants);Serilog;ServiceBusQueue;ServiceBusTopic</DefineConstants>
     <Serilog>true</Serilog>
+    <ServiceBusQueue>true</ServiceBusQueue>
+    <ServiceBusTopic>true</ServiceBusTopic>
   </PropertyGroup>
 
   <ItemGroup>

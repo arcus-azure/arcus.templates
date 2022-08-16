@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.Fixture;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Logging;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -21,17 +22,17 @@ namespace Arcus.Templates.Tests.Integration.Worker.Logging
         }
 
         [Theory]
-        [InlineData(ServiceBusEntity.Queue)]
-        [InlineData(ServiceBusEntity.Topic)]
-        public async Task GetHealthOfServiceBusProject_WithExcludeSerilog_ResponseHealthy(ServiceBusEntity resourceEntity)
+        [InlineData(ServiceBusEntityType.Queue)]
+        [InlineData(ServiceBusEntityType.Topic)]
+        public async Task GetHealthOfServiceBusProject_WithExcludeSerilog_ResponseHealthy(ServiceBusEntityType entityType)
         {
             // Arrange
             var config = TestConfig.Create();
             var options = 
-                ServiceBusWorkerProjectOptions
-                    .Create(config).WithExcludeSerilog();
+                WorkerMessagingProjectOptions.CreateForServiceBus(entityType, config)
+                                             .WithExcludeSerilog();
 
-            using (var project = await ServiceBusWorkerProject.StartNewAsync(resourceEntity, config, options, _outputWriter))
+            using (var project = await WorkerMessagingProject.StartNewAsync(options, _outputWriter))
             {
                 // Act
                 HealthStatus status = await project.Health.ProbeHealthAsync();

@@ -8,12 +8,13 @@
     "Message Processing",
     "Messaging",
     "Azure",
-    "Queue"
+    "Queue",
+    "Topic"
   ],
-  "name": "Arcus Service Bus Queue v#{Package.Version}#",
-  "identity": "Arcus.Templates.ServiceBus.Queue",
-  "shortName": "arcus-servicebus-queue",
-  "sourceName": "Arcus.Templates.ServiceBus.Queue",
+  "name": "Arcus Worker Messaging v#{Package.Version}#",
+  "identity": "Arcus.Templates.Worker.Messaging",
+  "shortName": "arcus-worker-messaging",
+  "sourceName": "Arcus.Templates.Worker.Messaging",
   "preferNameDirectory": true,
   "tags": {
     "language": "C#",
@@ -62,6 +63,30 @@
         "value": "#error"
       },
       "replaces": "//#error"
+    },
+    "messaging": {
+      "type": "parameter",
+      "datatype": "choice",
+      "choices": [
+        {
+          "choice": "ServiceBusTopic",
+          "description": "Uses Arcus' Azure Service Bus messaging system on a topic subscription for the worker project"
+        },
+        {
+          "choice": "ServiceBusQueue",
+          "description": "Uses Arcus' Azure Service Bus messaging system on a queue for the worker project"
+        }
+      ],
+      "defaultValue": "ServiceBusTopic",
+      "description": "Choose which type of messaging system for the worker project"
+    },
+    "ServiceBusQueue": {
+      "type": "computed",
+      "value": "(messaging == \"ServiceBusQueue\")"
+    },
+    "ServiceBusTopic": {
+      "type": "computed",
+      "value": "(messaging == \"ServiceBusTopic\")"
     },
     "exclude-serilog": {
       "type": "parameter",

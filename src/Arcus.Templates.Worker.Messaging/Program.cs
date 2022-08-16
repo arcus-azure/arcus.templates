@@ -12,7 +12,7 @@ using Serilog.Events;
 using Serilog.Extensions.Hosting;
 #endif
 
-namespace Arcus.Templates.ServiceBus.Queue
+namespace Arcus.Templates.Worker.Messaging
 {
     public class Program
     {
@@ -77,9 +77,15 @@ namespace Arcus.Templates.ServiceBus.Queue
 #endif
                        .ConfigureServices((hostContext, services) =>
                        {
+#if ServiceBusQueue
                            services.AddServiceBusQueueMessagePump(secretProvider => secretProvider.GetRawSecretAsync("ARCUS_SERVICEBUS_CONNECTIONSTRING"))
                                    .WithServiceBusMessageHandler<EmptyMessageHandler, EmptyMessage>();
-                           
+#endif
+#if ServiceBusTopic
+                               services.AddServiceBusTopicMessagePump("Receive-All", secretProvider => secretProvider.GetRawSecretAsync("ARCUS_SERVICEBUS_CONNECTIONSTRING"))
+                                       .WithServiceBusMessageHandler<EmptyMessageHandler, EmptyMessage>();
+#endif
+
                            services.AddTcpHealthProbes("ARCUS_HEALTH_PORT");
                        });
         }
@@ -97,7 +103,12 @@ namespace Arcus.Templates.ServiceBus.Queue
                       .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                       .Enrich.FromLogContext()
                       .Enrich.WithVersion()
-                      .Enrich.WithComponentName("Service Bus Queue Worker")
+#if ServiceBusQueue
+                      .Enrich.WithComponentName("Service Bus Queue Worker") 
+#endif
+#if ServiceBusTopic
+                      .Enrich.WithComponentName("Service Bus Topic Worker")
+#endif
                       .WriteTo.Console();
                 
                 if (!string.IsNullOrWhiteSpace(connectionString))

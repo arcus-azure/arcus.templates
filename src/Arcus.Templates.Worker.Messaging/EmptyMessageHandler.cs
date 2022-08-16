@@ -7,7 +7,7 @@ using Arcus.Messaging.Abstractions.ServiceBus.MessageHandling;
 using Arcus.Messaging.Pumps.ServiceBus;
 using Microsoft.Extensions.Logging;
 
-namespace Arcus.Templates.ServiceBus.Queue
+namespace Arcus.Templates.Worker.Messaging
 {
     /// <summary>
     /// Empty implementation of the <see cref="AzureServiceBusMessagePump"/>, using an <see cref="EmptyMessage"/> as event message.

@@ -6,9 +6,16 @@
   "description": {
     "text": "Provide a template to easily build workers on a Azure Service Bus Queue."
   },
-  "learnMoreLink": "https://templates.arcus-azure.net/features/servicebus-queue-worker-template",
+  "learnMoreLink": "https://templates.arcus-azure.net/features/servicebus-worker-template",
   "icon": "icon.jpg",
   "symbolInfo": [
+    {
+      "id": "messaging",
+      "name": {
+        "text": "Messaging source"
+      },
+      "isVisible": true
+    },
     {
       "id": "exclude-serilog",
       "name": {

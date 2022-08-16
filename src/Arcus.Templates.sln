@@ -11,9 +11,7 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "Arcus.Templates.Orchestrato
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{F6DBEE21-816E-434F-AEA3-9FD6C2261E85}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arcus.Templates.ServiceBus.Queue", "Arcus.Templates.ServiceBus.Queue\Arcus.Templates.ServiceBus.Queue.csproj", "{094D277F-AB55-4CD8-B346-4693796FABDA}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arcus.Templates.ServiceBus.Topic", "Arcus.Templates.ServiceBus.Topic\Arcus.Templates.ServiceBus.Topic.csproj", "{F4200B87-E88B-4DF3-8385-CAF357956D29}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arcus.Templates.Worker.Messaging", "Arcus.Templates.Worker.Messaging\Arcus.Templates.Worker.Messaging.csproj", "{094D277F-AB55-4CD8-B346-4693796FABDA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arcus.Templates.AzureFunctions.Databricks.JobMetrics", "Arcus.Templates.AzureFunctions.Databricks.JobMetrics\Arcus.Templates.AzureFunctions.Databricks.JobMetrics.csproj", "{2A73C4DA-FCE4-41D3-B688-1D44A4E94958}"
 EndProject
@@ -21,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arcus.Templates.AzureFuncti
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arcus.Templates.AzureFunctions.ServiceBus.Queue", "Arcus.Templates.AzureFunctions.ServiceBus.Queue\Arcus.Templates.AzureFunctions.ServiceBus.Queue.csproj", "{651CD421-8E6E-44B8-AF3B-E96DD6266B11}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arcus.Templates.AzureFunctions.ServiceBus.Topic", "Arcus.Templates.AzureFunctions.ServiceBus.Topic\Arcus.Templates.AzureFunctions.ServiceBus.Topic.csproj", "{869EDEC5-AF3F-4E41-A61E-235BD6232636}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arcus.Templates.AzureFunctions.ServiceBus.Topic", "Arcus.Templates.AzureFunctions.ServiceBus.Topic\Arcus.Templates.AzureFunctions.ServiceBus.Topic.csproj", "{869EDEC5-AF3F-4E41-A61E-235BD6232636}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,10 +43,6 @@ Global
 		{094D277F-AB55-4CD8-B346-4693796FABDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{094D277F-AB55-4CD8-B346-4693796FABDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{094D277F-AB55-4CD8-B346-4693796FABDA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F4200B87-E88B-4DF3-8385-CAF357956D29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F4200B87-E88B-4DF3-8385-CAF357956D29}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F4200B87-E88B-4DF3-8385-CAF357956D29}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F4200B87-E88B-4DF3-8385-CAF357956D29}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2A73C4DA-FCE4-41D3-B688-1D44A4E94958}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2A73C4DA-FCE4-41D3-B688-1D44A4E94958}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2A73C4DA-FCE4-41D3-B688-1D44A4E94958}.Release|Any CPU.ActiveCfg = Release|Any CPU

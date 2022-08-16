@@ -1,9 +1,11 @@
----
+﻿---
 title: "Azure Service Bus Topic worker template"
 layout: default
 ---
 
 # Azure Service Bus Topic Worker Project Template
+
+⚠ Was previously called `arcus-servicebus-topic` but is now moved to a [general worker messaging project template](./worker-messaging-template.md) with a `--messaging ServiceBusTopic` project option.
 
 ## Create Your First Arcus Azure Service Bus Topic Worker Project
 

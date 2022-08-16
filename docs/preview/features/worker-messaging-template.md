@@ -1,33 +1,34 @@
-﻿---
-title: "Azure Service Bus Queue worker template"
+---
+title: "Worker messaging template"
 layout: default
 ---
 
-# Azure Service Bus Queue Worker Project Template
+# Worker Messaging Project Template
 
-⚠ Was previously called `arcus-servicebus-queue` but is now moved to a [general worker messaging project template](./worker-messaging-template.md) with a `--messaging ServiceBusQueue` project option.
-
-## Create Your First Arcus Azure Service Bus Queue Worker Project
+## Create Your First Arcus Worker Messaging Project
 
 First, install the template from NuGet:
 
 ```shell
-> dotnet new --install Arcus.Templates.ServiceBus.Queue
+> dotnet new --install Arcus.Templates.Worker.Messaging
 ```
 
-When installed, the template can be created with shortname: `arcus-servicebus-queue`:
+When installed, the template can be created with shortname: `arcus-worker-messaging`:
 
 ```shell
-> dotnet new arcus-servicebus-queue --name Arcus.Demo.ServiceBus.Queue 
+> dotnet new arcus-worker-messaging --messaging ServiceBusTopic --name Arcus.Demo.ServiceBus.Topic
 ```
 
+We support several messaging systems to create your worker messaging project:
+* `--messaging ServiceBusTopic` (default)
+* `--messaging ServiceBusQueue`
 
 ## Features
 
 Creates a starter worker project with by default configured:
 
 * TCP health check probe ([official docs](https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-2.2) & [Arcus docs](https://messaging.arcus-azure.net/features/tcp-health-probe)).
-* Empty message pump on Azure Service Bus Queue ([official docs](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-dotnet-get-started-with-queues))
+* Message pump on the configured messaging system
 * Dockerfile.
 
 ### Configuration

@@ -49,19 +49,19 @@ namespace Arcus.Templates.AzureFunctions.Databricks.JobMetrics
         
         private static LoggerConfiguration CreateLoggerConfiguration(IFunctionsHostBuilder builder)
         {
+            IConfiguration appConfig = builder.GetContext().Configuration;
             var configuration = new LoggerConfiguration()
-                .MinimumLevel.Debug()
+                .MinimumLevel.Information()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .Enrich.FromLogContext()
                 .Enrich.WithComponentName("Azure Databricks Metrics Scraper")
                 .Enrich.WithVersion()
                 .WriteTo.Console();
             
-            IConfiguration appConfig = builder.GetContext().Configuration;
-            var instrumentationKey = appConfig.GetValue<string>("APPINSIGHTS_INSTRUMENTATIONKEY");
-            if (!string.IsNullOrWhiteSpace(instrumentationKey))
+            var connectionString = appConfig.GetValue<string>("APPLICATIONINSIGHTS_CONNECTION_STRING");
+            if (!string.IsNullOrWhiteSpace(connectionString))
             {
-                configuration.WriteTo.AzureApplicationInsights(instrumentationKey);
+                configuration.WriteTo.AzureApplicationInsightsWithConnectionString(connectionString);
             }
             
             return configuration;

@@ -43,9 +43,8 @@ stages:
               projectAlias: 'arcus-servicebus-queue'
               ports: '$(Arcus.ServiceBus.Queue.Worker.HealthPort):$(Arcus.ServiceBus.Queue.Worker.HealthPort)'
               script: |
-                Get-Content './Arcus.Demo.ServiceBus.Queue/Program.cs' | 
-                  Where-Object { $_ -notmatch '#error' -and $_ -notmatch 'secretProvider: null' -and $_ -notmatch 'EmptyMessageHandler' -and $_ -notmatch 'AddServiceBusQueueMessagePump' } | 
-                  Where-Object { $_ -notmatch 'AddAzureKeyVaultWithManagedIdentity' -and $_ -notmatch '#if DEBUG' -and $_ -notmatch '#endif' } |
+                Get-Content './Arcus.Demo.ServiceBus.Queue/Program.cs' -Raw |
+                  % { $_ -replace '#error', '#warning' -replace '#if DEBUG', '#if RELEASE' } |
                   Set-Content './Arcus.Demo.ServiceBus.Queue/Program.cs'
               envVars: |
                 ARCUS_HEALTH_PORT=$(Arcus.ServiceBus.Queue.Worker.HealthPort)
@@ -59,9 +58,8 @@ stages:
               projectAlias: 'arcus-servicebus-topic'
               ports: '$(Arcus.ServiceBus.Topic.Worker.HealthPort):$(Arcus.ServiceBus.Topic.Worker.HealthPort)'
               script: |
-                Get-Content './Arcus.Demo.ServiceBus.Topic/Program.cs' | 
-                  Where-Object { $_ -notmatch '#error' -and $_ -notmatch 'secretProvider: null' -and $_ -notmatch 'EmptyMessageHandler' -and $_ -notmatch 'AddServiceBusTopicMessagePump' } | 
-                  Where-Object { $_ -notmatch 'AddAzureKeyVaultWithManagedIdentity' -and $_ -notmatch '#if DEBUG' -and $_ -notmatch '#endif' } |
+                Get-Content './Arcus.Demo.ServiceBus.Topic/Program.cs' -Raw |
+                  % { $_ -replace '#error', '#warning' -replace '#if DEBUG', '#if RELEASE' } |
                   Set-Content './Arcus.Demo.ServiceBus.Topic/Program.cs'
               envVars: |
                 ARCUS_HEALTH_PORT=$(Arcus.ServiceBus.Topic.Worker.HealthPort)
@@ -75,21 +73,21 @@ stages:
               projectAlias: 'arcus-az-databricks-jobmetrics'
               ports: '$(Arcus.AzureFunctions.Databricks.HttpPort):80'
               script: |
-                Get-Content './Arcus.Demo.AzureFunctions.Databricks.JobMetrics/Startup.cs' |
-                  Where-Object { $_ -notmatch '#error' } |
+                Get-Content './Arcus.Demo.AzureFunctions.Databricks.JobMetrics/Startup.cs' -Raw |
+                  % { $_ -replace '#error', '#warning' -replace '#if DEBUG', '#if RELEASE' } |
                   Set-Content './Arcus.Demo.AzureFunctions.Databricks.JobMetrics/Startup.cs'
               envVars: |
                 Arcus__Databricks__Url=$(Arcus.Databricks.Url)
                 Arcus__ApplicationInsights__MetricName=$(Arcus.ApplicationInsights.MetricName)
-                APPLICATIONINSIGHTS_INSTRUMENTATIONKEY=$(Arcus.ApplicationInsights.InstrumentationKey)
+                APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=$(Arcus.ApplicationInsights.InstrumentationKey)
           - template: 'run-new-project-from-template.yml'
             parameters:
               projectName: 'Arcus.Demo.AzureFunctions.Http'
               projectAlias: 'arcus-az-func-http'
               ports: '$(Arcus.AzureFunctions.Http.HttpPort):80'
               script: |
-                Get-Content './Arcus.Demo.AzureFunctions.Http/Startup.cs' |
-                  Where-Object { $_ -notmatch '#error' } |
+                Get-Content './Arcus.Demo.AzureFunctions.Http/Startup.cs' -Raw |
+                   % { $_ -replace '#error', '#warning' -replace '#if DEBUG', '#if RELEASE' } |
                   Set-Content './Arcus.Demo.AzureFunctions.Http/Startup.cs'
               envVars: |
                 APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=$(Arcus.ApplicationInsights.InstrumentationKey)
@@ -99,24 +97,24 @@ stages:
               projectAlias: 'arcus-az-func-servicebus-queue'
               ports: '$(Arcus.AzureFunctions.ServiceBus.Queue.Port):$(Arcus.AzureFunctions.ServiceBus.Queue.Port)'
               script: |
-                Get-Content './Arcus.Demo.AzureFunctions.ServiceBus.Queue/Startup.cs' |
-                  Where-Object { $_ -notmatch '#error' } |
+                Get-Content './Arcus.Demo.AzureFunctions.ServiceBus.Queue/Startup.cs' -Raw |
+                   % { $_ -replace '#error', '#warning' -replace '#if DEBUG', '#if RELEASE' } |
                   Set-Content './Arcus.Demo.AzureFunctions.ServiceBus.Queue/Startup.cs'
               envVars: |
                 ServiceBusConnectionString=$(Arcus.Worker.ServiceBus.Queue.ConnectionString)
-                APPINSIGHTS_INSTRUMENTATIONKEY=$(Arcus.ApplicationInsights.InstrumentationKey)
+                APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=$(Arcus.ApplicationInsights.InstrumentationKey)
           - template: 'run-new-project-from-template.yml'
             parameters:
               projectName: 'Arcus.Demo.AzureFunctions.ServiceBus.Topic'
               projectAlias: 'arcus-az-func-servicebus-topic'
               ports: '$(Arcus.AzureFunctions.ServiceBus.Topic.Port):$(Arcus.AzureFunctions.ServiceBus.Topic.Port)'
               script: |
-                Get-Content './Arcus.Demo.AzureFunctions.ServiceBus.Topic/Startup.cs' |
-                  Where-Object { $_ -notmatch '#error' } |
+                Get-Content './Arcus.Demo.AzureFunctions.ServiceBus.Topic/Startup.cs' -Raw |
+                  % { $_ -replace '#error', '#warning' -replace '#if DEBUG', '#if RELEASE' } |
                   Set-Content './Arcus.Demo.AzureFunctions.ServiceBus.Topic/Startup.cs'
               envVars: |
                 ServiceBusConnectionString=$(Arcus.Worker.ServiceBus.Topic.ConnectionString)
-                APPINSIGHTS_INSTRUMENTATIONKEY=$(Arcus.ApplicationInsights.InstrumentationKey)
+                APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=$(Arcus.ApplicationInsights.InstrumentationKey)
           - task: UseDotNet@2
             displayName: 'Import .NET Core SDK ($(DotNet.Sdk.PreviousVersion))'
             inputs:

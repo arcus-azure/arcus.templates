@@ -60,15 +60,15 @@ namespace Arcus.Templates.AzureFunctions.Http
 
         private static LoggerConfiguration CreateLoggerConfiguration(IFunctionsHostBuilder builder)
         {
+            IConfiguration appConfig = builder.GetContext().Configuration;
             var configuration = new LoggerConfiguration()
-                .MinimumLevel.Debug()
+                .MinimumLevel.Information()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .Enrich.FromLogContext()
                 .Enrich.WithComponentName("Azure HTTP Trigger")
                 .Enrich.WithVersion()
                 .WriteTo.Console();
             
-            IConfiguration appConfig = builder.GetContext().Configuration;
             var connectionString = appConfig.GetValue<string>("APPLICATIONINSIGHTS_CONNECTION_STRING");
             if (!string.IsNullOrWhiteSpace(connectionString))
             {

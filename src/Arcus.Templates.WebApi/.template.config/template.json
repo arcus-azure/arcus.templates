@@ -168,7 +168,7 @@
       "type": "computed",
       "value": "(logging == \"Console\")"
     },
-    "Serilog": {
+    "Serilog_AppInsights": {
       "type": "computed",
       "value": "(logging == \"Serilog\")"
     }

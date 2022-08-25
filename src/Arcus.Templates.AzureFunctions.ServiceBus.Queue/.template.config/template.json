@@ -69,7 +69,7 @@
       "defaultValue": "false",
       "description": "Exclude the Serilog logging infrastructure in the worker project"
     },
-    "Serilog": {
+    "Serilog_AppInsights": {
       "type": "computed",
       "value": "!(exclude-serilog)"
     }

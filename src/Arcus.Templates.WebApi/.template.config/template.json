@@ -120,7 +120,7 @@
     },
     "AppSettings": {
       "type": "computed",
-      "value": "include-appsettings || CertificateAuth || Serilog || JwtAuth"
+      "value": "include-appsettings || CertificateAuth || Serilog_AppInsights || JwtAuth"
     },
     "include-appsettings": {
       "type": "parameter",

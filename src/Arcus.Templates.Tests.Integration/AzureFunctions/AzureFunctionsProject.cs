@@ -149,7 +149,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions
             }
             else
             {
-                Logger.WriteLine("Test template Azure Functions project could not be started");
+                Logger.WriteLine("Test template Azure Functions project could not be started at: {0}", endpoint);
                 throw new CannotStartTemplateProjectException(
                     "The test project created from the Azure Functions project template doesn't seem to be running, "
                     + "please check any build or runtime errors that could occur when the test project was created");

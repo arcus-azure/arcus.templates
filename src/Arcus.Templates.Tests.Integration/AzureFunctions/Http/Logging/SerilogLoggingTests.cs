@@ -46,6 +46,35 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Logging
                 {
                     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
                 }
+
+                string startupContents = project.GetFileContentsInProject("Startup.cs");
+                Assert.DoesNotContain("Serilog", startupContents);
+            }
+        }
+
+        [Fact]
+        public async Task HttpTriggerProject_WithSerilog_StillProcessHttpRequest()
+        {
+            // Arrange
+            var order = new Order
+            {
+                Id = Guid.NewGuid().ToString(),
+                ArticleNumber = BogusGenerator.Random.String(1, 100),
+                Scheduled = BogusGenerator.Date.RecentOffset()
+            };
+
+            var options = new AzureFunctionsHttpProjectOptions();
+
+            // Act
+            using (var project = await AzureFunctionsHttpProject.StartNewAsync(options, _outputWriter))
+            {
+                using (HttpResponseMessage response = await project.Order.PostAsync(order))
+                {
+                    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+                }
+
+                string startupContents = project.GetFileContentsInProject("Startup.cs");
+                Assert.Contains("Serilog", startupContents);
             }
         }
     }

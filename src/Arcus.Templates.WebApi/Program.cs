@@ -245,7 +245,8 @@ namespace Arcus.Templates.WebApi
                                 Id = "shared-access-key",
                                 Type = ReferenceType.SecurityScheme
                             }
-                        }, new List<string>() }
+                        }, new List<string>()
+                    }
                 });
 #endif
 #if CertificateAuth

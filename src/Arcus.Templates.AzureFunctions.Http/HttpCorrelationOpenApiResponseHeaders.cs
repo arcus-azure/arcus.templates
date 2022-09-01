@@ -19,7 +19,15 @@ namespace Arcus.Templates.AzureFunctions.Http
                 new OpenApiHeader
                 {
                     Required = true,
-                    Description = "Transaction ID is used to correlate multiple operation calls. A new transaction ID will be generated if no `X-Transaction-Id` header was present in the request."
+                    Description = "Transaction ID is used to correlate multiple operation calls. A new transaction ID will be generated if no `X-Transaction-Id` header was present in the request"
+                }
+            },
+            {
+                "X-Operation-Id",
+                new OpenApiHeader
+                {
+                    Required = true,
+                    Description = "Operation ID is used to uniquely identify a single operation call"
                 }
             },
             {
@@ -27,7 +35,7 @@ namespace Arcus.Templates.AzureFunctions.Http
                 new OpenApiHeader
                 {
                     Required = true,
-                    Description = "Operation ID is used to identify a single operation call."
+                    Description = "Request ID is used to identify the upstream service that calls this endpoint"
                 }
             }
         };

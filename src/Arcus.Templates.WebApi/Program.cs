@@ -20,7 +20,7 @@ using Microsoft.Extensions.Hosting;
 #if Console
 using Microsoft.Extensions.Logging; 
 #endif
-#if Serilog
+#if Serilog_AppInsights
 using Serilog;
 using Serilog.Configuration;
 using Serilog.Extensions.Hosting;
@@ -49,7 +49,7 @@ namespace Arcus.Templates.WebApi
 {
     public class Program
     {
-#if Serilog
+#if Serilog_AppInsights
         #warning Make sure that the Azure Application Insights connection string key is available as a secret.
         private const string ApplicationInsightsConnectionStringKeyName = "APPLICATIONINSIGHTS_CONNECTION_STRING";
         
@@ -60,7 +60,7 @@ namespace Arcus.Templates.WebApi
 #endif
         public static async Task<int> Main(string[] args)
         {
-#if Serilog
+#if Serilog_AppInsights
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .WriteTo.Console()
@@ -317,7 +317,7 @@ namespace Arcus.Templates.WebApi
                 //#error Please provide a valid secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secret-store/provider/key-vault
                 stores.AddAzureKeyVaultWithManagedIdentity("https://your-keyvault.vault.azure.net/", CacheConfiguration.Default);
             });
-#if Serilog
+#if Serilog_AppInsights
             builder.Host.UseSerilog(Log.Logger);
 #endif
 #if Console
@@ -325,7 +325,7 @@ namespace Arcus.Templates.WebApi
 #endif
         }
 
-#if Serilog
+#if Serilog_AppInsights
         
         private static async Task ConfigureSerilogAsync(WebApplication app)
         {

@@ -5,7 +5,7 @@ using Arcus.Security.Core.Caching.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-#if Serilog
+#if Serilog_AppInsights
 using Serilog;
 using Serilog.Configuration;
 using Serilog.Events;
@@ -16,14 +16,14 @@ namespace Arcus.Templates.ServiceBus.Topic
 {
     public class Program
     {
-#if Serilog
+#if Serilog_AppInsights
         #warning Make sure that the Azure Application Insights connection string key is available as a secret.
         private const string ApplicationInsightsConnectionStringKeyName = "APPLICATIONINSIGHTS_CONNECTION_STRING";
         
 #endif
         public static async Task<int> Main(string[] args)
         {
-#if Serilog
+#if Serilog_AppInsights
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .WriteTo.Console()
@@ -71,7 +71,7 @@ namespace Arcus.Templates.ServiceBus.Topic
                            //#error Please provide a valid secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secret-store/provider/key-vault
                            stores.AddAzureKeyVaultWithManagedIdentity("https://your-keyvault.vault.azure.net/", CacheConfiguration.Default);
                        })
-#if Serilog
+#if Serilog_AppInsights
                        .UseSerilog(Log.Logger)
 #endif
                        .ConfigureServices((hostContext, services) =>
@@ -82,7 +82,7 @@ namespace Arcus.Templates.ServiceBus.Topic
                            services.AddTcpHealthProbes("ARCUS_HEALTH_PORT");
                        });
         }
-#if Serilog
+#if Serilog_AppInsights
         
         private static async Task ConfigureSerilogAsync(IHost host)
         {

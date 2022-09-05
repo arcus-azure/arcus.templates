@@ -220,16 +220,14 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         /// <summary>
         /// Gets the Service Bus connection string based on the given <paramref name="entity"/>.
         /// </summary>
-        /// <param name="entity"></param>
-        /// <returns></returns>
-        public string GetServiceBusConnectionString(ServiceBusEntityType entity)
+        public string GetServiceBusConnectionString(ServiceBusEntityType entityType)
         {
-            switch (entity)
+            switch (entityType)
             {
                 case ServiceBusEntityType.Queue: return _configuration["Arcus:Worker:ServiceBus:Queue:ConnectionString"];
                 case ServiceBusEntityType.Topic: return _configuration["Arcus:Worker:ServiceBus:Topic:ConnectionString"];
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(entity), entity, "Unknown Service Bus entity");
+                    throw new ArgumentOutOfRangeException(nameof(entityType), entityType, "Unknown Service Bus entity");
             }
         }
 

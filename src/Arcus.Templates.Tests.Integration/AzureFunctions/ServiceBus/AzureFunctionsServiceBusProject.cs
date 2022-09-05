@@ -89,7 +89,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
 
             AzureFunctionsServiceBusProject project = CreateNew(entityType, options, configuration, outputWriter);
 
-            await project.StartAsync(entity);
+            await project.StartAsync(entityType);
             return project;
         }
 

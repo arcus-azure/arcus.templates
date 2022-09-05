@@ -39,7 +39,7 @@ namespace Arcus.Templates.Tests.Integration.Worker
             _configuration = configuration;
 
             Health = new HealthEndpointService(_healthPort, outputWriter);
-            MessagePump = new MessagePumpService(entity, configuration, outputWriter);
+            MessagePump = new MessagePumpService(entityType, configuration, outputWriter);
         }
 
         /// <summary>

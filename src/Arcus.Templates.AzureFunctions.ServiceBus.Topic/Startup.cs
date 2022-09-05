@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-#if Serilog
+#if Serilog_AppInsights
 using Serilog;
 using Serilog.Configuration;
 using Serilog.Events; 
@@ -42,7 +42,7 @@ namespace Arcus.Templates.AzureFunctions.ServiceBus.Topic
             
             builder.AddServiceBusMessageRouting()
                    .WithServiceBusMessageHandler<OrdersAzureServiceBusMessageHandler, Order>();
-#if Serilog
+#if Serilog_AppInsights
             
             LoggerConfiguration logConfig = CreateLoggerConfiguration(builder);
             builder.Services.AddLogging(logging =>
@@ -52,7 +52,7 @@ namespace Arcus.Templates.AzureFunctions.ServiceBus.Topic
             }); 
 #endif
         }
-#if Serilog
+#if Serilog_AppInsights
         
         private static LoggerConfiguration CreateLoggerConfiguration(IFunctionsHostBuilder builder)
         {

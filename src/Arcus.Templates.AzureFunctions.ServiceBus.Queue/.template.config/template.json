@@ -69,7 +69,7 @@
       "defaultValue": "false",
       "description": "Exclude the Serilog logging infrastructure in the worker project"
     },
-    "Serilog": {
+    "Serilog_AppInsights": {
       "type": "computed",
       "value": "!(exclude-serilog)"
     }
@@ -87,7 +87,7 @@
       "args": {
         "referenceType": "package",
         "reference": "Microsoft.NET.Sdk.Functions",
-        "version": "4.0.1",
+        "version": "4.1.1",
         "projectFileExtensions": ".csproj"
       }
     }

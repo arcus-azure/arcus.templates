@@ -23,10 +23,10 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
     public class AzureFunctionsServiceBusProject : AzureFunctionsProject, IAsyncDisposable
     {
         private AzureFunctionsServiceBusProject(
-            ServiceBusEntityType entity, 
+            ServiceBusEntityType entityType, 
             TestConfig configuration, 
             ITestOutputHelper outputWriter) 
-            : base(configuration.GetAzureFunctionsServiceBusProjectDirectory(entity), 
+            : base(configuration.GetAzureFunctionsServiceBusProjectDirectory(entityType), 
                    configuration, 
                    outputWriter)
         {
@@ -44,7 +44,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
         /// <summary>
         /// Starts a newly created project from the Azure Functions Service Bus project template.
         /// </summary>
-        /// <param name="entity">The type of the Azure Service Bus entity, to control the used project template.</param>
+        /// <param name="entityType">The type of the Azure Service Bus entity, to control the used project template.</param>
         /// <param name="configuration">The collection of configuration values to correctly initialize the resulting project with secret values.</param>
         /// <param name="outputWriter">The output logger to add telemetry information during the creation and startup process.</param>
         /// <returns>
@@ -54,20 +54,20 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
         ///     Thrown when the <paramref name="configuration"/>, or the <paramref name="outputWriter"/> is <c>null</c>.
         /// </exception>
         public static async Task<AzureFunctionsServiceBusProject> StartNewProjectAsync(
-            ServiceBusEntityType entity,
+            ServiceBusEntityType entityType,
             TestConfig configuration,
             ITestOutputHelper outputWriter)
         {
             Guard.NotNull(configuration, nameof(configuration), "Requires a configuration instance to retrieve the configuration values to pass along to the to-be-created project");
             Guard.NotNull(outputWriter, nameof(outputWriter), "Requires a test logger to write diagnostic information during the creation and startup process");
 
-            return await StartNewProjectAsync(entity, new AzureFunctionsServiceBusProjectOptions(), configuration, outputWriter);
+            return await StartNewProjectAsync(entityType, new AzureFunctionsServiceBusProjectOptions(), configuration, outputWriter);
         }
 
         /// <summary>
         /// Starts a newly created project from the Azure Functions Service Bus project template.
         /// </summary>
-        /// <param name="entity">The type of the Azure Service Bus entity, to control the used project template.</param>
+        /// <param name="entityType">The type of the Azure Service Bus entity, to control the used project template.</param>
         /// <param name="options">The additional project options to pass along to the project creation command.</param>
         /// <param name="configuration">The collection of configuration values to correctly initialize the resulting project with secret values.</param>
         /// <param name="outputWriter">The output logger to add telemetry information during the creation and startup process.</param>
@@ -78,7 +78,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
         ///     Thrown when the <paramref name="options"/>, the <paramref name="configuration"/>, or the <paramref name="outputWriter"/> is <c>null</c>.
         /// </exception>
         public static async Task<AzureFunctionsServiceBusProject> StartNewProjectAsync(
-            ServiceBusEntityType entity,
+            ServiceBusEntityType entityType,
             AzureFunctionsServiceBusProjectOptions options,
             TestConfig configuration,
             ITestOutputHelper outputWriter)
@@ -87,19 +87,19 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
             Guard.NotNull(configuration, nameof(configuration), "Requires a configuration instance to retrieve the configuration values to pass along to the to-be-created project");
             Guard.NotNull(outputWriter, nameof(outputWriter), "Requires a test logger to write diagnostic information during the creation and startup process");
 
-            AzureFunctionsServiceBusProject project = CreateNew(entity, options, configuration, outputWriter);
+            AzureFunctionsServiceBusProject project = CreateNew(entityType, options, configuration, outputWriter);
 
             await project.StartAsync(entity);
             return project;
         }
 
         private static AzureFunctionsServiceBusProject CreateNew(
-            ServiceBusEntityType entity, 
+            ServiceBusEntityType entityType, 
             AzureFunctionsServiceBusProjectOptions options, 
             TestConfig configuration, 
             ITestOutputHelper outputWriter)
         {
-            var project = new AzureFunctionsServiceBusProject(entity, configuration, outputWriter);
+            var project = new AzureFunctionsServiceBusProject(entityType, configuration, outputWriter);
             project.CreateNewProject(options);
             project.AddOrderMessageHandlerImplementation();
             project.AddStorageAccount();
@@ -122,9 +122,9 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
                     .Replace("OrdersAzureServiceBusMessageHandler", nameof(OrdersMessageHandler)));
         }
 
-        private async Task StartAsync(ServiceBusEntityType entity)
+        private async Task StartAsync(ServiceBusEntityType entityType)
         {
-            string serviceBusConnectionString = Configuration.GetServiceBusConnectionString(entity);
+            string serviceBusConnectionString = Configuration.GetServiceBusConnectionString(entityType);
             var properties = ServiceBusConnectionStringProperties.Parse(serviceBusConnectionString);
             string namespaceConnectionString = $"Endpoint={properties.Endpoint};SharedAccessKeyName={properties.SharedAccessKeyName};SharedAccessKey={properties.SharedAccessKey}";
             Environment.SetEnvironmentVariable("ServiceBusConnectionString", namespaceConnectionString);

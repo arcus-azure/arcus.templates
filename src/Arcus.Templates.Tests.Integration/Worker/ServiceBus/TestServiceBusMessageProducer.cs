@@ -49,7 +49,7 @@ namespace Arcus.Templates.Tests.Integration.Worker.ServiceBus
         /// Creates an <see cref="TestServiceBusMessageProducer"/> instance which sends events to an Azure Service Bus.
         /// </summary>
         /// <param name="configuration">The test configuration used in this test suite.</param>
-        /// <param name="entityType"></param>
+        /// <param name="entityType">The resource entity for which the worker template should be created.</param>
         /// <exception cref="ArgumentNullException">Thrown when the <paramref name="configuration"/> is <c>null</c>.</exception>
         public static TestServiceBusMessageProducer CreateFor(TestConfig configuration, ServiceBusEntityType entityType)
         {

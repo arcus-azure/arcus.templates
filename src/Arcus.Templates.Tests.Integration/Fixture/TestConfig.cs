@@ -90,7 +90,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         /// <exception cref="ArgumentOutOfRangeException">Thrown when no project directory can be found for the given <paramref name="entity"/>.</exception>
         public DirectoryInfo GetAzureFunctionsServiceBusProjectDirectory(ServiceBusEntityType entity)
         {
-            switch (entity)
+            switch (entityType)
             {
                 case ServiceBusEntityType.Queue: return PathCombineWithSourcesDirectory("Arcus.Templates.AzureFunctions.ServiceBus.Queue");
                 case ServiceBusEntityType.Topic: return PathCombineWithSourcesDirectory("Arcus.Templates.AzureFunctions.ServiceBus.Topic");

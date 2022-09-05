@@ -19,7 +19,7 @@ namespace Arcus.Templates.Tests.Integration.Worker.MessagePump
     /// </summary>
     public class MessagePumpService : IAsyncDisposable
     {
-        private readonly ServiceBusEntityType _entity;
+        private readonly ServiceBusEntityType _entityType;
         private readonly ILogger _logger;
         private readonly TestConfig _configuration;
 
@@ -28,12 +28,12 @@ namespace Arcus.Templates.Tests.Integration.Worker.MessagePump
         /// <summary>
         /// Initializes a new instance of the <see cref="MessagePumpService"/> class.
         /// </summary>
-        public MessagePumpService(ServiceBusEntityType entity, TestConfig configuration, ITestOutputHelper outputWriter)
+        public MessagePumpService(ServiceBusEntityType entityType, TestConfig configuration, ITestOutputHelper outputWriter)
         {
             Guard.NotNull(configuration, nameof(configuration));
             Guard.NotNull(outputWriter, nameof(outputWriter));
 
-            _entity = entity;
+            _entityType = entityType;
             _logger = new XunitTestLogger(outputWriter);
             _configuration = configuration;
         }
@@ -64,7 +64,7 @@ namespace Arcus.Templates.Tests.Integration.Worker.MessagePump
                     "Cannot simulate the message pump because the service is not yet started; please start this service before simulating");
             }
 
-            string connectionString = _configuration.GetServiceBusConnectionString(_entity);
+            string connectionString = _configuration.GetServiceBusConnectionString(_entityType);
             var producer = new TestServiceBusMessageProducer(connectionString);
 
             var operationId = $"operation-{Guid.NewGuid()}";

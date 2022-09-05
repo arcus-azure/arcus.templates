@@ -95,7 +95,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
                 case ServiceBusEntityType.Queue: return PathCombineWithSourcesDirectory("Arcus.Templates.AzureFunctions.ServiceBus.Queue");
                 case ServiceBusEntityType.Topic: return PathCombineWithSourcesDirectory("Arcus.Templates.AzureFunctions.ServiceBus.Topic");
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(entity), entity, "Unknown Service Bus entity");
+                    throw new ArgumentOutOfRangeException(nameof(entityType), entityType, "Unknown Service Bus entity type");
             }
         }
 

@@ -23,11 +23,11 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus.MessageHan
         [Theory]
         [InlineData(ServiceBusEntityType.Queue)]
         [InlineData(ServiceBusEntityType.Topic)]
-        public async Task ServiceBusProject_WithOrderMessageHandlerImplementation_CorrectlyProcessesMessage(ServiceBusEntityType entity)
+        public async Task ServiceBusProject_WithOrderMessageHandlerImplementation_CorrectlyProcessesMessage(ServiceBusEntityType entityType)
         {
             // Arrange
             var config = TestConfig.Create();
-            await using (var project = await AzureFunctionsServiceBusProject.StartNewProjectAsync(entity, config, _outputWriter))
+            await using (var project = await AzureFunctionsServiceBusProject.StartNewProjectAsync(entityType, config, _outputWriter))
             {
                 // Act / Assert
                 await project.MessagePump.SimulateMessageProcessingAsync();

@@ -23,7 +23,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus.Logging
         [Theory]
         [InlineData(ServiceBusEntityType.Queue)]
         [InlineData(ServiceBusEntityType.Topic)]
-        public async Task ServiceBusProject_WithoutSerilog_CorrectlyProcessesMessage(ServiceBusEntityType entity)
+        public async Task ServiceBusProject_WithoutSerilog_CorrectlyProcessesMessage(ServiceBusEntityType entityType)
         {
             // Arrange
             var config = TestConfig.Create();
@@ -31,7 +31,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus.Logging
                 new AzureFunctionsServiceBusProjectOptions()
                     .WithExcludeSerilog();
 
-            await using (var project = await AzureFunctionsServiceBusProject.StartNewProjectAsync(entity, options, config, _outputWriter))
+            await using (var project = await AzureFunctionsServiceBusProject.StartNewProjectAsync(entityType, options, config, _outputWriter))
             {
                 // Act / Assert
                 await project.MessagePump.SimulateMessageProcessingAsync();

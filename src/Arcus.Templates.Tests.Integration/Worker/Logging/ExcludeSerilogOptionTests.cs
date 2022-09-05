@@ -24,7 +24,7 @@ namespace Arcus.Templates.Tests.Integration.Worker.Logging
         [Theory]
         [InlineData(ServiceBusEntityType.Queue)]
         [InlineData(ServiceBusEntityType.Topic)]
-        public async Task GetHealthOfServiceBusProject_WithExcludeSerilog_ResponseHealthy(ServiceBusEntityType resourceEntity)
+        public async Task GetHealthOfServiceBusProject_WithExcludeSerilog_ResponseHealthy(ServiceBusEntityType entityType)
         {
             // Arrange
             var config = TestConfig.Create();
@@ -32,7 +32,7 @@ namespace Arcus.Templates.Tests.Integration.Worker.Logging
                 ServiceBusWorkerProjectOptions
                     .Create(config).WithExcludeSerilog();
 
-            using (var project = await ServiceBusWorkerProject.StartNewAsync(resourceEntity, config, options, _outputWriter))
+            using (var project = await ServiceBusWorkerProject.StartNewAsync(entityType, config, options, _outputWriter))
             {
                 // Act
                 HealthStatus status = await project.Health.ProbeHealthAsync();

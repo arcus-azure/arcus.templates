@@ -30,7 +30,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
                    configuration, 
                    outputWriter)
         {
-            MessagePump = new MessagePumpService(entity, configuration, outputWriter);
+            MessagePump = new MessagePumpService(entityType, configuration, outputWriter);
         }
 
         /// <summary>

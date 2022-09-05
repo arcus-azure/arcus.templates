@@ -73,14 +73,14 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         /// <summary>
         /// Gets the project directory of the Service Bus project based on the given <paramref name="entity"/>.
         /// </summary>
-        public DirectoryInfo GetServiceBusProjectDirectory(ServiceBusEntityType entity)
+        public DirectoryInfo GetServiceBusProjectDirectory(ServiceBusEntityType entityType)
         {
-            switch (entity)
+            switch (entityType)
             {
                 case ServiceBusEntityType.Queue: return PathCombineWithSourcesDirectory("Arcus.Templates.ServiceBus.Queue");
                 case ServiceBusEntityType.Topic: return PathCombineWithSourcesDirectory("Arcus.Templates.ServiceBus.Topic");
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(entity), entity, "Unknown Service Bus entity");
+                    throw new ArgumentOutOfRangeException(nameof(entityType), entityType, "Unknown Service Bus entity");
             }
         }
 

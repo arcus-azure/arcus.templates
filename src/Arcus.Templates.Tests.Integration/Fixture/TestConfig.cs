@@ -85,7 +85,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         }
 
         /// <summary>
-        /// Gets the project directory of the Azure Functions Service Bus project based on the given <paramref name="entity"/>.
+        /// Gets the project directory of the Azure Functions Service Bus project based on the given <paramref name="entityType"/>.
         /// </summary>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when no project directory can be found for the given <paramref name="entity"/>.</exception>
         public DirectoryInfo GetAzureFunctionsServiceBusProjectDirectory(ServiceBusEntityType entity)

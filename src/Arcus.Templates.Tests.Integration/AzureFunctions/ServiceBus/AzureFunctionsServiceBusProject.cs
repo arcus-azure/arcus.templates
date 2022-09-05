@@ -129,7 +129,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
             string namespaceConnectionString = $"Endpoint={properties.Endpoint};SharedAccessKeyName={properties.SharedAccessKeyName};SharedAccessKey={properties.SharedAccessKey}";
             Environment.SetEnvironmentVariable("ServiceBusConnectionString", namespaceConnectionString);
 
-            if (entity is ServiceBusEntityType.Topic)
+            if (entityType is ServiceBusEntityType.Topic)
             {
                 await AddServiceBusTopicSubscriptionAsync(properties.EntityPath, namespaceConnectionString);
             }

@@ -40,13 +40,13 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <DefineConstants>$(DefineConstants);SharedAccessKeyAuth;CertificateAuth;Auth;Serilog;Console;OpenApi;Correlation</DefineConstants>
+    <DefineConstants>$(DefineConstants);SharedAccessKeyAuth;CertificateAuth;Auth;Serilog_AppInsights;Console;OpenApi;Correlation</DefineConstants>
     <SharedAccessKeyAuth>true</SharedAccessKeyAuth>
     <CertificateAuth>true</CertificateAuth>
     <JwtAuth>false</JwtAuth>
     <Auth>true</Auth>
     <Correlation>true</Correlation>
-    <Serilog>true</Serilog>
+    <Serilog_AppInsights>true</Serilog_AppInsights>
     <Console>true</Console>
     <OpenApi>true</OpenApi>
   </PropertyGroup>
@@ -64,11 +64,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Arcus.Observability.Correlation" Version="2.5.0" />
-    <PackageReference Include="Arcus.Observability.Telemetry.AspNetCore" Version="2.5.0" />
-    <PackageReference Include="Arcus.Observability.Telemetry.Core" Version="2.5.0" />
-    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Filters" Version="2.5.0" Condition="'$(Serilog)' == 'true'" />
-    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Sinks.ApplicationInsights" Version="2.5.0" Condition="'$(Serilog)' == 'true'" />
+    <PackageReference Include="Arcus.Observability.Correlation" Version="2.6.0" />
+    <PackageReference Include="Arcus.Observability.Telemetry.AspNetCore" Version="2.6.0" />
+    <PackageReference Include="Arcus.Observability.Telemetry.Core" Version="2.6.0" />
+    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Filters" Version="2.6.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
+    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Sinks.ApplicationInsights" Version="2.6.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
     <PackageReference Include="Arcus.Security.Core" Version="1.7.0" />
     <PackageReference Include="Arcus.Security.Providers.AzureKeyVault" Version="1.7.0" />
     <PackageReference Include="Arcus.WebApi.Hosting" Version="1.6.1" />
@@ -77,7 +77,7 @@
     <PackageReference Include="Guard.NET" Version="3.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.8" Condition="'$(JwtAuth)' == 'true'" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
-    <PackageReference Include="Serilog.AspNetCore" Version="6.0.1" Condition="'$(Serilog)' == 'true'" />
+    <PackageReference Include="Serilog.AspNetCore" Version="6.0.1" Condition="'$(Serilog_AppInsights)' == 'true'" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" Condition="'$(OpenApi)' == 'true'" />
     <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="7.0.5" Condition="'$(OpenApi)' == 'true' and '$(Correlation)' == 'true'" />
   </ItemGroup>

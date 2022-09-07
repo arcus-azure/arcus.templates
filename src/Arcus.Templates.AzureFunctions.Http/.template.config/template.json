@@ -96,6 +96,16 @@
     "OpenApi": {
       "type": "computed",
       "value": "!(exclude-openApi)"
+    },
+    "exclude-serilog": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false",
+      "description": "Exclude the Serilog logging infrastructure in the worker project"
+    },
+    "Serilog_AppInsights": {
+      "type": "computed",
+      "value": "!(exclude-serilog)"
     }
   },
   "postActions": [

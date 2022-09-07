@@ -36,5 +36,15 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http
 
             return new AzureFunctionsHttpProjectOptions(optionsWithExcludeOpenApi);
         }
+
+        /// <summary>
+        /// Adds the project option to exclude the Serilog logging system from the Azure Functions HTTP trigger project.
+        /// </summary>
+        public AzureFunctionsHttpProjectOptions WithExcludeSerilog()
+        {
+            ProjectOptions optionsWithExcludeSerilog = AddOption("--exclude-serilog");
+
+            return new AzureFunctionsHttpProjectOptions(optionsWithExcludeSerilog);
+        }
     }
 }

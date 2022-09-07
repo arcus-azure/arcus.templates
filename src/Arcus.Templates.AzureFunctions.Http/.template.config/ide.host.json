@@ -23,6 +23,13 @@
         "text": "Exclude OpenApi Documentation"
       },
       "isVisible": true
+    },
+    {
+      "id": "exclude-serilog",
+      "name": {
+        "text": "Exclude Serilog"
+      },
+      "isVisible": true
     }
   ]
 }

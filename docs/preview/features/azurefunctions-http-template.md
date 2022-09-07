@@ -38,6 +38,7 @@ And additional features available with options:
 
 * `--include-healthchecks` (default `false`): include a default Health Azure Function and health check services from the project
 * `--exclude-openapi` (default `false`): exclude the [Azure Functions OpenAPI docs generation and UI](https://github.com/Azure/azure-functions-openapi-extension) from the project.
+* `--exclude-serilog` (default `false`): exclude the [Serilog](https://serilog.net/) logging infrastructure in the Azure Functions project which includes default enrichers ([version](https://observability.arcus-azure.net/features/telemetry-enrichment#version-enricher) and [application](https://observability.arcus-azure.net/features/telemetry-enrichment#application-enricher)), and sinking to Application Insights.
 
 ### Security
 

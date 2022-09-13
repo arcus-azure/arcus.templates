@@ -70,7 +70,7 @@ namespace Arcus.Templates.Tests.Integration.Worker.ServiceBus
             var data = @event.Data.ToString();
             Assert.NotNull(data);
 
-            var eventData = JsonConvert.DeserializeObject<OrderCreatedEventData>(data);
+            var eventData = JsonConvert.DeserializeObject<OrderCreatedEventData>(data, new MessageCorrelationInfoJsonConverter());
             return eventData;
         }
 

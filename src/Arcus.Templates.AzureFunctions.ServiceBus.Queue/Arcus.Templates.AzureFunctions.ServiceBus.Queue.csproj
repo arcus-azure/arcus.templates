@@ -45,8 +45,8 @@
   <!--#endif-->
   
   <ItemGroup>
-    <PackageReference Include="Arcus.Messaging.Abstractions.ServiceBus" Version="1.2.0" />
-    <PackageReference Include="Arcus.Messaging.AzureFunctions.ServiceBus" Version="1.2.0" />
+    <PackageReference Include="Arcus.Messaging.Abstractions.ServiceBus" Version="1.3.0" />
+    <PackageReference Include="Arcus.Messaging.AzureFunctions.ServiceBus" Version="1.3.0" />
     <PackageReference Include="Arcus.Observability.Correlation" Version="2.6.0" />
     <PackageReference Include="Arcus.Observability.Telemetry.AzureFunctions" Version="2.6.0" />
     <PackageReference Include="Arcus.Observability.Telemetry.Core" Version="2.6.0" />

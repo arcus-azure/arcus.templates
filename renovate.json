@@ -1,4 +1,5 @@
 {
+  "assigneesFromCodeOwners": true,
   "masterIssue": false,
   "branchPrefix":"renovate-",
   "separateMajorMinor": false,
@@ -9,6 +10,9 @@
   "extends": [
     "config:base",
     "default:disablePrControls"
+  ],
+  "ignorePaths": [
+    "**/docs/**"
   ],
   "nuget": {
     "enabled": true

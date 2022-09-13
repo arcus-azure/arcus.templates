@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -21,6 +22,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         private readonly Process _process;
         private readonly DirectoryInfo _templateDirectory;
 
+        private ProjectOptions _options;
         private bool _created, _started, _disposed;
 
         /// <summary>
@@ -77,6 +79,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             }
 
             _created = true;
+            _options = projectOptions;
 
             string shortName = GetTemplateShortNameAtTemplateFolder();
             Logger.WriteLine($"Creates new project from template {shortName} at {ProjectDirectory.FullName}");
@@ -153,10 +156,27 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         }
 
         /// <summary>
+        /// Updates a file in the target project folder with a 'using' statement for a given <paramref name="type"/>.
+        /// </summary>
+        /// <param name="fileName">The target file name to change its contents.</param>
+        /// <param name="type">The type for which the namespace should be added as a 'using' statement.</param>
+        /// <exception cref="ArgumentException">Thrown when the <paramref name="fileName"/> is blank.</exception>
+        /// <exception cref="ArgumentNullException">Thrown when the <paramref name="type"/> is <c>null</c>.</exception>
+        public void UpdateFileWithUsingStatement(string fileName, Type type)
+        {
+            Guard.NotNullOrWhitespace(fileName, nameof(fileName), "Requires a non-blank file name (no file path) to update the contents with a 'using' statement");
+            Guard.NotNull(type, nameof(type), "Requires a type definition to retrieve the namespace for the 'using' statement");
+
+            UpdateFileInProject(fileName, contents => $"using {type.Namespace};{Environment.NewLine}" + contents);
+        }
+
+        /// <summary>
         /// Updates a file in the target project folder, using the given <paramref name="updateContents"/> function.
         /// </summary>
-        /// <param name="fileName">The target file name to change it's contents.</param>
+        /// <param name="fileName">The target file name to change its contents.</param>
         /// <param name="updateContents">The function that changes the contents of the file.</param>
+        /// <exception cref="ArgumentException">Thrown when the <paramref name="fileName"/> is blank.</exception>
+        /// <exception cref="ArgumentNullException">Thrown when the <paramref name="updateContents"/> is <c>null</c>.</exception>
         public void UpdateFileInProject(string fileName, Func<string, string> updateContents)
         {
             Guard.NotNullOrWhitespace(fileName, nameof(fileName), "Requires a non-blank file name (no file path) to update the contents");
@@ -165,7 +185,6 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             string destPath = Path.Combine(ProjectDirectory.FullName, fileName);
             if (!File.Exists(destPath))
             {
-                string files = String.Join(", ", ProjectDirectory.GetFiles().Select(f => f.FullName));
                 throw new FileNotFoundException($"No project file with the file name: '{fileName}' was found in the target project folder");
             }
 
@@ -184,7 +203,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         public void AddTypeAsFile<TFixture>(IDictionary<string, string> replacements = null, params string[] namespaces)
         {
             replacements = replacements ?? new Dictionary<string, string>();
-            namespaces = namespaces ?? new string[0];
+            namespaces = namespaces ?? Array.Empty<string>();
 
             string srcPath = FindFixtureTypeInDirectory(FixtureDirectory, typeof(TFixture));
             string destPath = Path.Combine(ProjectDirectory.FullName, Path.Combine(namespaces), typeof(TFixture).Name + ".cs");
@@ -235,13 +254,29 @@ namespace Arcus.Templates.Tests.Integration.Fixture
                 throw new InvalidOperationException("Test demo project from template is already started");
             }
 
-            commandArguments = commandArguments ?? new CommandArgument[0];
+            CommandArgument[] runCommandArguments = DetermineRunCommandArguments(commandArguments);
 
-            ProcessStartInfo processInfo = PrepareProjectRun(buildConfiguration, targetFramework, commandArguments);
-            _process.StartInfo = processInfo;
+            try
+            {
+                ProcessStartInfo processInfo = PrepareProjectRun(buildConfiguration, targetFramework, runCommandArguments);
+                _process.StartInfo = processInfo;
 
-            _started = true;
-            _process.Start();
+                _started = true;
+                _process.Start();
+            }
+            catch (Exception exception)
+            {
+                throw CreateProjectStartupFailure(exception);
+            }
+        }
+
+        private CommandArgument[] DetermineRunCommandArguments(CommandArgument[] commandArguments)
+        {
+            CommandArgument[] defaultCommandArguments = commandArguments ?? Array.Empty<CommandArgument>();
+            IEnumerable<CommandArgument> optionsCommandArguments =
+                _options?.AdditionalRunArguments ?? Array.Empty<CommandArgument>();
+            
+            return defaultCommandArguments.Concat(optionsCommandArguments).ToArray();
         }
 
         /// <summary>
@@ -275,14 +310,75 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             return processInfo;
         }
 
-        private static string GetTargetFrameworkIdentifier(TargetFramework targetFramework)
+        /// <summary>
+        /// Creates an user-friendly exception based on an occurred <paramref name="exception"/> to show and help the tester pinpoint the problem.
+        /// </summary>
+        /// <param name="exception">The occurred exception during the startup process of the test project based on the project template.</param>
+        protected virtual CannotStartTemplateProjectException CreateProjectStartupFailure(Exception exception)
+        {
+            return new CannotStartTemplateProjectException(
+                "Could start test project based on project template due to an exception occurred during the build/run process, " 
+                + "please check for any compile errors or runtime failures (via the 'TearDownOptions') in the created test project based on the project template", exception);
+        }
+
+        /// <summary>
+        /// Gets the identifier for the given <paramref name="targetFramework"/> (ex: 'netcoreapp3.1').
+        /// </summary>
+        /// <param name="targetFramework">The target framework for which the end result project from the project template is build.</param>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when the <paramref name="targetFramework"/> is outside the bounds of the enumeration.</exception>
+        protected static string GetTargetFrameworkIdentifier(TargetFramework targetFramework)
         {
             switch (targetFramework)
             {
                 case TargetFramework.NetCoreApp31: return "netcoreapp3.1";
+                case TargetFramework.Net6_0: return "net6.0";
                 default:
                     throw new ArgumentOutOfRangeException(nameof(targetFramework), targetFramework, "Unknown target framework specified for template project");
             }
+        }
+
+        /// <summary>
+        /// Gets the file contents of the '.csproj' project file in the end-result project created from the project template.
+        /// </summary>
+        public string GetFileContentsOfProjectFile()
+        {
+            string fileContents = GetFileContentsInProject(ProjectName + ".csproj");
+            return fileContents;
+        }
+
+        /// <summary>
+        /// Gets the file contents of a <paramref name="fileName"/> located at the end-result project created from the project template.
+        /// </summary>
+        /// <param name="fileName">The file name to retrieve the file contents in the end-result project from the project template.</param>
+        /// <exception cref="ArgumentException">Thrown when the <paramref name="fileName"/> is blank.</exception>
+        /// <exception cref="FileNotFoundException">Thrown when the <paramref name="fileName"/> doesn't point to a existing file in the end-result project from the project template.</exception>
+        public string GetFileContentsInProject(string fileName)
+        {
+            Guard.NotNullOrWhitespace(fileName, nameof(fileName), "Requires a non-blank file name to retrieve the file contents in the end-result project from the project template");
+
+            string filePath = Path.Combine(ProjectDirectory.FullName, fileName);
+            if (!File.Exists(filePath))
+            {
+                throw new FileNotFoundException(
+                    $"Cannot find file within end-result project from project template at file path: '{filePath}', " 
+                    +  "please make sure that the project template includes this file or that the test suite adds this file afterwards");
+            }
+
+            string fileContents = File.ReadAllText(filePath);
+            return fileContents;
+        }
+
+        /// <summary>
+        /// Determines whether or not a file is present in the resulting project directory.
+        /// </summary>
+        /// <param name="fileName">The file name (without path) that should be present in the resulting project directory.</param>
+        /// <exception cref="ArgumentException">Thrown when the <paramref name="fileName"/> is blank.</exception>
+        public bool ContainsFile(string fileName)
+        {
+            Guard.NotNullOrWhitespace(fileName, nameof(fileName), "Requires a non-blank file name to determine whether the file is present in the resulting project directory");
+
+            string filePath = Path.Combine(ProjectDirectory.FullName, fileName);
+            return File.Exists(filePath);
         }
 
         /// <summary>

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.AzureFunctions.Http.Api;
 using Arcus.Templates.Tests.Integration.Fixture;
 using Arcus.Templates.Tests.Integration.WebApi.Health;
+using Arcus.Templates.Tests.Integration.WebApi.Swagger;
 using Flurl;
 using GuardNet;
 using Xunit.Abstractions;
@@ -28,9 +29,15 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http
                    configuration, 
                    outputWriter)
         {
-            OrderFunctionEndpoint = RootEndpoint.AppendPathSegments("order").ToUri();
+            OrderFunctionEndpoint = RootEndpoint.AppendPathSegments("api", "v1", "order").ToUri();
             Order = new OrderService(OrderFunctionEndpoint, outputWriter);
-            Health = new HealthEndpointService(RootEndpoint, outputWriter);
+            Health = new HealthEndpointService(
+                RootEndpoint.AppendPathSegments("api", "v1").ToUri(), 
+                outputWriter);
+            Swagger = new SwaggerEndpointService(
+                RootEndpoint.AppendPathSegments("api", "swagger", "ui"),
+                RootEndpoint.AppendPathSegments("api", "swagger.json"),
+                outputWriter);
         }
         
         /// <summary>
@@ -47,7 +54,50 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http
         /// Gets the service to interact with the health checks functionality of the Azure Function.
         /// </summary>
         public HealthEndpointService Health { get; }
+        
+        /// <summary>
+        /// Gets the service to interact with the Swagger OpenAPI documentation of the Azure Function.
+        /// </summary>
+        public SwaggerEndpointService Swagger { get; }
 
+        /// <summary>
+        /// Starts a newly created project from the Azure Functions HTTP project template.
+        /// </summary>
+        /// <param name="outputWriter">The output logger to write telemetry information during the creation and startup process.</param>
+        /// <returns>
+        ///     An Azure Functions HTTP project with a full set of endpoint services to interact with.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">Thrown when the <paramref name="outputWriter"/> is <c>null</c>.</exception>
+        /// <exception cref="CannotStartTemplateProjectException">Thrown when the Azure Functions project cannot be started correctly.</exception>
+        public static async Task<AzureFunctionsHttpProject> StartNewAsync(ITestOutputHelper outputWriter)
+        {
+            Guard.NotNull(outputWriter, nameof(outputWriter), "Requires a test logger to write diagnostic information during the creation and startup process");
+
+            AzureFunctionsHttpProject project = await StartNewAsync(new AzureFunctionsHttpProjectOptions(), outputWriter);
+            return project;
+        }
+        
+        /// <summary>
+        /// Starts a newly created project from the Azure Functions HTTP project template.
+        /// </summary>
+        /// <param name="options">The project options to control the functionality of the to-be-created project from this template.</param>
+        /// <param name="outputWriter">The output logger to write telemetry information during the creation and startup process.</param>
+        /// <returns>
+        ///     An Azure Functions HTTP project with a full set of endpoint services to interact with.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">Thrown when the <paramref name="options"/>, or <paramref name="outputWriter"/> is <c>null</c>.</exception>
+        /// <exception cref="CannotStartTemplateProjectException">Thrown when the Azure Functions project cannot be started correctly.</exception>
+        public static async Task<AzureFunctionsHttpProject> StartNewAsync(
+            AzureFunctionsHttpProjectOptions options,
+            ITestOutputHelper outputWriter)
+        {
+            Guard.NotNull(options, nameof(options), "Requires a set of project argument options to create the Azure Functions HTTP trigger project");
+            Guard.NotNull(outputWriter, nameof(outputWriter), "Requires a test logger to write diagnostic information during the creation and startup process");
+
+            AzureFunctionsHttpProject project = await StartNewAsync(TestConfig.Create(), options, outputWriter);
+            return project;
+        }
+        
         /// <summary>
         /// Starts a newly created project from the Azure Functions HTTP project template.
         /// </summary>
@@ -143,7 +193,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http
         /// </summary>
         public async Task StartAsync()
         {
-            Run(BuildConfiguration.Release, TargetFramework.NetCoreApp31);
+            Run(Configuration.BuildConfiguration, TargetFramework.Net6_0);
             await WaitUntilTriggerIsAvailableAsync(OrderFunctionEndpoint);
         }
     }

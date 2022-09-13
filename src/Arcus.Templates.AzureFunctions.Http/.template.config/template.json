@@ -34,6 +34,13 @@
           "exclude": [
             "HealthFunction.cs"
           ]
+        },
+        {
+          "condition": "!(OpenApi)",
+          "exclude": [
+            "HttpCorrelationOpenApiResponseHeaders.cs",
+            "OpenApiConfigurationOptions.cs"
+          ]
         }
       ]
     }
@@ -54,6 +61,14 @@
       },
       "replaces": "//[#if DEBUG]"
     },
+    "ElseDirective": {
+      "type": "generated",
+      "generator": "constant",
+      "parameters": {
+        "value": "#else"
+      },
+      "replaces": "//[#else]"
+    },
     "EndIf": {
       "type": "generated",
       "generator": "constant",
@@ -71,7 +86,27 @@
     "IncludeHealthChecks": {
       "type": "computed",
       "value": "include-healthchecks"
-    } 
+    },
+    "exclude-openApi": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false",
+      "description": "Exclude the OpenApi docs, UI generation from XML docs from the Azure Functions project"
+    },
+    "OpenApi": {
+      "type": "computed",
+      "value": "!(exclude-openApi)"
+    },
+    "exclude-serilog": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false",
+      "description": "Exclude the Serilog logging infrastructure in the worker project"
+    },
+    "Serilog_AppInsights": {
+      "type": "computed",
+      "value": "!(exclude-serilog)"
+    }
   },
   "postActions": [
     {
@@ -86,7 +121,7 @@
       "args": {
         "referenceType": "package",
         "reference": "Microsoft.NET.Sdk.Functions",
-        "version": "3.0.13",
+        "version": "4.1.1",
         "projectFileExtensions": ".csproj"
       }
     }

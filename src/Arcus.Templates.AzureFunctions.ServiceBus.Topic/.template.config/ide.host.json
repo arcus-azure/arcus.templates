@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json.schemastore.org/vs-2017.3.host",
+  "name": {
+    "text": "Azure Service Bus Topic"
+  },
+  "description": {
+    "text": "Provide a template to easily build Azure Functions on a Azure Service Bus Topic."
+  },
+  "learnMoreLink": "https://templates.arcus-azure.net/features/servicebus-topic-azurefunctions-template",
+  "icon": "icon.jpg",
+  "symbolInfo": [
+    {
+      "id": "exclude-serilog",
+      "name": {
+        "text": "Exclude Serilog"
+      },
+      "isVisible": true
+    }
+  ]
+}

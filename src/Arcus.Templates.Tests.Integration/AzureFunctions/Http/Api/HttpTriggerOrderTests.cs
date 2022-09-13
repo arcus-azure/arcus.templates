@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Arcus.Templates.AzureFunctions.Http.Model;
 using Arcus.Templates.Tests.Integration.Fixture;
 using Bogus;
-using Newtonsoft.Json;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -50,11 +50,10 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Api
                     // Assert
                     string responseContent = await response.Content.ReadAsStringAsync();
                     Assert.True(HttpStatusCode.OK == response.StatusCode, responseContent);
-                    Assert.NotNull(JsonConvert.DeserializeObject<Order>(responseContent));
+                    Assert.NotNull(JsonSerializer.Deserialize<Order>(responseContent));
                     
                     IEnumerable<string> responseHeaderNames = response.Headers.Select(header => header.Key).ToArray();
                     Assert.Contains("X-Transaction-ID", responseHeaderNames);
-                    Assert.Contains("RequestId", responseHeaderNames);
                 }
             }
         }

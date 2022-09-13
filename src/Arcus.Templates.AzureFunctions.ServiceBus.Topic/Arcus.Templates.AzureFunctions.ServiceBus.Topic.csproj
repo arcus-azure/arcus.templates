@@ -1,0 +1,73 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <AzureFunctionsVersion>v4</AzureFunctionsVersion>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <!--#if (AuthoringMode)-->
+    <Authors>Arcus</Authors>
+    <Company>Arcus</Company>
+    <RepositoryType>Git</RepositoryType>
+    <Description>Provide a template to easily build Azure Functions on a Azure Service Bus Topic.</Description>
+    <IsPackable>true</IsPackable>
+    <Title>Template for Azure Functions Service Bus topic project</Title>
+    <PackageType>Template</PackageType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>Azure;Azure Functions;Service Bus;Topic</PackageTags>
+    <Copyright>Copyright (c) Arcus</Copyright>
+    <PackageLicenseUrl>https://github.com/arcus-azure/arcus.templates/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/arcus-azure/arcus.templates</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/arcus-azure/arcus.templates</RepositoryUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/arcus-azure/arcus/master/media/arcus.png</PackageIconUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <IncludeContentInPack>true</IncludeContentInPack>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <ContentTargetFolders>content</ContentTargetFolders>
+    <EnableDefaultContentItems>false</EnableDefaultContentItems>
+    <DockerComposeProjectPath>..\Arcus.Templates.Orchestrator.dcproj</DockerComposeProjectPath>
+    <NoWarn>NU5048;NU5125;NU5119</NoWarn>
+    <!--#endif-->
+  </PropertyGroup>
+  <!--#if (AuthoringMode)-->
+  <ItemGroup>
+    <Content Include="**\*" Exclude="**\bin\**\*;**\obj\**\*;**\.vs\**\*;**\launchSettings.json" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);Serilog_AppInsights</DefineConstants>
+    <Serilog_AppInsights>true</Serilog_AppInsights>
+    <DockerFastModeProjectMountDirectory>/home/site/wwwroot</DockerFastModeProjectMountDirectory>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+  <!--#endif-->
+  
+  <ItemGroup>
+    <PackageReference Include="Arcus.Messaging.Abstractions.ServiceBus" Version="1.2.0" />
+    <PackageReference Include="Arcus.Messaging.AzureFunctions.ServiceBus" Version="1.2.0" />
+    <PackageReference Include="Arcus.Observability.Correlation" Version="2.6.0" />
+    <PackageReference Include="Arcus.Observability.Telemetry.AzureFunctions" Version="2.6.0" />
+    <PackageReference Include="Arcus.Observability.Telemetry.Core" Version="2.6.0" />
+    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Filters" Version="2.6.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
+    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Sinks.ApplicationInsights" Version="2.6.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
+    <PackageReference Include="Arcus.Security.AzureFunctions" Version="1.8.1" />
+    <PackageReference Include="Arcus.Security.Providers.AzureKeyVault" Version="1.8.1" />
+    <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.ServiceBus" Version="5.7.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
+    <PackageReference Include="Serilog" Version="2.11.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
+    <PackageReference Include="Serilog.Extensions.Hosting" Version="5.0.1" Condition="'$(Serilog_AppInsights)' == 'true'" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Update="host.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="local.settings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+    </None>
+  </ItemGroup>
+</Project>

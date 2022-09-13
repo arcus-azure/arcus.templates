@@ -6,6 +6,7 @@ using Arcus.Templates.Tests.Integration.Fixture;
 using Arcus.Templates.Tests.Integration.WebApi.Health.v1;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -42,14 +43,50 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Health
                 {
                     // Assert
                     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-                    Assert.NotEmpty(response.Headers.GetValues("RequestId"));
                     Assert.NotEmpty(response.Headers.GetValues("X-Transaction-Id"));
                     
                     string healthReportJson = await response.Content.ReadAsStringAsync();
 
-                    var healthReport = JsonConvert.DeserializeObject<HealthReport>(healthReportJson, new TimeSpanConverter());
-                    Assert.NotNull(healthReport);
-                    Assert.Equal(HealthStatus.Healthy, healthReport.Status);
+                    var healthReport = JObject.Parse(healthReportJson);
+                    Assert.Equal(HealthStatus.Healthy.ToString(), healthReport["status"]);
+                }
+            }
+        }
+
+        [Fact]
+        public async Task HttpAzureFunctionsProject_RemovesExceptionDetails_WhenRequestingHealth()
+        {
+            // Arrange
+            var options =
+                new AzureFunctionsHttpProjectOptions()
+                    .WithIncludeHealthChecks();
+
+            using (var project = AzureFunctionsHttpProject.CreateNew(_config, options, _outputWriter))
+            {
+                string description = "Sabotage this!";
+                project.UpdateFileWithUsingStatement("Startup.cs", typeof(HealthCheckResult));
+                project.UpdateFileInProject("Startup.cs", contents =>
+                {
+                    return contents.Replace(
+                        "builder.Services.AddHealthChecks();",
+                        "builder.Services.AddHealthChecks()" 
+                        + $".AddCheck(\"sample\", () => HealthCheckResult.Unhealthy(\"{description}\", new InvalidOperationException(\"Sabotage!\")));");
+                });
+                await project.StartAsync();
+                project.TearDownOptions = TearDownOptions.KeepProjectDirectory;
+                // Act
+                using (HttpResponseMessage response = await project.Health.GetAsync())
+                {
+                    // Assert
+                    Assert.Equal(HttpStatusCode.ServiceUnavailable, response.StatusCode);
+
+                    string json = await response.Content.ReadAsStringAsync();
+                    var report = JObject.Parse(json);
+                    Assert.Equal(HealthStatus.Unhealthy.ToString(), report["status"]);
+                    Assert.True(report.TryGetValue("entries", out JToken entries), "Health report should contain 'entries' property");
+                    JToken sampleEntry = entries["sample"];
+                    Assert.Equal(description, sampleEntry["description"]);
+                    Assert.Null(sampleEntry["exception"]);
                 }
             }
         }

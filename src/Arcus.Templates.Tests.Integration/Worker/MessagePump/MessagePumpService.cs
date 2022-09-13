@@ -1,18 +1,14 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Arcus.EventGrid;
-using Arcus.EventGrid.Contracts;
-using Arcus.EventGrid.Parsers;
-using Arcus.EventGrid.Testing.Infrastructure.Hosts.ServiceBus;
 using Arcus.Templates.Tests.Integration.Fixture;
 using Arcus.Templates.Tests.Integration.Logging;
 using Arcus.Templates.Tests.Integration.Worker.Fixture;
+using Arcus.Templates.Tests.Integration.Worker.ServiceBus;
+using Azure.Messaging.ServiceBus;
 using Bogus;
 using GuardNet;
-using Microsoft.Azure.EventGrid.Models;
 using Microsoft.Azure.ServiceBus;
-using Microsoft.Azure.ServiceBus.Core;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -23,22 +19,22 @@ namespace Arcus.Templates.Tests.Integration.Worker.MessagePump
     /// </summary>
     public class MessagePumpService : IAsyncDisposable
     {
-        private readonly ServiceBusEntity _entity;
-        private readonly ITestOutputHelper _outputWriter;
+        private readonly ServiceBusEntityType _entityType;
+        private readonly ILogger _logger;
         private readonly TestConfig _configuration;
 
-        private ServiceBusEventConsumerHost _serviceBusEventConsumerHost;
+        private TestServiceBusMessageEventConsumer _serviceBusMessageEventConsumer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MessagePumpService"/> class.
         /// </summary>
-        public MessagePumpService(ServiceBusEntity entity, TestConfig configuration, ITestOutputHelper outputWriter)
+        public MessagePumpService(ServiceBusEntityType entityType, TestConfig configuration, ITestOutputHelper outputWriter)
         {
             Guard.NotNull(configuration, nameof(configuration));
             Guard.NotNull(outputWriter, nameof(outputWriter));
 
-            _entity = entity;
-            _outputWriter = outputWriter;
+            _entityType = entityType;
+            _logger = new XunitTestLogger(outputWriter);
             _configuration = configuration;
         }
 
@@ -47,13 +43,9 @@ namespace Arcus.Templates.Tests.Integration.Worker.MessagePump
         /// </summary>
         public async Task StartAsync()
         {
-            if (_serviceBusEventConsumerHost is null)
+            if (_serviceBusMessageEventConsumer is null)
             {
-                var topicName = _configuration.GetValue<string>("Arcus:Worker:Infra:ServiceBus:TopicName");
-                var connectionString = _configuration.GetValue<string>("Arcus:Worker:Infra:ServiceBus:ConnectionString");
-                var serviceBusEventConsumerHostOptions = new ServiceBusEventConsumerHostOptions(topicName, connectionString);
-
-                _serviceBusEventConsumerHost = await ServiceBusEventConsumerHost.StartAsync(serviceBusEventConsumerHostOptions, new XunitTestLogger(_outputWriter));
+                _serviceBusMessageEventConsumer = await TestServiceBusMessageEventConsumer.StartNewAsync(_configuration, _logger);
             }
             else
             {
@@ -66,47 +58,30 @@ namespace Arcus.Templates.Tests.Integration.Worker.MessagePump
         /// </summary>
         public async Task SimulateMessageProcessingAsync()
         {
-            if (_serviceBusEventConsumerHost is null)
+            if (_serviceBusMessageEventConsumer is null)
             {
                 throw new InvalidOperationException(
                     "Cannot simulate the message pump because the service is not yet started; please start this service before simulating");
             }
 
-            var operationId = Guid.NewGuid().ToString();
-            var transactionId = Guid.NewGuid().ToString();
+            string connectionString = _configuration.GetServiceBusConnectionString(_entityType);
+            var producer = new TestServiceBusMessageProducer(connectionString);
 
-            string connectionString = _configuration.GetServiceBusConnectionString(_entity);
-            var serviceBusConnectionStringBuilder = new ServiceBusConnectionStringBuilder(connectionString);
-            var messageSender = new MessageSender(serviceBusConnectionStringBuilder);
+            var operationId = $"operation-{Guid.NewGuid()}";
+            var transactionId = $"transaction-{Guid.NewGuid()}";
+            Order order = GenerateOrder();
+            ServiceBusMessage orderMessage = order.AsServiceBusMessage(operationId, transactionId);
+            await producer.ProduceAsync(orderMessage);
 
-            try
-            {
-                Order order = GenerateOrder();
-                Message orderMessage = order.AsServiceBusMessage(operationId, transactionId);
-                await messageSender.SendAsync(orderMessage);
-
-                string receivedEvent = _serviceBusEventConsumerHost.GetReceivedEvent(operationId);
-                Assert.NotEmpty(receivedEvent);
-
-                EventBatch<Event> eventBatch = EventParser.Parse(receivedEvent);
-                Assert.NotNull(eventBatch);
-                Event orderCreatedEvent = Assert.Single(eventBatch.Events);
-                Assert.NotNull(orderCreatedEvent);
-
-                var orderCreatedEventData = orderCreatedEvent.GetPayload<OrderCreatedEventData>();
-                Assert.NotNull(orderCreatedEventData);
-                Assert.NotNull(orderCreatedEventData.CorrelationInfo);
-                Assert.Equal(order.Id, orderCreatedEventData.Id);
-                Assert.Equal(order.Amount, orderCreatedEventData.Amount);
-                Assert.Equal(order.ArticleNumber, orderCreatedEventData.ArticleNumber);
-                Assert.Equal(transactionId, orderCreatedEventData.CorrelationInfo.TransactionId);
-                Assert.Equal(operationId, orderCreatedEventData.CorrelationInfo.OperationId);
-                Assert.NotEmpty(orderCreatedEventData.CorrelationInfo.CycleId);
-            }
-            finally
-            {
-                await messageSender.CloseAsync();
-            }
+            OrderCreatedEventData orderCreatedEventData = _serviceBusMessageEventConsumer.ConsumeOrderEvent(operationId);
+            Assert.NotNull(orderCreatedEventData);
+            Assert.NotNull(orderCreatedEventData.CorrelationInfo);
+            Assert.Equal(order.Id, orderCreatedEventData.Id);
+            Assert.Equal(order.Amount, orderCreatedEventData.Amount);
+            Assert.Equal(order.ArticleNumber, orderCreatedEventData.ArticleNumber);
+            Assert.Equal(transactionId, orderCreatedEventData.CorrelationInfo.TransactionId);
+            Assert.Equal(operationId, orderCreatedEventData.CorrelationInfo.OperationId);
+            Assert.NotEmpty(orderCreatedEventData.CorrelationInfo.CycleId);
         }
 
         private static Order GenerateOrder()
@@ -130,9 +105,9 @@ namespace Arcus.Templates.Tests.Integration.Worker.MessagePump
         /// <returns>A task that represents the asynchronous dispose operation.</returns>
         public async ValueTask DisposeAsync()
         {
-            if (_serviceBusEventConsumerHost != null)
+            if (_serviceBusMessageEventConsumer != null)
             {
-                await _serviceBusEventConsumerHost.StopAsync();
+                await _serviceBusMessageEventConsumer.DisposeAsync();
             }
         }
     }

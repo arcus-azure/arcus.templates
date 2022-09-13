@@ -20,40 +20,51 @@ namespace Arcus.Templates.AzureFunctions.Databricks.JobMetrics
         {
             builder.ConfigurationBuilder.AddEnvironmentVariables();
         }
-
+        
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://docs.microsoft.com/en-us/azure/azure-functions/functions-dotnet-dependency-injection
         public override void Configure(IFunctionsHostBuilder builder)
         {
             IConfiguration config = builder.GetContext().Configuration;
-
+            
             builder.ConfigureSecretStore(stores =>
             {
 //[#if DEBUG]
                 stores.AddConfiguration(config);
 //[#endif]
-
+                
                 stores.AddEnvironmentVariables();
-
+                
                 //#error Please provide a valid secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secret-store/provider/key-vault
                 stores.AddAzureKeyVaultWithManagedIdentity("https://your-keyvault.vault.azure.net/", CacheConfiguration.Default);
             });
-
-            var instrumentationKey = config.GetValue<string>("APPLICATIONINSIGHTS_INSTRUMENTATIONKEY");
+            
+            LoggerConfiguration logConfig = CreateLoggerConfiguration(builder);
+            builder.Services.AddLogging(logging =>
+            {
+                logging.RemoveMicrosoftApplicationInsightsLoggerProvider()
+                       .AddSerilog(logConfig.CreateLogger(), dispose: true);
+            });
+        }
+        
+        private static LoggerConfiguration CreateLoggerConfiguration(IFunctionsHostBuilder builder)
+        {
+            IConfiguration appConfig = builder.GetContext().Configuration;
             var configuration = new LoggerConfiguration()
-                .MinimumLevel.Debug()
+                .MinimumLevel.Information()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .Enrich.FromLogContext()
                 .Enrich.WithComponentName("Azure Databricks Metrics Scraper")
                 .Enrich.WithVersion()
-                .WriteTo.Console()
-                .WriteTo.AzureApplicationInsights(instrumentationKey);
-
-            builder.Services.AddLogging(logging =>
+                .WriteTo.Console();
+            
+            var connectionString = appConfig.GetValue<string>("APPLICATIONINSIGHTS_CONNECTION_STRING");
+            if (!string.IsNullOrWhiteSpace(connectionString))
             {
-                logging.ClearProvidersExceptFunctionProviders()
-                       .AddSerilog(configuration.CreateLogger(), dispose: true);
-            });
+                configuration.WriteTo.AzureApplicationInsightsWithConnectionString(connectionString);
+            }
+            
+            return configuration;
         }
     }
 }

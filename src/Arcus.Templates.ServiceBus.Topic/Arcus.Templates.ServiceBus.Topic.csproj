@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Worker">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <!--#if (AuthoringMode)-->
     <Authors>Arcus</Authors>
@@ -12,10 +12,11 @@
     <PackageId>Arcus.Templates.ServiceBus.Topic</PackageId>
     <Title>Template for worker Azure Service Bus Topic project</Title>
     <PackageType>Template</PackageType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>Worker;Azure;Azure;ServiceBus;Topic</PackageTags>
     <Copyright>Copyright (c) Arcus</Copyright>
     <PackageLicenseUrl>https://github.com/arcus-azure/arcus.templates/blob/master/LICENSE</PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/arcus-azure/arcus.templates</PackageProjectUrl>
+    <PackageProjectUrl>https://templates.arcus-azure.net/</PackageProjectUrl>
     <PackageTags>Worker;Azure;ServiceBus;Topic</PackageTags>
     <RepositoryUrl>https://github.com/arcus-azure/arcus.templates</RepositoryUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/arcus-azure/arcus/master/media/arcus.png</PackageIconUrl>
@@ -26,7 +27,8 @@
     <ContentTargetFolders>content</ContentTargetFolders>
     <EnableDefaultContentItems>false</EnableDefaultContentItems>
     <DockerComposeProjectPath>..\Arcus.Templates.Orchestrator.dcproj</DockerComposeProjectPath>
-    <NoWarn>NU5048;NU5125;CS1030;CS1998</NoWarn>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>NU5048;NU5125;CS1030;CS1998;NU5128</NoWarn>
     <!--#endif-->
   </PropertyGroup>
 
@@ -36,29 +38,31 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <DefineConstants>$(DefineConstants);</DefineConstants>
-    <ExcludeSerilog>false</ExcludeSerilog>
+    <DefineConstants>$(DefineConstants);Serilog_AppInsights</DefineConstants>
+    <Serilog_AppInsights>true</Serilog_AppInsights>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Dockerfile" />
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
   <!--#endif-->
 
   <ItemGroup>
-    <PackageReference Include="Arcus.Messaging.Health" Version="1.0.0" />
-    <PackageReference Include="Arcus.Messaging.Pumps.ServiceBus" Version="1.0.0" />
-    <PackageReference Include="Arcus.Observability.Telemetry.Core" Version="2.2.1" />
-    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Sinks.ApplicationInsights" Version="2.2.1" Condition="'$(ExcludeSerilog)' == 'false'" />
-    <PackageReference Include="Arcus.Security.Core" Version="1.6.0" />
-    <PackageReference Include="Arcus.Security.Providers.AzureKeyVault" Version="1.6.0" />
-    <PackageReference Include="Guard.NET" Version="1.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.11.1" />
+    <PackageReference Include="Arcus.Messaging.Health" Version="1.3.0" />
+    <PackageReference Include="Arcus.Messaging.Pumps.ServiceBus" Version="1.3.0" />
+    <PackageReference Include="Arcus.Observability.Correlation" Version="2.6.0" />
+    <PackageReference Include="Arcus.Observability.Telemetry.Core" Version="2.6.0" />
+    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Filters" Version="2.6.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
+    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Sinks.ApplicationInsights" Version="2.6.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
+    <PackageReference Include="Arcus.Security.Core" Version="1.8.1" />
+    <PackageReference Include="Arcus.Security.Providers.AzureKeyVault" Version="1.8.1" />
+    <PackageReference Include="Guard.NET" Version="3.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="Serilog" Version="2.10.0" Condition="'$(ExcludeSerilog)' == 'false'" />
-    <PackageReference Include="Serilog.Extensions.Hosting" Version="4.1.2" Condition="'$(ExcludeSerilog)' == 'false'" />
-    <PackageReference Include="Serilog.Sinks.Console" Version="4.0.0" />
+    <PackageReference Include="Serilog" Version="2.11.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
+    <PackageReference Include="Serilog.Extensions.Hosting" Version="5.0.1" Condition="'$(Serilog_AppInsights)' == 'true'" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
   </ItemGroup>
 
 </Project>

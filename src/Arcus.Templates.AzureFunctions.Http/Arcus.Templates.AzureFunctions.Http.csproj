@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <AzureFunctionsVersion>v3</AzureFunctionsVersion>
+    <TargetFramework>net6.0</TargetFramework>
+    <AzureFunctionsVersion>v4</AzureFunctionsVersion>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <!--#if (AuthoringMode)-->
     <Authors>Arcus</Authors>
@@ -12,10 +12,11 @@
     <PackageId>Arcus.Templates.AzureFunctions.Http</PackageId>
     <Title>Template for Azure Functions HTTP project</Title>
     <PackageType>Template</PackageType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>Azure;Azure Functions;HTTP;API</PackageTags>
     <Copyright>Copyright (c) Arcus</Copyright>
     <PackageLicenseUrl>https://github.com/arcus-azure/arcus.templates/blob/master/LICENSE</PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/arcus-azure/arcus.templates</PackageProjectUrl>
+    <PackageProjectUrl>https://templates.arcus-azure.net/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/arcus-azure/arcus.templates</RepositoryUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/arcus-azure/arcus/master/media/arcus.png</PackageIconUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -24,7 +25,8 @@
     <ContentTargetFolders>content</ContentTargetFolders>
     <EnableDefaultContentItems>false</EnableDefaultContentItems>
     <DockerComposeProjectPath>..\Arcus.Templates.Orchestrator.dcproj</DockerComposeProjectPath>
-    <NoWarn>NU5048;NU5125</NoWarn>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>NU5048;NU5125;NU5119;NU5128</NoWarn>
     <!--#endif-->
   </PropertyGroup>
 
@@ -34,12 +36,14 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <DefineConstants>$(DefineConstants);</DefineConstants>
+    <DefineConstants>$(DefineConstants);OpenApi;Serilog_AppInsights</DefineConstants>
+    <OpenApi>true</OpenApi>
+    <Serilog_AppInsights>true</Serilog_AppInsights>
     <DockerFastModeProjectMountDirectory>/home/site/wwwroot</DockerFastModeProjectMountDirectory>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Dockerfile" />
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
   <!--#endif-->
 
@@ -54,16 +58,20 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Arcus.Observability.Telemetry.AspNetCore" Version="2.2.1" />
-    <PackageReference Include="Arcus.Observability.Telemetry.AzureFunctions" Version="2.2.1" />
-    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Sinks.Applicationinsights" Version="2.2.1" />
-    <PackageReference Include="Arcus.Security.AzureFunctions" Version="1.6.0" />
-    <PackageReference Include="Arcus.Security.Providers.AzureKeyVault" Version="1.6.0" />
-    <PackageReference Include="Arcus.WebApi.Logging.AzureFunctions" Version="1.3.1" />
+    <PackageReference Include="Arcus.Observability.Correlation" Version="2.6.0" />
+    <PackageReference Include="Arcus.Observability.Telemetry.AspNetCore" Version="2.6.0" />
+    <PackageReference Include="Arcus.Observability.Telemetry.AzureFunctions" Version="2.6.0" />
+    <PackageReference Include="Arcus.Observability.Telemetry.Core" Version="2.6.0" />
+    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Filters" Version="2.6.0" Condition="'$(Serilog_AppInsights)' == 'true'"  />
+    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Sinks.Applicationinsights" Version="2.6.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
+    <PackageReference Include="Arcus.Security.AzureFunctions" Version="1.8.1" />
+    <PackageReference Include="Arcus.Security.Providers.AzureKeyVault" Version="1.8.1" />
+    <PackageReference Include="Arcus.WebApi.Logging.AzureFunctions" Version="1.6.1" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="4.0.1" />
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.0.12" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.11.1" />
-    <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
-    <PackageReference Include="Serilog.Sinks.Console" Version="4.0.0" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.2.0" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.OpenApi" Version="1.4.0" Condition="'$(OpenApi)' == 'true'" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
   </ItemGroup>
 </Project>

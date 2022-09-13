@@ -16,7 +16,6 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Authentication.v1
     [Trait("Category", TestTraits.Integration)]
     public class SharedAccessKeyAuthenticationOptionTests
     {
-        private readonly TestConfig _configuration;
         private readonly ITestOutputHelper _outputWriter;
 
         /// <summary>
@@ -24,7 +23,6 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Authentication.v1
         /// </summary>
         public SharedAccessKeyAuthenticationOptionTests(ITestOutputHelper outputWriter)
         {
-            _configuration = TestConfig.Create();
             _outputWriter = outputWriter;
         }
 
@@ -40,7 +38,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Authentication.v1
                 new WebApiProjectOptions()
                     .WithSharedAccessAuthentication(headerName, secretKey, secretValue);
             
-            using (var project = await WebApiProject.StartNewAsync(_configuration, unauthenticatedArguments, _outputWriter))
+            using (var project = await WebApiProject.StartNewAsync(unauthenticatedArguments, _outputWriter))
             {
                 // Act
                 using (HttpResponseMessage response = await project.Health.GetAsync())
@@ -63,7 +61,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Authentication.v1
                 new WebApiProjectOptions()
                     .WithSharedAccessAuthentication(headerName, secretKey, secretValue);
             
-            using (var project = await WebApiProject.StartNewAsync(_configuration, authenticatedArguments, _outputWriter))
+            using (var project = await WebApiProject.StartNewAsync(authenticatedArguments, _outputWriter))
             {
                 // Act
                 using (HttpResponseMessage response = 
@@ -87,7 +85,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Authentication.v1
                 new WebApiProjectOptions()
                     .WithSharedAccessAuthentication(headerName, secretKey, secretValue);
 
-            using (var project = await WebApiProject.StartNewAsync(_configuration, authenticatedArguments, _outputWriter))
+            using (var project = await WebApiProject.StartNewAsync(authenticatedArguments, _outputWriter))
             // Act
             using (HttpResponseMessage response = await project.Swagger.GetSwaggerDocsAsync())
             {

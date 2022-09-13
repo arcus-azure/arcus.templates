@@ -32,6 +32,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Logging.v1
                 project.AddTypeAsFile<SaboteurController>();
                 await project.StartAsync();
 
+                project.TearDownOptions = TearDownOptions.KeepProjectDirectory;
                 // Act
                 using (HttpResponseMessage response = await project.Root.GetAsync(SaboteurController.Route))
                 {
@@ -40,7 +41,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Logging.v1
                     await RetryAssertUntilTelemetryShouldBeAvailableAsync(async client =>
                     {
                         EventsResults<EventsRequestResult> results =
-                            await client.Events.GetRequestEventsAsync(ApplicationInsightsConfig.ApplicationId, filter: OnlyLastHourFilter);
+                            await client.Events.GetRequestEventsAsync(ApplicationInsightsConfig.ApplicationId, timespan: PastHalfHourTimeSpan);
 
                         Assert.Contains(results.Value, result =>
                         {

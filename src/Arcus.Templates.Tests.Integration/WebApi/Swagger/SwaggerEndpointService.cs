@@ -30,6 +30,16 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Swagger
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="SwaggerEndpointService" /> class.
+        /// </summary>
+        public SwaggerEndpointService(string swaggerUIEndpoint, string swaggerDocsEndpoint, ITestOutputHelper outputWriter)
+            : base(outputWriter)
+        {
+            _swaggerUIEndpoint = swaggerUIEndpoint;
+            _swaggerDocsEndpoint = swaggerDocsEndpoint;
+        }
+
+        /// <summary>
         /// Sends a GET request to the Swagger UI help page.
         /// </summary>
         public async Task<HttpResponseMessage> GetSwaggerUIAsync()

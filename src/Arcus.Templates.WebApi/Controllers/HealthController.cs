@@ -1,10 +1,12 @@
 ﻿using System.Threading.Tasks;
+using Arcus.Templates.WebApi.Models;
 using Arcus.WebApi.Logging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using GuardNet;
-#if (ExcludeOpenApi == false && ExcludeCorrelation == false)
+#if OpenApi
+using Arcus.Templates.WebApi.ExampleProviders;
 using Swashbuckle.AspNetCore.Filters;
 #endif
 
@@ -38,23 +40,28 @@ namespace Arcus.Templates.WebApi.Controllers
         /// <response code="503">API is unhealthy or in degraded state</response>
         [HttpGet(Name = "Health_Get")]
         [RequestTracking(500, 599)]
-        [ProducesResponseType(typeof(HealthReport), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(HealthReport), StatusCodes.Status503ServiceUnavailable)]
-#if (ExcludeOpenApi == false && ExcludeCorrelation == false)
-        [SwaggerResponseHeader(200, "RequestId", "string", "The header that has a request ID that uniquely identifies this operation call")]
-        [SwaggerResponseHeader(200, "X-Transaction-Id", "string", "The header that has the transaction ID is used to correlate multiple operation calls.")]
+        [ProducesResponseType(typeof(ApiHealthReport), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiHealthReport), StatusCodes.Status503ServiceUnavailable)]
+#if OpenApi
+#if Correlation
+        [SwaggerResponseHeader(200, "Request-Id", "string", "The header that has a request ID that identifies the upstream service that calls this endpoint")]
+        [SwaggerResponseHeader(200, "X-Transaction-Id", "string", "The header that has the transaction ID is used to correlate multiple operation calls")]
+        [SwaggerResponseHeader(200, "X-Operation-Id", "string", "The header that has the operation ID is used to uniquely identify this single call")]
+#endif
+        [SwaggerResponseExample(200, typeof(HealthReportResponseExampleProvider))]
 #endif
         public async Task<IActionResult> Get()
         {
             HealthReport healthReport = await _healthCheckService.CheckHealthAsync();
-            
-            if (healthReport?.Status == HealthStatus.Healthy)
+            ApiHealthReport json = ApiHealthReport.FromHealthReport(healthReport);
+
+            if (healthReport.Status == HealthStatus.Healthy)
             {
-                return Ok(healthReport);
+                return Ok(json);
             }
             else
             {
-                return StatusCode(StatusCodes.Status503ServiceUnavailable, healthReport);
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, json);
             }
         }
     }

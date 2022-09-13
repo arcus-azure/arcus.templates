@@ -15,7 +15,21 @@
       "name": {
         "text": "Include Health Checks"
       },
-      "isVisible": true 
+      "isVisible": true
+    },
+    {
+      "id": "exclude-openapi",
+      "name": {
+        "text": "Exclude OpenApi Documentation"
+      },
+      "isVisible": true
+    },
+    {
+      "id": "exclude-serilog",
+      "name": {
+        "text": "Exclude Serilog"
+      },
+      "isVisible": true
     }
   ]
 }

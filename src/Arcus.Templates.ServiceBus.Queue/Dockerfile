@@ -1,8 +1,8 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1.202-alpine3.10 AS base
+FROM mcr.microsoft.com/dotnet/sdk:6.0.301-alpine3.14 AS base
 WORKDIR /app
 EXPOSE 80
 
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1.202-alpine3.10 AS build
+FROM mcr.microsoft.com/dotnet/sdk:6.0.301-alpine3.14 AS build
 WORKDIR /src
 COPY ["Arcus.Templates.ServiceBus.Queue.csproj", ""]
 

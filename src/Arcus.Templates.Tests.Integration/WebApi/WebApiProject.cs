@@ -12,8 +12,9 @@ using Flurl;
 using GuardNet;
 using Polly;
 using Xunit.Abstractions;
+using static Org.BouncyCastle.Math.EC.ECCurve;
 
-namespace Arcus.Templates.Tests.Integration.WebApi 
+namespace Arcus.Templates.Tests.Integration.WebApi
 {
     /// <summary>
     /// Project template to create new web API projects.
@@ -27,7 +28,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi
         private static readonly HttpClient HttpClient = new HttpClient();
 
         private WebApiProject(
-            Uri baseUrl, 
+            Uri baseUrl,
             TestConfig configuration,
             DirectoryInfo templateDirectory,
             DirectoryInfo fixturesDirectory,
@@ -191,7 +192,11 @@ namespace Arcus.Templates.Tests.Integration.WebApi
             Uri baseUrl = configuration.GenerateRandomLocalhostUrl();
             var project = new WebApiProject(baseUrl, configuration, templateDirectory, fixtureDirectory, outputWriter);
             project.CreateNewProject(projectOptions);
-            project.UpdateFileInProject("Program.cs", contents => project.RemovesUserErrorsFromContents(contents));
+            project.UpdateFileInProject("Program.cs", contents =>
+            {
+                return project.RemovesUserErrorsFromContents(contents)
+                              .Replace("stores.AddAzureKeyVaultWithManagedIdentity(\"https://your-keyvault.vault.azure.net/\", CacheConfiguration.Default);", "stores.AddConfiguration(config);");
+            });
 
             return project;
         }
@@ -201,10 +206,10 @@ namespace Arcus.Templates.Tests.Integration.WebApi
         /// </summary>
         public async Task StartAsync()
         {
-            Run(_configuration.BuildConfiguration, 
-                _configuration.TargetFramework,
+            Run(_configuration.BuildConfiguration,
+                TargetFramework.Net6_0,
                 CommandArgument.CreateOpen("ARCUS_HTTP_PORT", _baseUrl.Port));
-            
+
             await WaitUntilWebProjectIsAvailable(_baseUrl.Port);
         }
 
@@ -214,7 +219,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi
                 Policy.Handle<Exception>()
                       .WaitAndRetryForeverAsync(_ => TimeSpan.FromSeconds(1));
 
-            var result = 
+            var result =
                 await Policy.TimeoutAsync(TimeSpan.FromSeconds(10))
                             .WrapAsync(waitAndRetryForeverAsync)
                             .ExecuteAndCaptureAsync(() => GetNonExistingEndpoint(httpPort));

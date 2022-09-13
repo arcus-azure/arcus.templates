@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using GuardNet;
 using Org.BouncyCastle.Asn1.X509;
@@ -54,7 +55,8 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Fixture
 
             using (X509Certificate2 issuerCert = GenerateCA(issuerName))
             {
-                AsymmetricCipherKeyPair issuerKeyPair = DotNetUtilities.GetKeyPair(issuerCert.PrivateKey);
+                RSA privateKey = issuerCert.GetRSAPrivateKey();
+                AsymmetricCipherKeyPair issuerKeyPair = DotNetUtilities.GetKeyPair(privateKey);
                 var issuerSerialNumber = new BigInteger(issuerCert.GetSerialNumber());
 
                 var certificateGenerator = new X509V3CertificateGenerator();

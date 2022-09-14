@@ -13,9 +13,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Arcus.Templates.Tests.Integration.Worker.Fixture
 {
-    public class OrdersAzureServiceBusMessageHandler : IAzureServiceBusMessageHandler<Order>
+    public class TestOrdersAzureServiceBusMessageHandler : IAzureServiceBusMessageHandler<Order>
     {
-        private readonly ILogger<OrdersAzureServiceBusMessageHandler> _logger;
+        private readonly ILogger<TestOrdersAzureServiceBusMessageHandler> _logger;
         private readonly IEventGridPublisher _eventGridPublisher;
 
         /// <summary>
@@ -23,7 +23,7 @@ namespace Arcus.Templates.Tests.Integration.Worker.Fixture
         /// </summary>
         /// <param name="configuration">Configuration of the application</param>
         /// <param name="logger">Logger to write telemetry to</param>
-        public OrdersAzureServiceBusMessageHandler(IConfiguration configuration, ILogger<OrdersAzureServiceBusMessageHandler> logger)
+        public TestOrdersAzureServiceBusMessageHandler(IConfiguration configuration, ILogger<TestOrdersAzureServiceBusMessageHandler> logger)
         {
             _logger = logger;
             var eventGridTopic = configuration.GetValue<string>("EVENTGRID_TOPIC_URI");

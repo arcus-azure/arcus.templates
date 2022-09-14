@@ -159,12 +159,12 @@ namespace Arcus.Templates.Tests.Integration.Worker
             AddTypeAsFile<Customer>();
             AddTypeAsFile<OrderCreatedEvent>();
             AddTypeAsFile<OrderCreatedEventData>();
-            AddTypeAsFile<OrdersAzureServiceBusMessageHandler>();
+            AddTypeAsFile<TestOrdersAzureServiceBusMessageHandler>();
             
             UpdateFileInProject("Program.cs", contents => 
                 RemovesUserErrorsFromContents(contents)
                     .Replace(".MinimumLevel.Debug()", ".MinimumLevel.Verbose()")
-                    .Replace("EmptyMessageHandler", nameof(OrdersAzureServiceBusMessageHandler))
+                    .Replace("EmptyMessageHandler", nameof(TestOrdersAzureServiceBusMessageHandler))
                     .Replace("EmptyMessage", nameof(Order))
                     .Replace("stores.AddAzureKeyVaultWithManagedIdentity(\"https://your-keyvault.vault.azure.net/\", CacheConfiguration.Default);", ""));
         }

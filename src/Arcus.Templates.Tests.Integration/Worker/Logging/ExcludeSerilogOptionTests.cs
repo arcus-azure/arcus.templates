@@ -40,6 +40,8 @@ namespace Arcus.Templates.Tests.Integration.Worker.Logging
                 
                 // Assert
                 Assert.Equal(HealthStatus.Healthy, status);
+                Assert.DoesNotContain("Serilog", project.GetFileContentsInProject("Program.cs"));
+                Assert.DoesNotContain("Serilog", project.GetFileContentsOfProjectFile());
             }
         }
 
@@ -60,6 +62,8 @@ namespace Arcus.Templates.Tests.Integration.Worker.Logging
 
                 // Assert
                 Assert.Equal(HealthStatus.Healthy, status);
+                Assert.DoesNotContain("Serilog", project.GetFileContentsInProject("Program.cs"));
+                Assert.DoesNotContain("Serilog", project.GetFileContentsOfProjectFile());
             }
         }
     }

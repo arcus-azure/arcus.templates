@@ -3,6 +3,7 @@ variables:
   Arcus.Api.BaseUrl: 'http://localhost:$(Http.Port)/api/v1'
   Arcus.ServiceBus.Queue.Worker.HealthPort: '42065'
   Arcus.ServiceBus.Topic.Worker.HealthPort: '42066'
+  Arcus.EventHubs.Worker.HealthPort: '42069'
   Arcus.Databricks.JobId: 9
   Arcus.AzureFunctions.ApplicationInsights.MetricName: 'Databricks Job Completed'
   Arcus.AzureFunctions.Databricks.HttpPort: '5050'

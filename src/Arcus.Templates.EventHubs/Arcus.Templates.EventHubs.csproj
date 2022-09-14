@@ -1,0 +1,68 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <!--#if (AuthoringMode)-->
+    <Authors>Arcus</Authors>
+    <Company>Arcus</Company>
+    <RepositoryType>Git</RepositoryType>
+    <Description>Provide a template to easily build workers on a Azure EventHubs.</Description>
+    <IsPackable>true</IsPackable>
+    <PackageId>Arcus.Templates.EventHubs</PackageId>
+    <Title>Template for worker Azure Service Bus Queue project</Title>
+    <PackageType>Template</PackageType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>Worker;Azure;Azure;EventHubs</PackageTags>
+    <Copyright>Copyright (c) Arcus</Copyright>
+    <PackageLicenseUrl>https://github.com/arcus-azure/arcus.templates/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://templates.arcus-azure.net/</PackageProjectUrl>
+    <PackageTags>Worker;Azure;EventHubs</PackageTags>
+    <RepositoryUrl>https://github.com/arcus-azure/arcus.templates</RepositoryUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/arcus-azure/arcus/master/media/arcus.png</PackageIconUrl>
+    <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <IncludeContentInPack>true</IncludeContentInPack>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <ContentTargetFolders>content</ContentTargetFolders>
+    <EnableDefaultContentItems>false</EnableDefaultContentItems>
+    <DockerComposeProjectPath>..\Arcus.Templates.Orchestrator.dcproj</DockerComposeProjectPath>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>NU5048;NU5125;CS1030;CS1998;NU5128</NoWarn>
+    <!--#endif-->
+  </PropertyGroup>
+
+  <!--#if (AuthoringMode)-->
+  <ItemGroup>
+    <Content Include="**\*" Exclude="**\bin\**\*;**\obj\**\*;**\.vs\**\*;**\launchSettings.json" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);Serilog_AppInsights</DefineConstants>
+    <Serilog_AppInsights>true</Serilog_AppInsights>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+  <!--#endif-->
+
+  <ItemGroup>
+    <PackageReference Include="Arcus.Messaging.Health" Version="1.3.0" />
+    <PackageReference Include="Arcus.Messaging.Pumps.EventHubs" Version="1.3.0" />
+    <PackageReference Include="Arcus.Observability.Correlation" Version="2.6.0" />
+    <PackageReference Include="Arcus.Observability.Telemetry.Core" Version="2.6.0" />
+    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Filters" Version="2.6.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
+    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Sinks.ApplicationInsights" Version="2.6.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
+    <PackageReference Include="Arcus.Security.Core" Version="1.8.1" />
+    <PackageReference Include="Arcus.Security.Providers.AzureKeyVault" Version="1.8.1" />
+    <PackageReference Include="Guard.NET" Version="3.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Serilog" Version="2.11.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
+    <PackageReference Include="Serilog.Extensions.Hosting" Version="5.0.1" Condition="'$(Serilog_AppInsights)' == 'true'" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
+  </ItemGroup>
+
+</Project>

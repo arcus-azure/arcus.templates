@@ -1,18 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Sockets;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.Fixture;
 using Arcus.Templates.Tests.Integration.Worker.Configuration;
 using Arcus.Templates.Tests.Integration.Worker.Fixture;
-using Arcus.Templates.Tests.Integration.Worker.Health;
-using Arcus.Templates.Tests.Integration.Worker.MessagePump;
-using Azure.Messaging.ServiceBus;
+using Arcus.Templates.Tests.Integration.Worker.ServiceBus;
 using GuardNet;
 using Microsoft.Extensions.Logging;
-using Polly;
 using Xunit.Abstractions;
 
 namespace Arcus.Templates.Tests.Integration.Worker
@@ -20,26 +12,18 @@ namespace Arcus.Templates.Tests.Integration.Worker
     /// <summary>
     /// Project template to create Azure ServiceBus Queue worker projects.
     /// </summary>
-    public class ServiceBusWorkerProject : TemplateProject, IAsyncDisposable
+    public class ServiceBusWorkerProject : WorkerProject
     {
-        private readonly ServiceBusEntityType _entityType;
-        private readonly int _healthPort;
-        private readonly TestConfig _configuration;
-
         private ServiceBusWorkerProject(
             ServiceBusEntityType entityType,
             TestConfig configuration,
+            TestServiceBusMessageProducer messageProducer,
             ITestOutputHelper outputWriter)
             : base(configuration.GetServiceBusProjectDirectory(entityType), 
-                   configuration.GetFixtureProjectDirectory(), 
+                   configuration, 
+                   messageProducer,
                    outputWriter)
         {
-            _entityType = entityType;
-            _healthPort = configuration.GenerateWorkerHealthPort();
-            _configuration = configuration;
-
-            Health = new HealthEndpointService(_healthPort, outputWriter);
-            MessagePump = new MessagePumpService(entityType, configuration, outputWriter);
         }
 
         /// <summary>
@@ -139,8 +123,14 @@ namespace Arcus.Templates.Tests.Integration.Worker
             ITestOutputHelper outputWriter)
         {
             ServiceBusWorkerProject project = CreateNew(entityType, configuration, options, outputWriter);
-            await project.StartAsync(options);
-            await project.MessagePump.StartAsync();
+
+            EventGridConfig eventGridConfig = configuration.GetEventGridConfig();
+            string serviceBusConnection = configuration.GetServiceBusConnectionString(entityType);
+
+            await project.StartAsync(options, 
+                CommandArgument.CreateSecret("EVENTGRID_TOPIC_URI", eventGridConfig.TopicUri),
+                CommandArgument.CreateSecret("EVENTGRID_AUTH_KEY", eventGridConfig.AuthenticationKey),
+                CommandArgument.CreateSecret("ARCUS_SERVICEBUS_CONNECTIONSTRING", serviceBusConnection));
 
             return project;
         }
@@ -151,7 +141,10 @@ namespace Arcus.Templates.Tests.Integration.Worker
             ServiceBusWorkerProjectOptions options,
             ITestOutputHelper outputWriter)
         {
-            var project = new ServiceBusWorkerProject(entityType, configuration, outputWriter);
+            string connectionString = configuration.GetServiceBusConnectionString(entityType);
+            var producer = new TestServiceBusMessageProducer(connectionString);
+            var project = new ServiceBusWorkerProject(entityType, configuration, producer, outputWriter);
+
             project.CreateNewProject(options);
             project.AddOrdersMessagePump();
 
@@ -166,105 +159,14 @@ namespace Arcus.Templates.Tests.Integration.Worker
             AddTypeAsFile<Customer>();
             AddTypeAsFile<OrderCreatedEvent>();
             AddTypeAsFile<OrderCreatedEventData>();
-            AddTypeAsFile<OrdersMessageHandler>();
+            AddTypeAsFile<OrdersAzureServiceBusMessageHandler>();
             
             UpdateFileInProject("Program.cs", contents => 
                 RemovesUserErrorsFromContents(contents)
                     .Replace(".MinimumLevel.Debug()", ".MinimumLevel.Verbose()")
-                    .Replace("EmptyMessageHandler", nameof(OrdersMessageHandler))
+                    .Replace("EmptyMessageHandler", nameof(OrdersAzureServiceBusMessageHandler))
                     .Replace("EmptyMessage", nameof(Order))
                     .Replace("stores.AddAzureKeyVaultWithManagedIdentity(\"https://your-keyvault.vault.azure.net/\", CacheConfiguration.Default);", ""));
-        }
-
-        private async Task StartAsync(ServiceBusWorkerProjectOptions options)
-        {
-            CommandArgument[] commands = 
-                CreateServiceBusQueueWorkerCommands()
-                    .Concat(options.AdditionalArguments)
-                    .ToArray();
-            
-            Run(_configuration.BuildConfiguration, TargetFramework.Net6_0, commands);
-            await WaitUntilWorkerProjectIsAvailableAsync(_healthPort);
-        }
-
-        private IEnumerable<CommandArgument> CreateServiceBusQueueWorkerCommands()
-        {
-            EventGridConfig eventGridConfig = _configuration.GetEventGridConfig();
-            string serviceBusConnection = _configuration.GetServiceBusConnectionString(_entityType);
-
-            return new[]
-            {
-                CommandArgument.CreateOpen("ARCUS_HEALTH_PORT", _healthPort),
-                CommandArgument.CreateSecret("EVENTGRID_TOPIC_URI", eventGridConfig.TopicUri),
-                CommandArgument.CreateSecret("EVENTGRID_AUTH_KEY", eventGridConfig.AuthenticationKey),
-                CommandArgument.CreateSecret("ARCUS_SERVICEBUS_CONNECTIONSTRING", serviceBusConnection)
-            };
-        }
-
-        private async Task WaitUntilWorkerProjectIsAvailableAsync(int tcpPort)
-        {
-            IAsyncPolicy waitAndRetryForeverAsync =
-                Policy.Handle<Exception>()
-                      .WaitAndRetryForeverAsync(retryNumber => TimeSpan.FromSeconds(1));
-
-            PolicyResult result = 
-                await Policy.TimeoutAsync(TimeSpan.FromSeconds(10))
-                            .WrapAsync(waitAndRetryForeverAsync)
-                            .ExecuteAndCaptureAsync(() => TryToConnectToTcpListener(tcpPort));
-
-            if (result.Outcome == OutcomeType.Successful)
-            {
-                Logger.WriteLine("Test template Service Bus worker project fully started at: localhost:{0}", tcpPort);
-            }
-            else
-            {
-                Logger.WriteLine("Test template Service Bus project could not be started");
-                throw new CannotStartTemplateProjectException(
-                    "The test project created from the Service Bus project template doesn't seem to be running, "
-                    + "please check any build or runtime errors that could occur when the test project was created");
-            }
-        }
-
-        private static async Task TryToConnectToTcpListener(int tcpPort)
-        {
-            using (var client = new TcpClient())
-            {
-                await client.ConnectAsync(IPAddress.Parse("127.0.0.1"), tcpPort);
-                client.Close();
-            }
-        }
-
-        /// <summary>
-        /// Gets the service that interacts with the exposed health report information of the Service Bus worker project.
-        /// </summary>
-        public HealthEndpointService Health { get; }
-
-        /// <summary>
-        /// Gets the service that interacts with the hosted-service message pump in the Service Bus worker project.
-        /// </summary>
-        /// <remarks>
-        ///     Only when the project is started, is this service available for interaction.
-        /// </remarks>
-        public MessagePumpService MessagePump { get; }
-
-        /// <summary>
-        /// Returns a string that represents the current object.
-        /// </summary>
-        /// <returns>A string that represents the current object.</returns>
-        public override string ToString()
-        {
-            return $"Project: {ProjectDirectory.FullName}, running at: localhost:{_healthPort}";
-        }
-
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources asynchronously.
-        /// </summary>
-        /// <returns>A task that represents the asynchronous dispose operation.</returns>
-        public async ValueTask DisposeAsync()
-        {
-            Dispose();
-
-            await MessagePump.DisposeAsync();
         }
     }
 }

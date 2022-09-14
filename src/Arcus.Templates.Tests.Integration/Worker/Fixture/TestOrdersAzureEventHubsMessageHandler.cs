@@ -5,25 +5,23 @@ using System.Threading.Tasks;
 using Arcus.EventGrid.Publishing;
 using Arcus.EventGrid.Publishing.Interfaces;
 using Arcus.Messaging.Abstractions;
-using Arcus.Messaging.Abstractions.ServiceBus;
-using Arcus.Messaging.Abstractions.ServiceBus.MessageHandling;
+using Arcus.Messaging.Abstractions.EventHubs;
+using Arcus.Messaging.Abstractions.EventHubs.MessageHandling;
 using CloudNative.CloudEvents;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace Arcus.Templates.Tests.Integration.Worker.Fixture
 {
-    public class OrdersMessageHandler : IAzureServiceBusMessageHandler<Order>
+    public class TestOrdersAzureEventHubsMessageHandler : IAzureEventHubsMessageHandler<Order>
     {
-        private readonly ILogger<OrdersMessageHandler> _logger;
+        private readonly ILogger<TestOrdersAzureEventHubsMessageHandler> _logger;
         private readonly IEventGridPublisher _eventGridPublisher;
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the <see cref="TestOrdersAzureEventHubsMessageHandler" /> class.
         /// </summary>
-        /// <param name="configuration">Configuration of the application</param>
-        /// <param name="logger">Logger to write telemetry to</param>
-        public OrdersMessageHandler(IConfiguration configuration, ILogger<OrdersMessageHandler> logger)
+        public TestOrdersAzureEventHubsMessageHandler(IConfiguration configuration, ILogger<TestOrdersAzureEventHubsMessageHandler> logger)
         {
             _logger = logger;
             var eventGridTopic = configuration.GetValue<string>("EVENTGRID_TOPIC_URI");
@@ -36,17 +34,19 @@ namespace Arcus.Templates.Tests.Integration.Worker.Fixture
                     .Build();
         }
 
-        /// <summary>Process a new message that was received</summary>
-        /// <param name="message">Message that was received</param>
-        /// <param name="messageContext">Context providing more information concerning the processing</param>
-        /// <param name="correlationInfo">
-        ///     Information concerning correlation of telemetry and processes by using a variety of unique
-        ///     identifiers
-        /// </param>
-        /// <param name="cancellationToken">Cancellation token</param>
+        /// <summary>
+        /// Process a new message that was received.
+        /// </summary>
+        /// <param name="message">The message that was received.</param>
+        /// <param name="messageContext">The context providing more information concerning the processing.</param>
+        /// <param name="correlationInfo">The information concerning correlation of telemetry and processes by using a variety of unique identifiers.</param>
+        /// <param name="cancellationToken">The token to cancel the processing.</param>
+        /// <exception cref="T:System.ArgumentNullException">
+        ///     Thrown when the <paramref name="message" />, <paramref name="messageContext" />, or the <paramref name="correlationInfo" /> is <c>null</c>.
+        /// </exception>
         public async Task ProcessMessageAsync(
             Order message,
-            AzureServiceBusMessageContext messageContext,
+            AzureEventHubsMessageContext messageContext,
             MessageCorrelationInfo correlationInfo,
             CancellationToken cancellationToken)
         {

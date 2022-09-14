@@ -30,13 +30,34 @@ namespace Arcus.Templates.Tests.Integration.Worker.Logging
             var config = TestConfig.Create();
             var options = 
                 ServiceBusWorkerProjectOptions
-                    .Create(config).WithExcludeSerilog();
+                    .Create(config)
+                    .WithExcludeSerilog();
 
-            using (var project = await ServiceBusWorkerProject.StartNewAsync(entityType, config, options, _outputWriter))
+            await using (var project = await ServiceBusWorkerProject.StartNewAsync(entityType, config, options, _outputWriter))
             {
                 // Act
                 HealthStatus status = await project.Health.ProbeHealthAsync();
                 
+                // Assert
+                Assert.Equal(HealthStatus.Healthy, status);
+            }
+        }
+
+        [Fact]
+        public async Task GetHealthOfEventHubsProject_WithExcludeSerilog_ResponseHealthy()
+        {
+            // Arrange
+            var config = TestConfig.Create();
+            var options =
+                EventHubsWorkerProjectOptions
+                    .Create(config)
+                    .WithExcludeSerilog();
+
+            await using (var project = await EventHubsWorkerProject.StartNewAsync(config, options, _outputWriter))
+            {
+                // Act
+                HealthStatus status = await project.Health.ProbeHealthAsync();
+
                 // Assert
                 Assert.Equal(HealthStatus.Healthy, status);
             }

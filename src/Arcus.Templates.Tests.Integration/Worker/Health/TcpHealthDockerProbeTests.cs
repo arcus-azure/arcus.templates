@@ -51,5 +51,21 @@ namespace Arcus.Templates.Tests.Integration.Worker.Health
             // Assert
             Assert.Equal(HealthStatus.Healthy, status);
         }
+
+        [Fact]
+        public async Task EventHubsWorkerOnDocker_ProbeForHealthReport_ResponseHealthy()
+        {
+            // Arrange
+            var configuration = TestConfig.Create();
+            int healthPort = configuration.GetDockerEventHubsWorkerHealthPort();
+
+            var healthEndpointService = new HealthEndpointService(healthPort, _outputWriter);
+
+            // Act
+            HealthStatus status = await healthEndpointService.ProbeHealthAsync();
+
+            // Assert
+            Assert.Equal(HealthStatus.Healthy, status);
+        }
     }
 }

@@ -7,6 +7,7 @@ using Arcus.Templates.Tests.Integration.Worker;
 using Arcus.Templates.Tests.Integration.Worker.Configuration;
 using Arcus.Templates.Tests.Integration.Worker.Fixture;
 using Arcus.Templates.Tests.Integration.Worker.MessagePump;
+using Arcus.Templates.Tests.Integration.Worker.ServiceBus;
 using Azure;
 using Azure.Messaging.ServiceBus;
 using Azure.Messaging.ServiceBus.Administration;
@@ -30,7 +31,9 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
                    configuration, 
                    outputWriter)
         {
-            MessagePump = new MessagePumpService(entityType, configuration, outputWriter);
+            string connectionString = configuration.GetServiceBusConnectionString(entityType);
+            var producer = new TestServiceBusMessageProducer(connectionString);
+            MessagePump = new MessagePumpService(producer, configuration, outputWriter);
         }
 
         /// <summary>
@@ -116,10 +119,10 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
             AddTypeAsFile<Customer>();
             AddTypeAsFile<OrderCreatedEvent>();
             AddTypeAsFile<OrderCreatedEventData>();
-            AddTypeAsFile<OrdersMessageHandler>();
+            AddTypeAsFile<OrdersAzureServiceBusMessageHandler>();
             UpdateFileInProject("Startup.cs", contents => 
                 RemovesUserErrorsFromContents(contents)
-                    .Replace("OrdersAzureServiceBusMessageHandler", nameof(OrdersMessageHandler)));
+                    .Replace("OrdersAzureServiceBusMessageHandler", nameof(OrdersAzureServiceBusMessageHandler)));
         }
 
         private async Task StartAsync(ServiceBusEntityType entityType)

@@ -34,7 +34,7 @@ namespace Arcus.Templates.Tests.Integration.Worker.EventHubs
         /// <summary>
         /// Sends the <paramref name="order"/> to the configured Azure EventHubs.
         /// </summary>
-        /// <param name="order"></param>
+        /// <param name="order">The message to send.</param>
         /// <param name="operationId">The ID to identify a single operation in a correlation scenario.</param>
         /// <param name="transactionId">The ID to identify a whole transaction across interactions in a correlation scenario.</param>
         /// <exception cref="ArgumentNullException">Thrown when the <paramref name="order"/> is <c>null</c>.</exception>

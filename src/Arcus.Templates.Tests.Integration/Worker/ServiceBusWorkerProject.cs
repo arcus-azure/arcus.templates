@@ -146,12 +146,12 @@ namespace Arcus.Templates.Tests.Integration.Worker
             var project = new ServiceBusWorkerProject(entityType, configuration, producer, outputWriter);
 
             project.CreateNewProject(options);
-            project.AddOrdersMessagePump();
+            project.AddTestMessageHandler();
 
             return project;
         }
 
-        private void AddOrdersMessagePump()
+        private void AddTestMessageHandler()
         {
             AddPackage("Arcus.EventGrid", "3.2.0");
             AddPackage("Arcus.EventGrid.Publishing", "3.2.0");

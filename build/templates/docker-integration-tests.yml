@@ -80,8 +80,8 @@ stages:
                 ARCUS_HEALTH_PORT=$(Arcus.EventHubs.Worker.HealthPort)
                 EVENTGRID_TOPIC_URI=$(Arcus.Worker.EventGrid.TopicUri)
                 EVENTGRID_AUTH_KEY=$(Arcus.Worker.EventGrid.AuthKey)
-                EVENTHUBS_NAME=orders
-                BLOBSTORAGE_CONTAINERNAME=eventhubs-docker
+                EVENTHUBS_NAME=$(Arcus.EventHubs.Docker.EventHubsName)
+                BLOBSTORAGE_CONTAINERNAME=$(Arcus.EventHubs.Docker.BlobStorage.ContainerName)
                 ARCUS_EVENTHUBS_CONNECTIONSTRING=$(Arcus.EventHubs.ConnectionString)
                 ARCUS_STORAGEACCOUNT_CONNECTIONSTRING=$(Arcus.EventHubs.BlobStorage.StorageAccountConnectionString)
                 ARCUS_SERVICEBUS_CONNECTIONSTRING=$(Arcus.Worker.ServiceBus.Queue.ConnectionString)

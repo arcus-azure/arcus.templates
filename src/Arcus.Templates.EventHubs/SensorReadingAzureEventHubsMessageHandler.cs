@@ -4,11 +4,11 @@ using System.Threading.Tasks;
 using Arcus.Messaging.Abstractions;
 using Arcus.Messaging.Abstractions.EventHubs;
 using Arcus.Messaging.Abstractions.EventHubs.MessageHandling;
-using Arcus.Templates.AzureFunctions.ServiceBus.Queue.Model;
+using Arcus.Templates.EventHubs.Model;
 using GuardNet;
 using Microsoft.Extensions.Logging;
 
-namespace Arcus.Templates.AzureFunctions.ServiceBus.Queue
+namespace Arcus.Templates.EventHubs
 {
     /// <summary>
     /// Represents an <see cref="IAzureEventHubsMessageHandler{TMessage}"/> implementation that processes <see cref="SensorReading"/> messages.

@@ -4,8 +4,6 @@ using Arcus.Security.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
-using Arcus.Templates.AzureFunctions.ServiceBus.Queue;
-using Arcus.Templates.AzureFunctions.ServiceBus.Queue.Model;
 using Microsoft.Extensions.Hosting;
 #if Serilog_AppInsights
 using Serilog;

@@ -10,7 +10,7 @@
     <Description>Provide a template to easily build workers on a Azure EventHubs.</Description>
     <IsPackable>true</IsPackable>
     <PackageId>Arcus.Templates.EventHubs</PackageId>
-    <Title>Template for worker Azure Service Bus Queue project</Title>
+    <Title>Template for worker Azure EventHubs project</Title>
     <PackageType>Template</PackageType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>Worker;Azure;Azure;EventHubs</PackageTags>

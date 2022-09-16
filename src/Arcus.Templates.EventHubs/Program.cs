@@ -4,6 +4,7 @@ using Arcus.Security.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
+using Arcus.Templates.EventHubs.Model;
 using Microsoft.Extensions.Hosting;
 #if Serilog_AppInsights
 using Serilog;

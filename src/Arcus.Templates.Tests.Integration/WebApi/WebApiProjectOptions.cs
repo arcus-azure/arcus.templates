@@ -20,13 +20,6 @@ namespace Arcus.Templates.Tests.Integration.WebApi
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="WebApiProjectOptions"/> class.
-        /// </summary>
-        private WebApiProjectOptions(ProjectOptions options) : base(options)
-        {
-        }
-
-        /// <summary>
         /// Creates a set of empty project options for the web API project; resulting in a default web API project when a project is created from these options.
         /// </summary>
         public static WebApiProjectOptions Empty { get; } = new WebApiProjectOptions();
@@ -36,9 +29,8 @@ namespace Arcus.Templates.Tests.Integration.WebApi
         /// </summary>
         public WebApiProjectOptions WithIncludeAppSettings()
         {
-            ProjectOptions optionsWithIncludeAppSettings = AddOption("--include-appsettings");
-
-            return new WebApiProjectOptions(optionsWithIncludeAppSettings);
+            AddOption("--include-appsettings");
+            return this;
         }
 
         /// <summary>
@@ -46,9 +38,8 @@ namespace Arcus.Templates.Tests.Integration.WebApi
         /// </summary>
         public WebApiProjectOptions WithExcludeCorrelation()
         {
-            ProjectOptions optionsWithExcludeCorrelation = AddOption("--exclude-correlation");
-
-            return new WebApiProjectOptions(optionsWithExcludeCorrelation);
+            AddOption("--exclude-correlation");
+            return this;
         }
 
         /// <summary>
@@ -56,9 +47,8 @@ namespace Arcus.Templates.Tests.Integration.WebApi
         /// </summary>
         public WebApiProjectOptions WithExcludeOpenApiDocs()
         {
-            ProjectOptions optionsWithExcludeOpenApi = AddOption("--exclude-openApi");
-
-            return new WebApiProjectOptions(optionsWithExcludeOpenApi);
+            AddOption("--exclude-openApi");
+            return this;
         }
 
         /// <summary>
@@ -67,9 +57,8 @@ namespace Arcus.Templates.Tests.Integration.WebApi
         /// <returns></returns>
         public WebApiProjectOptions WithConsoleLogging()
         {
-            ProjectOptions optionsWithDefaultLogging = AddOption("--logging Console");
-
-            return new WebApiProjectOptions(optionsWithDefaultLogging);
+            AddOption("--logging Console");
+            return this;
         }
 
         /// <summary>
@@ -77,9 +66,8 @@ namespace Arcus.Templates.Tests.Integration.WebApi
         /// </summary>
         public WebApiProjectOptions WithSerilogLogging()
         {
-            ProjectOptions optionsWithSerilogLogging = AddOption("--logging Serilog");
-            
-            return new WebApiProjectOptions(optionsWithSerilogLogging);
+            AddOption("--logging Serilog");
+            return this;
         }
 
         /// <summary>
@@ -88,11 +76,10 @@ namespace Arcus.Templates.Tests.Integration.WebApi
         /// <param name="applicationInsightsInstrumentationKey">The key to connect to the Azure Application Insights resource.</param>
         public WebApiProjectOptions WithSerilogLogging(string applicationInsightsInstrumentationKey)
         {
-            ProjectOptions optionsWithSerilogLogging = 
-                AddOption("--logging Serilog",
-                          CommandArgument.CreateSecret("APPLICATIONINSIGHTS_CONNECTION_STRING", $"InstrumentationKey={applicationInsightsInstrumentationKey}"));
+            AddOption("--logging Serilog", 
+                CommandArgument.CreateSecret("APPLICATIONINSIGHTS_CONNECTION_STRING", $"InstrumentationKey={applicationInsightsInstrumentationKey}"));
 
-            return new WebApiProjectOptions(optionsWithSerilogLogging);
+            return this;
         }
 
         /// <summary>
@@ -105,11 +92,10 @@ namespace Arcus.Templates.Tests.Integration.WebApi
         {
             Guard.NotNullOrWhitespace(key, nameof(key), "Cannot add JWT authentication authentication option without a security key to validate the JWT token");
 
-            ProjectOptions optionsWithJwtAuthentication = AddOption(
-                "--authentication JWT",
+            AddOption("--authentication JWT",
                 (fixtureDirectory, projectDirectory) => ConfigureJwtAuthentication(fixtureDirectory, projectDirectory, key, issuer, audience));
 
-            return new WebApiProjectOptions(optionsWithJwtAuthentication);
+            return this;
         }
 
         private static void ConfigureJwtAuthentication(DirectoryInfo fixtureDirectory, DirectoryInfo projectDirectory, string key, string issuer, string audience)
@@ -153,11 +139,10 @@ namespace Arcus.Templates.Tests.Integration.WebApi
             Guard.NotNullOrWhitespace(secretName, nameof(secretName), "Cannot add shared access key authentication project option without a secret name");
             Guard.NotNullOrWhitespace(secretValue, nameof(secretValue), "Cannot add shared access key authentication project option without a secret value");
 
-            ProjectOptions optionsWithSharedAccessAuthentication = AddOption(
-                "--authentication SharedAccessKey",
+            AddOption("--authentication SharedAccessKey",
                 (fixtureDirectory, projectDirectory) => ConfigureSharedAccessAuthentication(fixtureDirectory, projectDirectory, headerName, secretName, secretValue));
 
-            return new WebApiProjectOptions(optionsWithSharedAccessAuthentication);
+            return this;
         }
 
         private static void ConfigureSharedAccessAuthentication(DirectoryInfo fixtureDirectory, DirectoryInfo projectDirectory, string requestHeader, string secretName, string secretValue)
@@ -254,11 +239,10 @@ namespace Arcus.Templates.Tests.Integration.WebApi
         {
             Guard.NotNullOrWhitespace(subject, nameof(subject), "Cannot add certificate authentication project option based on subject without a subject value");
 
-           ProjectOptions optionsWithCertificateAuthentication = AddOption(
-               "--authentication Certificate",
+           AddOption("--authentication Certificate",
                (fixtureDirectory, projectDirectory) => ConfigureCertificateSubjectAuthentication(projectDirectory, subject));
 
-           return new WebApiProjectOptions(optionsWithCertificateAuthentication);
+           return this;
         }
 
         private static void ConfigureCertificateSubjectAuthentication(DirectoryInfo projectDirectory, string subject)

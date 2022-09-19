@@ -5,34 +5,26 @@ using System.Threading.Tasks;
 using Arcus.EventGrid.Publishing;
 using Arcus.EventGrid.Publishing.Interfaces;
 using Arcus.Messaging.Abstractions;
-using Arcus.Messaging.Abstractions.ServiceBus;
-using Arcus.Messaging.Abstractions.ServiceBus.MessageHandling;
+using Arcus.Messaging.Abstractions.EventHubs;
+using Arcus.Messaging.Abstractions.EventHubs.MessageHandling;
 using CloudNative.CloudEvents;
-using GuardNet;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace Arcus.Templates.Tests.Integration.Worker.Fixture
 {
-    /// <summary>
-    /// Represents an <see cref="IAzureServiceBusMessageHandler{TMessage}"/> implementation that processes <see cref="Order"/> messages.
-    /// </summary>
-    public class TestOrderAzureServiceBusMessageHandler : IAzureServiceBusMessageHandler<Order>
+    public class TestOrdersAzureEventHubsMessageHandler : IAzureEventHubsMessageHandler<Order>
     {
+        private readonly ILogger<TestOrdersAzureEventHubsMessageHandler> _logger;
         private readonly IEventGridPublisher _eventGridPublisher;
-        private readonly ILogger<TestOrderAzureServiceBusMessageHandler> _logger;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TestOrderAzureServiceBusMessageHandler" /> class.
+        /// Initializes a new instance of the <see cref="TestOrdersAzureEventHubsMessageHandler" /> class.
         /// </summary>
-        /// <param name="logger">The logger instance to write informational message during the order processing.</param>
-        /// <exception cref="ArgumentNullException">Thrown when the <paramref name="logger"/> is <c>null</c>.</exception>
-        public TestOrderAzureServiceBusMessageHandler(
-            IConfiguration configuration,
-            ILogger<TestOrderAzureServiceBusMessageHandler> logger)
+        public TestOrdersAzureEventHubsMessageHandler(IConfiguration configuration, ILogger<TestOrdersAzureEventHubsMessageHandler> logger)
         {
-            Guard.NotNull(logger, nameof(logger), "Requires an logger instance to write informational messages during the order processing");
-             var eventGridTopic = configuration.GetValue<string>("EVENTGRID_TOPIC_URI");
+            _logger = logger;
+            var eventGridTopic = configuration.GetValue<string>("EVENTGRID_TOPIC_URI");
             var eventGridKey = configuration.GetValue<string>("EVENTGRID_AUTH_KEY");
 
             _eventGridPublisher =
@@ -40,8 +32,6 @@ namespace Arcus.Templates.Tests.Integration.Worker.Fixture
                     .ForTopic(eventGridTopic)
                     .UsingAuthenticationKey(eventGridKey)
                     .Build();
-
-            _logger = logger;
         }
 
         /// <summary>
@@ -56,14 +46,16 @@ namespace Arcus.Templates.Tests.Integration.Worker.Fixture
         /// </exception>
         public async Task ProcessMessageAsync(
             Order message,
-            AzureServiceBusMessageContext messageContext,
+            AzureEventHubsMessageContext messageContext,
             MessageCorrelationInfo correlationInfo,
             CancellationToken cancellationToken)
         {
-            _logger.LogTrace("Processing order {OrderId} for {OrderAmount} units of {OrderArticle}", message.Id, message.Amount, message.ArticleNumber);
+            _logger.LogInformation(
+                "Processing order {OrderId} for {OrderAmount} units of {OrderArticle}",
+                message.Id, message.Amount, message.ArticleNumber);
 
             await PublishEventToEventGridAsync(message, correlationInfo.OperationId, correlationInfo);
-            
+
             _logger.LogInformation("Order {OrderId} processed", message.Id);
         }
 

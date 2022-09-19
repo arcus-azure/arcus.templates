@@ -4,12 +4,12 @@ using GuardNet;
 
 namespace Arcus.Templates.Tests.Integration.Worker
 {
-    /// <summary>
-    /// Represents the available options for the Azure Service Bus Topic and Queue worker projects.
-    /// </summary>
-    public class ServiceBusWorkerProjectOptions : WorkerProjectOptions
+    public class EventHubsWorkerProjectOptions : WorkerProjectOptions
     {
-        private ServiceBusWorkerProjectOptions(TestConfig config) : base(config)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EventHubsWorkerProjectOptions" /> class.
+        /// </summary>
+        private EventHubsWorkerProjectOptions(TestConfig config) : base(config)
         {
         }
 
@@ -18,18 +18,18 @@ namespace Arcus.Templates.Tests.Integration.Worker
         /// </summary>
         /// <param name="configuration">The integration test configuration instance to retrieve connection secrets.</param>
         /// <exception cref="ArgumentNullException">Thrown when the <paramref name="configuration"/> is <c>null</c>.</exception>
-        public static ServiceBusWorkerProjectOptions Create(TestConfig configuration)
+        public static EventHubsWorkerProjectOptions Create(TestConfig configuration)
         {
             Guard.NotNull(configuration, nameof(configuration), "Requires a test configuration instance to retrieve additional connection secrets");
 
-            var options = new ServiceBusWorkerProjectOptions(configuration);
+            var options = new EventHubsWorkerProjectOptions(configuration);
             return options;
         }
 
         /// <summary>
         /// Adds the project option to exclude the Serilog logging infrastructure from the worker project.
         /// </summary>
-        public ServiceBusWorkerProjectOptions WithExcludeSerilog()
+        public EventHubsWorkerProjectOptions WithExcludeSerilog()
         {
             ExcludeSerilog();
             return this;

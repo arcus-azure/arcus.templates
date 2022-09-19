@@ -206,10 +206,19 @@ namespace Arcus.Templates.Tests.Integration.WebApi
         /// </summary>
         public async Task StartAsync()
         {
-            Run(_configuration.BuildConfiguration,
-                TargetFramework.Net6_0,
-                CommandArgument.CreateOpen("ARCUS_HTTP_PORT", _baseUrl.Port));
+            var commandArguments = Array.Empty<CommandArgument>();
+            if (ContainsFile("appsettings.json"))
+            {
+                UpdateFileInProject(
+                    "appsettings.json", 
+                    contents => contents.Replace("\"ARCUS_HTTP_PORT\": 5000", $"\"ARCUS_HTTP_PORT\": {_baseUrl.Port}"));
+            }
+            else
+            {
+                commandArguments = new[] { CommandArgument.CreateOpen("ARCUS_HTTP_PORT", _baseUrl.Port) };
+            }
 
+            Run(_configuration.BuildConfiguration, TargetFramework.Net6_0, commandArguments);
             await WaitUntilWebProjectIsAvailable(_baseUrl.Port);
         }
 

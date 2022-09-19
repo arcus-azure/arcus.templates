@@ -1,18 +1,19 @@
 ﻿using System;
-using System.Threading.Tasks;
-using Arcus.Security.Core;
 using Arcus.Security.Core.Caching.Configuration;
+using Arcus.Security.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Threading.Tasks;
+using Arcus.Templates.EventHubs.Model;
 using Microsoft.Extensions.Hosting;
 #if Serilog_AppInsights
 using Serilog;
 using Serilog.Configuration;
 using Serilog.Events;
-using Serilog.Extensions.Hosting;
+using Serilog.Extensions.Hosting; 
 #endif
 
-namespace Arcus.Templates.ServiceBus.Queue
+namespace Arcus.Templates.EventHubs
 {
     public class Program
     {
@@ -21,6 +22,7 @@ namespace Arcus.Templates.ServiceBus.Queue
         private const string ApplicationInsightsConnectionStringKeyName = "APPLICATIONINSIGHTS_CONNECTION_STRING";
         
 #endif
+
         public static async Task<int> Main(string[] args)
         {
 #if Serilog_AppInsights
@@ -47,15 +49,14 @@ namespace Arcus.Templates.ServiceBus.Queue
                 Log.CloseAndFlush();
             }
 #else
-            CreateHostBuilder(args)
-                .Build()
-                .Run();
+            IHost host = CreateHostBuilder(args).Build();
+            await host.RunAsync();
             
             return 0;
 #endif
         }
-        
-        public static IHostBuilder CreateHostBuilder(string[] args)
+
+          public static IHostBuilder CreateHostBuilder(string[] args)
         {
             return Host.CreateDefaultBuilder(args)
                        .ConfigureAppConfiguration(configuration =>
@@ -77,8 +78,11 @@ namespace Arcus.Templates.ServiceBus.Queue
 #endif
                        .ConfigureServices((hostContext, services) =>
                        {
-                           services.AddServiceBusQueueMessagePump(secretProvider => secretProvider.GetRawSecretAsync("ARCUS_SERVICEBUS_CONNECTIONSTRING"))
-                                   .WithServiceBusMessageHandler<EmptyMessageHandler, EmptyMessage>();
+                           var eventHubsName = hostContext.Configuration.GetValue<string>("EVENTHUBS_NAME");
+                           var containerName = hostContext.Configuration.GetValue<string>("BLOBSTORAGE_CONTAINERNAME");
+
+                           services.AddEventHubsMessagePump(eventHubsName, "ARCUS_EVENTHUBS_CONNECTIONSTRING", containerName, "ARCUS_STORAGEACCOUNT_CONNECTIONSTRING")
+                                   .WithEventHubsMessageHandler<SensorReadingAzureEventHubsMessageHandler, SensorReading>();
                            
                            services.AddTcpHealthProbes("ARCUS_HEALTH_PORT");
                        });
@@ -97,7 +101,7 @@ namespace Arcus.Templates.ServiceBus.Queue
                       .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                       .Enrich.FromLogContext()
                       .Enrich.WithVersion()
-                      .Enrich.WithComponentName("Service Bus Queue Worker")
+                      .Enrich.WithComponentName("EventHubs Worker")
                       .WriteTo.Console();
                 
                 if (!string.IsNullOrWhiteSpace(connectionString))

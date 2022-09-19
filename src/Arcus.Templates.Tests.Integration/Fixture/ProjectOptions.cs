@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
 using GuardNet;
 
 namespace Arcus.Templates.Tests.Integration.Fixture 
@@ -11,47 +11,15 @@ namespace Arcus.Templates.Tests.Integration.Fixture
     /// </summary>
     public class ProjectOptions
     {
-        private readonly IEnumerable<string> _arguments;
-        private readonly  IEnumerable<Action<DirectoryInfo, DirectoryInfo>> _updateProject;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ProjectOptions"/> class.
-        /// </summary>
-        public ProjectOptions() 
-            : this(Enumerable.Empty<string>(),
-                   Enumerable.Empty<Action<DirectoryInfo, DirectoryInfo>>(),
-                   Enumerable.Empty<CommandArgument>())
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ProjectOptions"/> class.
-        /// </summary>
-        public ProjectOptions(ProjectOptions options) 
-            : this(options?._arguments, 
-                   options?._updateProject,
-                   options?.AdditionalRunArguments.ToArray())
-        {
-        }
-
-        private ProjectOptions(
-            IEnumerable<string> arguments,
-            IEnumerable<Action<DirectoryInfo, DirectoryInfo>> updateProject,
-            IEnumerable<CommandArgument> additionalRunArguments)
-        {
-            Guard.NotNull(arguments, nameof(arguments), "Cannot create web API project without project options");
-            Guard.NotNull(updateProject, nameof(updateProject), "Cannot create web API project without post-project-created actions");
-
-            _arguments = arguments;
-            _updateProject = updateProject;
-            AdditionalRunArguments = additionalRunArguments;
-        }
+        private readonly ICollection<string> _arguments = new Collection<string>();
+        private readonly ICollection<Action<DirectoryInfo, DirectoryInfo>> _updateProject = new Collection<Action<DirectoryInfo, DirectoryInfo>>();
+        private readonly List<CommandArgument> _additionalRunArguments = new List<CommandArgument>();
 
         /// <summary>
         /// Gets the additional console arguments to pass along the 'dotnet run' command.
         /// These arguments are related to the project options that were configured for the project.
         /// </summary>
-        public IEnumerable<CommandArgument> AdditionalRunArguments { get; }
+        public IEnumerable<CommandArgument> AdditionalRunArguments => _additionalRunArguments.ToArray();
 
         /// <summary>
         /// Adds an option to the project that should be added for a project template.
@@ -63,10 +31,10 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         {
             Guard.NotNullOrWhitespace(optionArgument, nameof(optionArgument), "Requires a console argument to pass along to the 'dotnet new' command");
 
-            return new ProjectOptions(
-                _arguments.Append(optionArgument), 
-                _updateProject, 
-                AdditionalRunArguments.Concat(additionalRunArguments).ToArray());
+            _arguments.Add(optionArgument);
+            _additionalRunArguments.AddRange(additionalRunArguments);
+
+            return this;
         }
 
         /// <summary>
@@ -81,10 +49,33 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             Guard.NotNullOrWhitespace(optionArgument, nameof(optionArgument), "Requires a console argument to pass along to the 'dotnet new' command");
             Guard.NotNull(updateProject, nameof(updateProject), "Requires an update action to alter the project's content so that the created project uses the project option correctly");
 
-            return new ProjectOptions(
-                _arguments.Append(optionArgument),
-                _updateProject.Append(updateProject),
-                AdditionalRunArguments.Concat(additionalRunArguments).ToArray());
+            _arguments.Add(optionArgument);
+            _updateProject.Add(updateProject);
+            _additionalRunArguments.AddRange(additionalRunArguments);
+            
+            return this;
+        }
+
+        /// <summary>
+        /// Adds an additional run argument to pass along the 'dotnet run' command.
+        /// </summary>
+        /// <param name="runArgument">The open/secret command argument to pass along.</param>
+        /// <exception cref="ArgumentNullException">Thrown when the <paramref name="runArgument"/> is <c>null</c>.</exception>
+        protected void AddRunArgument(CommandArgument runArgument)
+        {
+            Guard.NotNull(runArgument, nameof(runArgument), "Requires a command run argument to pass along the project 'dotnet run' command");
+            _additionalRunArguments.Add(runArgument);
+        }
+
+        /// <summary>
+        /// Removes a previously registered run argument(s) that should not be passed along the 'dotnet run' command.
+        /// </summary>
+        /// <param name="argumentName">The argument name of the open/secret command argument that should not be passed along.</param>
+        /// <exception cref="ArgumentException">Thrown when the <paramref name="argumentName"/> is blank.</exception>
+        protected void RemoveRunArgument(string argumentName)
+        {
+            Guard.NotNullOrWhitespace(argumentName, nameof(argumentName), "Requires a name of the command run argument that should not be passed along to the project 'dotnet run' command");
+            _additionalRunArguments.RemoveAll(cmd => cmd.Name == argumentName);
         }
 
         /// <summary>
@@ -92,7 +83,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         /// </summary>
         internal string ToCommandLineArguments()
         {
-            return String.Join(" ", _arguments);
+            return string.Join(" ", _arguments);
         }
 
         /// <summary>

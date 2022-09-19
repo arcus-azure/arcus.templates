@@ -4,10 +4,8 @@ using Arcus.Templates.Tests.Integration.Fixture;
 using Arcus.Templates.Tests.Integration.Logging;
 using Arcus.Templates.Tests.Integration.Worker.Fixture;
 using Arcus.Templates.Tests.Integration.Worker.ServiceBus;
-using Azure.Messaging.ServiceBus;
 using Bogus;
 using GuardNet;
-using Microsoft.Azure.ServiceBus;
 using Microsoft.Extensions.Logging;
 using Xunit;
 using Xunit.Abstractions;
@@ -19,8 +17,8 @@ namespace Arcus.Templates.Tests.Integration.Worker.MessagePump
     /// </summary>
     public class MessagePumpService : IAsyncDisposable
     {
-        private readonly ServiceBusEntityType _entityType;
         private readonly ILogger _logger;
+        private readonly IOrderProducer _messageProducer;
         private readonly TestConfig _configuration;
 
         private TestServiceBusMessageEventConsumer _serviceBusMessageEventConsumer;
@@ -28,13 +26,14 @@ namespace Arcus.Templates.Tests.Integration.Worker.MessagePump
         /// <summary>
         /// Initializes a new instance of the <see cref="MessagePumpService"/> class.
         /// </summary>
-        public MessagePumpService(ServiceBusEntityType entityType, TestConfig configuration, ITestOutputHelper outputWriter)
+        public MessagePumpService(IOrderProducer messageProducer, TestConfig configuration, ITestOutputHelper outputWriter)
         {
             Guard.NotNull(configuration, nameof(configuration));
+            Guard.NotNull(messageProducer, nameof(messageProducer));
             Guard.NotNull(outputWriter, nameof(outputWriter));
 
-            _entityType = entityType;
             _logger = new XunitTestLogger(outputWriter);
+            _messageProducer = messageProducer;
             _configuration = configuration;
         }
 
@@ -64,14 +63,10 @@ namespace Arcus.Templates.Tests.Integration.Worker.MessagePump
                     "Cannot simulate the message pump because the service is not yet started; please start this service before simulating");
             }
 
-            string connectionString = _configuration.GetServiceBusConnectionString(_entityType);
-            var producer = new TestServiceBusMessageProducer(connectionString);
-
             var operationId = $"operation-{Guid.NewGuid()}";
             var transactionId = $"transaction-{Guid.NewGuid()}";
             Order order = GenerateOrder();
-            ServiceBusMessage orderMessage = order.AsServiceBusMessage(operationId, transactionId);
-            await producer.ProduceAsync(orderMessage);
+            await _messageProducer.ProduceAsync(order, operationId, transactionId);
 
             OrderCreatedEventData orderCreatedEventData = _serviceBusMessageEventConsumer.ConsumeOrderEvent(operationId);
             Assert.NotNull(orderCreatedEventData);

@@ -7,11 +7,6 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
     /// </summary>
     public class AzureFunctionsServiceBusProjectOptions : ProjectOptions
     {
-        private AzureFunctionsServiceBusProjectOptions(ProjectOptions options) 
-            : base(options)
-        {
-        }
-
         /// <summary>
         /// Initializes a new instance of the <see cref="AzureFunctionsServiceBusProjectOptions" /> class.
         /// </summary>
@@ -24,8 +19,8 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
         /// </summary>
         public AzureFunctionsServiceBusProjectOptions WithExcludeSerilog()
         {
-            ProjectOptions options = AddOption("--exclude-serilog");
-            return new AzureFunctionsServiceBusProjectOptions(options);
+            AddOption("--exclude-serilog");
+            return this;
         }
     }
 }

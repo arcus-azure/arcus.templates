@@ -38,6 +38,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
                 AddOption($"--functions-worker {workerTypeArgument}");
 
             }
+
             return this;
         }
 

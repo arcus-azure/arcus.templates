@@ -1,5 +1,6 @@
 ﻿using System;
 using Arcus.Templates.Tests.Integration.Fixture;
+using Microsoft.Extensions.Logging;
 
 namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
 {
@@ -8,11 +9,14 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
     /// </summary>
     public class AzureFunctionsServiceBusProjectOptions : ProjectOptions
     {
+        private readonly ServiceBusEntityType _entityType;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="AzureFunctionsServiceBusProjectOptions" /> class.
         /// </summary>
-        public AzureFunctionsServiceBusProjectOptions()
+        public AzureFunctionsServiceBusProjectOptions(ServiceBusEntityType entityType)
         {
+            _entityType = entityType;
         }
 
         /// <summary>
@@ -28,9 +32,12 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
         {
             FunctionWorker = workerType;
 
-            string workerTypeArgument = DetermineFunctionWorkerArgument(workerType);
-            AddOption($"--functions-worker {workerTypeArgument}");
+            if (_entityType is ServiceBusEntityType.Topic)
+            {
+                string workerTypeArgument = DetermineFunctionWorkerArgument(workerType);
+                AddOption($"--functions-worker {workerTypeArgument}");
 
+            }
             return this;
         }
 

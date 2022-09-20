@@ -28,7 +28,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus.Logging
             // Arrange
             var config = TestConfig.Create();
             var options =
-                new AzureFunctionsServiceBusProjectOptions()
+                new AzureFunctionsServiceBusProjectOptions(entityType)
                     .WithExcludeSerilog();
 
             await using (var project = await AzureFunctionsServiceBusProject.StartNewProjectAsync(entityType, options, config, _outputWriter))

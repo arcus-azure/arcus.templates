@@ -35,7 +35,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus.MessageHan
         {
             var config = TestConfig.Create();
             var options =
-                new AzureFunctionsServiceBusProjectOptions()
+                new AzureFunctionsServiceBusProjectOptions(entityType)
                     .WithFunctionWorker(workerType);
 
             await using (var project = await AzureFunctionsServiceBusProject.StartNewProjectAsync(entityType, options, config, _outputWriter))

@@ -34,9 +34,9 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <DefineConstants>$(DefineConstants);Serilog_AppInsights;InProcess;Isolated</DefineConstants>
-    <InProcess>false</InProcess>
-    <Isolated>true</Isolated>
+    <DefineConstants>$(DefineConstants);Serilog_AppInsights;InProcess</DefineConstants>
+    <InProcess>true</InProcess>
+    <Isolated>false</Isolated>
     <Serilog_AppInsights>true</Serilog_AppInsights>
     <DockerFastModeProjectMountDirectory>/home/site/wwwroot</DockerFastModeProjectMountDirectory>
   </PropertyGroup>

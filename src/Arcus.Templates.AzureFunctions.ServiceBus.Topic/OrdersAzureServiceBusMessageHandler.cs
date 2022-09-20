@@ -13,7 +13,7 @@ namespace Arcus.Templates.AzureFunctions.ServiceBus.Topic
     /// <summary>
     /// Represents an <see cref="IAzureServiceBusMessageHandler{TMessage}"/> implementation that processes <see cref="Order"/> messages.
     /// </summary>
-    public class OrdersAzureServiceBusMessageHandler : IAzureServiceBusMessageHandler<Order> 
+    public class OrdersAzureServiceBusMessageHandler : IAzureServiceBusMessageHandler<Order>
     {
         private readonly ILogger<OrdersAzureServiceBusMessageHandler> _logger;
 
@@ -40,7 +40,7 @@ namespace Arcus.Templates.AzureFunctions.ServiceBus.Topic
         /// </exception>
         public Task ProcessMessageAsync(
             Order message,
-            AzureServiceBusMessageContext messageContext, 
+            AzureServiceBusMessageContext messageContext,
             MessageCorrelationInfo correlationInfo,
             CancellationToken cancellationToken)
         {

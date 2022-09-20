@@ -1,4 +1,5 @@
-﻿using Arcus.Templates.Tests.Integration.Fixture;
+﻿using System;
+using Arcus.Templates.Tests.Integration.Fixture;
 
 namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
 {
@@ -12,6 +13,36 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
         /// </summary>
         public AzureFunctionsServiceBusProjectOptions()
         {
+        }
+
+        /// <summary>
+        /// Gets the Azure Functions worker type the project should target.
+        /// </summary>
+        public FunctionWorker FunctionWorker { get; private set; } = FunctionWorker.InProcess;
+
+        /// <summary>
+        /// Sets the Azure Functions worker type to the project options when running the project template.
+        /// </summary>
+        /// <param name="workerType">The Azure Functions worker type the project should target.</param>
+        public AzureFunctionsServiceBusProjectOptions WithFunctionWorker(FunctionWorker workerType)
+        {
+            FunctionWorker = workerType;
+
+            string workerTypeArgument = DetermineFunctionWorkerArgument(workerType);
+            AddOption($"--functions-worker {workerTypeArgument}");
+
+            return this;
+        }
+
+        private static string DetermineFunctionWorkerArgument(FunctionWorker workerType)
+        {
+            switch (workerType)
+            {
+                case FunctionWorker.InProcess: return "inProcess";
+                case FunctionWorker.Isolated: return "isolated";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(workerType), workerType, "Unknown function worker type");
+            }
         }
 
         /// <summary>

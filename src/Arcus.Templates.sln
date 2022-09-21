@@ -21,7 +21,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arcus.Templates.AzureFuncti
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arcus.Templates.AzureFunctions.ServiceBus.Queue", "Arcus.Templates.AzureFunctions.ServiceBus.Queue\Arcus.Templates.AzureFunctions.ServiceBus.Queue.csproj", "{651CD421-8E6E-44B8-AF3B-E96DD6266B11}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arcus.Templates.AzureFunctions.ServiceBus.Topic", "Arcus.Templates.AzureFunctions.ServiceBus.Topic\Arcus.Templates.AzureFunctions.ServiceBus.Topic.csproj", "{869EDEC5-AF3F-4E41-A61E-235BD6232636}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arcus.Templates.AzureFunctions.ServiceBus.Topic", "Arcus.Templates.AzureFunctions.ServiceBus.Topic\Arcus.Templates.AzureFunctions.ServiceBus.Topic.csproj", "{869EDEC5-AF3F-4E41-A61E-235BD6232636}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arcus.Templates.EventHubs", "Arcus.Templates.EventHubs\Arcus.Templates.EventHubs.csproj", "{1E5D0205-06E0-4CD8-9C22-37F306BB23AC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -65,6 +67,10 @@ Global
 		{869EDEC5-AF3F-4E41-A61E-235BD6232636}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{869EDEC5-AF3F-4E41-A61E-235BD6232636}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{869EDEC5-AF3F-4E41-A61E-235BD6232636}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E5D0205-06E0-4CD8-9C22-37F306BB23AC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E5D0205-06E0-4CD8-9C22-37F306BB23AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E5D0205-06E0-4CD8-9C22-37F306BB23AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E5D0205-06E0-4CD8-9C22-37F306BB23AC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

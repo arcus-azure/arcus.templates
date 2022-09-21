@@ -7,10 +7,6 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http
     /// </summary>
     public class AzureFunctionsHttpProjectOptions : ProjectOptions
     {
-        private AzureFunctionsHttpProjectOptions(ProjectOptions existingOptions) : base(existingOptions)
-        {
-        }
-
         /// <summary>
         /// Initializes a new instance of the <see cref="AzureFunctionsHttpProjectOptions" /> class.
         /// </summary>
@@ -23,8 +19,8 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http
         /// </summary>
         public AzureFunctionsHttpProjectOptions WithIncludeHealthChecks()
         {
-            ProjectOptions newOptions = AddOption("--include-healthchecks");
-            return new AzureFunctionsHttpProjectOptions(newOptions);
+            AddOption("--include-healthchecks");
+            return this;
         }
         
         /// <summary>
@@ -32,9 +28,8 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http
         /// </summary>
         public AzureFunctionsHttpProjectOptions WithExcludeOpenApiDocs()
         {
-            ProjectOptions optionsWithExcludeOpenApi = AddOption("--exclude-openApi");
-
-            return new AzureFunctionsHttpProjectOptions(optionsWithExcludeOpenApi);
+            AddOption("--exclude-openApi");
+            return this;
         }
 
         /// <summary>
@@ -42,9 +37,8 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http
         /// </summary>
         public AzureFunctionsHttpProjectOptions WithExcludeSerilog()
         {
-            ProjectOptions optionsWithExcludeSerilog = AddOption("--exclude-serilog");
-
-            return new AzureFunctionsHttpProjectOptions(optionsWithExcludeSerilog);
+            AddOption("--exclude-serilog");
+            return this;
         }
     }
 }

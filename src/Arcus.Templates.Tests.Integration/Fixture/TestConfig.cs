@@ -6,6 +6,7 @@ using Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics.Con
 using Arcus.Templates.Tests.Integration.AzureFunctions.Http.Configuration;
 using Arcus.Templates.Tests.Integration.Worker;
 using Arcus.Templates.Tests.Integration.Worker.Configuration;
+using Arcus.Templates.Tests.Integration.Worker.EventHubs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Primitives;
 using GuardNet;
@@ -71,7 +72,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         }
 
         /// <summary>
-        /// Gets the project directory of the Service Bus project based on the given <paramref name="entity"/>.
+        /// Gets the project directory of the Service Bus project based on the given <paramref name="entityType"/>.
         /// </summary>
         public DirectoryInfo GetServiceBusProjectDirectory(ServiceBusEntityType entityType)
         {
@@ -82,6 +83,11 @@ namespace Arcus.Templates.Tests.Integration.Fixture
                 default:
                     throw new ArgumentOutOfRangeException(nameof(entityType), entityType, "Unknown Service Bus entity");
             }
+        }
+
+        public DirectoryInfo GetEventHubsProjectDirectory()
+        {
+            return PathCombineWithSourcesDirectory("Arcus.Templates.EventHubs");
         }
 
         /// <summary>
@@ -218,6 +224,16 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         }
 
         /// <summary>
+        /// Gets the TCP port on which the Service Bus topic worker projects on docker run on.
+        /// </summary>
+        public int GetDockerEventHubsWorkerHealthPort()
+        {
+            const string tcpPortKey = "Arcus:Worker:EventHubs:HealthPort";
+
+            return _configuration.GetValue<int>(tcpPortKey);
+        }
+
+        /// <summary>
         /// Gets the Service Bus connection string based on the given <paramref name="entity"/>.
         /// </summary>
         public string GetServiceBusConnectionString(ServiceBusEntityType entityType)
@@ -229,6 +245,17 @@ namespace Arcus.Templates.Tests.Integration.Fixture
                 default:
                     throw new ArgumentOutOfRangeException(nameof(entityType), entityType, "Unknown Service Bus entity");
             }
+        }
+
+        /// <summary>
+        /// Gets all the configuration to run the Azure EventHubs integration tests.
+        /// </summary>
+        public EventHubsConfig GetEventHubsConfig()
+        {
+            return new EventHubsConfig(
+                _configuration.GetValue<string>("Arcus:Worker:EventHubs:EventHubsName"),
+                _configuration.GetValue<string>("Arcus:Worker:EventHubs:ConnectionString"),
+                _configuration.GetValue<string>("Arcus:Worker:EventHubs:BlobStorage:StorageAccountConnectionString"));
         }
 
         /// <summary>

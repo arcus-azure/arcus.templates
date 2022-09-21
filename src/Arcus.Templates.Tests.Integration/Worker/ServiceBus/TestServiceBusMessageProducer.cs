@@ -1,16 +1,20 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Arcus.Templates.AzureFunctions.Http.Model;
 using Arcus.Templates.Tests.Integration.Fixture;
+using Arcus.Templates.Tests.Integration.Worker.MessagePump;
 using Azure.Messaging.ServiceBus;
 using GuardNet;
+using Microsoft.Azure.ServiceBus;
 using Microsoft.Extensions.Logging;
+using Order = Arcus.Templates.Tests.Integration.Worker.Fixture.Order;
 
 namespace Arcus.Templates.Tests.Integration.Worker.ServiceBus
 {
     /// <summary>
     /// Represents an event producer which sends events to an Azure Service Bus.
     /// </summary>
-    public class TestServiceBusMessageProducer
+    public class TestServiceBusMessageProducer : IOrderProducer
     {
         private readonly string _connectionString;
 
@@ -26,47 +30,21 @@ namespace Arcus.Templates.Tests.Integration.Worker.ServiceBus
         }
 
         /// <summary>
-        /// Creates an <see cref="TestServiceBusMessageProducer"/> instance which sends events to an Azure Service Bus topic subscription.
+        /// Sends the <paramref name="order"/> to the configured Azure Service Bus.
         /// </summary>
-        /// <param name="configuration">The test configuration used in this test suite.</param>
-        public static TestServiceBusMessageProducer CreateForTopic(TestConfig configuration)
+        /// <param name="order">The message to send.</param>
+        /// <param name="operationId">The ID to identify a single operation in a correlation scenario.</param>
+        /// <param name="transactionId">The ID to identify a whole transaction across interactions in a correlation scenario.</param>
+        /// <exception cref="ArgumentNullException">Thrown when the <paramref name="order"/> is <c>null</c>.</exception>
+        public async Task ProduceAsync(Order order, string operationId, string transactionId)
         {
-            Guard.NotNull(configuration, nameof(configuration), "Requires a test configuration to retrieve the Azure Service Bus topic entity-scoped connection string");
-            return CreateFor(configuration, ServiceBusEntityType.Topic);
-        }
+            Guard.NotNull(order, nameof(order), "Requires an Azure Service Bus message to send");
 
-        /// <summary>
-        /// Creates an <see cref="TestServiceBusMessageProducer"/> instance which sends events to an Azure Service Bus queue.
-        /// </summary>
-        /// <param name="configuration">The test configuration used in this test suite.</param>
-        public static TestServiceBusMessageProducer CreateForQueue(TestConfig configuration)
-        {
-            Guard.NotNull(configuration, nameof(configuration), "Requires a test configuration to retrieve the Azure Service Bus queue entity-scoped connection string");
-            return CreateFor(configuration, ServiceBusEntityType.Queue);
-        }
-
-        /// <summary>
-        /// Creates an <see cref="TestServiceBusMessageProducer"/> instance which sends events to an Azure Service Bus.
-        /// </summary>
-        /// <param name="configuration">The test configuration used in this test suite.</param>
-        /// <param name="entityType">The resource entity for which the worker template should be created.</param>
-        /// <exception cref="ArgumentNullException">Thrown when the <paramref name="configuration"/> is <c>null</c>.</exception>
-        public static TestServiceBusMessageProducer CreateFor(TestConfig configuration, ServiceBusEntityType entityType)
-        {
-            Guard.NotNull(configuration, nameof(configuration), "Requires a test configuration to retrieve the Azure Service Bus entity-scoped connection string");
-
-            string connectionString = configuration.GetServiceBusConnectionString(entityType);
-            return new TestServiceBusMessageProducer(connectionString);
-        }
-
-        /// <summary>
-        /// Sends the <paramref name="message"/> to the configured Azure Service Bus.
-        /// </summary>
-        /// <param name="message">The message to send.</param>
-        /// <exception cref="ArgumentNullException">Thrown when the <paramref name="message"/> is <c>null</c>.</exception>
-        public async Task ProduceAsync(ServiceBusMessage message)
-        {
-            Guard.NotNull(message, nameof(message), "Requires an Azure Service Bus message to send");
+            ServiceBusMessage message =
+                ServiceBusMessageBuilder.CreateForBody(order)
+                                        .WithOperationId(operationId)
+                                        .WithTransactionId(transactionId)
+                                        .Build();
 
             var connectionStringProperties = ServiceBusConnectionStringProperties.Parse(_connectionString);
             await using (var client = new ServiceBusClient(_connectionString))

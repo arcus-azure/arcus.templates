@@ -307,7 +307,7 @@ namespace Arcus.Templates.WebApi
 #if AppSettings
             string httpEndpointUrl = "http://+:" + configuration.GetValue<int>("ARCUS_HTTP_PORT"); 
 #else
-            string httpEndpointUrl = "http://+:" + configuration.GetValue("ARCUS_HTTP_PORT", 5000); 
+            string httpEndpointUrl = "http://+:" + configuration.GetValue("ARCUS_HTTP_PORT", 4068); 
 #endif
             builder.WebHost.ConfigureKestrel(options => options.AddServerHeader = false)
                            .UseUrls(httpEndpointUrl);

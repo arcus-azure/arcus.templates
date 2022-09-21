@@ -211,7 +211,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi
             {
                 UpdateFileInProject(
                     "appsettings.json", 
-                    contents => contents.Replace("\"ARCUS_HTTP_PORT\": 5000", $"\"ARCUS_HTTP_PORT\": {_baseUrl.Port}"));
+                    contents => contents.Replace("\"ARCUS_HTTP_PORT\": 4068", $"\"ARCUS_HTTP_PORT\": {_baseUrl.Port}"));
             }
             else
             {

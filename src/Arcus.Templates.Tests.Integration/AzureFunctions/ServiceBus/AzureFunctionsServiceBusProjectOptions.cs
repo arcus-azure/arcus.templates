@@ -36,7 +36,6 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
             {
                 string workerTypeArgument = DetermineFunctionWorkerArgument(workerType);
                 AddOption($"--functions-worker {workerTypeArgument}");
-
             }
 
             return this;

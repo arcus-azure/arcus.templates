@@ -140,7 +140,7 @@ stages:
               projectName: 'Arcus.Demo.AzureFunctions.ServiceBus.Topic.Isolated'
               projectAlias: 'arcus-az-func-servicebus-topic'
               projectOptions: '--functions-worker isolated'
-              ports: '$(Arcus.AzureFunctions.ServiceBus.Topic.Isolated.Port):$(Arcus.AzureFunctions.ServiceBus.Isolated.Topic.Port)'
+              ports: '$(Arcus.AzureFunctions.ServiceBus.Topic.Isolated.Port):$(Arcus.AzureFunctions.ServiceBus.Topic.Isolated.Port)'
               script: |
                 Get-Content './Arcus.Demo.AzureFunctions.ServiceBus.Topic.Isolated/Program.cs' -Raw |
                   % { $_ -replace '#error', '#warning' -replace '#if DEBUG', '#if RELEASE' } |

@@ -13,3 +13,4 @@ variables:
   Arcus.AzureFunctions.Http.HttpPort: '6060'
   Arcus.AzureFunctions.ServiceBus.Queue.Port: '42067'
   Arcus.AzureFunctions.ServiceBus.Topic.Port: '42068'
+  Arcus.AzureFunctions.EventHubs.Port: '42069'

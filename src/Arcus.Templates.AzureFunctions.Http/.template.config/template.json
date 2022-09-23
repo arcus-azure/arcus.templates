@@ -83,54 +83,55 @@
       "parameters": {
         "value": "#error"
       },
-      "replaces": "//#error",
-      "include-healthchecks": {
-        "type": "parameter",
-        "datatype": "bool",
-        "defaultValue": "false",
-        "description": "Include a health checks Azure Function to verify if the running Azure Function is healthy"
-      },
-      "IncludeHealthChecks": {
-        "type": "computed",
-        "value": "include-healthchecks"
-      },
-      "exclude-openApi": {
-        "type": "parameter",
-        "datatype": "bool",
-        "defaultValue": "false",
-        "description": "Exclude the OpenApi docs, UI generation from XML docs from the Azure Functions project"
-      },
-      "OpenApi": {
-        "type": "computed",
-        "value": "!(exclude-openApi)"
-      },
-      "exclude-serilog": {
-        "type": "parameter",
-        "datatype": "bool",
-        "defaultValue": "false",
-        "description": "Exclude the Serilog logging infrastructure in the worker project"
-      },
-      "Serilog_AppInsights": {
-        "type": "computed",
-        "value": "!(exclude-serilog)"
-      }
+      "replaces": "//#error"
     },
-    "postActions": [
-      {
-        "description": "Adding Reference to Microsoft.NET.Sdk.Functions Nuget package",
-        "actionId": "B17581D1-C5C9-4489-8F0A-004BE667B814",
-        "continueOnError": false,
-        "manualInstructions": [
-          {
-            "text": "Manually add the reference to Microsoft.NET.Sdk.Functions to your project file"
-          }
-        ],
-        "args": {
-          "referenceType": "package",
-          "reference": "Microsoft.NET.Sdk.Functions",
-          "version": "4.1.1",
-          "projectFileExtensions": ".csproj"
+    "include-healthchecks": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false",
+      "description": "Include a health checks Azure Function to verify if the running Azure Function is healthy"
+    },
+    "IncludeHealthChecks": {
+      "type": "computed",
+      "value": "include-healthchecks"
+    },
+    "exclude-openApi": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false",
+      "description": "Exclude the OpenApi docs, UI generation from XML docs from the Azure Functions project"
+    },
+    "OpenApi": {
+      "type": "computed",
+      "value": "!(exclude-openApi)"
+    },
+    "exclude-serilog": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false",
+      "description": "Exclude the Serilog logging infrastructure in the worker project"
+    },
+    "Serilog_AppInsights": {
+      "type": "computed",
+      "value": "!(exclude-serilog)"
+    }
+  },
+  "postActions": [
+    {
+      "description": "Adding Reference to Microsoft.NET.Sdk.Functions Nuget package",
+      "actionId": "B17581D1-C5C9-4489-8F0A-004BE667B814",
+      "continueOnError": false,
+      "manualInstructions": [
+        {
+          "text": "Manually add the reference to Microsoft.NET.Sdk.Functions to your project file"
         }
+      ],
+      "args": {
+        "referenceType": "package",
+        "reference": "Microsoft.NET.Sdk.Functions",
+        "version": "4.1.1",
+        "projectFileExtensions": ".csproj"
       }
-    ]
-  }
+    }
+  ]
+}

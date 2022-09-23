@@ -139,7 +139,7 @@ stages:
               projectName: 'Arcus.Demo.AzureFunctions.EventHubs.InProcess'
               projectAlias: 'arcus-az-func-eventhubs'
               options: '--functions-worker inProcess'
-              ports: '$(Arcus.AzureFunctions.EventHubs.Port):$(Arcus.AzureFunctions.EventHubs.Port)'
+              ports: '$(Arcus.AzureFunctions.EventHubs.InProcess.Port):$(Arcus.AzureFunctions.EventHubs.InProcess.Port)'
               script: |
                 Get-Content './Arcus.Demo.AzureFunctions.EventHubs.InProcess/Startup.cs' -Raw |
                   % { $_ -replace '#error', '#warning' -replace '#if DEBUG', '#if RELEASE' } |

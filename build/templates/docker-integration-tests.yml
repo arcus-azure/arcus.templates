@@ -151,23 +151,23 @@ stages:
                 EventHubsConnectionString=$(Arcus.EventHubs.ConnectionString)
                 AzureWebJobsStorage=$(Arcus.EventHubs.BlobStorage.StorageAccountConnectionString)
                 APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=$(Arcus.ApplicationInsights.InstrumentationKey)
-          #- template: 'run-new-project-from-template.yml'
-          #  parameters:
-          #    projectName: 'Arcus.Demo.AzureFunctions.EventHubs.Isolated'
-          #    projectAlias: 'arcus-az-func-eventhubs'
-          #    options: '--functions-worker inProcess'
-          #    ports: '$(Arcus.EventHubs.Worker.HealthPort):$(Arcus.EventHubs.Worker.HealthPort)'
-          #    script: |
-          #      Get-Content './Arcus.Demo.AzureFunctions.EventHubs.Isolated/Startup.cs' -Raw |
-          #        % { $_ -replace '#error', '#warning' -replace '#if DEBUG', '#if RELEASE' } |
-          #        Set-Content './Arcus.Demo.AzureFunctions.EventHubs.Isolated/Startup.cs'
-          #      Get-Content './Arcus.Demo.AzureFunctions.EventHubs.Isolated/SensorReadingFunction.cs' -Raw |
-          #        % { $_ -replace 'sensors', '$(Arcus.EventHubs.Docker.EventHubsName)' } |
-          #        Set-Content './Arcus.Demo.AzureFunctions.EventHubs.Isolated/SensorReadingFunction.cs'
-          #    envVars: |
-          #      EventHubsConnectionString=$(Arcus.EventHubs.ConnectionString)
-          #      AzureWebJobsStorage=$(Arcus.EventHubs.BlobStorage.StorageAccountConnectionString)
-          #      APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=$(Arcus.ApplicationInsights.InstrumentationKey)
+          - template: 'run-new-project-from-template.yml'
+            parameters:
+              projectName: 'Arcus.Demo.AzureFunctions.EventHubs.Isolated'
+              projectAlias: 'arcus-az-func-eventhubs'
+              options: '--functions-worker isolated'
+              ports: '$(Arcus.AzureFunctions.EventHubs.Isolated.Port):$(Arcus.AzureFunctions.EventHubs.Isolated.Port)'
+              script: |
+                Get-Content './Arcus.Demo.AzureFunctions.EventHubs.Isolated/Startup.cs' -Raw |
+                  % { $_ -replace '#error', '#warning' -replace '#if DEBUG', '#if RELEASE' } |
+                  Set-Content './Arcus.Demo.AzureFunctions.EventHubs.Isolated/Startup.cs'
+                Get-Content './Arcus.Demo.AzureFunctions.EventHubs.Isolated/SensorReadingFunction.cs' -Raw |
+                  % { $_ -replace 'sensors', '$(Arcus.EventHubs.Docker.EventHubsName)' } |
+                  Set-Content './Arcus.Demo.AzureFunctions.EventHubs.Isolated/SensorReadingFunction.cs'
+              envVars: |
+                EventHubsConnectionString=$(Arcus.EventHubs.ConnectionString)
+                AzureWebJobsStorage=$(Arcus.EventHubs.BlobStorage.StorageAccountConnectionString)
+                APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=$(Arcus.ApplicationInsights.InstrumentationKey)
           - task: UseDotNet@2
             displayName: 'Import .NET Core SDK ($(DotNet.Sdk.PreviousVersion))'
             inputs:
@@ -201,4 +201,16 @@ stages:
             inputs:
               targetType: 'inline'
               script: 'docker logs Arcus.Demo.EventHubs'
+            condition: failed()
+          - task: PowerShell@2
+            displayName: 'Get Docker container logs for Arcus.Demo.AzureFunctions.EventHubs.InProcess'
+            inputs:
+              targetType: 'inline'
+              script: 'docker logs Arcus.Demo.AzureFunctions.EventHubs.InProcess'
+            condition: failed()
+          - task: PowerShell@2
+            displayName: 'Get Docker container logs for Arcus.Demo.AzureFunctions.EventHubs.Isolated'
+            inputs:
+              targetType: 'inline'
+              script: 'docker logs Arcus.Demo.AzureFunctions.EventHubs.Isolated'
             condition: failed()

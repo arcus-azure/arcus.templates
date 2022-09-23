@@ -28,10 +28,10 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus.MessageHan
         }
 
         [Theory]
-        [InlineData(ServiceBusEntityType.Topic, FunctionWorker.Isolated)]
-        [InlineData(ServiceBusEntityType.Topic, FunctionWorker.InProcess)]
-        [InlineData(ServiceBusEntityType.Queue, FunctionWorker.InProcess)]
-        public async Task ServiceBusProject_WithOrderMessageHandlerImplementation_CorrectlyProcessesMessage(ServiceBusEntityType entityType, FunctionWorker workerType)
+        [InlineData(ServiceBusEntityType.Topic, FunctionsWorker.Isolated)]
+        [InlineData(ServiceBusEntityType.Topic, FunctionsWorker.InProcess)]
+        [InlineData(ServiceBusEntityType.Queue, FunctionsWorker.InProcess)]
+        public async Task ServiceBusProject_WithOrderMessageHandlerImplementation_CorrectlyProcessesMessage(ServiceBusEntityType entityType, FunctionsWorker workerType)
         {
             var config = TestConfig.Create();
             var options =

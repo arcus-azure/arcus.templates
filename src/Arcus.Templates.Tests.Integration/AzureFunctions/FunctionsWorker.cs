@@ -1,6 +1,6 @@
 ﻿namespace Arcus.Templates.Tests.Integration.AzureFunctions
 {
-    public enum FunctionWorker
+    public enum FunctionsWorker
     {
         InProcess,
         Isolated

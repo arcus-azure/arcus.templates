@@ -72,7 +72,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions
         /// <summary>
         /// Adds an test Azure storage account connection string to the Azure Function project so the project can start up correctly.
         /// </summary>
-        protected void AddLocalSettings(FunctionWorker workerType)
+        protected void AddLocalSettings(FunctionsWorker workerType)
         {
             string storageAccountConnectionString = AzureFunctionsConfig.StorageAccountConnectionString;
             string workerRuntime = DetermineWorkerRuntime(workerType);
@@ -81,7 +81,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions
                 $"{{ \"IsEncrypted\": false, " 
                 + $"\"Values\": {{ \"AzureWebJobsStorage\": \"{storageAccountConnectionString}\", \"FUNCTIONS_WORKER_RUNTIME\": \"{workerRuntime}\" }} }}");
             
-            if (workerType is FunctionWorker.InProcess)
+            if (workerType is FunctionsWorker.InProcess)
             {
                 json["Host"] = JsonNode.Parse($"{{ \"LocalHttpPort\": {RootEndpoint.Port} }}");
             }
@@ -89,12 +89,12 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions
             AddFileInProject("local.settings.json", json.ToString());
         }
 
-        private static string DetermineWorkerRuntime(FunctionWorker workerType)
+        private static string DetermineWorkerRuntime(FunctionsWorker workerType)
         {
             switch (workerType)
             {
-                case FunctionWorker.InProcess: return "dotnet";
-                case FunctionWorker.Isolated: return "dotnet-isolated";
+                case FunctionsWorker.InProcess: return "dotnet";
+                case FunctionsWorker.Isolated: return "dotnet-isolated";
                 default:
                     throw new ArgumentOutOfRangeException(nameof(workerType), workerType, "Unknown Azure Functions worker type");
             }

@@ -110,7 +110,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
             var project = new AzureFunctionsServiceBusProject(entityType, configuration, outputWriter);
             project.CreateNewProject(options);
             project.AddOrderMessageHandlerImplementation(options);
-            project.AddLocalSettings(options.FunctionWorker);
+            project.AddLocalSettings(options.FunctionsWorker);
 
             return project;
         }
@@ -125,14 +125,14 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
             AddTypeAsFile<OrderCreatedEvent>();
             AddTypeAsFile<OrderCreatedEventData>();
 
-            if (options.FunctionWorker is FunctionWorker.InProcess)
+            if (options.FunctionsWorker is FunctionsWorker.InProcess)
             {
                 AddTypeAsFile<TestOrdersAzureServiceBusMessageHandler>();
                 UpdateFileInProject("Startup.cs", contents =>
                     RemovesUserErrorsFromContents(contents)
                         .Replace("OrdersAzureServiceBusMessageHandler", nameof(TestOrdersAzureServiceBusMessageHandler))); 
             } 
-            else if (options.FunctionWorker is FunctionWorker.Isolated)
+            else if (options.FunctionsWorker is FunctionsWorker.Isolated)
             {
                 AddTypeAsFile<TestOrdersAzureServiceBusMessageHandler>();
                 UpdateFileInProject("Program.cs", contents =>

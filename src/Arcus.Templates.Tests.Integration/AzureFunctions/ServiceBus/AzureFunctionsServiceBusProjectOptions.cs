@@ -22,15 +22,15 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
         /// <summary>
         /// Gets the Azure Functions worker type the project should target.
         /// </summary>
-        public FunctionWorker FunctionWorker { get; private set; } = FunctionWorker.InProcess;
+        public FunctionsWorker FunctionsWorker { get; private set; } = FunctionsWorker.InProcess;
 
         /// <summary>
         /// Sets the Azure Functions worker type to the project options when running the project template.
         /// </summary>
         /// <param name="workerType">The Azure Functions worker type the project should target.</param>
-        public AzureFunctionsServiceBusProjectOptions WithFunctionWorker(FunctionWorker workerType)
+        public AzureFunctionsServiceBusProjectOptions WithFunctionWorker(FunctionsWorker workerType)
         {
-            FunctionWorker = workerType;
+            FunctionsWorker = workerType;
 
             if (_entityType is ServiceBusEntityType.Topic)
             {
@@ -41,12 +41,12 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
             return this;
         }
 
-        private static string DetermineFunctionWorkerArgument(FunctionWorker workerType)
+        private static string DetermineFunctionWorkerArgument(FunctionsWorker workerType)
         {
             switch (workerType)
             {
-                case FunctionWorker.InProcess: return "inProcess";
-                case FunctionWorker.Isolated: return "isolated";
+                case FunctionsWorker.InProcess: return "inProcess";
+                case FunctionsWorker.Isolated: return "isolated";
                 default:
                     throw new ArgumentOutOfRangeException(nameof(workerType), workerType, "Unknown function worker type");
             }

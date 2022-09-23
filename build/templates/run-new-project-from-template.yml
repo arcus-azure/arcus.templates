@@ -1,6 +1,7 @@
 parameters:
   projectName: ''
   projectAlias: ''
+  projectOptions: ''
   ports: ''
   script: ''
   envVars: {}
@@ -33,7 +34,7 @@ steps:
     inputs:
       command: 'custom'
       custom: 'new'
-      arguments: '${{ parameters.projectAlias }} -n ${{ parameters.projectName }}'
+      arguments: '${{ parameters.projectAlias }} -n ${{ parameters.projectName }} ${{ parameters.projectOptions }}'
   - task: PowerShell@2
     displayName: 'Run additional custom PS script'
     inputs:

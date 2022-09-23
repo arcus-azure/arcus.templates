@@ -54,12 +54,12 @@ namespace Arcus.Templates.Tests.Integration.Worker.Fixture
                 "Processing order {OrderId} for {OrderAmount} units of {OrderArticle}",
                 message.Id, message.Amount, message.ArticleNumber);
 
-            await PublishEventToEventGridAsync(message, correlationInfo.OperationId, correlationInfo);
+            await PublishEventToEventGridAsync(message, correlationInfo);
 
             _logger.LogInformation("Order {OrderId} processed", message.Id);
         }
 
-        private async Task PublishEventToEventGridAsync(Order orderMessage, string operationId, MessageCorrelationInfo correlationInfo)
+        private async Task PublishEventToEventGridAsync(Order orderMessage, MessageCorrelationInfo correlationInfo)
         {
             var eventData = new OrderCreatedEventData(
                 orderMessage.Id,
@@ -72,7 +72,7 @@ namespace Arcus.Templates.Tests.Integration.Worker.Fixture
                 CloudEventsSpecVersion.V1_0,
                 "OrderCreatedEvent",
                 new Uri("http://test-host"),
-                operationId,
+                correlationInfo.OperationId,
                 DateTime.UtcNow)
             {
                 Data = eventData,

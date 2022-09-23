@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Arcus.Messaging.Abstractions;
 using Arcus.Templates.Tests.Integration.Worker.Fixture;
 using Arcus.Templates.Tests.Integration.Worker.MessagePump;
 using Azure.Messaging.EventHubs;
 using Azure.Messaging.EventHubs.Producer;
+using Bogus;
 using GuardNet;
 
 namespace Arcus.Templates.Tests.Integration.Worker.EventHubs
@@ -45,7 +47,11 @@ namespace Arcus.Templates.Tests.Integration.Worker.EventHubs
             EventData message = 
                 EventDataBuilder.CreateForBody(order)
                                 .WithOperationId(operationId)
-                                .WithTransactionId(transactionId).Build();
+                                .WithTransactionId(transactionId)
+                                .Build();
+
+            // Not all EventHubs functionality in the Azure SDK supports the metadata retrieval of the `CorrelationId` property, so here we should use the properties instead.
+            message.Properties["Operation-Id"] = operationId;
 
             await using (var client = new EventHubProducerClient(_eventHubsConnectionString, _eventHubsName))
             {

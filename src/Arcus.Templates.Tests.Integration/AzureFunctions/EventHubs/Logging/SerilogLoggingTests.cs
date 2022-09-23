@@ -1,10 +1,9 @@
 ﻿using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.Fixture;
-using Microsoft.Extensions.Logging;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus.Logging
+namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs.Logging
 {
     [Collection(TestCollections.Integration)]
     [Trait("Category", TestTraits.Integration)]
@@ -21,19 +20,21 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus.Logging
         }
 
         [Theory]
-        [InlineData(ServiceBusEntityType.Queue)]
-        [InlineData(ServiceBusEntityType.Topic)]
-        public async Task ServiceBusProject_WithoutSerilog_CorrectlyProcessesMessage(ServiceBusEntityType entityType)
+        [InlineData(FunctionsWorker.InProcess)]
+        [InlineData(FunctionsWorker.Isolated)]
+        public async Task EventHubsProject_WithoutSerilog_CorrectlyProcessesMessage(FunctionsWorker workerType)
         {
             // Arrange
             var config = TestConfig.Create();
-            var options =
-                new AzureFunctionsServiceBusProjectOptions()
-                    .WithExcludeSerilog();
+            var options = new AzureFunctionsEventHubsProjectOptions()
+                .WithFunctionWorker(workerType)
+                .ExcludeSerilog();
 
-            await using (var project = await AzureFunctionsServiceBusProject.StartNewProjectAsync(entityType, options, config, _outputWriter))
+            // Act
+            await using (var project = await AzureFunctionsEventHubsProject.StartNewAsync(config, options, _outputWriter))
             {
-                // Act / Assert
+                project.TearDownOptions = TearDownOptions.KeepProjectDirectory;
+                // Assert
                 await project.MessagePump.SimulateMessageProcessingAsync();
                 Assert.DoesNotContain("Serilog", project.GetFileContentsOfProjectFile());
             }

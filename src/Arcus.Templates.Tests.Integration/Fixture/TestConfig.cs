@@ -106,6 +106,14 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         }
 
         /// <summary>
+        /// Gets the project directory of the Azure Functions EventHubs project template.
+        /// </summary>
+        public DirectoryInfo GetAzureFunctionsEventHubsProjectDirectory()
+        {
+            return PathCombineWithSourcesDirectory("Arcus.Templates.AzureFunctions.EventHubs");
+        }
+
+        /// <summary>
         /// Gets the project directory of the Azure Functions Databricks project template.
         /// </summary>
         public DirectoryInfo GetAzureFunctionsDatabricksJobMetricsProjectDirectory()

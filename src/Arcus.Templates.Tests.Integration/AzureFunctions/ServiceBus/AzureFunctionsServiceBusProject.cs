@@ -75,7 +75,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
         /// <param name="configuration">The collection of configuration values to correctly initialize the resulting project with secret values.</param>
         /// <param name="outputWriter">The output logger to add telemetry information during the creation and startup process.</param>
         /// <returns>
-        ///     An Azure Functions Service Bus Topic project with a set of services to interact with the worker.
+        ///     An Azure Functions Service Bus Topic project with a set of services to interact with the project.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         ///     Thrown when the <paramref name="options"/>, the <paramref name="configuration"/>, or the <paramref name="outputWriter"/> is <c>null</c>.
@@ -105,7 +105,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
             var project = new AzureFunctionsServiceBusProject(entityType, configuration, outputWriter);
             project.CreateNewProject(options);
             project.AddOrderMessageHandlerImplementation();
-            project.AddStorageAccount();
+            project.AddLocalSettings(FunctionsWorker.InProcess);
 
             return project;
         }

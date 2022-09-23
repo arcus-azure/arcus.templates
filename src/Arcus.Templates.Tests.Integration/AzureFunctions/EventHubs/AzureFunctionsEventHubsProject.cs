@@ -105,7 +105,6 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs
                 contents => contents.Replace("EventHubTrigger(\"sensors\"", $"EventHubTrigger(\"{eventHubsConfig.EventHubsName}\"")
                                     .Replace("var data = new EventData(message);", $"var data = new EventData(message);{Environment.NewLine}data.CorrelationId = properties[\"Operation-Id\"].GetString();"));
 
-
             string fileName = "";
             if (options.FunctionsWorker is FunctionsWorker.InProcess)
             {

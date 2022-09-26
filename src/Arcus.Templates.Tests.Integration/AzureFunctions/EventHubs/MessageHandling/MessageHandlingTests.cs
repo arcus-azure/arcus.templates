@@ -21,10 +21,19 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs.MessageHand
             _outputWriter = outputWriter;
         }
 
-        [Theory]
-        [InlineData(FunctionsWorker.InProcess)]
-        [InlineData(FunctionsWorker.Isolated)]
-        public async Task EventHubsProject_WithDefaultOptions_CorrectlyProcessesMessage(FunctionsWorker workerType)
+        [Fact]
+        public async Task EventHubsProject_AsIsolated_CorrectlyProcessesMessage()
+        {
+            await TestEventHubsProjectWithWorkerTypeCorrectlyProcessesMessage(FunctionsWorker.Isolated);
+        }
+
+        [Fact]
+        public async Task EventHubsProject_AsInProcess_CorrectlyProcessesMessage()
+        {
+            await TestEventHubsProjectWithWorkerTypeCorrectlyProcessesMessage(FunctionsWorker.InProcess);
+        }
+
+        private async Task TestEventHubsProjectWithWorkerTypeCorrectlyProcessesMessage(FunctionsWorker workerType)
         {
             // Arrange
             var config = TestConfig.Create();
@@ -34,17 +43,6 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs.MessageHand
                 // Act / Assert
                 await project.MessagePump.SimulateMessageProcessingAsync();
             }
-        }
-
-        [Fact]
-        public async Task SendEventToEventHubs()
-        {
-            var configuration = TestConfig.Create();
-            EventHubsConfig eventHubsConfig = configuration.GetEventHubsConfig();
-            var producer = new TestEventHubsMessageProducer(eventHubsConfig.EventHubsName, eventHubsConfig.EventHubsConnectionString);
-            await using var service = new MessagePumpService(producer, configuration, _outputWriter);
-            await service.StartAsync();
-            await service.SimulateMessageProcessingAsync();
         }
     }
 }

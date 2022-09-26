@@ -101,7 +101,7 @@
       "type": "parameter",
       "datatype": "bool",
       "defaultValue": "false",
-      "description": "Exclude the Serilog logging infrastructure in the worker project"
+      "description": "Exclude the Serilog logging infrastructure in the Azure Functions project"
     },
     "Serilog_AppInsights": {
       "type": "computed",
@@ -121,7 +121,7 @@
       "args": {
         "referenceType": "package",
         "reference": "Microsoft.NET.Sdk.Functions",
-        "version": "4.1.1",
+        "version": "4.1.13",
         "projectFileExtensions": ".csproj"
       }
     }

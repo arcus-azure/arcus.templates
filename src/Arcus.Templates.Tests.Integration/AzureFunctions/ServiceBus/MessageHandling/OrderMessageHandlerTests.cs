@@ -27,11 +27,25 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus.MessageHan
             _outputWriter = outputWriter;
         }
 
-        [Theory]
-        [InlineData(ServiceBusEntityType.Topic, FunctionsWorker.Isolated)]
-        [InlineData(ServiceBusEntityType.Topic, FunctionsWorker.InProcess)]
-        [InlineData(ServiceBusEntityType.Queue, FunctionsWorker.InProcess)]
-        public async Task ServiceBusProject_WithOrderMessageHandlerImplementation_CorrectlyProcessesMessage(ServiceBusEntityType entityType, FunctionsWorker workerType)
+        [Fact]
+        public async Task ServiceBusTopicProject_AsIsolated_CorrectlyProcessesMessage()
+        {
+           await TestServiceBusProjectWithWorkerTypeCorrectlyProcessesMessageAsync(ServiceBusEntityType.Topic, FunctionsWorker.Isolated);
+        }
+
+        [Fact]
+        public async Task ServiceBusTopicProject_AsInProcess_CorrectlyProcessesMessage()
+        {
+            await TestServiceBusProjectWithWorkerTypeCorrectlyProcessesMessageAsync(ServiceBusEntityType.Topic, FunctionsWorker.InProcess);
+        }
+
+        [Fact]
+        public async Task ServiceBusQueueProject_AsInProcess_CorrectlyProcessesMessage()
+        {
+            await TestServiceBusProjectWithWorkerTypeCorrectlyProcessesMessageAsync(ServiceBusEntityType.Topic, FunctionsWorker.Isolated);
+        }
+
+        private async Task TestServiceBusProjectWithWorkerTypeCorrectlyProcessesMessageAsync(ServiceBusEntityType entityType, FunctionsWorker workerType)
         {
             var config = TestConfig.Create();
             var options =

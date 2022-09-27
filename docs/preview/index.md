@@ -9,20 +9,8 @@ sidebar_label: Welcome
 sidebar_position: 1
 ---
 
-# Using our templates
-
-Arcus Templates provides various project templates:
-
-* **Azure Service Bus**
-    * [(Worker) Azure Service Bus Queue](./features/servicebus-queue-worker-template.md)
-    * [(Worker) Azure Service Bus Topic](./features/servicebus-topic-worker-template.md)
-    * [(Azure Functions) Azure Service Bus Queue Trigger](./features/azurefunctions-servicebus-queue-template.md)
-    * [(Azure Functions) Azure Service Bus Topic Trigger](./features/azurefunctions-servicebus-topic-template.md)
-* **HTTP**
-    * [Web API](./features/web-api-template.md)
-    * [(Azure Functions) HTTP Trigger (Azure Functions)](./features/azurefunctions-http-template.md)
-* **Other**
-    * * [(Azure Functions) Databricks Job Metrics](./features/azurefunctions-databricks-jobmetrics-template.md)
+# Introduction
+Arcus provides a ton of features across multiple libraries. These libraries are build to work together. Background jobs build on top of messaging which uses security features that includes telemetry tracking, and so on. Arcus templates provides several .NET project templates which already includes all the best practices and boilerplate code to kickstart your project. We provide several types of templates to accommodate the most popular types of projects. Look around to find the template of your need, and if missing, [send us your ideas](https://github.com/arcus-azure/arcus.templates/issues/new/choose) for an additional project template.
 
 Want to use our Arcus project templates in Visual Studio? [Learn more in our documentation](./features/using-arcus-templates-in-visualstudio.md)!
 

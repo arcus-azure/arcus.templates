@@ -56,8 +56,6 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus.MessageHan
             {
                 // Act / Assert
                 await project.MessagePump.SimulateMessageProcessingAsync();
-                Assert.DoesNotContain("Serilog", project.GetFileContentsOfProjectFile());
-                Assert.DoesNotContain("Serilog", project.GetFileContentsInProject("Program.cs"));
             }
         }
     }

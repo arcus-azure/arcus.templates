@@ -8,10 +8,12 @@ using Arcus.Security.Core.Caching.Configuration;
 using Arcus.Templates.AzureFunctions.ServiceBus.Topic.Model;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+#if Serilog_AppInsights
 using Serilog;
 using Serilog.Configuration;
 using Serilog.Events;
 using Serilog.Extensions.Hosting;
+#endif
 
 namespace Arcus.Templates.AzureFunctions.ServiceBus.Topic
 {

@@ -35,12 +35,12 @@ namespace Arcus.Templates.Tests.Integration.Worker
         }
 
         /// <summary>
-        /// Gets the service that interacts with the exposed health report information of the Service Bus worker project.
+        /// Gets the service that interacts with the exposed health report information of the worker project.
         /// </summary>
         public HealthEndpointService Health { get; }
 
         /// <summary>
-        /// Gets the service that interacts with the hosted-service message pump in the Service Bus worker project.
+        /// Gets the service that interacts with the hosted-service message pump in the worker project.
         /// </summary>
         /// <remarks>
         ///     Only when the project is started, is this service available for interaction.

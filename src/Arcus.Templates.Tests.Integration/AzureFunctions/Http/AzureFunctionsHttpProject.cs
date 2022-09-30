@@ -186,6 +186,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http
             var project = new AzureFunctionsHttpProject(configuration, outputWriter);
             project.CreateNewProject(options);
             project.AddLocalSettings(FunctionsWorker.InProcess);
+            project.UpdateFileInProject("Startup.cs", contents => project.RemovesUserErrorsFromContents(contents));
 
             return project;
         }

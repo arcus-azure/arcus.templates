@@ -80,7 +80,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions
             var json = JsonNode.Parse(
                 $"{{ \"IsEncrypted\": false, " 
                 + $"\"Values\": {{ \"AzureWebJobsStorage\": \"{storageAccountConnectionString}\", \"FUNCTIONS_WORKER_RUNTIME\": \"{workerRuntime}\" }} }}");
-            
+
             if (workerType is FunctionsWorker.InProcess)
             {
                 json["Host"] = JsonNode.Parse($"{{ \"LocalHttpPort\": {RootEndpoint.Port} }}");

@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.AzureFunctions.Configuration;
 using Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics.Configuration;
@@ -71,16 +72,32 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions
         /// <summary>
         /// Adds an test Azure storage account connection string to the Azure Function project so the project can start up correctly.
         /// </summary>
-        protected void AddStorageAccount()
+        protected void AddLocalSettings(FunctionsWorker workerType)
         {
             string storageAccountConnectionString = AzureFunctionsConfig.StorageAccountConnectionString;
+            string workerRuntime = DetermineWorkerRuntime(workerType);
+
+            var json = JsonNode.Parse(
+                $"{{ \"IsEncrypted\": false, " 
+                + $"\"Values\": {{ \"AzureWebJobsStorage\": \"{storageAccountConnectionString}\", \"FUNCTIONS_WORKER_RUNTIME\": \"{workerRuntime}\" }} }}");
             
-            AddFileInProject("local.settings.json", 
-                $"{{ " +
-                    $"\"IsEncrypted\": false, " +
-                    $"\"Values\": {{ \"AzureWebJobsStorage\": \"{storageAccountConnectionString}\", \"FUNCTIONS_WORKER_RUNTIME\": \"dotnet\" }}, " +
-                    $"\"Host\": {{ \"LocalHttpPort\": {RootEndpoint.Port} }}" +
-                $"}}");
+            if (workerType is FunctionsWorker.InProcess)
+            {
+                json["Host"] = JsonNode.Parse($"{{ \"LocalHttpPort\": {RootEndpoint.Port} }}");
+            }
+
+            AddFileInProject("local.settings.json", json.ToString());
+        }
+
+        private static string DetermineWorkerRuntime(FunctionsWorker workerType)
+        {
+            switch (workerType)
+            {
+                case FunctionsWorker.InProcess: return "dotnet";
+                case FunctionsWorker.Isolated: return "dotnet-isolated";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(workerType), workerType, "Unknown Azure Functions worker type");
+            }
         }
 
         /// <summary>

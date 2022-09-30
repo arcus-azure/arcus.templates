@@ -124,13 +124,27 @@ stages:
                 APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=$(Arcus.ApplicationInsights.InstrumentationKey)
           - template: 'run-new-project-from-template.yml'
             parameters:
-              projectName: 'Arcus.Demo.AzureFunctions.ServiceBus.Topic'
+              projectName: 'Arcus.Demo.AzureFunctions.ServiceBus.Topic.InProcess'
               projectAlias: 'arcus-az-func-servicebus-topic'
-              ports: '$(Arcus.AzureFunctions.ServiceBus.Topic.Port):$(Arcus.AzureFunctions.ServiceBus.Topic.Port)'
+              projectOptions: '--functions-worker inProcess'
+              ports: '$(Arcus.AzureFunctions.ServiceBus.Topic.InProcess.Port):$(Arcus.AzureFunctions.ServiceBus.Topic.InProcess.Port)'
               script: |
-                Get-Content './Arcus.Demo.AzureFunctions.ServiceBus.Topic/Startup.cs' -Raw |
+                Get-Content './Arcus.Demo.AzureFunctions.ServiceBus.Topic.InProcess/Startup.cs' -Raw |
                   % { $_ -replace '#error', '#warning' -replace '#if DEBUG', '#if RELEASE' } |
-                  Set-Content './Arcus.Demo.AzureFunctions.ServiceBus.Topic/Startup.cs'
+                  Set-Content './Arcus.Demo.AzureFunctions.ServiceBus.Topic.InProcess/Startup.cs'
+              envVars: |
+                ServiceBusConnectionString=$(Arcus.Worker.ServiceBus.Topic.ConnectionString)
+                APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=$(Arcus.ApplicationInsights.InstrumentationKey)
+          - template: 'run-new-project-from-template.yml'
+            parameters:
+              projectName: 'Arcus.Demo.AzureFunctions.ServiceBus.Topic.Isolated'
+              projectAlias: 'arcus-az-func-servicebus-topic'
+              projectOptions: '--functions-worker isolated'
+              ports: '$(Arcus.AzureFunctions.ServiceBus.Topic.Isolated.Port):$(Arcus.AzureFunctions.ServiceBus.Topic.Isolated.Port)'
+              script: |
+                Get-Content './Arcus.Demo.AzureFunctions.ServiceBus.Topic.Isolated/Program.cs' -Raw |
+                  % { $_ -replace '#error', '#warning' -replace '#if DEBUG', '#if RELEASE' } |
+                  Set-Content './Arcus.Demo.AzureFunctions.ServiceBus.Topic.Isolated/Program.cs'
               envVars: |
                 ServiceBusConnectionString=$(Arcus.Worker.ServiceBus.Topic.ConnectionString)
                 APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=$(Arcus.ApplicationInsights.InstrumentationKey)
@@ -167,4 +181,16 @@ stages:
             inputs:
               targetType: 'inline'
               script: 'docker logs Arcus.Demo.EventHubs'
+            condition: failed()
+          - task: PowerShell@2
+            displayName: 'Get Docker container logs for Arcus.Demo.AzureFunctions.ServiceBus.Topic.InProcess'
+            inputs:
+              targetType: 'inline'
+              script: 'docker logs Arcus.Demo.AzureFunctions.ServiceBus.Topic.InProcess'
+            condition: failed()
+          - task: PowerShell@2
+            displayName: 'Get Docker container logs for Arcus.Demo.AzureFunctions.ServiceBus.Topic.Isolated'
+            inputs:
+              targetType: 'inline'
+              script: 'docker logs Arcus.Demo.AzureFunctions.ServiceBus.Topic.Isolated'
             condition: failed()

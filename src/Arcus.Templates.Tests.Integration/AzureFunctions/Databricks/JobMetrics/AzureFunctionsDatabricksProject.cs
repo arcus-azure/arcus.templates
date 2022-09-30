@@ -57,7 +57,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics
             var project = new AzureFunctionsDatabricksProject(configuration, outputWriter);
             project.CreateNewProject(new ProjectOptions());
             project.AddDatabricksSecurityToken(project.AzureFunctionDatabricksConfig.SecurityToken);
-            project.AddStorageAccount();
+            project.AddLocalSettings(FunctionsWorker.InProcess);
             
             return project;
         }

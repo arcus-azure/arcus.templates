@@ -20,24 +20,49 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus.Logging
             _outputWriter = outputWriter;
         }
 
-        [Theory]
-        [InlineData(ServiceBusEntityType.Queue)]
-        [InlineData(ServiceBusEntityType.Topic)]
-        public async Task ServiceBusProject_WithoutSerilog_CorrectlyProcessesMessage(ServiceBusEntityType entityType)
+        [Fact]
+        public async Task ServiceBusTopicProjectIsolated_WithoutSerilog_CorrectlyProcessesMessage()
+        {
+            await TestServiceBusProjectWithoutSerilogCorrectlyProcessesMessage(ServiceBusEntityType.Topic, FunctionsWorker.Isolated);
+        }
+
+        [Fact]
+        public async Task ServiceBusTopicProjectInProcess_WithoutSerilog_CorrectlyProcessesMessage()
+        {
+            await TestServiceBusProjectWithoutSerilogCorrectlyProcessesMessage(ServiceBusEntityType.Topic, FunctionsWorker.InProcess);
+        }
+
+        [Fact]
+        public async Task ServiceBusQueueProjectInProcess_WithoutSerilog_CorrectlyProcessesMessage()
+        {
+            await TestServiceBusProjectWithoutSerilogCorrectlyProcessesMessage(ServiceBusEntityType.Queue, FunctionsWorker.InProcess);
+        }
+
+        private async Task TestServiceBusProjectWithoutSerilogCorrectlyProcessesMessage(ServiceBusEntityType entityType, FunctionsWorker workerType)
         {
             // Arrange
             var config = TestConfig.Create();
             var options =
-                new AzureFunctionsServiceBusProjectOptions()
+                new AzureFunctionsServiceBusProjectOptions(entityType)
+                    .WithFunctionWorker(workerType)
                     .WithExcludeSerilog();
 
             await using (var project = await AzureFunctionsServiceBusProject.StartNewProjectAsync(entityType, options, config, _outputWriter))
             {
                 // Act / Assert
                 await project.MessagePump.SimulateMessageProcessingAsync();
+                Assert.DoesNotContain("Serilog", project.GetFileContentsOfProjectFile());
 
-                string projectFileContents = project.GetFileContentsOfProjectFile();
-                Assert.DoesNotContain(projectFileContents, "Serilog");
+                // TODO: will refactor after all Azure Functions project templates are migrated.
+                if (workerType is FunctionsWorker.InProcess)
+                {
+                    Assert.DoesNotContain("Serilog", project.GetFileContentsInProject("Startup.cs"));
+                }
+
+                if (workerType is FunctionsWorker.Isolated)
+                {
+                    Assert.DoesNotContain("Serilog", project.GetFileContentsInProject("Program.cs"));
+                }
             }
         }
     }

@@ -1,5 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.Fixture;
+using Arcus.Templates.Tests.Integration.Worker;
+using Arcus.Templates.Tests.Integration.Worker.Fixture;
+using Arcus.Templates.Tests.Integration.Worker.MessagePump;
+using Azure.Messaging.ServiceBus;
+using Bogus;
+using Microsoft.Azure.ServiceBus;
 using Microsoft.Extensions.Logging;
 using Xunit;
 using Xunit.Abstractions;
@@ -20,14 +27,32 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus.MessageHan
             _outputWriter = outputWriter;
         }
 
-        [Theory]
-        [InlineData(ServiceBusEntityType.Queue)]
-        [InlineData(ServiceBusEntityType.Topic)]
-        public async Task ServiceBusProject_WithOrderMessageHandlerImplementation_CorrectlyProcessesMessage(ServiceBusEntityType entityType)
+        [Fact]
+        public async Task ServiceBusTopicProject_AsIsolated_CorrectlyProcessesMessage()
         {
-            // Arrange
+           await TestServiceBusProjectWithWorkerTypeCorrectlyProcessesMessageAsync(ServiceBusEntityType.Topic, FunctionsWorker.Isolated);
+        }
+
+        [Fact]
+        public async Task ServiceBusTopicProject_AsInProcess_CorrectlyProcessesMessage()
+        {
+            await TestServiceBusProjectWithWorkerTypeCorrectlyProcessesMessageAsync(ServiceBusEntityType.Topic, FunctionsWorker.InProcess);
+        }
+
+        [Fact]
+        public async Task ServiceBusQueueProject_AsInProcess_CorrectlyProcessesMessage()
+        {
+            await TestServiceBusProjectWithWorkerTypeCorrectlyProcessesMessageAsync(ServiceBusEntityType.Topic, FunctionsWorker.Isolated);
+        }
+
+        private async Task TestServiceBusProjectWithWorkerTypeCorrectlyProcessesMessageAsync(ServiceBusEntityType entityType, FunctionsWorker workerType)
+        {
             var config = TestConfig.Create();
-            await using (var project = await AzureFunctionsServiceBusProject.StartNewProjectAsync(entityType, config, _outputWriter))
+            var options =
+                new AzureFunctionsServiceBusProjectOptions(entityType)
+                    .WithFunctionWorker(workerType);
+
+            await using (var project = await AzureFunctionsServiceBusProject.StartNewProjectAsync(entityType, options, config, _outputWriter))
             {
                 // Act / Assert
                 await project.MessagePump.SimulateMessageProcessingAsync();

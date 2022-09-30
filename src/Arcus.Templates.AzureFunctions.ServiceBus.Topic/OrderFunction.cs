@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Arcus.Messaging.Abstractions;
@@ -6,9 +7,15 @@ using Arcus.Messaging.Abstractions.ServiceBus;
 using Arcus.Messaging.Abstractions.ServiceBus.MessageHandling;
 using Arcus.Templates.AzureFunctions.ServiceBus.Topic.Model;
 using Azure.Messaging.ServiceBus;
-using GuardNet;
 using Microsoft.Azure.ServiceBus;
+using GuardNet;
+#if Isolated
+using System.Text.Json;
+using Microsoft.Azure.Functions.Worker;
+#endif
+#if InProcess
 using Microsoft.Azure.WebJobs;
+#endif
 using Microsoft.Extensions.Logging;
 
 namespace Arcus.Templates.AzureFunctions.ServiceBus.Topic
@@ -34,6 +41,7 @@ namespace Arcus.Templates.AzureFunctions.ServiceBus.Topic
             _jobId = Guid.NewGuid().ToString();
         }
 
+#if InProcess
         /// <summary>
         /// Process an Azure Service Bus topic <paramref name="message"/> as an <see cref="Order"/>.
         /// </summary>
@@ -51,6 +59,45 @@ namespace Arcus.Templates.AzureFunctions.ServiceBus.Topic
             AzureServiceBusMessageContext messageContext = message.GetMessageContext(_jobId);
             MessageCorrelationInfo correlationInfo = message.GetCorrelationInfo();
             await _messageRouter.RouteMessageAsync(message, messageContext, correlationInfo, cancellationToken);
+        } 
+#endif
+#if Isolated
+        /// <summary>
+        /// Process an Azure Service Bus topic <paramref name="messageBody"/> as an <see cref="Order"/>.
+        /// </summary>
+        /// <param name="messageBody">The incoming message on the Azure Service Bus topic, representing an <see cref="Order"/>.</param>
+        /// <param name="context">The execution context for this Azure Functions instance.</param>
+        [Function("order-processing")]
+        public async Task Run(
+            [ServiceBusTrigger("order-topic", "order-subscription", Connection = "ServiceBusConnectionString")] byte[] messageBody,
+            FunctionContext context)
+        {
+            ServiceBusReceivedMessage message = ConvertToServiceBusMessage(messageBody, context);
+            var logger = context.GetLogger<ILogger<OrderFunction>>();
+            logger.LogInformation($"C# ServiceBus topic trigger function processed message: {message.MessageId}");
+
+            AzureServiceBusMessageContext messageContext = message.GetMessageContext(_jobId);
+            MessageCorrelationInfo correlationInfo = message.GetCorrelationInfo();
+            await _messageRouter.RouteMessageAsync(message, messageContext, correlationInfo, CancellationToken.None);
         }
+
+        private static ServiceBusReceivedMessage ConvertToServiceBusMessage(byte[] messageBody, FunctionContext context)
+        {
+            var applicationProperties = new Dictionary<string, object>();
+            if (context.BindingContext.BindingData.TryGetValue("ApplicationProperties", out object applicationPropertiesObj))
+            {
+                var json = applicationPropertiesObj.ToString();
+                applicationProperties = JsonSerializer.Deserialize<Dictionary<string, object>>(json);
+            }
+
+            var message = ServiceBusModelFactory.ServiceBusReceivedMessage(
+                body: BinaryData.FromBytes(messageBody),
+                messageId: context.BindingContext.BindingData["MessageId"]?.ToString(),
+                correlationId: context.BindingContext.BindingData["CorrelationId"]?.ToString(),
+                properties: applicationProperties);
+
+            return message;
+        }
+#endif
     }
 }

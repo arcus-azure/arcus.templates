@@ -15,3 +15,5 @@ variables:
   Arcus.AzureFunctions.ServiceBus.Topic.Port: '42068'
   Arcus.AzureFunctions.EventHubs.InProcess.Port: '42070'
   Arcus.AzureFunctions.EventHubs.Isolated.Port: '42071'
+  Arcus.AzureFunctions.ServiceBus.Topic.InProcess.Port: '42068'
+  Arcus.AzureFunctions.ServiceBus.Topic.Isolated.Port: '42088'

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.AzureFunctions.Http.Api;
 using Arcus.Templates.Tests.Integration.Fixture;

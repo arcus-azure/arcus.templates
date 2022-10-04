@@ -228,8 +228,8 @@ stages:
               targetType: 'inline'
               script: 'docker logs Arcus.Demo.AzureFunctions.EventHubs.Isolated'
             condition: failed()
-         - task: PowerShell@2
-           displayName: 'Get Docker container logs for Arcus.Demo.AzureFunctions.ServiceBus.Topic.InProcess'
+          - task: PowerShell@2
+            displayName: 'Get Docker container logs for Arcus.Demo.AzureFunctions.ServiceBus.Topic.InProcess'
             inputs:
               targetType: 'inline'
               script: 'docker logs Arcus.Demo.AzureFunctions.ServiceBus.Topic.InProcess'

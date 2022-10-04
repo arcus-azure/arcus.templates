@@ -146,7 +146,7 @@ namespace Arcus.Templates.AzureFunctions.Http
         {
             Guard.NotNull(request, nameof(request), "Requires a HTTP request to verify if the request accepts a JSON response");
             return GetAcceptMediaTypes(request).Any(mediaType => mediaType == "application/json");
-        }
+        } 
 
         /// <summary>
         /// Gets all the media types in the incoming <paramref name="request"/>'s 'Accept' header.

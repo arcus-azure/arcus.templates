@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net.Http;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.AzureFunctions.Http.Api;
@@ -9,6 +10,8 @@ using Arcus.Templates.Tests.Integration.WebApi.Health;
 using Arcus.Templates.Tests.Integration.WebApi.Swagger;
 using Flurl;
 using GuardNet;
+using Polly.Retry;
+using Polly;
 using Xunit.Abstractions;
 
 namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http
@@ -23,7 +26,9 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http
         /// Gets the name of the order Azure Function.
         /// </summary>
         public const string OrderFunctionName = "order";
-        
+
+        private static readonly HttpClient HttpClient = new HttpClient();
+
         private AzureFunctionsHttpProject(
             TestConfig configuration, 
             ITestOutputHelper outputWriter) 
@@ -185,10 +190,30 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http
             
             var project = new AzureFunctionsHttpProject(configuration, outputWriter);
             project.CreateNewProject(options);
-            project.AddLocalSettings(FunctionsWorker.InProcess);
-            project.UpdateFileInProject("Startup.cs", contents => project.RemovesUserErrorsFromContents(contents));
+            project.AddLocalSettings(options.FunctionsWorker);
+            project.UpdateFileInProject("local.settings.json", contents =>
+            {
+                var json = JsonNode.Parse(contents);
+                json["Host"] = JsonNode.Parse($"{{ \"LocalHttpPort\": {project.RootEndpoint.Port} }}");
+            
+                return json.ToString();
+            });
+
+            string fileName = DetermineStartupCodeFileName(options.FunctionsWorker);
+            project.UpdateFileInProject(fileName, contents => project.RemovesUserErrorsFromContents(contents));
 
             return project;
+        }
+
+        private static string DetermineStartupCodeFileName(FunctionsWorker workerType)
+        {
+            switch (workerType)
+            {
+                case FunctionsWorker.InProcess: return "Startup.cs";
+                case FunctionsWorker.Isolated: return "Program.cs";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(workerType), workerType, "Unknown Azure Functions worker type");
+            }
         }
 
         /// <summary>
@@ -198,6 +223,32 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http
         {
             Run(Configuration.BuildConfiguration, TargetFramework.Net6_0);
             await WaitUntilTriggerIsAvailableAsync(OrderFunctionEndpoint);
+        }
+
+        private async Task WaitUntilTriggerIsAvailableAsync(Uri endpoint)
+        {
+            Guard.NotNull(endpoint, nameof(endpoint), "Requires an HTTP endpoint for the Azure Functions project so the project knows when the Azure Functions project is available");
+            
+            AsyncRetryPolicy retryPolicy =
+                Policy.Handle<Exception>()
+                      .WaitAndRetryForeverAsync(index => TimeSpan.FromMilliseconds(500));
+
+            PolicyResult<HttpResponseMessage> result =
+                await Policy.TimeoutAsync(TimeSpan.FromSeconds(30))
+                            .WrapAsync(retryPolicy)
+                            .ExecuteAndCaptureAsync(() => HttpClient.GetAsync(endpoint));
+
+            if (result.Outcome == OutcomeType.Successful)
+            {
+                Logger.WriteLine("Test template Azure Functions project fully started at: {0}", endpoint);
+            }
+            else
+            {
+                Logger.WriteLine("Test template Azure Functions project could not be started at: {0}", endpoint);
+                throw new CannotStartTemplateProjectException(
+                    "The test project created from the Azure Functions project template doesn't seem to be running, "
+                    + "please check any build or runtime errors that could occur when the test project was created");
+            }
         }
     }
 }

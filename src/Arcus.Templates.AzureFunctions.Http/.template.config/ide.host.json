@@ -11,6 +11,13 @@
   "isApi": true,
   "symbolInfo": [
     {
+      "id": "functions-worker",
+      "name": {
+        "text": "Functions Worker"
+      },
+      "isVisible": true
+    },
+    {
       "id": "include-healthchecks",
       "name": {
         "text": "Include Health Checks"

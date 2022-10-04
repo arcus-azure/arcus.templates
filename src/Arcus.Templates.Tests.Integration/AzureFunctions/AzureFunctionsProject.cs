@@ -22,8 +22,6 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions
     {
         protected const string ApplicationInsightsConnectionStringKeyVariable = "APPLICATIONINSIGHTS_CONNECTION_STRING";
 
-        private static readonly HttpClient HttpClient = new HttpClient();
-        
         /// <summary>
         /// Initializes a new instance of the <see cref="AzureFunctionsProject"/> class.
         /// </summary>
@@ -81,11 +79,6 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions
                 $"{{ \"IsEncrypted\": false, " 
                 + $"\"Values\": {{ \"AzureWebJobsStorage\": \"{storageAccountConnectionString}\", \"FUNCTIONS_WORKER_RUNTIME\": \"{workerRuntime}\" }} }}");
 
-            if (workerType is FunctionsWorker.InProcess)
-            {
-                json["Host"] = JsonNode.Parse($"{{ \"LocalHttpPort\": {RootEndpoint.Port} }}");
-            }
-
             AddFileInProject("local.settings.json", json.ToString());
         }
 
@@ -141,38 +134,6 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions
                 + "or possible check for any compile errors or runtime failures (via the 'TearDownOptions') in the created test project based on the project template", exception);
         }
 
-        /// <summary>
-        /// Waits until the Azure Function project is fully running and ready to be interacted with.
-        /// </summary>
-        /// <param name="endpoint">The HTTP endpoint for the Azure Functions project to poll so the test project knows that the Azure Functions project is available.</param>
-        /// <exception cref="ArgumentNullException">Thrown when the <paramref name="endpoint"/> is <c>null</c>.</exception>
-        /// <exception cref="CannotStartTemplateProjectException">Thrown when the HTTP <paramref name="endpoint"/> was still not available after polling for some time.</exception>
-        protected async Task WaitUntilTriggerIsAvailableAsync(Uri endpoint)
-        {
-            Guard.NotNull(endpoint, nameof(endpoint), "Requires an HTTP endpoint for the Azure Functions project so the project knows when the Azure Functions project is available");
-            
-            AsyncRetryPolicy retryPolicy =
-                Policy.Handle<Exception>()
-                      .WaitAndRetryForeverAsync(index => TimeSpan.FromMilliseconds(500));
-
-            PolicyResult<HttpResponseMessage> result =
-                await Policy.TimeoutAsync(TimeSpan.FromSeconds(30))
-                            .WrapAsync(retryPolicy)
-                            .ExecuteAndCaptureAsync(() => HttpClient.GetAsync(endpoint));
-
-            if (result.Outcome == OutcomeType.Successful)
-            {
-                Logger.WriteLine("Test template Azure Functions project fully started at: {0}", endpoint);
-            }
-            else
-            {
-                Logger.WriteLine("Test template Azure Functions project could not be started at: {0}", endpoint);
-                throw new CannotStartTemplateProjectException(
-                    "The test project created from the Azure Functions project template doesn't seem to be running, "
-                    + "please check any build or runtime errors that could occur when the test project was created");
-            }
-        }
-        
         /// <summary>
         /// Performs additional application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>

@@ -8,7 +8,8 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "http://localhost:4068/api/docs"
+      "launchUrl": "api/docs",
+      "applicationUrl": "http://localhost:4068"
     },
 //#endif
     "Docker": {

@@ -33,8 +33,8 @@
     <NoWarn>NU5048;NU5125;CS1030;NU5128</NoWarn>
     <!--#endif-->
   </PropertyGroup>
-
   <!--#if (AuthoringMode)-->
+
   <ItemGroup>
     <Content Include="**\*" Exclude="**\bin\**\*;**\obj\**\*;**\.vs\**\*;**\launchSettings.json" />
   </ItemGroup>

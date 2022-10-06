@@ -32,7 +32,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics
         {
             var parameters = RunParameters.CreateNotebookParams(Enumerable.Empty<KeyValuePair<string, string>>());
 
-            using (var project = AzureFunctionsDatabricksProject.StartNew(_config, Logger))
+            using (var project = await AzureFunctionsDatabricksProject.StartNewAsync(_config, Logger))
             using (var client = DatabricksClient.CreateClient(project.AzureFunctionDatabricksConfig.BaseUrl, project.AzureFunctionDatabricksConfig.SecurityToken))
             {
                 JobSettings settings = CreateEmptyJobSettings();

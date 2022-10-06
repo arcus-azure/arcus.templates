@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Arcus.Messaging.Pumps.ServiceBus;
+using Arcus.Templates.Tests.Integration.AzureFunctions.Admin;
 using Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus.MessageHandling;
 using Arcus.Templates.Tests.Integration.Fixture;
 using Arcus.Templates.Tests.Integration.Worker;
@@ -26,8 +27,6 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
     [DebuggerDisplay("Project = {ProjectDirectory.FullName}")]
     public class AzureFunctionsServiceBusProject : AzureFunctionsProject, IAsyncDisposable
     {
-        private readonly ServiceBusEntityType _entityType;
-
         private AzureFunctionsServiceBusProject(
             ServiceBusEntityType entityType, 
             TestConfig configuration, 
@@ -39,6 +38,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
             string connectionString = configuration.GetServiceBusConnectionString(entityType);
             var producer = new TestServiceBusMessageProducer(connectionString);
             MessagePump = new MessagePumpService(producer, configuration, outputWriter);
+            Admin = new AdminEndpointService(RootEndpoint.Port, "order-processing", outputWriter);
         }
 
         /// <summary>
@@ -48,6 +48,11 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
         ///     Only when the project is started, is this service available for interaction.
         /// </remarks>
         public MessagePumpService MessagePump { get; }
+
+        /// <summary>
+        /// Gets the service to run administrative actions on the Azure Functions project.
+        /// </summary>
+        public AdminEndpointService Admin { get; }
 
         /// <summary>
         /// Starts a newly created project from the Azure Functions Service Bus project template.
@@ -97,7 +102,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
 
             AzureFunctionsServiceBusProject project = CreateNew(entityType, options, configuration, outputWriter);
 
-            await project.StartAsync(entityType);
+            await project.StartAsync(entityType, options);
             return project;
         }
 
@@ -141,7 +146,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
             }
         }
 
-        private async Task StartAsync(ServiceBusEntityType entityType)
+        private async Task StartAsync(ServiceBusEntityType entityType, AzureFunctionsServiceBusProjectOptions options)
         {
             string serviceBusConnectionString = Configuration.GetServiceBusConnectionString(entityType);
             var properties = ServiceBusConnectionStringProperties.Parse(serviceBusConnectionString);
@@ -163,6 +168,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
 
             Run(Configuration.BuildConfiguration, TargetFramework.Net6_0);
             await MessagePump.StartAsync();
+            await WaitUntilTriggerIsAvailableAsync(Admin.Endpoint);
         }
 
         private static async Task AddServiceBusTopicSubscriptionAsync(string topic, string connectionString)

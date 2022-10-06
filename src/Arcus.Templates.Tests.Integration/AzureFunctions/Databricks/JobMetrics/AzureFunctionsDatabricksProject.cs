@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
+using Arcus.Templates.Tests.Integration.AzureFunctions.Admin;
 using Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics.Configuration;
 using Arcus.Templates.Tests.Integration.Fixture;
 using Arcus.Templates.Tests.Integration.Worker.Fixture;
+using GuardNet;
 using Xunit.Abstractions;
 
 namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics
@@ -29,12 +32,18 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics
                    outputWriter)
         {
             AzureFunctionDatabricksConfig = configuration.GetDatabricksConfig();
+            Admin = new AdminEndpointService(RootEndpoint.Port, FunctionName, outputWriter);
         }
 
         /// <summary>
         /// Gets the Databricks connectivity information from the current application configuration, used by this project.
         /// </summary>
         public AzureFunctionDatabricksConfig AzureFunctionDatabricksConfig { get; }
+
+        /// <summary>
+        /// Gets the service to run administrative actions on the Azure Functions project.
+        /// </summary>
+        public AdminEndpointService Admin { get; }
 
         /// <summary>
         /// Starts a newly created project from the Azure Functions Databricks Job Metrics project template.
@@ -44,27 +53,54 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics
         /// <returns>
         ///     A Azure Functions Databricks Job Metrics project with a full set of endpoint services to interact with the Azure Function.
         /// </returns>
-        public static AzureFunctionsDatabricksProject StartNew(TestConfig configuration, ITestOutputHelper outputWriter)
+        /// <exception cref="ArgumentNullException">Thrown when the <paramref name="configuration"/> or <paramref name="outputWriter"/> is <c>null</c>.</exception>
+        public static async Task<AzureFunctionsDatabricksProject> StartNewAsync(TestConfig configuration, ITestOutputHelper outputWriter)
         {
-            AzureFunctionsDatabricksProject project = CreateNew(configuration, outputWriter);
-            project.Start();
+            Guard.NotNull(configuration, nameof(configuration), "Requires a test configuration instance to retrieve integration test configuration values to interact with Azure Databricks");
+            Guard.NotNull(outputWriter, nameof(outputWriter), "Requires a logging instance to write diagnostic information during the creation and startup process");
+
+            AzureFunctionsDatabricksProject project = await StartNewAsync(configuration, new AzureFunctionsDatabricksProjectOptions(), outputWriter);
+            return project;
+        }
+
+        /// <summary>
+        /// Starts a newly created project from the Azure Functions Databricks Job Metrics project template.
+        /// </summary>
+        /// <param name="configuration">The configuration to control the hosting of the to-be-created project.</param>
+        /// <param name="options">The additional user project options to change the project contents and functionality.</param>
+        /// <param name="outputWriter">The output logger to add telemetry information during the creation and startup process.</param>
+        /// <returns>
+        ///     A Azure Functions Databricks Job Metrics project with a full set of endpoint services to interact with the Azure Function.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown when the <paramref name="configuration"/>, <paramref name="options"/>, or <paramref name="outputWriter"/> is <c>null</c>.
+        /// </exception>
+        public static async Task<AzureFunctionsDatabricksProject> StartNewAsync(TestConfig configuration, AzureFunctionsDatabricksProjectOptions options, ITestOutputHelper outputWriter)
+        {
+            Guard.NotNull(configuration, nameof(configuration), "Requires a test configuration instance to retrieve integration test configuration values to interact with Azure Databricks");
+            Guard.NotNull(options, nameof(options), "Requires a project options to change the project contents and functionality");
+            Guard.NotNull(outputWriter, nameof(outputWriter), "Requires a logging instance to write diagnostic information during the creation and startup process");
+
+            AzureFunctionsDatabricksProject project = CreateNew(configuration, options, outputWriter);
+            await project.StartAsync();
 
             return project;
         }
 
-        private static AzureFunctionsDatabricksProject CreateNew(TestConfig configuration, ITestOutputHelper outputWriter)
+        private static AzureFunctionsDatabricksProject CreateNew(TestConfig configuration, AzureFunctionsDatabricksProjectOptions options, ITestOutputHelper outputWriter)
         {
             var project = new AzureFunctionsDatabricksProject(configuration, outputWriter);
-            project.CreateNewProject(new ProjectOptions());
+            project.CreateNewProject(options);
             project.AddDatabricksSecurityToken(project.AzureFunctionDatabricksConfig.SecurityToken);
             project.AddLocalSettings(FunctionsWorker.InProcess);
             
             return project;
         }
 
-        private void Start()
+        private async Task StartAsync()
         {
             Run(BuildConfiguration.Debug, TargetFramework.Net6_0);
+            await WaitUntilTriggerIsAvailableAsync(Admin.Endpoint);
         }
 
         private void AddDatabricksSecurityToken(string securityToken)

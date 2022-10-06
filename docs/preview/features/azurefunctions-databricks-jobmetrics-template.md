@@ -24,3 +24,9 @@ When installed, the template can be created with shortname: `arcus-az-databricks
 Creates a starter worker project with by default configured:
 
 * Azure Function timer that for each cycle the finished Databricks job runs reports as metrics ([official docs](https://background-jobs.arcus-azure.net/features/databricks/gain-insights))
+* Dockerfile
+
+### Configuration
+
+And additional features available with options:
+* `-es|--exclude-serilog`: Exclude the [Serilog](https://serilog.net/) logging infrastructure in the Azure Functions project which includes default enrichers ([version](https://observability.arcus-azure.net/features/telemetry-enrichment#version-enricher) and [application](https://observability.arcus-azure.net/features/telemetry-enrichment#application-enricher)), and sinking to Application Insights.

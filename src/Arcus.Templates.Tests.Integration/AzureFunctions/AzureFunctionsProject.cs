@@ -77,16 +77,8 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions
             string storageAccountConnectionString = AzureFunctionsConfig.StorageAccountConnectionString;
             string workerRuntime = DetermineWorkerRuntime(workerType);
 
-            var json = JsonNode.Parse(
-                $"{{ \"IsEncrypted\": false, " 
-                + $"\"Values\": {{ \"AzureWebJobsStorage\": \"{storageAccountConnectionString}\", \"FUNCTIONS_WORKER_RUNTIME\": \"{workerRuntime}\" }} }}");
-
-            if (workerType is FunctionsWorker.InProcess)
-            {
-                json["Host"] = JsonNode.Parse($"{{ \"LocalHttpPort\": {RootEndpoint.Port} }}");
-            }
-
-            AddFileInProject("local.settings.json", json.ToString());
+            AddFileInProject("local.settings.json",  
+                $"{{ \"IsEncrypted\": false, \"Values\": {{ \"AzureWebJobsStorage\": \"{storageAccountConnectionString}\", \"FUNCTIONS_WORKER_RUNTIME\": \"{workerRuntime}\" }}, \"Host\": {{ \"LocalHttpPort\": {RootEndpoint.Port} }} }}");
         }
 
         private static string DetermineWorkerRuntime(FunctionsWorker workerType)

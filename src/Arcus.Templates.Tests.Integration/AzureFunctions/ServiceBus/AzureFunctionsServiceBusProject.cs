@@ -168,11 +168,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
 
             Run(Configuration.BuildConfiguration, TargetFramework.Net6_0);
             await MessagePump.StartAsync();
-            
-            //if (options.FunctionsWorker is FunctionsWorker.InProcess)
-            {
-                await WaitUntilTriggerIsAvailableAsync(Admin.Endpoint); 
-            }
+            await WaitUntilTriggerIsAvailableAsync(Admin.Endpoint);
         }
 
         private static async Task AddServiceBusTopicSubscriptionAsync(string topic, string connectionString)

@@ -27,7 +27,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics
             var options = new AzureFunctionsDatabricksProjectOptions().WithExcludeSerilog();
 
             // Act
-            using (var project = AzureFunctionsDatabricksProject.StartNew(config, options, _outputWriter))
+            using (var project = await AzureFunctionsDatabricksProject.StartNewAsync(config, options, _outputWriter))
             {
                 // Assert
                 await project.Admin.TriggerFunctionAsync();

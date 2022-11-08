@@ -59,11 +59,6 @@ stages:
               keepToken: false
               tokenPrefix: '#{'
               tokenSuffix: '}#'
-          - task: UseDotNet@2
-            displayName: 'Import .NET Core SDK ($(DotNet.Sdk.PreviousVersion))'
-            inputs:
-              packageType: 'sdk'
-              version: '$(DotNet.Sdk.PreviousVersion)'
           - template: 'build/build-solution.yml@templates'
             parameters:
               dotnetSdkVersion: '$(DotNet.Sdk.Version)'
@@ -92,11 +87,6 @@ stages:
         pool:
           vmImage: '$(Vm.Image)'
         steps:
-          - task: UseDotNet@2
-            displayName: 'Import .NET Core SDK ($(DotNet.Sdk.PreviousVersion))'
-            inputs:
-              packageType: 'sdk'
-              version: '$(DotNet.Sdk.PreviousVersion)'
           - template: 'templates/install-azure-functions-core-tools.yml'
           - template: test/run-integration-tests.yml@templates
             parameters:

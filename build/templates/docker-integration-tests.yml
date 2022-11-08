@@ -182,11 +182,6 @@ stages:
                 EventHubsConnectionString=$(Arcus.EventHubs.ConnectionString)
                 AzureWebJobsStorage=$(Arcus.EventHubs.BlobStorage.StorageAccountConnectionString)
                 APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=$(Arcus.ApplicationInsights.InstrumentationKey)
-          - task: UseDotNet@2
-            displayName: 'Import .NET Core SDK ($(DotNet.Sdk.PreviousVersion))'
-            inputs:
-              packageType: 'sdk'
-              version: '$(DotNet.Sdk.PreviousVersion)'
           - template: test/run-integration-tests.yml@templates
             parameters:
               dotnetSdkVersion: '$(DotNet.Sdk.Version)'

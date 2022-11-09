@@ -60,9 +60,8 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus.MessageHan
 
             await using (var project = await AzureFunctionsServiceBusProject.StartNewProjectAsync(entityType, options, config, _outputWriter))
             {
-                project.TearDownOptions = TearDownOptions.KeepProjectDirectory;
                 // Act / Assert
-                //await project.MessagePump.SimulateMessageProcessingAsync();
+                await project.MessagePump.SimulateMessageProcessingAsync();
             }
         }
     }

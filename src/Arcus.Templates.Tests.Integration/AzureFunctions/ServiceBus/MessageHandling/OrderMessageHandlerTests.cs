@@ -45,6 +45,12 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus.MessageHan
             await TestServiceBusProjectWithWorkerTypeCorrectlyProcessesMessageAsync(ServiceBusEntityType.Queue, FunctionsWorker.InProcess);
         }
 
+        [Fact]
+        public async Task ServiceBusQueueProject_AsIsolated_CorrectlyProcessesMessage()
+        {
+            await TestServiceBusProjectWithWorkerTypeCorrectlyProcessesMessageAsync(ServiceBusEntityType.Queue, FunctionsWorker.Isolated);
+        }
+
         private async Task TestServiceBusProjectWithWorkerTypeCorrectlyProcessesMessageAsync(ServiceBusEntityType entityType, FunctionsWorker workerType)
         {
             var config = TestConfig.Create();
@@ -54,8 +60,9 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus.MessageHan
 
             await using (var project = await AzureFunctionsServiceBusProject.StartNewProjectAsync(entityType, options, config, _outputWriter))
             {
+                project.TearDownOptions = TearDownOptions.KeepProjectDirectory;
                 // Act / Assert
-                await project.MessagePump.SimulateMessageProcessingAsync();
+                //await project.MessagePump.SimulateMessageProcessingAsync();
             }
         }
     }

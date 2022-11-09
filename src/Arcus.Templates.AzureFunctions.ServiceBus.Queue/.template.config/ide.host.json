@@ -10,6 +10,13 @@
   "icon": "icon.jpg",
   "symbolInfo": [
     {
+      "id": "functions-worker",
+      "name": {
+        "text": "Functions Worker"
+      },
+      "isVisible": true
+    },
+    {
       "id": "exclude-serilog",
       "name": {
         "text": "Exclude Serilog"

@@ -53,6 +53,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus.MessageHan
 
         private async Task TestServiceBusProjectWithWorkerTypeCorrectlyProcessesMessageAsync(ServiceBusEntityType entityType, FunctionsWorker workerType)
         {
+            // Arrange
             var config = TestConfig.Create();
             var options =
                 new AzureFunctionsServiceBusProjectOptions(entityType)

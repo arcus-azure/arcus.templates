@@ -57,7 +57,7 @@
     <PackageReference Include="Arcus.Security.AzureFunctions" Version="1.8.1" />
     <PackageReference Include="Arcus.Security.Providers.AzureKeyVault" Version="1.8.1" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" Condition="'$(InProcess)' == 'true'" />
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.ServiceBus" Version="5.8.0" Condition="'$(InProcess)' == 'true'" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.ServiceBus" Version="5.8.1" Condition="'$(InProcess)' == 'true'" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.10.0" Condition="'$(Isolated)' == 'true'" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.ServiceBus" Version="5.7.0" Condition="'$(Isolated)' == 'true'" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.7.0" Condition="'$(Isolated)' == 'true'" />

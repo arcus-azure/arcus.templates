@@ -32,11 +32,8 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
         {
             FunctionsWorker = workerType;
 
-            if (_entityType is ServiceBusEntityType.Topic)
-            {
-                string workerTypeArgument = DetermineFunctionWorkerArgument(workerType);
-                AddOption($"--functions-worker {workerTypeArgument}");
-            }
+            string workerTypeArgument = DetermineFunctionWorkerArgument(workerType);
+            AddOption($"--functions-worker {workerTypeArgument}");
 
             return this;
         }

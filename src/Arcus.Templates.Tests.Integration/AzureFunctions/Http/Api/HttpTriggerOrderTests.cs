@@ -31,8 +31,10 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Api
             _config = TestConfig.Create();
         }
 
-        [Fact]
-        public async Task AzureFunctionsHttpProject_WithoutOptions_ResponseToCorrectOrder()
+        [Theory]
+        [InlineData(FunctionsWorker.InProcess)]
+        [InlineData(FunctionsWorker.Isolated)]
+        public async Task AzureFunctionsHttpProject_WithoutOptions_ResponseToCorrectOrder(FunctionsWorker workerType)
         {
             // Arrange
             var order = new Order
@@ -42,7 +44,8 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Api
                 Scheduled = BogusGenerator.Date.RecentOffset()
             };
 
-            using (var project = await AzureFunctionsHttpProject.StartNewAsync(_config, _outputWriter))
+            var options = new AzureFunctionsHttpProjectOptions().WithFunctionWorker(workerType);
+            using (var project = await AzureFunctionsHttpProject.StartNewAsync(_config, options, _outputWriter))
             {
                 // Act
                 using (HttpResponseMessage response = await project.Order.PostAsync(order))

@@ -30,16 +30,20 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Fix
             _outputWriter = outputWriter;
         }
         
-        [Fact]
-        public async Task OrderFunction_ReceivedBatchedOrders_ReturnsSuccess()
+        [Theory]
+        [InlineData(FunctionsWorker.InProcess)]
+        [InlineData(FunctionsWorker.Isolated)]
+        public async Task OrderFunction_ReceivedBatchedOrders_ReturnsSuccess(FunctionsWorker workerType)
         {
             // Arrange
             var config = TestConfig.Create();
-            using (var project = AzureFunctionsHttpProject.CreateNew(config, _outputWriter))
+            var options = new AzureFunctionsHttpProjectOptions().WithFunctionWorker(workerType);
+            using (var project = AzureFunctionsHttpProject.CreateNew(config, options, _outputWriter))
             {
+                string methodName = DetermineMethodName(workerType);
                 project.UpdateFileInProject($"{nameof(OrderFunction)}.cs", contents =>
                 {
-                    return contents.Replace("GetJsonBodyAsync<Order>", "GetJsonBodyAsync<Order[]>");
+                    return contents.Replace($"{methodName}<Order>", $"{methodName}<Order[]>");
                 });
                 await project.StartAsync();
 
@@ -52,6 +56,17 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Fix
                     // Assert
                     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
                 }
+            }
+        }
+
+        private static string DetermineMethodName(FunctionsWorker workerType)
+        {
+            switch (workerType)
+            {
+                case FunctionsWorker.InProcess: return "GetJsonBodyAsync";
+                case FunctionsWorker.Isolated: return "ReadFromJsonAsync";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(workerType), workerType, "Unknown functions worker type");
             }
         }
 

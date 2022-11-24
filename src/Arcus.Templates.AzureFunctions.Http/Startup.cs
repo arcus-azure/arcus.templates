@@ -11,9 +11,9 @@ using Serilog;
 using Serilog.Configuration;
 using Serilog.Events; 
 #endif
-
+ 
 [assembly: FunctionsStartup(typeof(Startup))]
-
+ 
 namespace Arcus.Templates.AzureFunctions.Http
 {
     public class Startup : FunctionsStartup
@@ -73,13 +73,13 @@ namespace Arcus.Templates.AzureFunctions.Http
                 .Enrich.WithComponentName("Azure HTTP Trigger")
                 .Enrich.WithVersion()
                 .WriteTo.Console();
-
+            
             var connectionString = appConfig.GetValue<string>("APPLICATIONINSIGHTS_CONNECTION_STRING");
             if (!string.IsNullOrWhiteSpace(connectionString))
             {
                 configuration.WriteTo.AzureApplicationInsightsWithConnectionString(connectionString);
             }
-
+            
             return configuration;
         } 
 #endif

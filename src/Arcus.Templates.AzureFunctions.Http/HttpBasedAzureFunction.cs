@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using Arcus.Observability.Correlation;
-using Arcus.Observability.Telemetry.Core;
-using Arcus.WebApi.Logging.Correlation;
+using Arcus.WebApi.Logging.AzureFunctions.Correlation;
+using Azure.Core.Serialization;
 using GuardNet;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -24,21 +22,14 @@ namespace Arcus.Templates.AzureFunctions.Http
     /// </summary>
     public abstract class HttpBasedAzureFunction
     {
-        private readonly HttpCorrelation _httpCorrelation;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="HttpBasedAzureFunction"/> class.
         /// </summary>
-        /// <param name="httpCorrelation">The correlation service to provide information of related requests.</param>
         /// <param name="logger">The logger instance to write diagnostic messages throughout the execution of the HTTP trigger.</param>
-        /// <exception cref="ArgumentNullException">Thrown when the <paramref name="httpCorrelation"/> is <c>null</c></exception>
-        protected HttpBasedAzureFunction(HttpCorrelation httpCorrelation, ILogger logger)
+        protected HttpBasedAzureFunction(ILogger logger)
         {
-            Guard.NotNull(httpCorrelation, nameof(httpCorrelation), "Requires an HTTP correlation instance");
-            _httpCorrelation = httpCorrelation;
-
             Logger = logger ?? NullLogger.Instance;
-
+            
             var options = new JsonSerializerOptions();
             options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
             options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
@@ -63,47 +54,6 @@ namespace Arcus.Templates.AzureFunctions.Http
         protected ILogger Logger { get; }
 
         /// <summary>
-        /// Correlate the current HTTP request according to the previously configured <see cref="T:Arcus.Observability.Correlation.CorrelationInfoOptions" />;
-        /// returning an <paramref name="errorMessage" /> when the correlation failed.
-        /// </summary>
-        /// <param name="errorMessage">The failure message that describes why the correlation of the HTTP request wasn't successful.</param>
-        /// <returns>
-        ///     <para>[true] when the HTTP request was successfully correlated and the HTTP response was altered accordingly;</para>
-        ///     <para>[false] there was a problem with the correlation, describing the failure in the <paramref name="errorMessage" />.</para>
-        /// </returns>
-        protected bool TryHttpCorrelate(out string errorMessage)
-        {
-            return _httpCorrelation.TryHttpCorrelate(out errorMessage);
-        }
-
-        /// <summary>
-        /// Correlate the current HTTP request according to the previously configured <see cref="T:Arcus.Observability.Correlation.CorrelationInfoOptions" />;
-        /// returning an <paramref name="errorMessage" /> when the correlation failed.
-        /// </summary>
-        /// <param name="telemetryContext">The telemetry context that will be enriched upon successful correlation.</param>
-        /// <param name="errorMessage">The failure message that describes why the correlation of the HTTP request wasn't successful.</param>
-        /// <returns>
-        ///     <para>[true] when the HTTP request was successfully correlated and the HTTP response was altered accordingly;</para>
-        ///     <para>[false] there was a problem with the correlation, describing the failure in the <paramref name="errorMessage" />.</para>
-        /// </returns>
-        protected bool TryHttpCorrelate(IDictionary<string, object> telemetryContext, out string errorMessage)
-        {
-            Guard.NotNull(telemetryContext, nameof(telemetryContext), "Requires a telemetry context for it to be enriched with correlation information");
-
-            if (_httpCorrelation.TryHttpCorrelate(out errorMessage))
-            {
-                CorrelationInfo correlation = _httpCorrelation.GetCorrelationInfo();
-                telemetryContext[ContextProperties.Correlation.OperationId] = correlation.OperationId;
-                telemetryContext[ContextProperties.Correlation.TransactionId] = correlation.TransactionId;
-                telemetryContext[ContextProperties.Correlation.OperationParentId] = correlation.OperationParentId;
-
-                return true;
-            }
-
-            return false;
-        }
-
-        /// <summary>
         /// Reads the body of the incoming request as JSON to deserialize it into a given <typeparamref name="TMessage"/> type.
         /// </summary>
         /// <typeparam name="TMessage">The type of the request's body that's being deserialized.</typeparam>
@@ -114,7 +64,7 @@ namespace Arcus.Templates.AzureFunctions.Http
         /// <exception cref="ValidationException">Thrown when the deserialized request body <typeparamref name="TMessage"/> didn't correspond to the required validation rules.</exception>
         protected async Task<TMessage> GetJsonBodyAsync<TMessage>(HttpRequest request)
         {
-            TMessage message = await JsonSerializer.DeserializeAsync<TMessage>(request.Body, JsonOptions);
+            var message = await request.ReadFromJsonAsync<TMessage>(JsonOptions);
             Validator.ValidateObject(message, new ValidationContext(message), validateAllProperties: true);
             
             return message;

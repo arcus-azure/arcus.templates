@@ -25,8 +25,10 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Logging
             _outputWriter = outputWriter;
         }
 
-        [Fact]
-        public async Task HttpTriggerProject_WithoutSerilog_StillProcessHttpRequest()
+        [Theory]
+        [InlineData(FunctionsWorker.Isolated)]
+        [InlineData(FunctionsWorker.InProcess)]
+        public async Task HttpTriggerProject_WithoutSerilog_StillProcessHttpRequest(FunctionsWorker workerType)
         {
             // Arrange
             var order = new Order
@@ -37,6 +39,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Logging
             };
 
             var options = new AzureFunctionsHttpProjectOptions()
+                .WithFunctionWorker(workerType)
                 .WithExcludeSerilog();
 
             // Act
@@ -47,13 +50,16 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Logging
                     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
                 }
 
-                string startupContents = project.GetFileContentsInProject("Startup.cs");
+                string runtimeFileName = DetermineRuntimeFile(workerType);
+                string startupContents = project.GetFileContentsInProject(runtimeFileName);
                 Assert.DoesNotContain("Serilog", startupContents);
             }
         }
 
-        [Fact]
-        public async Task HttpTriggerProject_WithSerilog_StillProcessHttpRequest()
+        [Theory]
+        [InlineData(FunctionsWorker.InProcess)]
+        [InlineData(FunctionsWorker.Isolated)]
+        public async Task HttpTriggerProject_WithSerilog_StillProcessHttpRequest(FunctionsWorker workerType)
         {
             // Arrange
             var order = new Order
@@ -63,7 +69,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Logging
                 Scheduled = BogusGenerator.Date.RecentOffset()
             };
 
-            var options = new AzureFunctionsHttpProjectOptions();
+            var options = new AzureFunctionsHttpProjectOptions().WithFunctionWorker(workerType);
 
             // Act
             using (var project = await AzureFunctionsHttpProject.StartNewAsync(options, _outputWriter))
@@ -73,8 +79,20 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Logging
                     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
                 }
 
-                string startupContents = project.GetFileContentsInProject("Startup.cs");
+                string runtimeFileName = DetermineRuntimeFile(workerType);
+                string startupContents = project.GetFileContentsInProject(runtimeFileName);
                 Assert.Contains("Serilog", startupContents);
+            }
+        }
+
+        private static string DetermineRuntimeFile(FunctionsWorker workerType)
+        {
+            switch (workerType)
+            {
+                case FunctionsWorker.InProcess: return "Startup.cs";
+                case FunctionsWorker.Isolated: return "Program.cs";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(workerType), workerType, "Unknown functions worker type");
             }
         }
     }

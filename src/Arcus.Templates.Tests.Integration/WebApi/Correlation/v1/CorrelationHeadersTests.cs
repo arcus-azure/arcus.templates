@@ -10,7 +10,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Correlation.v1
 {
     public class CorrelationHeadersTests
     {
-        private const string OperationHeaderName = "RequestId",
+        private const string OperationHeaderName = "X-Operation-ID",
                              TransactionHeaderName = "X-Transaction-ID";
 
         private readonly ITestOutputHelper _outputWriter;
@@ -71,7 +71,6 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Correlation.v1
                     // Assert
                     AssertNonBlankResponseHeader(response, OperationHeaderName);
                     string actualTransactionId = AssertNonBlankResponseHeader(response, TransactionHeaderName);
-
                     Assert.Equal(expectedTransactionId, actualTransactionId);
                 }
             }

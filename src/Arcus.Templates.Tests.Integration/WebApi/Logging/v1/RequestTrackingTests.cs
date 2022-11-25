@@ -32,7 +32,6 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Logging.v1
                 project.AddTypeAsFile<SaboteurController>();
                 await project.StartAsync();
 
-                project.TearDownOptions = TearDownOptions.KeepProjectDirectory;
                 // Act
                 using (HttpResponseMessage response = await project.Root.GetAsync(SaboteurController.Route))
                 {

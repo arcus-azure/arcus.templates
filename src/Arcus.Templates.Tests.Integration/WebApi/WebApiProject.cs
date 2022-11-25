@@ -219,23 +219,30 @@ namespace Arcus.Templates.Tests.Integration.WebApi
             }
 
             Run(_configuration.BuildConfiguration, TargetFramework.Net6_0, commandArguments);
-            await WaitUntilWebProjectIsAvailable(_baseUrl.Port);
+            await WaitUntilWebProjectIsAvailable();
         }
 
-        private async Task WaitUntilWebProjectIsAvailable(int httpPort)
+        private async Task WaitUntilWebProjectIsAvailable()
         {
             var waitAndRetryForeverAsync =
                 Policy.Handle<Exception>()
+                      .OrResult<HttpStatusCode>(status => status != HttpStatusCode.OK && status != HttpStatusCode.ServiceUnavailable)
                       .WaitAndRetryForeverAsync(_ => TimeSpan.FromSeconds(1));
 
             var result =
                 await Policy.TimeoutAsync(TimeSpan.FromSeconds(10))
                             .WrapAsync(waitAndRetryForeverAsync)
-                            .ExecuteAndCaptureAsync(() => GetNonExistingEndpoint(httpPort));
+                            .ExecuteAndCaptureAsync(async () =>
+                            {
+                                using (HttpResponseMessage response = await Health.GetAsync())
+                                {
+                                    return response.StatusCode;
+                                }
+                            });
 
             if (result.Outcome == OutcomeType.Successful)
             {
-                Logger.WriteLine("Test template web API project fully started at: localhost:{0}", httpPort);
+                Logger.WriteLine("Test template web API project fully started at: localhost:{0}", _baseUrl.Port);
             }
             else
             {
@@ -243,14 +250,6 @@ namespace Arcus.Templates.Tests.Integration.WebApi
                 throw new CannotStartTemplateProjectException(
                     "The test project created from the web API project template doesn't seem to be running, "
                     + "please check any build or runtime errors that could occur when the test project was created");
-            }
-        }
-
-        private static async Task<HttpStatusCode> GetNonExistingEndpoint(int httpPort)
-        {
-            using (HttpResponseMessage response = await HttpClient.GetAsync($"http://localhost:{httpPort}/not-exist"))
-            {
-                return response.StatusCode;
             }
         }
 

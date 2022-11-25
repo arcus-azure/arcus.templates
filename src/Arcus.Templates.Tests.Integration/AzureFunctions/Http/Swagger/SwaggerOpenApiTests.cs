@@ -245,7 +245,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Swagger
 
         private static void AssertOrderOperation(OpenApiOperation operation)
         {
-            Assert.Single(operation.Parameters, parameter => parameter.Name == "X-Transaction-Id");
+            Assert.Single(operation.Parameters, parameter => parameter.Name == "traceparent");
             Assert.Collection(operation.Responses,
                 res =>
                 {
@@ -260,7 +260,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Swagger
         
         private static void AssertHealthOperation(OpenApiOperation operation)
         {
-            Assert.Single(operation.Parameters, parameter => parameter.Name == "X-Transaction-Id");
+            Assert.Single(operation.Parameters, parameter => parameter.Name == "traceparent");
             Assert.Collection(operation.Responses,
                 res =>
                 {

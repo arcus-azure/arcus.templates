@@ -144,21 +144,14 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions
         {
             Guard.NotNull(endpoint, nameof(endpoint), "Requires an HTTP endpoint for the Azure Functions project so the project knows when the Azure Functions project is available");
             
-            AsyncRetryPolicy<HttpStatusCode> retryPolicy =
+            AsyncRetryPolicy retryPolicy =
                 Policy.Handle<Exception>()
-                      .OrResult<HttpStatusCode>(status => status == HttpStatusCode.NotFound)
                       .WaitAndRetryForeverAsync(index => TimeSpan.FromMilliseconds(500));
 
-            PolicyResult<HttpStatusCode> result =
+            PolicyResult<HttpResponseMessage> result =
                 await Policy.TimeoutAsync(TimeSpan.FromSeconds(30))
                             .WrapAsync(retryPolicy)
-                            .ExecuteAndCaptureAsync(async () =>
-                            {
-                                using (HttpResponseMessage response = await HttpClient.GetAsync(endpoint))
-                                {
-                                    return response.StatusCode;
-                                }
-                            });
+                            .ExecuteAndCaptureAsync(() => HttpClient.GetAsync(endpoint));
 
             if (result.Outcome == OutcomeType.Successful)
             {

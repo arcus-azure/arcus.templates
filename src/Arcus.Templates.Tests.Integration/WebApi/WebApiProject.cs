@@ -226,7 +226,9 @@ namespace Arcus.Templates.Tests.Integration.WebApi
         {
             var waitAndRetryForeverAsync =
                 Policy.Handle<Exception>()
-                      .OrResult<HttpStatusCode>(status => status != HttpStatusCode.OK && status != HttpStatusCode.ServiceUnavailable)
+                      .OrResult<HttpStatusCode>(status => status != HttpStatusCode.OK 
+                                                          && status != HttpStatusCode.ServiceUnavailable
+                                                          && status != HttpStatusCode.Unauthorized)
                       .WaitAndRetryForeverAsync(_ => TimeSpan.FromSeconds(1));
 
             var result =

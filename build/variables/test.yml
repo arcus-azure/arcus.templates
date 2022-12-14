@@ -10,7 +10,8 @@ variables:
   Arcus.Databricks.JobId: 9
   Arcus.AzureFunctions.ApplicationInsights.MetricName: 'Databricks Job Completed'
   Arcus.AzureFunctions.Databricks.HttpPort: '5050'
-  Arcus.AzureFunctions.Http.HttpPort: '6060'
+  Arcus.AzureFunctions.Http.InProcess.HttpPort: '6060'
+  Arcus.AzureFunctions.Http.Isolated.HttpPort: '6061'
   Arcus.AzureFunctions.ServiceBus.Queue.InProcess.Port: '42067'
   Arcus.AzureFunctions.ServiceBus.Queue.Isolated.Port: '42097'
   Arcus.AzureFunctions.ServiceBus.Topic.Port: '42068'

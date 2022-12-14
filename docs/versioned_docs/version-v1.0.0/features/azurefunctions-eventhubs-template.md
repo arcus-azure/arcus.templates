@@ -1,22 +1,22 @@
 ---
-title: "Azure Service Bus Queue Trigger template (Azure Functions)"
+title: "Azure EventHubs trigger template (Azure Functions)"
 layout: default
 ---
 
-# Azure Service Bus Queue Trigger template (Azure Functions)
+# Azure EventHubs trigger template (Azure Functions)
 
-## Create your first Arcus Azure Functions with Azure Service Bus Queue Trigger project
+## Create your first Arcus Azure Functions with Azure EventHubs trigger project
 
 First, install the template from NuGet:
 
 ```shell
-> dotnet new --install Arcus.Templates.AzureFunctions.ServiceBus.Queue
+> dotnet new --install Arcus.Templates.AzureFunctions.EventHubs
 ```
 
-When installed, the template can be created with shortname: `arcus-az-func-servicebus-queue`:
+When installed, the template can be created with shortname: `arcus-az-func-eventhubs`:
 
 ```shell
-> dotnet new arcus-az-func-servicebus-queue --name Arcus.Demo.AzureFunctions.ServiceBus.Queue
+> dotnet new arcus-az-func-servicebus-topic --name Arcus.Demo.AzureFunctions.EventHubs
 ```
 
 ## Features
@@ -34,4 +34,4 @@ And additional features available with options:
   * `inProcess` (default): Uses the in-process Azure Functions worker type which runs on the same process as run Azure Function
   * `isolated`: Uses the isolated Azure Functions worker type which runs on a different process as the Azure Function
   For more information on the difference between the two, see [Microsoft's documentation](https://learn.microsoft.com/en-us/azure/azure-functions/dotnet-isolated-process-guide).
-* `--exclude-serilog`: Exclude the [Serilog](https://serilog.net/) logging infrastructure in the Azure Functions project which includes default enrichers ([version](https://observability.arcus-azure.net/features/telemetry-enrichment#version-enricher) and [application](https://observability.arcus-azure.net/features/telemetry-enrichment#application-enricher)), and sinking to Application Insights.
+* `-es|--exclude-serilog`: Exclude the [Serilog](https://serilog.net/) logging infrastructure in the worker project which includes default enrichers ([version](https://observability.arcus-azure.net/features/telemetry-enrichment#version-enricher) and [application](https://observability.arcus-azure.net/features/telemetry-enrichment#application-enricher)), and sinking to Application Insights.

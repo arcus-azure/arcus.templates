@@ -42,11 +42,18 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus.MessageHan
         [Fact]
         public async Task ServiceBusQueueProject_AsInProcess_CorrectlyProcessesMessage()
         {
-            await TestServiceBusProjectWithWorkerTypeCorrectlyProcessesMessageAsync(ServiceBusEntityType.Topic, FunctionsWorker.Isolated);
+            await TestServiceBusProjectWithWorkerTypeCorrectlyProcessesMessageAsync(ServiceBusEntityType.Queue, FunctionsWorker.InProcess);
+        }
+
+        [Fact]
+        public async Task ServiceBusQueueProject_AsIsolated_CorrectlyProcessesMessage()
+        {
+            await TestServiceBusProjectWithWorkerTypeCorrectlyProcessesMessageAsync(ServiceBusEntityType.Queue, FunctionsWorker.Isolated);
         }
 
         private async Task TestServiceBusProjectWithWorkerTypeCorrectlyProcessesMessageAsync(ServiceBusEntityType entityType, FunctionsWorker workerType)
         {
+            // Arrange
             var config = TestConfig.Create();
             var options =
                 new AzureFunctionsServiceBusProjectOptions(entityType)

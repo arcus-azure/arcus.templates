@@ -5,9 +5,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+#if Serilog_AppInsights
 using Serilog;
 using Serilog.Configuration;
-using Serilog.Events;
+using Serilog.Events; 
+#endif
 
 [assembly: FunctionsStartup(typeof(Startup))]
 
@@ -38,14 +40,17 @@ namespace Arcus.Templates.AzureFunctions.Databricks.JobMetrics
                 //#error Please provide a valid secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secret-store/provider/key-vault
                 stores.AddAzureKeyVaultWithManagedIdentity("https://your-keyvault.vault.azure.net/", CacheConfiguration.Default);
             });
+#if Serilog_AppInsights
             
             LoggerConfiguration logConfig = CreateLoggerConfiguration(builder);
             builder.Services.AddLogging(logging =>
             {
                 logging.RemoveMicrosoftApplicationInsightsLoggerProvider()
                        .AddSerilog(logConfig.CreateLogger(), dispose: true);
-            });
+            }); 
+#endif
         }
+#if Serilog_AppInsights
         
         private static LoggerConfiguration CreateLoggerConfiguration(IFunctionsHostBuilder builder)
         {
@@ -57,14 +62,15 @@ namespace Arcus.Templates.AzureFunctions.Databricks.JobMetrics
                 .Enrich.WithComponentName("Azure Databricks Metrics Scraper")
                 .Enrich.WithVersion()
                 .WriteTo.Console();
-            
+
             var connectionString = appConfig.GetValue<string>("APPLICATIONINSIGHTS_CONNECTION_STRING");
             if (!string.IsNullOrWhiteSpace(connectionString))
             {
                 configuration.WriteTo.AzureApplicationInsightsWithConnectionString(connectionString);
             }
-            
+
             return configuration;
-        }
+        } 
+#endif
     }
 }

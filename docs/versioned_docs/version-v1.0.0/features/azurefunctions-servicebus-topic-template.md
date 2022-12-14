@@ -1,22 +1,22 @@
 ---
-title: "Azure Service Bus Queue Trigger template (Azure Functions)"
+title: "Azure Service Bus Topic Trigger template (Azure Functions)"
 layout: default
 ---
 
-# Azure Service Bus Queue Trigger template (Azure Functions)
+# Azure Service Bus Topic Trigger template (Azure Functions)
 
-## Create your first Arcus Azure Functions with Azure Service Bus Queue Trigger project
+## Create your first Arcus Azure Functions with Azure Service Bus Topic Trigger project
 
 First, install the template from NuGet:
 
 ```shell
-> dotnet new --install Arcus.Templates.AzureFunctions.ServiceBus.Queue
+> dotnet new --install Arcus.Templates.AzureFunctions.ServiceBus.Topic
 ```
 
-When installed, the template can be created with shortname: `arcus-az-func-servicebus-queue`:
+When installed, the template can be created with shortname: `arcus-az-func-servicebus-topic`:
 
 ```shell
-> dotnet new arcus-az-func-servicebus-queue --name Arcus.Demo.AzureFunctions.ServiceBus.Queue
+> dotnet new arcus-az-func-servicebus-topic --name Arcus.Demo.AzureFunctions.ServiceBus.Topic
 ```
 
 ## Features

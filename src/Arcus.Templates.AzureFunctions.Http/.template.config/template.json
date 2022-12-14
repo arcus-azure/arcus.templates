@@ -146,7 +146,7 @@
       "type": "parameter",
       "datatype": "bool",
       "defaultValue": "false",
-      "description": "Exclude the Serilog logging infrastructure in the worker project"
+      "description": "Exclude the Serilog logging infrastructure in the Azure Functions project"
     },
     "Serilog_AppInsights": {
       "type": "computed",

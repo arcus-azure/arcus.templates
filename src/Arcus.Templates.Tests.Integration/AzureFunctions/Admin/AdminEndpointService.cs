@@ -26,7 +26,13 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Admin
         {
             _httpPort = httpPort;
             _functionName = functionName;
+            Endpoint = new Uri($"http://localhost:{_httpPort}/admin/functions/{_functionName}");
         }
+
+        /// <summary>
+        /// Gets the admin HTTP endpoint to interact with the Azure Function directly.
+        /// </summary>
+        public Uri Endpoint { get; }
 
         /// <summary>
         /// Triggers the running Azure Functions project.
@@ -34,14 +40,13 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Admin
         /// <exception cref="HttpRequestException">Thrown when the Azure Functions endpoint cannot be contacted.</exception>
         public async Task TriggerFunctionAsync()
         {
-            string endpoint = $"http://localhost:{_httpPort}/admin/functions/{_functionName}";
             try
             {
-                Logger.WriteLine("POST -> {0}", endpoint);
+                Logger.WriteLine("POST -> {0}", Endpoint);
                 using (var content = new StringContent("{}", Encoding.UTF8, "application/json"))
-                using (HttpResponseMessage response = await HttpClient.PostAsync(endpoint, content))
+                using (HttpResponseMessage response = await HttpClient.PostAsync(Endpoint, content))
                 {
-                    Logger.WriteLine("{0} <- {1}", response.StatusCode, endpoint);
+                    Logger.WriteLine("{0} <- {1}", response.StatusCode, Endpoint);
                 }
             }
             catch (Exception exception)

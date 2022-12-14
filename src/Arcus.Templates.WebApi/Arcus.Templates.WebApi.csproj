@@ -33,8 +33,8 @@
     <NoWarn>NU5048;NU5125;CS1030;NU5128</NoWarn>
     <!--#endif-->
   </PropertyGroup>
-
   <!--#if (AuthoringMode)-->
+
   <ItemGroup>
     <Content Include="**\*" Exclude="**\bin\**\*;**\obj\**\*;**\.vs\**\*;**\launchSettings.json" />
   </ItemGroup>
@@ -75,11 +75,11 @@
     <PackageReference Include="Arcus.WebApi.Logging" Version="1.6.1" />
     <PackageReference Include="Arcus.WebApi.Security" Version="1.6.1" Condition="'$(Auth)' == 'true'" />
     <PackageReference Include="Guard.NET" Version="3.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.9" Condition="'$(JwtAuth)' == 'true'" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.10" Condition="'$(JwtAuth)' == 'true'" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
-    <PackageReference Include="Serilog.AspNetCore" Version="6.0.1" Condition="'$(Serilog_AppInsights)' == 'true'" />
+    <PackageReference Include="Serilog.AspNetCore" Version="6.1.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" Condition="'$(OpenApi)' == 'true'" />
-    <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="7.0.5" Condition="'$(OpenApi)' == 'true' and '$(Correlation)' == 'true'" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="7.0.6" Condition="'$(OpenApi)' == 'true' and '$(Correlation)' == 'true'" />
   </ItemGroup>
 
 </Project>

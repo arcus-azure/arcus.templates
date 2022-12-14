@@ -318,7 +318,7 @@ namespace Arcus.Templates.WebApi
                 stores.AddConfiguration(config);
 //[#endif]
                 
-                //#error Please provide a valid secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secret-store/provider/key-vault
+                #warning Please provide a valid secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secret-store/provider/key-vault
                 stores.AddAzureKeyVaultWithManagedIdentity("https://your-keyvault.vault.azure.net/", CacheConfiguration.Default);
             });
 #if Serilog_AppInsights
@@ -365,7 +365,14 @@ namespace Arcus.Templates.WebApi
             app.UseHttpCorrelation();
 #endif
             app.UseRouting();
-            app.UseRequestTracking(options => options.OmittedRoutes.Add("/"));
+            app.UseRequestTracking(options =>
+            {
+                options.OmittedRoutes.Add("/");
+#if OpenApi
+                options.OmittedRoutes.Add("/api/docs");
+                options.OmittedRoutes.Add("/api/v1/docs.json"); 
+#endif
+            });
             app.UseExceptionHandling();
             
 #if JwtAuth

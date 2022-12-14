@@ -209,13 +209,6 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http
             var project = new AzureFunctionsHttpProject(configuration, options, outputWriter);
             project.CreateNewProject(options);
             project.AddLocalSettings(options.FunctionsWorker);
-            project.UpdateFileInProject("local.settings.json", contents =>
-            {
-                var json = JsonNode.Parse(contents);
-                json["Host"] = JsonNode.Parse($"{{ \"LocalHttpPort\": {project.RootEndpoint.Port} }}");
-            
-                return json.ToString();
-            });
 
             project.UpdateFileInProject(project.RuntimeFileName, contents => project.RemovesUserErrorsFromContents(contents));
 

@@ -27,7 +27,7 @@
     <EnableDefaultContentItems>false</EnableDefaultContentItems>
     <DockerComposeProjectPath>..\Arcus.Templates.Orchestrator.dcproj</DockerComposeProjectPath>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <NoWarn>NU5048;NU5125;NU5119;NU5128;NU5104</NoWarn>
+    <NoWarn>NU5048;NU5125;NU5119;NU5128</NoWarn>
     <!--#endif-->
   </PropertyGroup>
 
@@ -69,7 +69,8 @@
     <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Sinks.Applicationinsights" Version="2.6.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
     <PackageReference Include="Arcus.Security.AzureFunctions" Version="1.8.1" />
     <PackageReference Include="Arcus.Security.Providers.AzureKeyVault" Version="1.8.1" />
-    <PackageReference Include="Arcus.WebApi.Logging.AzureFunctions" Version="1.7.0-preview-2" />
+    <PackageReference Include="Arcus.WebApi.Hosting.AzureFunctions" Version="1.7.0" Condition="'$(Isolated)' == 'true'" />
+    <PackageReference Include="Arcus.WebApi.Logging.AzureFunctions" Version="1.7.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.9.0" Condition="'$(Isolated)' == 'true'" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.0.13" Condition="'$(Isolated)' == 'true'" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.OpenApi" Version="1.4.0" Condition="'$(Isolated)' == 'true'" />

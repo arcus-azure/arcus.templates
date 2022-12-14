@@ -70,8 +70,8 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Health
             using (var project = AzureFunctionsHttpProject.CreateNew(_config, options, _outputWriter))
             {
                 string description = "Sabotage this!";
-                project.UpdateFileWithUsingStatement("Startup.cs", typeof(HealthCheckResult));
-                project.UpdateFileInProject("Startup.cs", contents =>
+                project.UpdateFileWithUsingStatement(project.RuntimeFileName, typeof(HealthCheckResult));
+                project.UpdateFileInProject(project.RuntimeFileName, contents =>
                 {
                     return contents.Replace(
                         "builder.Services.AddHealthChecks();",

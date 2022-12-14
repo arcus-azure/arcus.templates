@@ -8,6 +8,9 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Arcus.Observability.Correlation;
 using Arcus.Observability.Telemetry.Core;
+using Arcus.Observability.Telemetry.Serilog.Enrichers;
+using Arcus.WebApi.Logging.AzureFunctions.Correlation;
+using Arcus.WebApi.Logging.Core.Correlation;
 using Arcus.WebApi.Logging.Correlation;
 using GuardNet;
 using Microsoft.AspNetCore.Http;
@@ -16,6 +19,9 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Net.Http.Headers;
+#if Serilog_AppInsights
+using Serilog.Context; 
+#endif
 
 namespace Arcus.Templates.AzureFunctions.Http
 {
@@ -24,18 +30,25 @@ namespace Arcus.Templates.AzureFunctions.Http
     /// </summary>
     public abstract class HttpBasedAzureFunction
     {
-        private readonly HttpCorrelation _httpCorrelation;
+        private readonly AzureFunctionsInProcessHttpCorrelation _httpCorrelation;
+        private readonly IHttpCorrelationInfoAccessor _correlationInfoAccessor;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HttpBasedAzureFunction"/> class.
         /// </summary>
         /// <param name="httpCorrelation">The correlation service to provide information of related requests.</param>
+        /// <param name="correlationInfoAccessor">The instance to access the HTTP correlation throughout the application.</param>
         /// <param name="logger">The logger instance to write diagnostic messages throughout the execution of the HTTP trigger.</param>
         /// <exception cref="ArgumentNullException">Thrown when the <paramref name="httpCorrelation"/> is <c>null</c></exception>
-        protected HttpBasedAzureFunction(HttpCorrelation httpCorrelation, ILogger logger)
+        protected HttpBasedAzureFunction(
+            AzureFunctionsInProcessHttpCorrelation httpCorrelation, 
+            IHttpCorrelationInfoAccessor correlationInfoAccessor,
+            ILogger logger)
         {
             Guard.NotNull(httpCorrelation, nameof(httpCorrelation), "Requires an HTTP correlation instance");
+            Guard.NotNull(correlationInfoAccessor, nameof(correlationInfoAccessor), "Requires ");
             _httpCorrelation = httpCorrelation;
+            _correlationInfoAccessor = correlationInfoAccessor;
 
             Logger = logger ?? NullLogger.Instance;
 
@@ -63,44 +76,22 @@ namespace Arcus.Templates.AzureFunctions.Http
         protected ILogger Logger { get; }
 
         /// <summary>
-        /// Correlate the current HTTP request according to the previously configured <see cref="T:Arcus.Observability.Correlation.CorrelationInfoOptions" />;
-        /// returning an <paramref name="errorMessage" /> when the correlation failed.
+        /// Enrich the preceding functionality with the available HTTP correlation.
         /// </summary>
-        /// <param name="errorMessage">The failure message that describes why the correlation of the HTTP request wasn't successful.</param>
-        /// <returns>
-        ///     <para>[true] when the HTTP request was successfully correlated and the HTTP response was altered accordingly;</para>
-        ///     <para>[false] there was a problem with the correlation, describing the failure in the <paramref name="errorMessage" />.</para>
-        /// </returns>
-        protected bool TryHttpCorrelate(out string errorMessage)
+        protected IDisposable EnrichWithHttpCorrelation()
         {
-            return _httpCorrelation.TryHttpCorrelate(out errorMessage);
+#if Serilog_AppInsights
+            return LogContext.Push(new CorrelationInfoEnricher<CorrelationInfo>(_correlationInfoAccessor)); 
+#else
+            return null;
+#endif
         }
-
         /// <summary>
-        /// Correlate the current HTTP request according to the previously configured <see cref="T:Arcus.Observability.Correlation.CorrelationInfoOptions" />;
-        /// returning an <paramref name="errorMessage" /> when the correlation failed.
+        /// Add the HTTP correlation information to the HTTP response.
         /// </summary>
-        /// <param name="telemetryContext">The telemetry context that will be enriched upon successful correlation.</param>
-        /// <param name="errorMessage">The failure message that describes why the correlation of the HTTP request wasn't successful.</param>
-        /// <returns>
-        ///     <para>[true] when the HTTP request was successfully correlated and the HTTP response was altered accordingly;</para>
-        ///     <para>[false] there was a problem with the correlation, describing the failure in the <paramref name="errorMessage" />.</para>
-        /// </returns>
-        protected bool TryHttpCorrelate(IDictionary<string, object> telemetryContext, out string errorMessage)
+        protected void AddCorrelationResponseHeaders(HttpContext context)
         {
-            Guard.NotNull(telemetryContext, nameof(telemetryContext), "Requires a telemetry context for it to be enriched with correlation information");
-
-            if (_httpCorrelation.TryHttpCorrelate(out errorMessage))
-            {
-                CorrelationInfo correlation = _httpCorrelation.GetCorrelationInfo();
-                telemetryContext[ContextProperties.Correlation.OperationId] = correlation.OperationId;
-                telemetryContext[ContextProperties.Correlation.TransactionId] = correlation.TransactionId;
-                telemetryContext[ContextProperties.Correlation.OperationParentId] = correlation.OperationParentId;
-
-                return true;
-            }
-
-            return false;
+            _httpCorrelation.AddCorrelationResponseHeaders(context);
         }
 
         /// <summary>

@@ -26,9 +26,9 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Logging
         }
 
         [Theory]
-        [InlineData(FunctionsWorker.InProcess, "Startup.cs")]
-        [InlineData(FunctionsWorker.Isolated, "Program.cs")]
-        public async Task HttpTriggerProject_WithoutSerilog_StillProcessHttpRequest(FunctionsWorker workerType, string startCodeFileName)
+        [InlineData(FunctionsWorker.InProcess)]
+        [InlineData(FunctionsWorker.Isolated)]
+        public async Task HttpTriggerProject_WithoutSerilog_StillProcessHttpRequest(FunctionsWorker workerType)
         {
             // Arrange
             var order = new Order
@@ -51,14 +51,14 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Logging
                 }
 
                 Assert.DoesNotContain("Serilog", project.GetFileContentsOfProjectFile());
-                Assert.DoesNotContain("Serilog", project.GetFileContentsInProject(startCodeFileName));
+                Assert.DoesNotContain("Serilog", project.GetFileContentsInProject(project.RuntimeFileName));
             }
         }
 
         [Theory]
-        [InlineData(FunctionsWorker.InProcess, "Startup.cs")]
-        [InlineData(FunctionsWorker.Isolated, "Program.cs")]
-        public async Task HttpTriggerProject_WithSerilog_StillProcessHttpRequest(FunctionsWorker workerType, string startupCodeFileName)
+        [InlineData(FunctionsWorker.InProcess)]
+        [InlineData(FunctionsWorker.Isolated)]
+        public async Task HttpTriggerProject_WithSerilog_StillProcessHttpRequest(FunctionsWorker workerType)
         {
             // Arrange
             var order = new Order
@@ -79,7 +79,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Logging
                 }
 
                 Assert.Contains("Serilog", project.GetFileContentsOfProjectFile());
-                Assert.Contains("Serilog", project.GetFileContentsInProject(startupCodeFileName));
+                Assert.Contains("Serilog", project.GetFileContentsInProject(project.RuntimeFileName));
             }
         }
     }

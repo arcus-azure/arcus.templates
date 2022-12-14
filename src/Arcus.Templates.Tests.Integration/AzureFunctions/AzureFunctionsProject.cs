@@ -77,7 +77,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions
 
             var json = JsonNode.Parse(
                 $"{{ \"IsEncrypted\": false, " 
-                + $"\"Values\": {{ \"AzureWebJobsStorage\": \"{storageAccountConnectionString}\", \"FUNCTIONS_WORKER_RUNTIME\": \"{workerRuntime}\" }} }}");
+                + $"\"Values\": {{ \"AzureWebJobsStorage\": \"{storageAccountConnectionString}\", \"FUNCTIONS_WORKER_RUNTIME\": \"{workerRuntime}\", \"APPLICATIONINSIGHTS_CONNECTION_STRING\": \"\" }} }}");
 
             AddFileInProject("local.settings.json", json.ToString());
         }

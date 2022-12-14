@@ -8,18 +8,22 @@ using System.Threading.Tasks;
 using Arcus.Security.Core.Caching.Configuration;
 using Arcus.Security.Core;
 using Arcus.WebApi.Logging.AzureFunctions;
-using Arcus.WebApi.Hosting.AzureFunctions.Formatting;
+#if Isolated
+using Arcus.WebApi.Hosting.AzureFunctions.Formatting; 
+#endif
 using Azure.Core.Serialization;
 #if OpenApi && Isolated
 using Microsoft.Azure.Functions.Worker.Extensions.OpenApi.Extensions; 
 #endif
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+#if Serilog_AppInsights
 using Serilog;
 using Serilog.Configuration;
 using Serilog.Events;
-using Serilog.Extensions.Hosting;
-
+using Serilog.Extensions.Hosting; 
+#endif
+ 
 namespace Arcus.Templates.AzureFunctions.Http
 {
     public class Program
@@ -31,7 +35,7 @@ namespace Arcus.Templates.AzureFunctions.Http
                 .MinimumLevel.Debug()
                 .WriteTo.Console()
                 .CreateBootstrapLogger();
-
+            
             try
             {
                 IHost host = CreateHostBuilder(args).Build();
@@ -47,11 +51,10 @@ namespace Arcus.Templates.AzureFunctions.Http
                 Log.CloseAndFlush();
             }
 #else
-            IHost host = CreateHostBuilder(args).Build()
+            IHost host = CreateHostBuilder(args).Build();
             await host.RunAsync();
 #endif
         }
-
         
         private static IHostBuilder CreateHostBuilder(string[] args)
         {
@@ -68,11 +71,14 @@ namespace Arcus.Templates.AzureFunctions.Http
 #if IncludeHealthChecks
                            builder.Services.AddHealthChecks();
 #endif
-                           builder.Services.AddSingleton<IFunctionContextAccessor, DefaultFunctionContextAccessor>();
-                           AddJsonFormatting(builder.Services);
+                           builder.ConfigureJsonFormatting(options =>
+                           {
+                                options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                                options.Converters.Add(new JsonStringEnumConverter());
+                           });
 
-                           builder.UseMiddleware<AzureFunctionsJsonFormattingMiddleware>()
-                                  .UseMiddleware<FunctionContextMiddleware>()
+                           builder.UseOnlyJsonFormatting()
+                                  .UseFunctionContext()
                                   .UseHttpCorrelation()
                                   .UseRequestTracking(options => options.OmittedRoutes.Add("/v1/health"))
                                   .UseExceptionHandling();
@@ -87,16 +93,6 @@ namespace Arcus.Templates.AzureFunctions.Http
                            //#error Please provide a valid secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secret-store/provider/key-vault
                            stores.AddAzureKeyVaultWithManagedIdentity("https://your-keyvault.vault.azure.net/", CacheConfiguration.Default);
                        });
-        }
-        
-        private static void AddJsonFormatting(IServiceCollection services)
-        {
-            var options = new JsonSerializerOptions();
-            options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-            options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-            options.Converters.Add(new JsonStringEnumConverter());
-
-            services.AddSingleton(new JsonObjectSerializer(options));
         }
 #if Serilog_AppInsights
         

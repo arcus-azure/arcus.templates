@@ -6,6 +6,7 @@ using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Arcus.Templates.AzureFunctions.Http.Model;
+using Arcus.WebApi.Logging.Core.Correlation;
 using Arcus.WebApi.Logging.Correlation;
 using Azure.Core.Serialization;
 using GuardNet;
@@ -17,6 +18,7 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http; 
 #endif
 #if InProcess
+using Arcus.WebApi.Logging.AzureFunctions.Correlation;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http; 
 #endif
@@ -44,22 +46,26 @@ namespace Arcus.Templates.AzureFunctions.Http
     {
         private readonly HealthCheckService _healthCheckService;
 #if InProcess
+        private readonly AzureFunctionsInProcessHttpCorrelation _httpCorrelation;
         
         /// <summary>
         /// Initializes a new instance of the <see cref="HealthFunction" /> class.
         /// </summary>
         /// <param name="healthCheckService">The service to check the current health of the running Azure Function.</param>
         /// <param name="httpCorrelation">The instance to handle the HTTP request correlation.</param>
+        /// <param name="correlationInfoAccessor">The instance to access the HTTP correlation throughout the application.</param>
         /// <param name="logger">The logger instance to write diagnostic trace messages while handling the HTTP request.</param>
         /// <exception cref="ArgumentNullException">Thrown when the <paramref name="httpCorrelation"/> is <c>null</c>.</exception>
         public HealthFunction(
             HealthCheckService healthCheckService, 
-            HttpCorrelation httpCorrelation, 
-            ILogger<HealthFunction> logger)
-         : base(httpCorrelation, logger) 
+            AzureFunctionsInProcessHttpCorrelation httpCorrelation, 
+            IHttpCorrelationInfoAccessor correlationInfoAccessor,
+            ILogger<HealthFunction> logger) 
+            : base(httpCorrelation, correlationInfoAccessor, logger) 
         {
             Guard.NotNull(healthCheckService, nameof(healthCheckService), "Requires a health check service to check the current health of the running Azure Function");
             _healthCheckService = healthCheckService;
+            _httpCorrelation = httpCorrelation;
         }
 
         [FunctionName("health")]
@@ -77,36 +83,38 @@ namespace Arcus.Templates.AzureFunctions.Http
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = "v1/health")] HttpRequest request,
             CancellationToken cancellation)
         {
-            try
+            using (EnrichWithHttpCorrelation())
             {
-                Logger.LogInformation("C# HTTP trigger 'health' function processed a request");
-                if (AcceptsJson(request) == false)
+                try
                 {
-                    string accept = String.Join(", ", GetAcceptMediaTypes(request));
-                    Logger.LogError("Could not process current request because the response could not accept JSON (Accept: {Accept})", accept);
-                    
-                    return UnsupportedMediaType("Could not process current request because the response could not accept JSON");
-                }
+                    Logger.LogInformation("C# HTTP trigger 'health' function processed a request");
+                    if (AcceptsJson(request) == false)
+                    {
+                        string accept = string.Join(", ", GetAcceptMediaTypes(request));
+                        Logger.LogError("Could not process current request because the response could not accept JSON (Accept: {Accept})", accept);
 
-                if (TryHttpCorrelate(out string errorMessage) == false)
+                        return UnsupportedMediaType("Could not process current request because the response could not accept JSON");
+                    }
+
+                    HealthReport healthReport = await _healthCheckService.CheckHealthAsync(cancellation);
+                    ApiHealthReport apiHealthReport = ApiHealthReport.FromHealthReport(healthReport);
+
+                    if (healthReport?.Status == HealthStatus.Healthy)
+                    {
+                        return Json(apiHealthReport);
+                    }
+
+                    return Json(apiHealthReport, statusCode: StatusCodes.Status503ServiceUnavailable);
+                }
+                catch (Exception exception)
                 {
-                    return BadRequest(errorMessage);
+                    Logger.LogCritical(exception, exception.Message);
+                    return InternalServerError("Could not process the current request due to an unexpected exception");
                 }
-
-                HealthReport healthReport = await _healthCheckService.CheckHealthAsync(cancellation);
-                ApiHealthReport apiHealthReport = ApiHealthReport.FromHealthReport(healthReport);
-                
-                if (healthReport?.Status == HealthStatus.Healthy)
+                finally
                 {
-                    return Json(apiHealthReport);
+                    AddCorrelationResponseHeaders(request.HttpContext);
                 }
-
-                return Json(apiHealthReport, statusCode: StatusCodes.Status503ServiceUnavailable);
-            }
-            catch (Exception exception)
-            {
-                Logger.LogCritical(exception, exception.Message);
-                return InternalServerError("Could not process the current request due to an unexpected exception");
             }
         }
 #endif
@@ -144,14 +152,14 @@ namespace Arcus.Templates.AzureFunctions.Http
         {
             ILogger logger = context.GetLogger<HealthFunction>();
             logger.LogInformation("C# HTTP trigger 'health' function processed a request");
-
+            
             HealthReport healthReport = await _healthCheckService.CheckHealthAsync();
             ApiHealthReport apiHealthReport = ApiHealthReport.FromHealthReport(healthReport);
             
-            HttpStatusCode statusCode = DetermineStatusCode(healthReport);
-            HttpResponseData healthResponse = request.CreateResponse(statusCode);
+            HttpResponseData healthResponse = request.CreateResponse();
             await healthResponse.WriteAsJsonAsync(apiHealthReport, _jsonSerializer);
-
+            healthResponse.StatusCode = DetermineStatusCode(healthReport);
+            
             return healthResponse;
         }
         

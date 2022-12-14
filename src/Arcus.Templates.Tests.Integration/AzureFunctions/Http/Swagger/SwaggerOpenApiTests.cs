@@ -56,8 +56,8 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Swagger
                 using (HttpResponseMessage response = await project.Order.PostAsync(order))
                 {
                     // Assert
+                    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
                     string responseContent = await response.Content.ReadAsStringAsync();
-                    Assert.True(HttpStatusCode.OK == response.StatusCode, responseContent);
                     Assert.NotNull(JsonSerializer.Deserialize<Order>(responseContent));
                     
                     IEnumerable<string> responseHeaderNames = response.Headers.Select(header => header.Key).ToArray();
@@ -226,7 +226,6 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Swagger
             using (var project = await AzureFunctionsHttpProject.StartNewAsync(options, _outputWriter))
             // Act
             {
-                project.TearDownOptions = TearDownOptions.KeepProjectDirectory;
                 using (HttpResponseMessage response = await project.Swagger.GetSwaggerDocsAsync())
                 {
                     // Assert

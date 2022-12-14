@@ -105,7 +105,7 @@ namespace Arcus.Templates.AzureFunctions.Http
         /// <exception cref="ValidationException">Thrown when the deserialized request body <typeparamref name="TMessage"/> didn't correspond to the required validation rules.</exception>
         protected async Task<TMessage> GetJsonBodyAsync<TMessage>(HttpRequest request)
         {
-            TMessage message = await JsonSerializer.DeserializeAsync<TMessage>(request.Body, JsonOptions);
+            var message = await request.ReadFromJsonAsync<TMessage>(JsonOptions);
             Validator.ValidateObject(message, new ValidationContext(message), validateAllProperties: true);
             
             return message;

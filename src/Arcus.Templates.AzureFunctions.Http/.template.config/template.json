@@ -104,15 +104,15 @@
       "choices": [
         {
           "choice": "inProcess",
-          "description": "Uses Azure Functions in-process worker template"
+          "description": "Uses Azure Functions in-process project template"
         },
         {
           "choice": "isolated",
-          "description": "Uses Azure Functions isolated worker template"
+          "description": "Uses Azure Functions isolated project template"
         }
       ],
-      "defaultValue": "inProcess",
-      "description": "Chooses the kind of Azure Functions worker template"
+      "defaultValue": "isolated",
+      "description": "Chooses the kind of Azure Functions project template"
     },
     "InProcess": {
       "type": "computed",

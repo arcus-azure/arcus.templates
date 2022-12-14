@@ -80,7 +80,17 @@ namespace Arcus.Templates.AzureFunctions.Http
                            builder.UseOnlyJsonFormatting()
                                   .UseFunctionContext()
                                   .UseHttpCorrelation()
-                                  .UseRequestTracking(options => options.OmittedRoutes.Add("/v1/health"))
+                                   .UseRequestTracking(options =>
+                                  {
+                                      options.OmittedRoutes.Add("/");
+#if IncludeHealthChecks
+		                              options.OmittedRoutes.Add("/api/v1/health");
+#endif
+#if OpenApi
+		                              options.OmittedRoutes.Add("/api/openapi");
+                                      options.OmittedRoutes.Add("/api/swagger");
+#endif
+                                  })
                                   .UseExceptionHandling();
                        })
 #endif

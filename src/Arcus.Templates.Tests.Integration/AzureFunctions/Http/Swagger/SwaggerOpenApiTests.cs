@@ -132,7 +132,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Swagger
         [InlineData(FunctionsWorker.InProcess, BuildConfiguration.Debug, HttpStatusCode.OK)]
         [InlineData(FunctionsWorker.InProcess, BuildConfiguration.Release, HttpStatusCode.NotFound)]
         [InlineData(FunctionsWorker.Isolated, BuildConfiguration.Debug, HttpStatusCode.OK)]
-        [InlineData(FunctionsWorker.Isolated, BuildConfiguration.Release, HttpStatusCode.NotFound)]
+        [InlineData(FunctionsWorker.Isolated, BuildConfiguration.Release, HttpStatusCode.OK)]
         public async Task GetSwaggerUI_WithBuildConfiguration_Returns(
             FunctionsWorker workerType, 
             BuildConfiguration buildConfiguration, 

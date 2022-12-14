@@ -141,13 +141,15 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Swagger
             // Arrange
             var testConfiguration = TestConfig.Create(buildConfiguration);
             var options = new AzureFunctionsHttpProjectOptions().WithFunctionsWorker(workerType);
-            using (var project = await AzureFunctionsHttpProject.StartNewAsync(testConfiguration, options, _outputWriter)) 
-                // Act
-            using (HttpResponseMessage response = await project.Swagger.GetSwaggerUIAsync())
+            using (var project = await AzureFunctionsHttpProject.StartNewAsync(testConfiguration, options, _outputWriter))
             {
-                // Assert
-                Assert.NotNull(response);
-                Assert.Equal(expectedStatusCode, response.StatusCode);
+                // Act
+                using (HttpResponseMessage response = await project.Swagger.GetSwaggerUIAsync())
+                {
+                    // Assert
+                    Assert.NotNull(response);
+                    Assert.Equal(expectedStatusCode, response.StatusCode);
+                }
             }
         }
         

@@ -100,6 +100,8 @@ namespace Arcus.Templates.AzureFunctions.Http
                            stores.AddConfiguration(config);
 //[#endif]
 
+                           stores.AddEnvironmentVariables();
+
                            //#error Please provide a valid secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secret-store/provider/key-vault
                            stores.AddAzureKeyVaultWithManagedIdentity("https://your-keyvault.vault.azure.net/", CacheConfiguration.Default);
                        });

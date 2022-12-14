@@ -202,7 +202,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Swagger
         {
             // Arrange
             var options = new AzureFunctionsHttpProjectOptions().WithFunctionsWorker(workerType);
-            using (var project = await AzureFunctionsHttpProject.StartNewAsync(_outputWriter)) 
+            using (var project = await AzureFunctionsHttpProject.StartNewAsync(options, _outputWriter)) 
             // Act
             using (HttpResponseMessage response = await project.Swagger.GetSwaggerDocsAsync())
             {

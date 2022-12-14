@@ -18,7 +18,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http
         /// <summary>
         /// Gets the Azure Functions worker type the project should target.
         /// </summary>
-        public FunctionsWorker FunctionsWorker { get; private set; } = FunctionsWorker.InProcess;
+        public FunctionsWorker FunctionsWorker { get; private set; } = FunctionsWorker.Isolated;
 
         /// <summary>
         /// Adds the project option to configure the Azure Functions worker type of the Azure Functions HTTP trigger project.

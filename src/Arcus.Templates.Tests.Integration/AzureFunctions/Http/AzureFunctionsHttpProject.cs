@@ -223,31 +223,5 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http
             Run(Configuration.BuildConfiguration, TargetFramework.Net6_0);
             await WaitUntilTriggerIsAvailableAsync(OrderFunctionEndpoint);
         }
-
-        private async Task WaitUntilTriggerIsAvailableAsync(Uri endpoint)
-        {
-            Guard.NotNull(endpoint, nameof(endpoint), "Requires an HTTP endpoint for the Azure Functions project so the project knows when the Azure Functions project is available");
-            
-            AsyncRetryPolicy retryPolicy =
-                Policy.Handle<Exception>()
-                      .WaitAndRetryForeverAsync(index => TimeSpan.FromMilliseconds(500));
-
-            PolicyResult<HttpResponseMessage> result =
-                await Policy.TimeoutAsync(TimeSpan.FromSeconds(30))
-                            .WrapAsync(retryPolicy)
-                            .ExecuteAndCaptureAsync(() => HttpClient.GetAsync(endpoint));
-
-            if (result.Outcome == OutcomeType.Successful)
-            {
-                Logger.WriteLine("Test template Azure Functions project fully started at: {0}", endpoint);
-            }
-            else
-            {
-                Logger.WriteLine("Test template Azure Functions project could not be started at: {0}", endpoint);
-                throw new CannotStartTemplateProjectException(
-                    "The test project created from the Azure Functions project template doesn't seem to be running, "
-                    + "please check any build or runtime errors that could occur when the test project was created");
-            }
-        }
     }
 }

@@ -62,8 +62,8 @@
     <PackageReference Include="Arcus.Observability.Telemetry.AzureFunctions" Version="2.6.0" />
     <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Filters" Version="2.6.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
     <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Sinks.Applicationinsights" Version="2.6.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
-    <PackageReference Include="Arcus.Security.AzureFunctions" Version="1.8.1" />
-    <PackageReference Include="Arcus.Security.Providers.AzureKeyVault" Version="1.8.1" />
+    <PackageReference Include="Arcus.Security.AzureFunctions" Version="1.9.0" />
+    <PackageReference Include="Arcus.Security.Providers.AzureKeyVault" Version="1.9.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="4.0.1" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" Condition="'$(Serilog_AppInsights)' == 'true'" />

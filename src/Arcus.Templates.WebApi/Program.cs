@@ -216,7 +216,7 @@ namespace Arcus.Templates.WebApi
 
                 swaggerGenerationOptions.ExampleFilters();
 #if Correlation
-                swaggerGenerationOptions.OperationFilter<AddHeaderOperationFilter>("X-Transaction-Id", "Transaction ID is used to correlate multiple operation calls. A new transaction ID will be generated if not specified.", false);
+                swaggerGenerationOptions.OperationFilter<AddHeaderOperationFilter>("X-Transaction-ID", "Transaction ID is used to correlate multiple operation calls. A new transaction ID will be generated if not specified.", false);
                 swaggerGenerationOptions.OperationFilter<AddResponseHeadersFilter>();
 #endif
 #if SharedAccessKeyAuth

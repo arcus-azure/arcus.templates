@@ -175,7 +175,7 @@ namespace Arcus.Templates.WebApi
             .AddJwtBearer((jwt, serviceProvider) =>
             {
                 var secretProvider = serviceProvider.GetRequiredService<ISecretProvider>();
-                string key = secretProvider.GetRawSecretAsync("JwtSigningKey").GetAwaiter().GetResult();
+                string key = secretProvider.GetRawSecret("JwtSigningKey");
                 
                 jwt.SaveToken = true;
                 jwt.TokenValidationParameters = new TokenValidationParameters

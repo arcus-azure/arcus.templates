@@ -69,8 +69,8 @@
     <PackageReference Include="Arcus.Observability.Telemetry.Core" Version="2.6.0" />
     <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Filters" Version="2.6.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
     <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Sinks.ApplicationInsights" Version="2.6.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
-    <PackageReference Include="Arcus.Security.Core" Version="1.8.1" />
-    <PackageReference Include="Arcus.Security.Providers.AzureKeyVault" Version="1.8.1" />
+    <PackageReference Include="Arcus.Security.Core" Version="1.9.0" />
+    <PackageReference Include="Arcus.Security.Providers.AzureKeyVault" Version="1.9.0" />
     <PackageReference Include="Arcus.WebApi.Hosting" Version="1.7.0" />
     <PackageReference Include="Arcus.WebApi.Logging" Version="1.7.0" />
     <PackageReference Include="Arcus.WebApi.Security" Version="1.7.0" Condition="'$(Auth)' == 'true'" />

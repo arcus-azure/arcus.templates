@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Net.Mime;
 using System.Threading;
 using System.Threading.Tasks;
-using Arcus.EventGrid.Publishing;
-using Arcus.EventGrid.Publishing.Interfaces;
 using Arcus.Messaging.Abstractions;
 using Arcus.Messaging.Abstractions.EventHubs;
 using Arcus.Messaging.Abstractions.EventHubs.MessageHandling;
-using CloudNative.CloudEvents;
+using Azure;
+using Azure.Messaging;
+using Azure.Messaging.EventGrid;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -16,7 +15,7 @@ namespace Arcus.Templates.Tests.Integration.Worker.Fixture
     public class TestOrdersAzureEventHubsMessageHandler : IAzureEventHubsMessageHandler<Order>
     {
         private readonly ILogger<TestOrdersAzureEventHubsMessageHandler> _logger;
-        private readonly IEventGridPublisher _eventGridPublisher;
+        private readonly EventGridPublisherClient _eventGridPublisher;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TestOrdersAzureEventHubsMessageHandler" /> class.
@@ -24,14 +23,11 @@ namespace Arcus.Templates.Tests.Integration.Worker.Fixture
         public TestOrdersAzureEventHubsMessageHandler(IConfiguration configuration, ILogger<TestOrdersAzureEventHubsMessageHandler> logger)
         {
             _logger = logger;
+
             var eventGridTopic = configuration.GetValue<string>("EVENTGRID_TOPIC_URI");
             var eventGridKey = configuration.GetValue<string>("EVENTGRID_AUTH_KEY");
 
-            _eventGridPublisher =
-                EventGridPublisherBuilder
-                    .ForTopic(eventGridTopic)
-                    .UsingAuthenticationKey(eventGridKey)
-                    .Build();
+            _eventGridPublisher = new EventGridPublisherClient(new Uri(eventGridTopic), new AzureKeyCredential(eventGridKey));
         }
 
         /// <summary>
@@ -69,17 +65,15 @@ namespace Arcus.Templates.Tests.Integration.Worker.Fixture
                 correlationInfo);
 
             var orderCreatedEvent = new CloudEvent(
-                CloudEventsSpecVersion.V1_0,
+                "http://test-host",
                 "OrderCreatedEvent",
-                new Uri("http://test-host"),
-                correlationInfo.OperationId,
-                DateTime.UtcNow)
+                jsonSerializableData: eventData)
             {
-                Data = eventData,
-                DataContentType = new ContentType("application/json")
+                Id = correlationInfo.OperationId,
+                Time = DateTimeOffset.UtcNow
             };
 
-            await _eventGridPublisher.PublishAsync(orderCreatedEvent);
+            await _eventGridPublisher.SendEventAsync(orderCreatedEvent);
 
             _logger.LogInformation("Event {EventId} was published with subject {EventSubject}", orderCreatedEvent.Id, orderCreatedEvent.Subject);
         }

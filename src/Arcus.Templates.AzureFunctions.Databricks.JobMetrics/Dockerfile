@@ -2,7 +2,7 @@ FROM mcr.microsoft.com/azure-functions/dotnet:4 AS base
 WORKDIR /app
 EXPOSE 80
 
-FROM mcr.microsoft.com/dotnet/sdk:7.0.100-bullseye-slim AS build
+FROM mcr.microsoft.com/dotnet/sdk:7.0.101-bullseye-slim AS build
 WORKDIR /src
 COPY ["Arcus.Templates.AzureFunctions.Databricks.JobMetrics.csproj", ""]
 

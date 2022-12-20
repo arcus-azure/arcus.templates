@@ -129,15 +129,6 @@ namespace Arcus.Templates.WebApi
         
         private static void ConfigureServices(WebApplicationBuilder builder, IConfiguration configuration)
         {
-#if CertificateAuth
-            var certificateAuthenticationConfig = 
-                new CertificateAuthenticationConfigBuilder()
-                    .WithSubject(X509ValidationLocation.Configuration, "CertificateSubject")
-                    .Build();
-            
-            builder.Services.AddScoped(serviceProvider => new CertificateAuthenticationValidator(certificateAuthenticationConfig));
-            
-#endif
             builder.Services.AddRouting(options =>
             {
                 options.LowercaseUrls = true;
@@ -159,7 +150,10 @@ namespace Arcus.Templates.WebApi
                 options.AddSharedAccessKeyAuthenticationFilterOnHeader(SharedAccessKeyHeaderName, "<your-secret-name>");
 #endif
 #if CertificateAuth
-                options.AddCertificateAuthenticationFilter();
+                options.AddCertificateAuthenticationFilter(auth =>
+                {
+                    auth.WithSubject(X509ValidationLocation.Configuration, "CertificateSubject");
+                });
 #endif
 #if JwtAuth
                 AuthorizationPolicy policy = 
@@ -181,7 +175,7 @@ namespace Arcus.Templates.WebApi
             .AddJwtBearer((jwt, serviceProvider) =>
             {
                 var secretProvider = serviceProvider.GetRequiredService<ISecretProvider>();
-                string key = secretProvider.GetRawSecretAsync("JwtSigningKey").GetAwaiter().GetResult();
+                string key = secretProvider.GetRawSecret("JwtSigningKey");
                 
                 jwt.SaveToken = true;
                 jwt.TokenValidationParameters = new TokenValidationParameters
@@ -222,7 +216,7 @@ namespace Arcus.Templates.WebApi
 
                 swaggerGenerationOptions.ExampleFilters();
 #if Correlation
-                swaggerGenerationOptions.OperationFilter<AddHeaderOperationFilter>("X-Transaction-Id", "Transaction ID is used to correlate multiple operation calls. A new transaction ID will be generated if not specified.", false);
+                swaggerGenerationOptions.OperationFilter<AddHeaderOperationFilter>("X-Transaction-ID", "Transaction ID is used to correlate multiple operation calls. A new transaction ID will be generated if not specified.", false);
                 swaggerGenerationOptions.OperationFilter<AddResponseHeadersFilter>();
 #endif
 #if SharedAccessKeyAuth

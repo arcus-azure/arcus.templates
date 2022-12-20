@@ -38,8 +38,8 @@ Creates a starter worker project with by default configured:
 And additional features available with options:
 
 * `--functions-worker`: Configures the type of Azure Functions worker type the project should target.
-  * `inProcess` (default): Uses the in-process Azure Functions worker type which runs on the same process as run Azure Function
-  * `isolated`: Uses the isolated Azure Functions worker type which runs on a different process as the Azure Function
+  * `isolated` (default): Uses the isolated Azure Functions worker type which runs on a different process as the Azure Function
+  * `inProcess`: Uses the in-process Azure Functions worker type which runs on the same process as run Azure Function
   For more information on the difference between the two, see [Microsoft's documentation](https://learn.microsoft.com/en-us/azure/azure-functions/dotnet-isolated-process-guide).
 * `--include-healthchecks` (default `false`): include a default Health Azure Function and health check services from the project
 * `--exclude-openapi` (default `false`): exclude the [Azure Functions OpenAPI docs generation and UI](https://github.com/Azure/azure-functions-openapi-extension) from the project.

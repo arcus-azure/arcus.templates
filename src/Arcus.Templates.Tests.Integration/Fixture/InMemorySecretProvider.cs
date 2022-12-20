@@ -11,7 +11,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
     /// <summary>
     /// <see cref="ISecretProvider"/> implementation that provides an in-memory storage of secrets by name.
     /// </summary>
-    public class InMemorySecretProvider : ICachedSecretProvider
+    public class InMemorySecretProvider : ICachedSecretProvider, ISyncSecretProvider
     {
         private readonly IDictionary<string, string> _secretValueByName;
 
@@ -39,12 +39,12 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         /// <returns>Returns a <see cref="Task{TResult}"/> that contains the secret key</returns>
         /// <exception cref="ArgumentException">The name must not be empty</exception>
         /// <exception cref="ArgumentNullException">The name must not be null</exception>
-        public async Task<string> GetRawSecretAsync(string secretName, bool ignoreCache)
+        public Task<string> GetRawSecretAsync(string secretName, bool ignoreCache)
         {
             Guard.NotNull(secretName, "Secret name cannot be 'null'");
 
-            string value = await GetRawSecretAsync(secretName);
-            return value;
+            string secretValue = GetRawSecret(secretName);
+            return Task.FromResult(secretValue);
         }
 
         /// <summary>Retrieves the secret value, based on the given name</summary>
@@ -54,10 +54,12 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         /// <exception cref="T:System.ArgumentException">The name must not be empty</exception>
         /// <exception cref="T:System.ArgumentNullException">The name must not be null</exception>
         /// <exception cref="T:Arcus.Security.Core.SecretNotFoundException">The secret was not found, using the given name</exception>
-        public async Task<Secret> GetSecretAsync(string secretName, bool ignoreCache)
+        public Task<Secret> GetSecretAsync(string secretName, bool ignoreCache)
         {
-            string value = await GetRawSecretAsync(secretName);
-            return new Secret(value, version: "1.0.0");
+            Guard.NotNull(secretName, "Secret name cannot be 'null'");
+
+            Secret secret = GetSecret(secretName);
+            return Task.FromResult(secret);
         }
 
         /// <summary>Retrieves the secret value, based on the given name</summary>
@@ -66,10 +68,12 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         /// <exception cref="T:System.ArgumentException">The <paramref name="secretName" /> must not be empty</exception>
         /// <exception cref="T:System.ArgumentNullException">The <paramref name="secretName" /> must not be null</exception>
         /// <exception cref="T:Arcus.Security.Core.SecretNotFoundException">The secret was not found, using the given name</exception>
-        public async Task<Secret> GetSecretAsync(string secretName)
+        public Task<Secret> GetSecretAsync(string secretName)
         {
-            string value = await GetRawSecretAsync(secretName);
-            return new Secret(value, version: "1.0.0");
+            Guard.NotNull(secretName, "Secret name cannot be 'null'");
+
+            Secret secret = GetSecret(secretName);
+            return Task.FromResult(secret);
         }
 
         /// <summary>Retrieves the secret value, based on the given name</summary>
@@ -82,12 +86,8 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         {
             Guard.NotNull(secretName, "Secret name cannot be 'null'");
 
-            if (_secretValueByName.TryGetValue(secretName, out string secretValue))
-            {
-                return Task.FromResult(secretValue);
-            }
-
-            return Task.FromResult<string>(null);
+            string secretValue = GetRawSecret(secretName);
+            return Task.FromResult(secretValue);
         }
 
         /// <summary>
@@ -98,6 +98,45 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         public Task InvalidateSecretAsync(string secretName)
         {
             return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Retrieves the secret value, based on the given name.
+        /// </summary>
+        /// <param name="secretName">The name of the secret key</param>
+        /// <returns>Returns a <see cref="T:Arcus.Security.Core.Secret" /> that contains the secret key</returns>
+        /// <exception cref="T:System.ArgumentException">Thrown when the <paramref name="secretName" /> is blank.</exception>
+        /// <exception cref="T:Arcus.Security.Core.SecretNotFoundException">Thrown when the secret was not found, using the given name.</exception>
+        public Secret GetSecret(string secretName)
+        {
+            Guard.NotNull(secretName, "Secret name cannot be 'null'");
+
+            string secretValue = GetRawSecret(secretName);
+            if (secretValue is null)
+            {
+                return null;
+            }
+
+            return new Secret(secretValue, "1.0.0");
+        }
+
+        /// <summary>
+        /// Retrieves the secret value, based on the given name.
+        /// </summary>
+        /// <param name="secretName">The name of the secret key</param>
+        /// <returns>Returns the secret key.</returns>
+        /// <exception cref="T:System.ArgumentException">Thrown when the <paramref name="secretName" /> is blank.</exception>
+        /// <exception cref="T:Arcus.Security.Core.SecretNotFoundException">Thrown when the secret was not found, using the given name.</exception>
+        public string GetRawSecret(string secretName)
+        {
+            Guard.NotNull(secretName, "Secret name cannot be 'null'");
+
+            if (_secretValueByName.TryGetValue(secretName, out string secretValue))
+            {
+                return secretValue;
+            }
+
+            return null;
         }
     }
 }

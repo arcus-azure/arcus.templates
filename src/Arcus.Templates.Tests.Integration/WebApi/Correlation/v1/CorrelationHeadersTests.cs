@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Arcus.Templates.Tests.Integration.Fixture;
+using Bogus;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -10,10 +10,12 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Correlation.v1
 {
     public class CorrelationHeadersTests
     {
-        private const string OperationHeaderName = "RequestId",
+        private const string OperationHeaderName = "X-Operation-ID",
                              TransactionHeaderName = "X-Transaction-ID";
 
         private readonly ITestOutputHelper _outputWriter;
+
+        private static readonly Faker BogusGenerator = new Faker();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CorrelationHeadersTests"/> class.
@@ -60,19 +62,19 @@ namespace Arcus.Templates.Tests.Integration.WebApi.Correlation.v1
         public async Task GetHealth_OutOfTheBox_AndTransactionIdRequestHeader_ReturnsOkWithCorrelationHeadersAndSameTransactionId()
         {
             // Arrange
-            var expectedTransactionId = $"transaction-{Guid.NewGuid():N}";
+            string transactionId = BogusGenerator.Random.Hexadecimal(32, prefix: null);
+            string operationParentId = BogusGenerator.Random.Hexadecimal(16, prefix: null);
             using (var project = await WebApiProject.StartNewAsync(_outputWriter))
             {
                 // Act
                 using (HttpResponseMessage response = 
                     await project.Health.GetAsync(
-                        request => request.Headers.Add(TransactionHeaderName, expectedTransactionId)))
+                        request => request.Headers.Add("traceparent", $"00-{transactionId}-{operationParentId}-00")))
                 {
                     // Assert
                     AssertNonBlankResponseHeader(response, OperationHeaderName);
                     string actualTransactionId = AssertNonBlankResponseHeader(response, TransactionHeaderName);
-
-                    Assert.Equal(expectedTransactionId, actualTransactionId);
+                    Assert.Equal(transactionId, actualTransactionId);
                 }
             }
         }

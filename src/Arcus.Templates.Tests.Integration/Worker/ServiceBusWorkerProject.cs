@@ -153,8 +153,7 @@ namespace Arcus.Templates.Tests.Integration.Worker
 
         private void AddTestMessageHandler()
         {
-            AddPackage("Arcus.EventGrid", "3.2.0");
-            AddPackage("Arcus.EventGrid.Publishing", "3.2.0");
+            AddPackage("Arcus.EventGrid.Core", "3.3.0");
             AddTypeAsFile<Order>();
             AddTypeAsFile<Customer>();
             AddTypeAsFile<OrderCreatedEvent>();

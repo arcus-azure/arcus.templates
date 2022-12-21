@@ -52,10 +52,17 @@ namespace Arcus.Templates.AzureFunctions.Http
                 stores.AddAzureKeyVaultWithManagedIdentity("https://your-keyvault.vault.azure.net/", CacheConfiguration.Default);
             });
 #if Serilog_AppInsights
-            
-            LoggerConfiguration logConfig = CreateLoggerConfiguration(builder);
+            IConfiguration appConfig = builder.GetContext().Configuration;
+            var connectionString = appConfig.GetValue<string>("APPLICATIONINSIGHTS_CONNECTION_STRING");
+
+            LoggerConfiguration logConfig = CreateLoggerConfiguration(connectionString);
             builder.Services.AddLogging(logging =>
             {
+                logging.AddApplicationInsightsWebJobs(options =>
+                {
+                    options.ConnectionString = connectionString;
+                });
+
                 logging.RemoveMicrosoftApplicationInsightsLoggerProvider()
                        .AddSerilog(logConfig.CreateLogger(), dispose: true);
             }); 
@@ -63,9 +70,8 @@ namespace Arcus.Templates.AzureFunctions.Http
         }
 #if Serilog_AppInsights
         
-        private static LoggerConfiguration CreateLoggerConfiguration(IFunctionsHostBuilder builder)
+        private static LoggerConfiguration CreateLoggerConfiguration(string connectionString)
         {
-            IConfiguration appConfig = builder.GetContext().Configuration;
             var configuration = new LoggerConfiguration()
                 .MinimumLevel.Information()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
@@ -73,13 +79,12 @@ namespace Arcus.Templates.AzureFunctions.Http
                 .Enrich.WithComponentName("Azure HTTP Trigger")
                 .Enrich.WithVersion()
                 .WriteTo.Console();
-
-            var connectionString = appConfig.GetValue<string>("APPLICATIONINSIGHTS_CONNECTION_STRING");
+            
             if (!string.IsNullOrWhiteSpace(connectionString))
             {
                 configuration.WriteTo.AzureApplicationInsightsWithConnectionString(connectionString);
             }
-
+            
             return configuration;
         } 
 #endif

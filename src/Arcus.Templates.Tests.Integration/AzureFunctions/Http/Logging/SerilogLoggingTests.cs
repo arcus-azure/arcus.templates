@@ -25,8 +25,10 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Logging
             _outputWriter = outputWriter;
         }
 
-        [Fact]
-        public async Task HttpTriggerProject_WithoutSerilog_StillProcessHttpRequest()
+        [Theory]
+        [InlineData(FunctionsWorker.InProcess)]
+        [InlineData(FunctionsWorker.Isolated)]
+        public async Task HttpTriggerProject_WithoutSerilog_StillProcessHttpRequest(FunctionsWorker workerType)
         {
             // Arrange
             var order = new Order
@@ -37,6 +39,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Logging
             };
 
             var options = new AzureFunctionsHttpProjectOptions()
+                .WithFunctionsWorker(workerType)
                 .WithExcludeSerilog();
 
             // Act
@@ -47,13 +50,15 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Logging
                     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
                 }
 
-                string startupContents = project.GetFileContentsInProject("Startup.cs");
-                Assert.DoesNotContain("Serilog", startupContents);
+                Assert.DoesNotContain("Serilog", project.GetFileContentsOfProjectFile());
+                Assert.DoesNotContain("Serilog", project.GetFileContentsInProject(project.RuntimeFileName));
             }
         }
 
-        [Fact]
-        public async Task HttpTriggerProject_WithSerilog_StillProcessHttpRequest()
+        [Theory]
+        [InlineData(FunctionsWorker.InProcess)]
+        [InlineData(FunctionsWorker.Isolated)]
+        public async Task HttpTriggerProject_WithSerilog_StillProcessHttpRequest(FunctionsWorker workerType)
         {
             // Arrange
             var order = new Order
@@ -63,7 +68,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Logging
                 Scheduled = BogusGenerator.Date.RecentOffset()
             };
 
-            var options = new AzureFunctionsHttpProjectOptions();
+            var options = new AzureFunctionsHttpProjectOptions().WithFunctionsWorker(workerType);
 
             // Act
             using (var project = await AzureFunctionsHttpProject.StartNewAsync(options, _outputWriter))
@@ -73,8 +78,8 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Logging
                     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
                 }
 
-                string startupContents = project.GetFileContentsInProject("Startup.cs");
-                Assert.Contains("Serilog", startupContents);
+                Assert.Contains("Serilog", project.GetFileContentsOfProjectFile());
+                Assert.Contains("Serilog", project.GetFileContentsInProject(project.RuntimeFileName));
             }
         }
     }

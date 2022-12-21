@@ -35,7 +35,10 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Fix
         {
             // Arrange
             var config = TestConfig.Create();
-            using (var project = AzureFunctionsHttpProject.CreateNew(config, _outputWriter))
+            var options = new AzureFunctionsHttpProjectOptions()
+                .WithFunctionsWorker(FunctionsWorker.InProcess);
+
+            using (var project = AzureFunctionsHttpProject.CreateNew(config, options, _outputWriter))
             {
                 project.UpdateFileInProject($"{nameof(OrderFunction)}.cs", contents =>
                 {

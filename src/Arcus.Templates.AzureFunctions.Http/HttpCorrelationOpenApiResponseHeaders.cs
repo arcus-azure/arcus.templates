@@ -31,11 +31,11 @@ namespace Arcus.Templates.AzureFunctions.Http
                 }
             },
             {
-                "RequestId",
+                "traceparent",
                 new OpenApiHeader
                 {
                     Required = true,
-                    Description = "Request ID is used to identify the upstream service that calls this endpoint"
+                    Description = "traceparent is used to identify the upstream service that calls this endpoint"
                 }
             }
         };

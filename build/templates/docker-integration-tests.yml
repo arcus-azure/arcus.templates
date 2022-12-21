@@ -101,13 +101,26 @@ stages:
                 APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=$(Arcus.ApplicationInsights.InstrumentationKey)
           - template: 'run-new-project-from-template.yml'
             parameters:
-              projectName: 'Arcus.Demo.AzureFunctions.Http'
+              projectName: 'Arcus.Demo.AzureFunctions.InProcess.Http'
               projectAlias: 'arcus-az-func-http'
-              ports: '$(Arcus.AzureFunctions.Http.HttpPort):80'
+              projectOptions: '--functions-worker inProcess'
+              ports: '$(Arcus.AzureFunctions.Http.InProcess.HttpPort):80'
               script: |
-                Get-Content './Arcus.Demo.AzureFunctions.Http/Startup.cs' -Raw |
+                Get-Content './Arcus.Demo.AzureFunctions.InProcess.Http/Startup.cs' -Raw |
                    % { $_ -replace '#error', '#warning' -replace '#if DEBUG', '#if RELEASE' } |
-                  Set-Content './Arcus.Demo.AzureFunctions.Http/Startup.cs'
+                  Set-Content './Arcus.Demo.AzureFunctions.InProcess.Http/Startup.cs'
+              envVars: |
+                APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=$(Arcus.ApplicationInsights.InstrumentationKey)
+          - template: 'run-new-project-from-template.yml'
+            parameters:
+              projectName: 'Arcus.Demo.AzureFunctions.Isolated.Http'
+              projectAlias: 'arcus-az-func-http'
+              projectOptions: '--functions-worker isolated'
+              ports: '$(Arcus.AzureFunctions.Http.Isolated.HttpPort):80'
+              script: |
+                Get-Content './Arcus.Demo.AzureFunctions.Isolated.Http/Program.cs' -Raw |
+                   % { $_ -replace '#error', '#warning' -replace '#if DEBUG', '#if RELEASE' } |
+                  Set-Content './Arcus.Demo.AzureFunctions.Isolated.Http/Program.cs'
               envVars: |
                 APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=$(Arcus.ApplicationInsights.InstrumentationKey)
           - template: 'run-new-project-from-template.yml'
@@ -248,4 +261,16 @@ stages:
             inputs:
               targetType: 'inline'
               script: 'docker logs Arcus.Demo.AzureFunctions.ServiceBus.Topic.Isolated'
+            condition: failed()
+          - task: PowerShell@2
+            displayName: 'Get Docker container logs for Arcus.Demo.AzureFunctions.InProcess.Http'
+            inputs:
+              targetType: 'inline'
+              script: 'docker logs Arcus.Demo.AzureFunctions.InProcess.Http'
+            condition: failed()
+          - task: PowerShell@2
+            displayName: 'Get Docker container logs for Arcus.Demo.AzureFunctions.Isolated.Http'
+            inputs:
+              targetType: 'inline'
+              script: 'docker logs Arcus.Demo.AzureFunctions.Isolated.Http'
             condition: failed()

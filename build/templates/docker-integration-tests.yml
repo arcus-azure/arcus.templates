@@ -179,7 +179,7 @@ stages:
             parameters:
               projectName: 'Arcus.Demo.AzureFunctions.EventHubs.InProcess'
               projectAlias: 'arcus-az-func-eventhubs'
-              options: '--functions-worker inProcess'
+              projectOptions: '--functions-worker inProcess'
               ports: '$(Arcus.AzureFunctions.EventHubs.InProcess.Port):$(Arcus.AzureFunctions.EventHubs.InProcess.Port)'
               script: |
                 Get-Content './Arcus.Demo.AzureFunctions.EventHubs.InProcess/Startup.cs' -Raw |
@@ -196,7 +196,7 @@ stages:
             parameters:
               projectName: 'Arcus.Demo.AzureFunctions.EventHubs.Isolated'
               projectAlias: 'arcus-az-func-eventhubs'
-              options: '--functions-worker isolated'
+              projectOptions: '--functions-worker isolated'
               ports: '$(Arcus.AzureFunctions.EventHubs.Isolated.Port):$(Arcus.AzureFunctions.EventHubs.Isolated.Port)'
               script: |
                 Get-Content './Arcus.Demo.AzureFunctions.EventHubs.Isolated/Startup.cs' -Raw |

@@ -1,0 +1,10 @@
+{
+    "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    //#if (Serilog_AppInsights)
+    "APPLICATIONINSIGHTS_CONNECTION_STRING": ""
+    //#endif
+  }
+}

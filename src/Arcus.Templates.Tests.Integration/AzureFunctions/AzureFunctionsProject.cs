@@ -117,7 +117,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions
             };
             Logger.WriteLine("> {0} {1}", processInfo.FileName, processInfo.Arguments);
 
-            Environment.SetEnvironmentVariable(ApplicationInsightsConnectionStringKeyVariable, $"InstrumentationKey={ApplicationInsightsConfig.InstrumentationKey}");
+            //Environment.SetEnvironmentVariable(ApplicationInsightsConnectionStringKeyVariable, $"InstrumentationKey={ApplicationInsightsConfig.InstrumentationKey}");
             return processInfo;
         }
 

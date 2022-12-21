@@ -199,9 +199,9 @@ stages:
               projectOptions: '--functions-worker isolated'
               ports: '$(Arcus.AzureFunctions.EventHubs.Isolated.Port):$(Arcus.AzureFunctions.EventHubs.Isolated.Port)'
               script: |
-                Get-Content './Arcus.Demo.AzureFunctions.EventHubs.Isolated/Startup.cs' -Raw |
+                Get-Content './Arcus.Demo.AzureFunctions.EventHubs.Isolated/Program.cs' -Raw |
                   % { $_ -replace '#error', '#warning' -replace '#if DEBUG', '#if RELEASE' } |
-                  Set-Content './Arcus.Demo.AzureFunctions.EventHubs.Isolated/Startup.cs'
+                  Set-Content './Arcus.Demo.AzureFunctions.EventHubs.Isolated/Program.cs'
                 Get-Content './Arcus.Demo.AzureFunctions.EventHubs.Isolated/SensorReadingFunction.cs' -Raw |
                   % { $_ -replace 'sensors', '$(Arcus.EventHubs.Docker.EventHubsName)' } |
                   Set-Content './Arcus.Demo.AzureFunctions.EventHubs.Isolated/SensorReadingFunction.cs'

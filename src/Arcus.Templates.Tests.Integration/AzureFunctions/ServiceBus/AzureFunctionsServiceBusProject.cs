@@ -30,9 +30,11 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
         private AzureFunctionsServiceBusProject(
             ServiceBusEntityType entityType, 
             TestConfig configuration, 
+            AzureFunctionsServiceBusProjectOptions options,
             ITestOutputHelper outputWriter) 
             : base(configuration.GetAzureFunctionsServiceBusProjectDirectory(entityType), 
                    configuration, 
+                   options,
                    outputWriter)
         {
             string connectionString = configuration.GetServiceBusConnectionString(entityType);
@@ -102,7 +104,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
 
             AzureFunctionsServiceBusProject project = CreateNew(entityType, options, configuration, outputWriter);
 
-            await project.StartAsync(entityType, options);
+            await project.StartAsync(entityType);
             return project;
         }
 
@@ -112,15 +114,15 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
             TestConfig configuration, 
             ITestOutputHelper outputWriter)
         {
-            var project = new AzureFunctionsServiceBusProject(entityType, configuration, outputWriter);
+            var project = new AzureFunctionsServiceBusProject(entityType, configuration, options, outputWriter);
             project.CreateNewProject(options);
-            project.AddOrderMessageHandlerImplementation(options);
-            project.AddLocalSettings(options.FunctionsWorker);
+            project.AddOrderMessageHandlerImplementation();
+            project.AddLocalSettings();
 
             return project;
         }
 
-        private void AddOrderMessageHandlerImplementation(AzureFunctionsServiceBusProjectOptions options)
+        private void AddOrderMessageHandlerImplementation()
         {
             AddPackage("Arcus.EventGrid.Core", "3.3.0");
 
@@ -129,23 +131,13 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
             AddTypeAsFile<OrderCreatedEvent>();
             AddTypeAsFile<OrderCreatedEventData>();
 
-            if (options.FunctionsWorker is FunctionsWorker.InProcess)
-            {
-                AddTypeAsFile<TestOrdersAzureServiceBusMessageHandler>();
-                UpdateFileInProject("Startup.cs", contents =>
-                    RemovesUserErrorsFromContents(contents)
-                        .Replace("OrdersAzureServiceBusMessageHandler", nameof(TestOrdersAzureServiceBusMessageHandler))); 
-            } 
-            else if (options.FunctionsWorker is FunctionsWorker.Isolated)
-            {
-                AddTypeAsFile<TestOrdersAzureServiceBusMessageHandler>();
-                UpdateFileInProject("Program.cs", contents =>
-                    RemovesUserErrorsFromContents(contents)
-                        .Replace("OrdersAzureServiceBusMessageHandler", nameof(TestOrdersAzureServiceBusMessageHandler)));
-            }
+            AddTypeAsFile<TestOrdersAzureServiceBusMessageHandler>();
+            UpdateFileInProject(RuntimeFileName, contents =>
+                RemovesUserErrorsFromContents(contents)
+                    .Replace("OrdersAzureServiceBusMessageHandler", nameof(TestOrdersAzureServiceBusMessageHandler))); 
         }
 
-        private async Task StartAsync(ServiceBusEntityType entityType, AzureFunctionsServiceBusProjectOptions options)
+        private async Task StartAsync(ServiceBusEntityType entityType)
         {
             string serviceBusConnectionString = Configuration.GetServiceBusConnectionString(entityType);
             var properties = ServiceBusConnectionStringProperties.Parse(serviceBusConnectionString);

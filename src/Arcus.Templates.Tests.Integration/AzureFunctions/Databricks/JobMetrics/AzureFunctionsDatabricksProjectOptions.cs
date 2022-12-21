@@ -1,17 +1,16 @@
-﻿using Arcus.Templates.Tests.Integration.Fixture;
-
-namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics
+﻿namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics
 {
     /// <summary>
     /// Represents the additional user project options to change the <see cref="AzureFunctionsDatabricksProject"/> project contents and functionality.
     /// </summary>
-    public class AzureFunctionsDatabricksProjectOptions : ProjectOptions
+    public class AzureFunctionsDatabricksProjectOptions : AzureFunctionsProjectOptions
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="AzureFunctionsDatabricksProjectOptions" /> class.
         /// </summary>
         public AzureFunctionsDatabricksProjectOptions()
         {
+            FunctionsWorker = FunctionsWorker.InProcess;
         }
 
         /// <summary>

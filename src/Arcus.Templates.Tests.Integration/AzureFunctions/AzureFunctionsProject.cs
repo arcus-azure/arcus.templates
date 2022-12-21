@@ -29,11 +29,13 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions
         /// </summary>
         /// <param name="templateDirectory">The file directory where the .NET project template is located.</param>
         /// <param name="configuration">The configuration instance to retrieve Azure Functions-specific test values.</param>
+        /// <param name="options">The options used to manipulate the resulting Azure Functions project.</param>
         /// <param name="outputWriter">The logger instance to write diagnostic trace messages during the lifetime of the test project.</param>
         /// <exception cref="ArgumentNullException">Thrown when the <paramref name="templateDirectory"/>, <paramref name="configuration"/>, or <paramref name="outputWriter"/> is <c>null</c>.</exception>
         protected  AzureFunctionsProject(
             DirectoryInfo templateDirectory, 
             TestConfig configuration,
+            AzureFunctionsProjectOptions options,
             ITestOutputHelper outputWriter) 
             : base(templateDirectory, 
                    configuration.GetFixtureProjectDirectory(), 
@@ -44,10 +46,22 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions
             Guard.NotNull(outputWriter, nameof(outputWriter), "Requires an logger instance to write diagnostic trace messages during the lifetime of the project.");
 
             Configuration = configuration;
+            FunctionsWorker = options.FunctionsWorker;
+            RuntimeFileName = DetermineStartupCodeFileName();
             RootEndpoint = configuration.GenerateRandomLocalhostUrl().ResetToRoot().ToUri();
             AzureFunctionsConfig = configuration.GetAzureFunctionsConfig();
             ApplicationInsightsConfig = configuration.GetApplicationInsightsConfig();
         }
+
+        /// <summary>
+        /// Gets the Azure Functions worker type the project should target.
+        /// </summary>
+        public FunctionsWorker FunctionsWorker { get; }
+
+        /// <summary>
+        /// Gets the file name of the Azure Functions that contains the startup code ('Startup.cs' for in-process functions, 'Program.cs' for isolated functions).
+        /// </summary>
+        public string RuntimeFileName { get; }
 
         /// <summary>
         /// Gets the root endpoint on which the Azure Function is running.
@@ -72,23 +86,34 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions
         /// <summary>
         /// Adds an test Azure storage account connection string to the Azure Function project so the project can start up correctly.
         /// </summary>
-        protected void AddLocalSettings(FunctionsWorker workerType)
+        protected void AddLocalSettings()
         {
             string storageAccountConnectionString = AzureFunctionsConfig.StorageAccountConnectionString;
-            string workerRuntime = DetermineWorkerRuntime(workerType);
+            string workerRuntime = DetermineWorkerRuntime();
 
             AddFileInProject("local.settings.json",  
                 $"{{ \"IsEncrypted\": false, \"Values\": {{ \"AzureWebJobsStorage\": \"{storageAccountConnectionString}\", \"FUNCTIONS_WORKER_RUNTIME\": \"{workerRuntime}\", \"APPLICATIONINSIGHTS_CONNECTION_STRING\": \"\" }}, \"Host\": {{ \"LocalHttpPort\": {RootEndpoint.Port} }} }}");
         }
 
-        private static string DetermineWorkerRuntime(FunctionsWorker workerType)
+        private string DetermineWorkerRuntime()
         {
-            switch (workerType)
+            switch (FunctionsWorker)
             {
                 case FunctionsWorker.InProcess: return "dotnet";
                 case FunctionsWorker.Isolated: return "dotnet-isolated";
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(workerType), workerType, "Unknown Azure Functions worker type");
+                    throw new ArgumentOutOfRangeException(nameof(FunctionsWorker), FunctionsWorker, "Unknown Azure Functions worker type");
+            }
+        }
+
+        private string DetermineStartupCodeFileName()
+        {
+            switch (FunctionsWorker)
+            {
+                case FunctionsWorker.InProcess: return "Startup.cs";
+                case FunctionsWorker.Isolated: return "Program.cs";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(FunctionsWorker), FunctionsWorker, "Unknown Azure Functions worker type");
             }
         }
 

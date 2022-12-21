@@ -11,15 +11,16 @@ using Xunit.Abstractions;
 namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs
 {
     /// <summary>
-    /// Project template to create Azure Functions EventHubs triger projects.
+    /// Project template to create Azure Functions EventHubs trigger projects.
     /// </summary>
     public class AzureFunctionsEventHubsProject : AzureFunctionsProject, IAsyncDisposable
     {
         private AzureFunctionsEventHubsProject(
             TestEventHubsMessageProducer messageProducer,
             TestConfig config,
+            AzureFunctionsEventHubsProjectOptions options,
             ITestOutputHelper outputWriter)
-            : base(config.GetAzureFunctionsEventHubsProjectDirectory(), config, outputWriter)
+            : base(config.GetAzureFunctionsEventHubsProjectDirectory(), config, options, outputWriter)
         {
             MessagePump = new MessagePumpService(messageProducer, config, outputWriter);
         }
@@ -82,16 +83,16 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs
         {
             EventHubsConfig eventHubsConfig = configuration.GetEventHubsConfig();
             var producer = new TestEventHubsMessageProducer(eventHubsConfig.EventHubsName, eventHubsConfig.EventHubsConnectionString);
-            var project = new AzureFunctionsEventHubsProject(producer, configuration, outputWriter);
+            var project = new AzureFunctionsEventHubsProject(producer, configuration, options, outputWriter);
 
             project.CreateNewProject(options);
-            project.AddTestMessageHandler(eventHubsConfig, options);
-            project.AddLocalSettings(options.FunctionsWorker);
+            project.AddTestMessageHandler(eventHubsConfig);
+            project.AddLocalSettings();
 
             return project;
         }
 
-        private void AddTestMessageHandler(EventHubsConfig eventHubsConfig, AzureFunctionsEventHubsProjectOptions options)
+        private void AddTestMessageHandler(EventHubsConfig eventHubsConfig)
         {
             AddPackage("Arcus.EventGrid.Core", "3.3.0");
             AddTypeAsFile<Order>();
@@ -104,18 +105,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs
                 contents => contents.Replace("EventHubTrigger(\"sensors\"", $"EventHubTrigger(\"{eventHubsConfig.EventHubsName}\"")
                                     .Replace("var data = new EventData(message);", $"var data = new EventData(message);{Environment.NewLine}data.CorrelationId = properties[\"Operation-Id\"].GetString();"));
 
-            string fileName = "";
-            if (options.FunctionsWorker is FunctionsWorker.InProcess)
-            {
-                fileName = "Startup.cs";
-            }
-
-            if (options.FunctionsWorker is FunctionsWorker.Isolated)
-            {
-                fileName = "Program.cs";
-            }
-
-            UpdateFileInProject(fileName, contents => 
+            UpdateFileInProject(RuntimeFileName, contents => 
                 RemovesUserErrorsFromContents(contents)
                     .Replace(".MinimumLevel.Debug()", ".MinimumLevel.Verbose()")
                     .Replace("SensorReadingAzureEventHubsMessageHandler", nameof(TestOrdersAzureEventHubsMessageHandler))

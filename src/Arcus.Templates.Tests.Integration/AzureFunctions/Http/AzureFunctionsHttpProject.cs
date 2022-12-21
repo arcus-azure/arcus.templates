@@ -35,9 +35,9 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http
             ITestOutputHelper outputWriter) 
             : base(configuration.GetAzureFunctionsHttpProjectDirectory(), 
                    configuration, 
+                   options,
                    outputWriter)
         {
-            RuntimeFileName = DetermineStartupCodeFileName(options.FunctionsWorker);
             OrderFunctionEndpoint = RootEndpoint.AppendPathSegments("api", "v1", "order").ToUri();
             Order = new OrderService(OrderFunctionEndpoint, outputWriter);
             Health = new HealthEndpointService(
@@ -49,22 +49,6 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http
                 outputWriter);
         }
 
-        private static string DetermineStartupCodeFileName(FunctionsWorker workerType)
-        {
-            switch (workerType)
-            {
-                case FunctionsWorker.InProcess: return "Startup.cs";
-                case FunctionsWorker.Isolated: return "Program.cs";
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(workerType), workerType, "Unknown Azure Functions worker type");
-            }
-        }
-
-        /// <summary>
-        /// Gets the file name of the Azure Functions that contains the startup code ('Startup.cs' for in-process functions, 'Program.cs' for isolated functions).
-        /// </summary>
-        public string RuntimeFileName { get; }
-        
         /// <summary>
         /// Gets the endpoint of the order Azure Function.
         /// </summary>
@@ -186,7 +170,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http
 
             AzureFunctionsHttpProject project = CreateNew(configuration, new AzureFunctionsHttpProjectOptions(), outputWriter);
             return project;
-        }
+        }   
 
         /// <summary>
         /// Creates a new temporary project based on the Azure Functions HTTP trigger project template.
@@ -208,7 +192,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http
             
             var project = new AzureFunctionsHttpProject(configuration, options, outputWriter);
             project.CreateNewProject(options);
-            project.AddLocalSettings(options.FunctionsWorker);
+            project.AddLocalSettings();
 
             project.UpdateFileInProject(project.RuntimeFileName, contents => project.RemovesUserErrorsFromContents(contents));
 

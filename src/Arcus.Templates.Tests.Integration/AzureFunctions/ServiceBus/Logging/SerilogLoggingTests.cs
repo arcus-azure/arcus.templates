@@ -38,6 +38,12 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus.Logging
             await TestServiceBusProjectWithoutSerilogCorrectlyProcessesMessage(ServiceBusEntityType.Queue, FunctionsWorker.InProcess);
         }
 
+        [Fact]
+        public async Task ServiceBusQueueProjectIsolated_WithoutSerilog_CorrectlyProcessesMessage()
+        {
+            await TestServiceBusProjectWithoutSerilogCorrectlyProcessesMessage(ServiceBusEntityType.Queue, FunctionsWorker.Isolated);
+        }
+
         private async Task TestServiceBusProjectWithoutSerilogCorrectlyProcessesMessage(ServiceBusEntityType entityType, FunctionsWorker workerType)
         {
             // Arrange

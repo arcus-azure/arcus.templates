@@ -90,7 +90,7 @@
           "description": "Uses Azure Functions isolated worker template"
         }
       ],
-      "defaultValue": "inProcess",
+      "defaultValue": "isolated",
       "description": "Chooses the kind of Azure Functions worker template"
     },
     "InProcess": {

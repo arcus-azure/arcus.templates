@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.AzureFunctions.Admin;
-using Arcus.Templates.Tests.Integration.AzureFunctions.Configuration;
-using Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics.Configuration;
-using Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics.MetricReporting;
 using Arcus.Templates.Tests.Integration.AzureFunctions.Http.Configuration;
 using Arcus.Templates.Tests.Integration.Fixture;
 using Xunit;
@@ -27,13 +21,16 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Health
             _outputWriter = outputWriter;
         }
         
-        [Fact]
-        public async Task AzureFunctionsHttpProject_WithoutOptions_ShouldAnswerToAdministratorEndpoint()
+        [Theory]
+        [InlineData(FunctionsWorker.InProcess)]
+        [InlineData(FunctionsWorker.Isolated)]
+        public async Task AzureFunctionsHttpProject_WithoutOptions_ShouldAnswerToAdministratorEndpoint(FunctionsWorker workerType)
         {
             // Arrange
             var configuration = TestConfig.Create();
             AzureFunctionHttpConfig httpConfig = configuration.GetAzureFunctionHttpConfig();
-            var service = new AdminEndpointService(httpConfig.HttpPort, AzureFunctionsHttpProject.OrderFunctionName, _outputWriter);
+            int httpPort = httpConfig.GetHttpPort(workerType);
+            var service = new AdminEndpointService(httpPort, AzureFunctionsHttpProject.OrderFunctionName, _outputWriter);
 
             // Act / Assert
             await service.TriggerFunctionAsync();

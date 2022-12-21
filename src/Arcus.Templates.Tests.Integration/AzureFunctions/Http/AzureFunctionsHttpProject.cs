@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net.Http;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.AzureFunctions.Http.Api;
@@ -9,6 +10,8 @@ using Arcus.Templates.Tests.Integration.WebApi.Health;
 using Arcus.Templates.Tests.Integration.WebApi.Swagger;
 using Flurl;
 using GuardNet;
+using Polly.Retry;
+using Polly;
 using Xunit.Abstractions;
 
 namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http
@@ -23,14 +26,18 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http
         /// Gets the name of the order Azure Function.
         /// </summary>
         public const string OrderFunctionName = "order";
-        
+
+        private static readonly HttpClient HttpClient = new HttpClient();
+
         private AzureFunctionsHttpProject(
             TestConfig configuration, 
+            AzureFunctionsHttpProjectOptions options,
             ITestOutputHelper outputWriter) 
             : base(configuration.GetAzureFunctionsHttpProjectDirectory(), 
                    configuration, 
                    outputWriter)
         {
+            RuntimeFileName = DetermineStartupCodeFileName(options.FunctionsWorker);
             OrderFunctionEndpoint = RootEndpoint.AppendPathSegments("api", "v1", "order").ToUri();
             Order = new OrderService(OrderFunctionEndpoint, outputWriter);
             Health = new HealthEndpointService(
@@ -41,6 +48,22 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http
                 RootEndpoint.AppendPathSegments("api", "swagger.json"),
                 outputWriter);
         }
+
+        private static string DetermineStartupCodeFileName(FunctionsWorker workerType)
+        {
+            switch (workerType)
+            {
+                case FunctionsWorker.InProcess: return "Startup.cs";
+                case FunctionsWorker.Isolated: return "Program.cs";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(workerType), workerType, "Unknown Azure Functions worker type");
+            }
+        }
+
+        /// <summary>
+        /// Gets the file name of the Azure Functions that contains the startup code ('Startup.cs' for in-process functions, 'Program.cs' for isolated functions).
+        /// </summary>
+        public string RuntimeFileName { get; }
         
         /// <summary>
         /// Gets the endpoint of the order Azure Function.
@@ -183,10 +206,11 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http
             Guard.NotNull(options, nameof(options), "Requires a set of project argument options to create the Azure Functions HTTP trigger project");
             Guard.NotNull(outputWriter, nameof(outputWriter), "Requires a test logger to write diagnostic information during the creation and startup process");
             
-            var project = new AzureFunctionsHttpProject(configuration, outputWriter);
+            var project = new AzureFunctionsHttpProject(configuration, options, outputWriter);
             project.CreateNewProject(options);
-            project.AddLocalSettings(FunctionsWorker.InProcess);
-            project.UpdateFileInProject("Startup.cs", contents => project.RemovesUserErrorsFromContents(contents));
+            project.AddLocalSettings(options.FunctionsWorker);
+
+            project.UpdateFileInProject(project.RuntimeFileName, contents => project.RemovesUserErrorsFromContents(contents));
 
             return project;
         }

@@ -23,7 +23,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions
         protected const string ApplicationInsightsConnectionStringKeyVariable = "APPLICATIONINSIGHTS_CONNECTION_STRING";
 
         private static readonly HttpClient HttpClient = new HttpClient();
-        
+
         /// <summary>
         /// Initializes a new instance of the <see cref="AzureFunctionsProject"/> class.
         /// </summary>
@@ -78,7 +78,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions
             string workerRuntime = DetermineWorkerRuntime(workerType);
 
             AddFileInProject("local.settings.json",  
-                $"{{ \"IsEncrypted\": false, \"Values\": {{ \"AzureWebJobsStorage\": \"{storageAccountConnectionString}\", \"FUNCTIONS_WORKER_RUNTIME\": \"{workerRuntime}\" }}, \"Host\": {{ \"LocalHttpPort\": {RootEndpoint.Port} }} }}");
+                $"{{ \"IsEncrypted\": false, \"Values\": {{ \"AzureWebJobsStorage\": \"{storageAccountConnectionString}\", \"FUNCTIONS_WORKER_RUNTIME\": \"{workerRuntime}\", \"APPLICATIONINSIGHTS_CONNECTION_STRING\": \"\" }}, \"Host\": {{ \"LocalHttpPort\": {RootEndpoint.Port} }} }}");
         }
 
         private static string DetermineWorkerRuntime(FunctionsWorker workerType)
@@ -133,7 +133,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions
                 + "or possible check for any compile errors or runtime failures (via the 'TearDownOptions') in the created test project based on the project template", exception);
         }
 
-        /// <summary>
+         /// <summary>
         /// Waits until the Azure Function project is fully running and ready to be interacted with.
         /// </summary>
         /// <param name="endpoint">The HTTP endpoint for the Azure Functions project to poll so the test project knows that the Azure Functions project is available.</param>
@@ -164,7 +164,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions
                     + "please check any build or runtime errors that could occur when the test project was created");
             }
         }
-        
+
         /// <summary>
         /// Performs additional application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>

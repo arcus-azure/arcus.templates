@@ -3,6 +3,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <AzureFunctionsVersion>v4</AzureFunctionsVersion>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <OutputType Condition="'$(Isolated)' == 'true'">Exe</OutputType>
     <!--#if (AuthoringMode)-->
     <Authors>Arcus</Authors>
     <Company>Arcus</Company>
@@ -36,7 +37,9 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <DefineConstants>$(DefineConstants);OpenApi;Serilog_AppInsights</DefineConstants>
+    <DefineConstants>$(DefineConstants);OpenApi;Serilog_AppInsights;InProcess</DefineConstants>
+    <Isolated>false</Isolated>
+    <InProcess>true</InProcess>
     <OpenApi>true</OpenApi>
     <Serilog_AppInsights>true</Serilog_AppInsights>
     <DockerFastModeProjectMountDirectory>/home/site/wwwroot</DockerFastModeProjectMountDirectory>
@@ -62,16 +65,22 @@
     <PackageReference Include="Arcus.Observability.Telemetry.AspNetCore" Version="2.6.0" />
     <PackageReference Include="Arcus.Observability.Telemetry.AzureFunctions" Version="2.6.0" />
     <PackageReference Include="Arcus.Observability.Telemetry.Core" Version="2.6.0" />
-    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Filters" Version="2.6.0" Condition="'$(Serilog_AppInsights)' == 'true'"  />
+    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Filters" Version="2.6.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
     <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Sinks.Applicationinsights" Version="2.6.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
     <PackageReference Include="Arcus.Security.AzureFunctions" Version="1.9.0" />
     <PackageReference Include="Arcus.Security.Providers.AzureKeyVault" Version="1.9.0" />
-    <PackageReference Include="Arcus.WebApi.Logging.AzureFunctions" Version="1.6.1" />
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="4.0.1" />
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.2.0" />
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.OpenApi" Version="1.4.0" Condition="'$(OpenApi)' == 'true'" />
+    <PackageReference Include="Arcus.WebApi.Hosting.AzureFunctions" Version="1.7.0" Condition="'$(Isolated)' == 'true'" />
+    <PackageReference Include="Arcus.WebApi.Logging.AzureFunctions" Version="1.7.0" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.9.0" Condition="'$(Isolated)' == 'true'" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.0.13" Condition="'$(Isolated)' == 'true'" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.OpenApi" Version="1.4.0" Condition="'$(OpenApi)' == 'true' and '$(Isolated)' == 'true'" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.7.0" Condition="'$(Isolated)' == 'true'" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="4.0.1" Condition="'$(InProcess)' == 'true'" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.2.0" Condition="'$(InProcess)' == 'true'" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.OpenApi" Version="1.4.0" Condition="'$(OpenApi)' == 'true' and '$(InProcess)' == 'true'" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
     <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
+    <PackageReference Include="Serilog.Extensions.Hosting" Version="5.0.1" Condition="'$(Serilog_AppInsights)' == 'true'" />
   </ItemGroup>
 </Project>

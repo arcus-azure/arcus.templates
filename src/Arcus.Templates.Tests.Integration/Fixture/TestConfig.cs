@@ -319,9 +319,9 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         /// <exception cref="KeyNotFoundException">Thrown when one of the HTTP Azure Function configuration values are not found.</exception>
         public AzureFunctionHttpConfig GetAzureFunctionHttpConfig()
         {
-            var httpPort = _configuration.GetRequiredValue<int>("Arcus:AzureFunctions:Http:HttpPort");
-            
-            return new AzureFunctionHttpConfig(httpPort);
+            return new AzureFunctionHttpConfig(
+                _configuration.GetRequiredValue<int>("Arcus:AzureFunctions:Http:Isolated:HttpPort"),
+                _configuration.GetRequiredValue<int>("Arcus:AzureFunctions:Http:InProcess:HttpPort"));
         }
 
         /// <summary>

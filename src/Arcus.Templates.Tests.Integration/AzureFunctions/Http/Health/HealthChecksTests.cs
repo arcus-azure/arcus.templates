@@ -41,7 +41,6 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Health
             
             using (var project = await AzureFunctionsHttpProject.StartNewAsync(_config, options, _outputWriter))
             {
-                project.TearDownOptions = TearDownOptions.KeepProjectDirectory;
                 // Act
                 using (HttpResponseMessage response = await project.Health.GetAsync())
                 {

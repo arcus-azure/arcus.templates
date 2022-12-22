@@ -1,0 +1,14 @@
+{
+    "IsEncrypted": false,
+  "Values": {
+    //#if(Isolated)
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
+    //#else
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    //#endif
+    //#if (Serilog_AppInsights)
+    "APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=<key>",
+    //#endif
+    "AzureWebJobsStorage": ""
+  }
+}

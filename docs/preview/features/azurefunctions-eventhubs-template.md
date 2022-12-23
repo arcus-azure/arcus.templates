@@ -31,7 +31,7 @@ Creates a starter worker project with by default configured:
 
 And additional features available with options:
 * `--functions-worker`: Configures the type of Azure Functions worker type the project should target.
-  * `inProcess` (default): Uses the in-process Azure Functions worker type which runs on the same process as run Azure Function
-  * `isolated`: Uses the isolated Azure Functions worker type which runs on a different process as the Azure Function
+  * `isolated` (default): Uses the isolated Azure Functions worker type which runs on a different process as the Azure Function
+  * `inProcess`: Uses the in-process Azure Functions worker type which runs on the same process as run Azure Function
   For more information on the difference between the two, see [Microsoft's documentation](https://learn.microsoft.com/en-us/azure/azure-functions/dotnet-isolated-process-guide).
 * `-es|--exclude-serilog`: Exclude the [Serilog](https://serilog.net/) logging infrastructure in the worker project which includes default enrichers ([version](https://observability.arcus-azure.net/features/telemetry-enrichment#version-enricher) and [application](https://observability.arcus-azure.net/features/telemetry-enrichment#application-enricher)), and sinking to Application Insights.

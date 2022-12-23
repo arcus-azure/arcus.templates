@@ -26,9 +26,11 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics
 
         private AzureFunctionsDatabricksProject(
             TestConfig configuration, 
+            AzureFunctionsDatabricksProjectOptions options,
             ITestOutputHelper outputWriter) 
             : base(configuration.GetAzureFunctionsDatabricksJobMetricsProjectDirectory(), 
                    configuration, 
+                   options,
                    outputWriter)
         {
             AzureFunctionDatabricksConfig = configuration.GetDatabricksConfig();
@@ -89,10 +91,10 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics
 
         private static AzureFunctionsDatabricksProject CreateNew(TestConfig configuration, AzureFunctionsDatabricksProjectOptions options, ITestOutputHelper outputWriter)
         {
-            var project = new AzureFunctionsDatabricksProject(configuration, outputWriter);
+            var project = new AzureFunctionsDatabricksProject(configuration, options, outputWriter);
             project.CreateNewProject(options);
             project.AddDatabricksSecurityToken(project.AzureFunctionDatabricksConfig.SecurityToken);
-            project.AddLocalSettings(FunctionsWorker.InProcess);
+            project.AddLocalSettings();
             
             return project;
         }
@@ -107,7 +109,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics
         {
             AddTypeAsFile<SingleValueSecretProvider>();
 
-            UpdateFileInProject("Startup.cs", contents =>
+            UpdateFileInProject(RuntimeFileName, contents =>
                 RemovesUserErrorsFromContents(contents)
                     .Replace("AddAzureKeyVaultWithManagedIdentity(\"https://your-keyvault.vault.azure.net/\", CacheConfiguration.Default)", 
                              $"AddProvider(new {nameof(SingleValueSecretProvider)}(\"{securityToken}\"))"));

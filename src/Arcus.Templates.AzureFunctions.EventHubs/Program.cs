@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Arcus.Security.Core;
 using Arcus.Security.Core.Caching.Configuration;
+using Arcus.Templates.AzureFunctions.EventHubs.Model;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 #if Serilog_AppInsights

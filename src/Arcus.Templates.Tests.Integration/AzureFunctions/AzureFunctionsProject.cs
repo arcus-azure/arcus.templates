@@ -142,7 +142,6 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions
             };
             Logger.WriteLine("> {0} {1}", processInfo.FileName, processInfo.Arguments);
 
-            Environment.SetEnvironmentVariable(ApplicationInsightsConnectionStringKeyVariable, $"InstrumentationKey={ApplicationInsightsConfig.InstrumentationKey}");
             return processInfo;
         }
 
@@ -188,15 +187,6 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions
                     "The test project created from the Azure Functions project template doesn't seem to be running, "
                     + "please check any build or runtime errors that could occur when the test project was created");
             }
-        }
-
-        /// <summary>
-        /// Performs additional application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        /// <param name="disposing">The flag indicating whether or not the additional tasks should be disposed.</param>
-        protected override void Disposing(bool disposing)
-        {
-            Environment.SetEnvironmentVariable(ApplicationInsightsConnectionStringKeyVariable, null);
         }
     }
 }

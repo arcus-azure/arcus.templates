@@ -133,6 +133,9 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics
             Environment.SetEnvironmentVariable(ApplicationInsightsMetricNameVariable, ApplicationInsightsConfig.MetricName);
             Environment.SetEnvironmentVariable(DatabricksUrlVariable, AzureFunctionDatabricksConfig.BaseUrl);
 
+            ApplicationInsightsConfig appInsightsConfig = Configuration.GetApplicationInsightsConfig();
+            Environment.SetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING", $"InstrumentationKey={appInsightsConfig.InstrumentationKey}");
+
             return startInfo;
         }
 
@@ -145,6 +148,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics
             base.Disposing(disposing);
             Environment.SetEnvironmentVariable(ApplicationInsightsMetricNameVariable, null);
             Environment.SetEnvironmentVariable(DatabricksUrlVariable, null);
+            Environment.SetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING", null);
         }
     }
 }

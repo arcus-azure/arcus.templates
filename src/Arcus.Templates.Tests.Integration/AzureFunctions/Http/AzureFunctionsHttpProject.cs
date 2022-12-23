@@ -12,6 +12,7 @@ using Flurl;
 using GuardNet;
 using Polly.Retry;
 using Polly;
+using Xunit;
 using Xunit.Abstractions;
 
 namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http
@@ -192,8 +193,18 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http
             
             var project = new AzureFunctionsHttpProject(configuration, options, outputWriter);
             project.CreateNewProject(options);
-            project.AddLocalSettings();
+            project.UpdateFileInProject(
+                "local.settings.json",
+                contents =>
+                {
+                    var json = JsonObject.Parse(contents);
+                    json["Host"] = new JsonObject(new[]
+                    {
+                        new KeyValuePair<string, JsonNode>("LocalHttpPort", project.RootEndpoint.Port)
+                    });
 
+                    return json.ToString();
+                });
             project.UpdateFileInProject(project.RuntimeFileName, contents => project.RemovesUserErrorsFromContents(contents));
 
             return project;

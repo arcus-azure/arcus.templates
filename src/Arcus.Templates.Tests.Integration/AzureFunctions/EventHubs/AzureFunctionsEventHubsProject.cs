@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics.Configuration;
 using Arcus.Templates.Tests.Integration.Fixture;
 using Arcus.Templates.Tests.Integration.Worker.Configuration;
 using Arcus.Templates.Tests.Integration.Worker.EventHubs;
@@ -122,6 +123,9 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs
             Environment.SetEnvironmentVariable("EVENTGRID_TOPIC_URI", eventGridConfig.TopicUri);
             Environment.SetEnvironmentVariable("EVENTGRID_AUTH_KEY", eventGridConfig.AuthenticationKey);
 
+            ApplicationInsightsConfig appInsightsConfig = Configuration.GetApplicationInsightsConfig();
+            Environment.SetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING", $"InstrumentationKey={appInsightsConfig.InstrumentationKey}");
+
             Run(Configuration.BuildConfiguration, TargetFramework.Net6_0);
             await MessagePump.StartAsync();
         }
@@ -135,6 +139,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs
             Environment.SetEnvironmentVariable("EventHubsConnectionString", null);
             Environment.SetEnvironmentVariable("EVENTGRID_TOPIC_URI", null);
             Environment.SetEnvironmentVariable("EVENTGRID_AUTH_KEY", null);
+            Environment.SetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING", null);
 
             Dispose();
             await MessagePump.DisposeAsync();

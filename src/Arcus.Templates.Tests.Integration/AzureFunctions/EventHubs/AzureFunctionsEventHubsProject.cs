@@ -3,9 +3,8 @@ using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics.Configuration;
 using Arcus.Templates.Tests.Integration.Fixture;
 using Arcus.Templates.Tests.Integration.Worker.Configuration;
-using Arcus.Templates.Tests.Integration.Worker.EventHubs;
+using Arcus.Templates.Tests.Integration.Worker.EventHubs.Fixture;
 using Arcus.Templates.Tests.Integration.Worker.Fixture;
-using Arcus.Templates.Tests.Integration.Worker.MessagePump;
 using GuardNet;
 using Xunit.Abstractions;
 
@@ -17,13 +16,12 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs
     public class AzureFunctionsEventHubsProject : AzureFunctionsProject, IAsyncDisposable
     {
         private AzureFunctionsEventHubsProject(
-            TestEventHubsMessageProducer messageProducer,
             TestConfig config,
             AzureFunctionsEventHubsProjectOptions options,
             ITestOutputHelper outputWriter)
             : base(config.GetAzureFunctionsEventHubsProjectDirectory(), config, options, outputWriter)
         {
-            MessagePump = new MessagePumpService(messageProducer, config, outputWriter);
+            Messaging = new TestEventHubsMessagePumpService(config, outputWriter);
         }
 
         /// <summary>
@@ -32,7 +30,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs
         /// <remarks>
         ///     Only when the project is started, is this service available for interaction.
         /// </remarks>
-        public MessagePumpService MessagePump { get; }
+        public IMessagingService Messaging { get; }
 
         /// <summary>
         /// Starts a newly created project from the Azure Functions EventHubs project template.
@@ -83,8 +81,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs
             ITestOutputHelper outputWriter)
         {
             EventHubsConfig eventHubsConfig = configuration.GetEventHubsConfig();
-            var producer = new TestEventHubsMessageProducer(eventHubsConfig.EventHubsName, eventHubsConfig.EventHubsConnectionString);
-            var project = new AzureFunctionsEventHubsProject(producer, configuration, options, outputWriter);
+            var project = new AzureFunctionsEventHubsProject(configuration, options, outputWriter);
 
             project.CreateNewProject(options);
             project.AddTestMessageHandler(eventHubsConfig);
@@ -96,11 +93,9 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs
         private void AddTestMessageHandler(EventHubsConfig eventHubsConfig)
         {
             AddPackage("Arcus.EventGrid.Core", "3.3.0");
-            AddTypeAsFile<Order>();
-            AddTypeAsFile<Customer>();
-            AddTypeAsFile<OrderCreatedEvent>();
-            AddTypeAsFile<OrderCreatedEventData>();
-            AddTypeAsFile<TestOrdersAzureEventHubsMessageHandler>();
+            AddTypeAsFile<SensorUpdate>();
+            AddTypeAsFile<SensorUpdateEventData>();
+            AddTypeAsFile<TestSensorUpdateAzureEventHubsMessageHandler>();
 
             UpdateFileInProject("SensorReadingFunction.cs", 
                 contents => contents.Replace("EventHubTrigger(\"sensors\"", $"EventHubTrigger(\"{eventHubsConfig.EventHubsName}\"")
@@ -109,8 +104,8 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs
             UpdateFileInProject(RuntimeFileName, contents => 
                 RemovesUserErrorsFromContents(contents)
                     .Replace(".MinimumLevel.Debug()", ".MinimumLevel.Verbose()")
-                    .Replace("SensorReadingAzureEventHubsMessageHandler", nameof(TestOrdersAzureEventHubsMessageHandler))
-                    .Replace("SensorReading", nameof(Order))
+                    .Replace("SensorReadingAzureEventHubsMessageHandler", nameof(TestSensorUpdateAzureEventHubsMessageHandler))
+                    .Replace("SensorReading", nameof(SensorUpdate))
                     .Replace("stores.AddAzureKeyVaultWithManagedIdentity(\"https://your-keyvault.vault.azure.net/\", CacheConfiguration.Default);", ""));
         }
 
@@ -127,7 +122,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs
             Environment.SetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING", $"InstrumentationKey={appInsightsConfig.InstrumentationKey}");
 
             Run(Configuration.BuildConfiguration, TargetFramework.Net6_0);
-            await MessagePump.StartAsync();
+            await Messaging.StartAsync();
         }
 
         /// <summary>
@@ -142,7 +137,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs
             Environment.SetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING", null);
 
             Dispose();
-            await MessagePump.DisposeAsync();
+            await Messaging.DisposeAsync();
         }
     }
 }

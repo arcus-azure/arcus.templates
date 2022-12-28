@@ -5,7 +5,7 @@ using Azure.Storage.Blobs.Models;
 using GuardNet;
 using Microsoft.Extensions.Logging;
 
-namespace Arcus.Templates.Tests.Integration.Worker.EventHubs
+namespace Arcus.Templates.Tests.Integration.Worker.EventHubs.Fixture
 {
     /// <summary>
     /// Represents a temporary disposable fixture that sets up an Azure Blob storage container.
@@ -47,7 +47,7 @@ namespace Arcus.Templates.Tests.Integration.Worker.EventHubs
 
             string containerName = $"eventhubs-{Guid.NewGuid()}";
             var blobClient = new BlobServiceClient(storageAccountConnectionString);
-            
+
             logger.LogTrace("Add Azure Blob storage container '{ContainerName}'", containerName);
             await blobClient.CreateBlobContainerAsync(containerName, PublicAccessType.Blob);
 

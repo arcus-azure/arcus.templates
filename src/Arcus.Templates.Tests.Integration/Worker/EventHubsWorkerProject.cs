@@ -3,9 +3,7 @@ using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.Fixture;
 using Arcus.Templates.Tests.Integration.Logging;
 using Arcus.Templates.Tests.Integration.Worker.Configuration;
-using Arcus.Templates.Tests.Integration.Worker.EventHubs;
-using Arcus.Templates.Tests.Integration.Worker.Fixture;
-using Arcus.Templates.Tests.Integration.Worker.MessagePump;
+using Arcus.Templates.Tests.Integration.Worker.EventHubs.Fixture;
 using GuardNet;
 using Xunit.Abstractions;
 
@@ -20,12 +18,11 @@ namespace Arcus.Templates.Tests.Integration.Worker
 
         private EventHubsWorkerProject(
             TestConfig configuration, 
-            IOrderProducer messageProducer,
             TemporaryBlobStorageContainer blobStorageContainer,
             ITestOutputHelper outputWriter)
             : base(configuration.GetEventHubsProjectDirectory(),
                    configuration,
-                   messageProducer,
+                   new TestEventHubsMessagePumpService(configuration, outputWriter),
                    outputWriter)
         {
             _blobStorageContainer = blobStorageContainer;
@@ -90,9 +87,8 @@ namespace Arcus.Templates.Tests.Integration.Worker
             ITestOutputHelper outputWriter)
         {
             EventHubsConfig eventHubsConfig = configuration.GetEventHubsConfig();
-            var producer = new TestEventHubsMessageProducer(eventHubsConfig.EventHubsName, eventHubsConfig.EventHubsConnectionString);
             var blobStorageContainer = await TemporaryBlobStorageContainer.CreateAsync(eventHubsConfig.StorageConnectionString, new XunitTestLogger(outputWriter));
-            var project = new EventHubsWorkerProject(configuration, producer, blobStorageContainer, outputWriter);
+            var project = new EventHubsWorkerProject(configuration, blobStorageContainer, outputWriter);
 
             project.CreateNewProject(options);
             project.AddTestMessageHandler();
@@ -103,17 +99,15 @@ namespace Arcus.Templates.Tests.Integration.Worker
         private void AddTestMessageHandler()
         {
             AddPackage("Arcus.EventGrid.Core", "3.3.0");
-            AddTypeAsFile<Order>();
-            AddTypeAsFile<Customer>();
-            AddTypeAsFile<OrderCreatedEvent>();
-            AddTypeAsFile<OrderCreatedEventData>();
-            AddTypeAsFile<TestOrdersAzureEventHubsMessageHandler>();
+            AddTypeAsFile<SensorUpdate>();
+            AddTypeAsFile<SensorUpdateEventData>();
+            AddTypeAsFile<TestSensorUpdateAzureEventHubsMessageHandler>();
             
             UpdateFileInProject("Program.cs", contents => 
                 RemovesUserErrorsFromContents(contents)
                     .Replace(".MinimumLevel.Debug()", ".MinimumLevel.Verbose()")
-                    .Replace("SensorReadingAzureEventHubsMessageHandler", nameof(TestOrdersAzureEventHubsMessageHandler))
-                    .Replace("SensorReading", nameof(Order))
+                    .Replace("SensorReadingAzureEventHubsMessageHandler", nameof(TestSensorUpdateAzureEventHubsMessageHandler))
+                    .Replace("SensorReading", nameof(SensorUpdate))
                     .Replace("stores.AddAzureKeyVaultWithManagedIdentity(\"https://your-keyvault.vault.azure.net/\", CacheConfiguration.Default);", ""));
         }
 

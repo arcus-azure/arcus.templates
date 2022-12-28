@@ -23,7 +23,7 @@ namespace Arcus.Templates.Tests.Integration.Worker.EventHubs
         {
             await using (var project = await EventHubsWorkerProject.StartNewAsync(_outputWriter))
             {
-                await project.MessagePump.SimulateMessageProcessingAsync();
+                await project.Messaging.SimulateMessageProcessingAsync();
             }
         }
     }

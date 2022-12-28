@@ -1,6 +1,6 @@
 ﻿using Arcus.Messaging.Abstractions;
 
-namespace Arcus.Templates.Tests.Integration.Worker.Fixture 
+namespace Arcus.Templates.Tests.Integration.Worker.ServiceBus.Fixture
 {
     public class OrderCreatedEventData
     {

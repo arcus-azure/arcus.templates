@@ -1,8 +1,7 @@
 ﻿using Arcus.Messaging.Abstractions;
 using Azure.Messaging.EventGrid;
-using Newtonsoft.Json;
 
-namespace Arcus.Templates.Tests.Integration.Worker.Fixture 
+namespace Arcus.Templates.Tests.Integration.Worker.ServiceBus.Fixture
 {
     public class OrderCreatedEvent : EventGridEvent
     {

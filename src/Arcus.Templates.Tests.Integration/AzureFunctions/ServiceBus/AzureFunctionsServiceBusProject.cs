@@ -2,20 +2,15 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using Arcus.Messaging.Pumps.ServiceBus;
 using Arcus.Templates.Tests.Integration.AzureFunctions.Admin;
-using Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus.MessageHandling;
 using Arcus.Templates.Tests.Integration.Fixture;
-using Arcus.Templates.Tests.Integration.Worker;
 using Arcus.Templates.Tests.Integration.Worker.Configuration;
 using Arcus.Templates.Tests.Integration.Worker.Fixture;
-using Arcus.Templates.Tests.Integration.Worker.MessagePump;
-using Arcus.Templates.Tests.Integration.Worker.ServiceBus;
+using Arcus.Templates.Tests.Integration.Worker.ServiceBus.Fixture;
 using Azure;
 using Azure.Messaging.ServiceBus;
 using Azure.Messaging.ServiceBus.Administration;
 using GuardNet;
-using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
 
@@ -37,9 +32,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
                    options,
                    outputWriter)
         {
-            string connectionString = configuration.GetServiceBusConnectionString(entityType);
-            var producer = new TestServiceBusMessageProducer(connectionString);
-            MessagePump = new MessagePumpService(producer, configuration, outputWriter);
+            Messaging = new TestServiceBusMessagePumpService(entityType, configuration, outputWriter);
             Admin = new AdminEndpointService(RootEndpoint.Port, "order-processing", outputWriter);
         }
 
@@ -49,7 +42,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
         /// <remarks>
         ///     Only when the project is started, is this service available for interaction.
         /// </remarks>
-        public MessagePumpService MessagePump { get; }
+        public IMessagingService Messaging { get; }
 
         /// <summary>
         /// Gets the service to run administrative actions on the Azure Functions project.
@@ -158,7 +151,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
             Environment.SetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING", $"InstrumentationKey={instrumentationKey}");
 
             Run(Configuration.BuildConfiguration, TargetFramework.Net6_0);
-            await MessagePump.StartAsync();
+            await Messaging.StartAsync();
             await WaitUntilTriggerIsAvailableAsync(Admin.Endpoint);
         }
 
@@ -193,7 +186,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
 
             try
             {
-                await MessagePump.DisposeAsync();
+                await Messaging.DisposeAsync();
             }
             catch (Exception exception)
             {

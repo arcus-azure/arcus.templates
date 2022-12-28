@@ -4,13 +4,12 @@ using System.IO;
 using Arcus.Templates.Tests.Integration.AzureFunctions.Configuration;
 using Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics.Configuration;
 using Arcus.Templates.Tests.Integration.AzureFunctions.Http.Configuration;
-using Arcus.Templates.Tests.Integration.Worker;
 using Arcus.Templates.Tests.Integration.Worker.Configuration;
-using Arcus.Templates.Tests.Integration.Worker.EventHubs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Primitives;
 using GuardNet;
 using Microsoft.Extensions.Logging;
+using Arcus.Templates.Tests.Integration.Worker.EventHubs.Fixture;
 
 namespace Arcus.Templates.Tests.Integration.Fixture
 {

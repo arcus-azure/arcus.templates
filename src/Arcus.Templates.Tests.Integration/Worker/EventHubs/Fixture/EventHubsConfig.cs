@@ -1,7 +1,7 @@
 ﻿using System;
 using GuardNet;
 
-namespace Arcus.Templates.Tests.Integration.Worker.EventHubs
+namespace Arcus.Templates.Tests.Integration.Worker.EventHubs.Fixture
 {
     /// <summary>
     /// Represents a configuration section that provides information on Azure EventHubs used during integration testing.
@@ -20,8 +20,8 @@ namespace Arcus.Templates.Tests.Integration.Worker.EventHubs
         ///     Thrown when the <paramref name="eventHubsName"/>, <paramref name="connectionString"/>, or the <paramref name="storageConnectionString"/> is blank.
         /// </exception>
         public EventHubsConfig(
-            string eventHubsName, 
-            string connectionString, 
+            string eventHubsName,
+            string connectionString,
             string storageConnectionString)
         {
             Guard.NotNullOrWhitespace(eventHubsName, nameof(eventHubsName), "Requires a non-blank name for the Azure EventHubs instance used in the self-contained integration tests");

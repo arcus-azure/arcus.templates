@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.AzureFunctions.Admin;
 using Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics.Configuration;
 using Arcus.Templates.Tests.Integration.Fixture;
-using Arcus.Templates.Tests.Integration.Worker.Fixture;
 using GuardNet;
 using Xunit.Abstractions;
 

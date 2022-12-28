@@ -5,7 +5,8 @@ using Arcus.EventGrid.Contracts;
 using Arcus.EventGrid.Parsers;
 using Arcus.EventGrid.Testing.Infrastructure.Hosts.ServiceBus;
 using Arcus.Templates.Tests.Integration.Fixture;
-using Arcus.Templates.Tests.Integration.Worker.Fixture;
+using Arcus.Templates.Tests.Integration.Worker.ServiceBus.Fixture;
+using Azure.Messaging;
 using GuardNet;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -13,7 +14,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Newtonsoft.Json;
 using Xunit;
 
-namespace Arcus.Templates.Tests.Integration.Worker.ServiceBus
+namespace Arcus.Templates.Tests.Integration.Worker.Fixture
 {
     /// <summary>
     /// Represents an event consumer which receives events from an Azure Service Bus.
@@ -70,6 +71,19 @@ namespace Arcus.Templates.Tests.Integration.Worker.ServiceBus
 
             var eventData = JsonConvert.DeserializeObject<OrderCreatedEventData>(data, new MessageCorrelationInfoJsonConverter());
             return eventData;
+        }
+
+        public TEventData ConsumeEvent<TEventData>(string eventId)
+        {
+            string receivedEvent = _serviceBusEventConsumerHost.GetReceivedEvent(eventId, retryCount: 10);
+            Assert.NotEmpty(receivedEvent);
+
+            BinaryData data = BinaryData.FromString(receivedEvent);
+            var cloudEvent = CloudEvent.Parse(data);
+            Assert.NotNull(cloudEvent.Data);
+
+            string json = cloudEvent.Data.ToString();
+            return JsonConvert.DeserializeObject<TEventData>(json, new MessageCorrelationInfoJsonConverter());
         }
 
         /// <summary>

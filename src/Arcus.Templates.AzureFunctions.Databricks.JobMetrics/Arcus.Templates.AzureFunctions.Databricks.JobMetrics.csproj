@@ -11,14 +11,14 @@
     <IsPackable>true</IsPackable>
     <PackageId>Arcus.Templates.AzureFunctions.Databricks.JobMetrics</PackageId>
     <Title>Template for Azure Functions Databricks project</Title>
-    <PackageType>Template</PackageType>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>Azure;Azure Functions;Databricks;Metric</PackageTags>
+    <PackageType>Template</PackageType>
     <Copyright>Copyright (c) Arcus</Copyright>
-    <PackageLicenseUrl>https://github.com/arcus-azure/arcus.templates/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://templates.arcus-azure.net/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/arcus-azure/arcus.templates</RepositoryUrl>
-    <PackageIconUrl>https://raw.githubusercontent.com/arcus-azure/arcus/master/media/arcus.png</PackageIconUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageIcon>icon.png</PackageIcon>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IncludeContentInPack>true</IncludeContentInPack>
     <IncludeBuildOutput>false</IncludeBuildOutput>
@@ -26,7 +26,7 @@
     <EnableDefaultContentItems>false</EnableDefaultContentItems>
     <DockerComposeProjectPath>..\Arcus.Templates.Orchestrator.dcproj</DockerComposeProjectPath>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <NoWarn>NU5048;NU5125;NU5119;NU5128</NoWarn>
+    <NoWarn>NU5119;NU5128</NoWarn>
     <!--#endif-->
   </PropertyGroup>
 
@@ -43,6 +43,8 @@
 
   <ItemGroup>
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+    <None Include="..\..\LICENSE" Pack="true" PackagePath="\" />
+    <None Include="..\..\docs\static\img\icon.png" Pack="true" PackagePath="\"/>
   </ItemGroup>
   <!--#endif-->
 

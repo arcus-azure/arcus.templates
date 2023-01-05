@@ -13,15 +13,14 @@
     <IsPackable>true</IsPackable>
     <PackageId>Arcus.Templates.WebApi</PackageId>
     <Title>Template for web API project</Title>
+    <PackageTags>Azure;WebAPI;App Services;Web App;Web;API</PackageTags>
     <PackageType>Template</PackageType>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageTags>Azure;WebAPI;App Services;Web App;Web;API</PackageTags>
     <Copyright>Copyright (c) Arcus</Copyright>
-    <PackageLicenseUrl>https://github.com/arcus-azure/arcus.templates/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://templates.arcus-azure.net/</PackageProjectUrl>
-    <PackageTags>Azure;WebAPI;App Services;Web App;Web;API</PackageTags>
     <RepositoryUrl>https://github.com/arcus-azure/arcus.templates</RepositoryUrl>
-    <PackageIconUrl>https://raw.githubusercontent.com/arcus-azure/arcus/master/media/arcus.png</PackageIconUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageIcon>icon.png</PackageIcon>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IncludeContentInPack>true</IncludeContentInPack>
@@ -30,7 +29,7 @@
     <EnableDefaultContentItems>false</EnableDefaultContentItems>
     <DockerComposeProjectPath>..\Arcus.Templates.Orchestrator.dcproj</DockerComposeProjectPath>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <NoWarn>NU5048;NU5125;CS1030;NU5128</NoWarn>
+    <NoWarn>CS1030;NU5128</NoWarn>
     <!--#endif-->
   </PropertyGroup>
   <!--#if (AuthoringMode)-->
@@ -53,6 +52,8 @@
 
   <ItemGroup>
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+    <None Include="..\..\LICENSE" Pack="true" PackagePath="\" />
+    <None Include="..\..\docs\static\img\icon.png" Pack="true" PackagePath="\"/>
   </ItemGroup>
   <!--#endif-->
 

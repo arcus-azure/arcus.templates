@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <OutputType Condition="'$(Isolated)' == 'true'" >Exe</OutputType>
+    <OutputType Condition="'$(Isolated)' == 'true'">Exe</OutputType>
     <AzureFunctionsVersion>v4</AzureFunctionsVersion>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <!--#if (AuthoringMode)-->
@@ -12,21 +12,21 @@
     <IsPackable>true</IsPackable>
     <PackageId>Arcus.Templates.AzureFunctions.ServiceBus.Queue</PackageId>
     <Title>Template for Azure Functions Service Bus Queue project</Title>
-    <PackageType>Template</PackageType>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>Azure;Azure Functions;Service Bus;Queue</PackageTags>
+    <PackageType>Template</PackageType>
     <Copyright>Copyright (c) Arcus</Copyright>
-    <PackageLicenseUrl>https://github.com/arcus-azure/arcus.templates/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://templates.arcus-azure.net/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/arcus-azure/arcus.templates</RepositoryUrl>
-    <PackageIconUrl>https://raw.githubusercontent.com/arcus-azure/arcus/master/media/arcus.png</PackageIconUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageIcon>icon.png</PackageIcon>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IncludeContentInPack>true</IncludeContentInPack>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <ContentTargetFolders>content</ContentTargetFolders>
     <EnableDefaultContentItems>false</EnableDefaultContentItems>
     <DockerComposeProjectPath>..\Arcus.Templates.Orchestrator.dcproj</DockerComposeProjectPath>
-    <NoWarn>NU5048;NU5125;NU5119</NoWarn>
+    <NoWarn>NU5119</NoWarn>
     <!--#endif-->
   </PropertyGroup>
   <!--#if (AuthoringMode)-->
@@ -44,6 +44,8 @@
 
   <ItemGroup>
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+    <None Include="..\..\LICENSE" Pack="true" PackagePath="\" />
+    <None Include="..\..\docs\static\img\icon.png" Pack="true" PackagePath="\" />
   </ItemGroup>
   <!--#endif-->
   
@@ -77,4 +79,5 @@
       <CopyToPublishDirectory>Never</CopyToPublishDirectory>
     </None>
   </ItemGroup>
+
 </Project>

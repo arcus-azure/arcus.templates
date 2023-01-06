@@ -1,8 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.Fixture;
 using Arcus.Templates.Tests.Integration.Worker.Configuration;
-using Arcus.Templates.Tests.Integration.Worker.Fixture;
-using Arcus.Templates.Tests.Integration.Worker.ServiceBus;
+using Arcus.Templates.Tests.Integration.Worker.ServiceBus.Fixture;
 using GuardNet;
 using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
@@ -17,11 +16,10 @@ namespace Arcus.Templates.Tests.Integration.Worker
         private ServiceBusWorkerProject(
             ServiceBusEntityType entityType,
             TestConfig configuration,
-            TestServiceBusMessageProducer messageProducer,
             ITestOutputHelper outputWriter)
             : base(configuration.GetServiceBusProjectDirectory(entityType), 
                    configuration, 
-                   messageProducer,
+                   new TestServiceBusMessagePumpService(entityType, configuration, outputWriter),
                    outputWriter)
         {
         }
@@ -141,10 +139,7 @@ namespace Arcus.Templates.Tests.Integration.Worker
             ServiceBusWorkerProjectOptions options,
             ITestOutputHelper outputWriter)
         {
-            string connectionString = configuration.GetServiceBusConnectionString(entityType);
-            var producer = new TestServiceBusMessageProducer(connectionString);
-            var project = new ServiceBusWorkerProject(entityType, configuration, producer, outputWriter);
-
+            var project = new ServiceBusWorkerProject(entityType, configuration, outputWriter);
             project.CreateNewProject(options);
             project.AddTestMessageHandler();
 

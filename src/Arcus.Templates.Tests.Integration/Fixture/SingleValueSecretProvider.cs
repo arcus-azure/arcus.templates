@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Arcus.Security.Core;
 
-namespace Arcus.Templates.Tests.Integration.Worker.Fixture
+namespace Arcus.Templates.Tests.Integration.Fixture
 {
     /// <summary>
     /// Represents a <see cref="ISecretProvider"/> that only returns a single secret value, regardless of the secret name.

@@ -35,7 +35,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs.Logging
             {
                 project.TearDownOptions = TearDownOptions.KeepProjectDirectory;
                 // Assert
-                await project.MessagePump.SimulateMessageProcessingAsync();
+                await project.Messaging.SimulateMessageProcessingAsync();
                 Assert.DoesNotContain("Serilog", project.GetFileContentsOfProjectFile());
             }
         }

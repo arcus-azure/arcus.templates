@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Arcus.Templates.Tests.Integration.Worker.Fixture
+namespace Arcus.Templates.Tests.Integration.Worker.ServiceBus.Fixture
 {
     public class Customer
     {

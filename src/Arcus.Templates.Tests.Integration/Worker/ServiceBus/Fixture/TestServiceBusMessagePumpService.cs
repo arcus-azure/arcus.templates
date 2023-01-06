@@ -3,43 +3,35 @@ using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.Fixture;
 using Arcus.Templates.Tests.Integration.Logging;
 using Arcus.Templates.Tests.Integration.Worker.Fixture;
-using Arcus.Templates.Tests.Integration.Worker.ServiceBus;
+using Azure.Messaging.ServiceBus;
 using Bogus;
-using GuardNet;
 using Microsoft.Extensions.Logging;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Arcus.Templates.Tests.Integration.Worker.MessagePump
+namespace Arcus.Templates.Tests.Integration.Worker.ServiceBus.Fixture
 {
-    /// <summary>
-    /// Represents a service to interact with the hosted-service.
-    /// </summary>
-    public class MessagePumpService : IAsyncDisposable
+    public class TestServiceBusMessagePumpService : IMessagingService
     {
-        private readonly ILogger _logger;
-        private readonly IOrderProducer _messageProducer;
+        private readonly ServiceBusEntityType _entityType;
         private readonly TestConfig _configuration;
+        private readonly ILogger _logger;
 
         private TestServiceBusMessageEventConsumer _serviceBusMessageEventConsumer;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MessagePumpService"/> class.
+        /// Initializes a new instance of the <see cref="TestServiceBusMessagePumpService" /> class.
         /// </summary>
-        public MessagePumpService(IOrderProducer messageProducer, TestConfig configuration, ITestOutputHelper outputWriter)
+        public TestServiceBusMessagePumpService(
+            ServiceBusEntityType entityType,
+            TestConfig configuration,
+            ITestOutputHelper outputWriter)
         {
-            Guard.NotNull(configuration, nameof(configuration));
-            Guard.NotNull(messageProducer, nameof(messageProducer));
-            Guard.NotNull(outputWriter, nameof(outputWriter));
-
-            _logger = new XunitTestLogger(outputWriter);
-            _messageProducer = messageProducer;
+            _entityType = entityType;
             _configuration = configuration;
+            _logger = new XunitTestLogger(outputWriter);
         }
 
-        /// <summary>
-        /// Starts a new instance of the <see cref="MessagePumpService"/> type to simulate messages.
-        /// </summary>
         public async Task StartAsync()
         {
             if (_serviceBusMessageEventConsumer is null)
@@ -52,9 +44,6 @@ namespace Arcus.Templates.Tests.Integration.Worker.MessagePump
             }
         }
 
-        /// <summary>
-        /// Simulate the message processing of the message pump using the Service Bus.
-        /// </summary>
         public async Task SimulateMessageProcessingAsync()
         {
             if (_serviceBusMessageEventConsumer is null)
@@ -66,9 +55,9 @@ namespace Arcus.Templates.Tests.Integration.Worker.MessagePump
             var operationId = $"operation-{Guid.NewGuid()}";
             var transactionId = $"transaction-{Guid.NewGuid()}";
             Order order = GenerateOrder();
-            await _messageProducer.ProduceAsync(order, operationId, transactionId);
+            await ProduceMessageAsync(order, operationId, transactionId);
 
-            OrderCreatedEventData orderCreatedEventData = _serviceBusMessageEventConsumer.ConsumeOrderEvent(operationId);
+            var orderCreatedEventData = _serviceBusMessageEventConsumer.ConsumeEvent<OrderCreatedEventData>(operationId);
             Assert.NotNull(orderCreatedEventData);
             Assert.NotNull(orderCreatedEventData.CorrelationInfo);
             Assert.Equal(order.Id, orderCreatedEventData.Id);
@@ -81,9 +70,9 @@ namespace Arcus.Templates.Tests.Integration.Worker.MessagePump
 
         private static Order GenerateOrder()
         {
-             var customerGenerator = new Faker<Customer>()
-                .RuleFor(u => u.FirstName, (f, u) => f.Name.FirstName())
-                .RuleFor(u => u.LastName, (f, u) => f.Name.LastName());
+            var customerGenerator = new Faker<Customer>()
+               .RuleFor(u => u.FirstName, (f, u) => f.Name.FirstName())
+               .RuleFor(u => u.LastName, (f, u) => f.Name.LastName());
 
             var orderGenerator = new Faker<Order>()
                 .RuleFor(u => u.Customer, () => customerGenerator)
@@ -94,10 +83,31 @@ namespace Arcus.Templates.Tests.Integration.Worker.MessagePump
             return orderGenerator.Generate();
         }
 
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources asynchronously.
-        /// </summary>
-        /// <returns>A task that represents the asynchronous dispose operation.</returns>
+        private async Task ProduceMessageAsync(Order order, string operationId, string transactionId)
+        {
+            ServiceBusMessage message =
+                ServiceBusMessageBuilder.CreateForBody(order)
+                                        .WithOperationId(operationId)
+                                        .WithTransactionId(transactionId)
+                                        .Build();
+
+            string connectionString = _configuration.GetServiceBusConnectionString(_entityType);
+            var connectionStringProperties = ServiceBusConnectionStringProperties.Parse(connectionString);
+            await using (var client = new ServiceBusClient(connectionString))
+            {
+                ServiceBusSender messageSender = client.CreateSender(connectionStringProperties.EntityPath);
+
+                try
+                {
+                    await messageSender.SendMessageAsync(message);
+                }
+                finally
+                {
+                    await messageSender.CloseAsync();
+                }
+            }
+        }
+
         public async ValueTask DisposeAsync()
         {
             if (_serviceBusMessageEventConsumer != null)

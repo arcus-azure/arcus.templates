@@ -56,19 +56,9 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus.Logging
             await using (var project = await AzureFunctionsServiceBusProject.StartNewProjectAsync(entityType, options, config, _outputWriter))
             {
                 // Act / Assert
-                await project.MessagePump.SimulateMessageProcessingAsync();
+                await project.Messaging.SimulateMessageProcessingAsync();
                 Assert.DoesNotContain("Serilog", project.GetFileContentsOfProjectFile());
-
-                // TODO: will refactor after all Azure Functions project templates are migrated.
-                if (workerType is FunctionsWorker.InProcess)
-                {
-                    Assert.DoesNotContain("Serilog", project.GetFileContentsInProject("Startup.cs"));
-                }
-
-                if (workerType is FunctionsWorker.Isolated)
-                {
-                    Assert.DoesNotContain("Serilog", project.GetFileContentsInProject("Program.cs"));
-                }
+                Assert.DoesNotContain("Serilog", project.GetFileContentsInProject(project.RuntimeFileName));
             }
         }
     }

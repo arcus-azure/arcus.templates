@@ -1,7 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.Fixture;
-using Arcus.Templates.Tests.Integration.Worker.EventHubs;
-using Arcus.Templates.Tests.Integration.Worker.MessagePump;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -41,7 +39,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs.MessageHand
             await using (var project = await AzureFunctionsEventHubsProject.StartNewAsync(config, options, _outputWriter))
             {
                 // Act / Assert
-                await project.MessagePump.SimulateMessageProcessingAsync();
+                await project.Messaging.SimulateMessageProcessingAsync();
             }
         }
     }

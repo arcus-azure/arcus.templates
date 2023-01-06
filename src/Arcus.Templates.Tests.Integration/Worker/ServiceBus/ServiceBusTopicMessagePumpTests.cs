@@ -25,7 +25,7 @@ namespace Arcus.Templates.Tests.Integration.Worker.ServiceBus
             await using (var project = await ServiceBusWorkerProject.StartNewWithTopicAsync(_outputWriter))
             {
                 // Act / Assert
-                await project.MessagePump.SimulateMessageProcessingAsync();
+                await project.Messaging.SimulateMessageProcessingAsync();
             }
         }
     }

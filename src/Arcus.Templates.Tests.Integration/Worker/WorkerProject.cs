@@ -6,10 +6,8 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.Fixture;
-using Arcus.Templates.Tests.Integration.Worker.Configuration;
+using Arcus.Templates.Tests.Integration.Worker.Fixture;
 using Arcus.Templates.Tests.Integration.Worker.Health;
-using Arcus.Templates.Tests.Integration.Worker.MessagePump;
-using Microsoft.Extensions.Logging;
 using Polly;
 using Xunit.Abstractions;
 
@@ -23,14 +21,14 @@ namespace Arcus.Templates.Tests.Integration.Worker
         protected WorkerProject(
             DirectoryInfo templateDirectory,
             TestConfig configuration,
-            IOrderProducer messageProducer,
+            IMessagingService messagingService,
             ITestOutputHelper outputWriter)
             : base(templateDirectory, configuration.GetFixtureProjectDirectory(), outputWriter)
         {
             _healthPort = configuration.GenerateWorkerHealthPort();
             _configuration = configuration;
 
-            MessagePump = new MessagePumpService(messageProducer, configuration, outputWriter);
+            Messaging = messagingService;
             Health = new HealthEndpointService(_healthPort, outputWriter);
         }
 
@@ -45,7 +43,7 @@ namespace Arcus.Templates.Tests.Integration.Worker
         /// <remarks>
         ///     Only when the project is started, is this service available for interaction.
         /// </remarks>
-        public MessagePumpService MessagePump { get; }
+        public IMessagingService Messaging { get; set; }
 
         /// <summary>
         /// 
@@ -62,7 +60,7 @@ namespace Arcus.Templates.Tests.Integration.Worker
             
             Run(_configuration.BuildConfiguration, TargetFramework.Net6_0, commands);
             await WaitUntilWorkerProjectIsAvailableAsync(_healthPort);
-            await MessagePump.StartAsync();
+            await Messaging.StartAsync();
         }
 
         private IEnumerable<CommandArgument> CreateDefaultWorkerCommand()
@@ -124,7 +122,7 @@ namespace Arcus.Templates.Tests.Integration.Worker
             Dispose();
 
             await DisposingAsync(true);
-            await MessagePump.DisposeAsync();
+            await Messaging.DisposeAsync();
         }
 
         /// <summary>

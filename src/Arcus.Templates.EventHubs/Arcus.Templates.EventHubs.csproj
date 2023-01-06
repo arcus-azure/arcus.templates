@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Worker">
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -11,15 +11,14 @@
     <IsPackable>true</IsPackable>
     <PackageId>Arcus.Templates.EventHubs</PackageId>
     <Title>Template for worker Azure EventHubs project</Title>
-    <PackageType>Template</PackageType>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageTags>Worker;Azure;Azure;EventHubs</PackageTags>
-    <Copyright>Copyright (c) Arcus</Copyright>
-    <PackageLicenseUrl>https://github.com/arcus-azure/arcus.templates/blob/master/LICENSE</PackageLicenseUrl>
-    <PackageProjectUrl>https://templates.arcus-azure.net/</PackageProjectUrl>
     <PackageTags>Worker;Azure;EventHubs</PackageTags>
+    <PackageType>Template</PackageType>
+    <Copyright>Copyright (c) Arcus</Copyright>
+    <PackageProjectUrl>https://templates.arcus-azure.net/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/arcus-azure/arcus.templates</RepositoryUrl>
-    <PackageIconUrl>https://raw.githubusercontent.com/arcus-azure/arcus/master/media/arcus.png</PackageIconUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageIcon>icon.png</PackageIcon>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IncludeContentInPack>true</IncludeContentInPack>
@@ -28,7 +27,7 @@
     <EnableDefaultContentItems>false</EnableDefaultContentItems>
     <DockerComposeProjectPath>..\Arcus.Templates.Orchestrator.dcproj</DockerComposeProjectPath>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <NoWarn>NU5048;NU5125;CS1030;CS1998;NU5128</NoWarn>
+    <NoWarn>CS1030;CS1998;NU5128</NoWarn>
     <!--#endif-->
   </PropertyGroup>
 
@@ -44,6 +43,8 @@
 
   <ItemGroup>
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+    <None Include="..\..\LICENSE" Pack="true" PackagePath="\" />
+    <None Include="..\..\docs\static\img\icon.png" Pack="true" PackagePath="\"/>
   </ItemGroup>
   <!--#endif-->
 

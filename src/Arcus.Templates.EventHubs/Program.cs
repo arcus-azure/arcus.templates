@@ -78,6 +78,11 @@ namespace Arcus.Templates.EventHubs
 #endif
                        .ConfigureServices((hostContext, services) =>
                        {
+#if Serilog_AppInsights
+                           services.AddAppName("EventHubs Worker");
+                           services.AddAssemblyAppVersion<Program>();
+                           
+#endif
                            var eventHubsName = hostContext.Configuration.GetValue<string>("EVENTHUBS_NAME");
                            var containerName = hostContext.Configuration.GetValue<string>("BLOBSTORAGE_CONTAINERNAME");
 
@@ -100,13 +105,13 @@ namespace Arcus.Templates.EventHubs
                 config.MinimumLevel.Information()
                       .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                       .Enrich.FromLogContext()
-                      .Enrich.WithVersion()
-                      .Enrich.WithComponentName("EventHubs Worker")
+                      .Enrich.WithVersion(host.Services)
+                      .Enrich.WithComponentName(host.Services)
                       .WriteTo.Console();
                 
                 if (!string.IsNullOrWhiteSpace(connectionString))
                 {
-                    config.WriteTo.AzureApplicationInsightsWithConnectionString(connectionString);
+                    config.WriteTo.AzureApplicationInsightsWithConnectionString(host.Services, connectionString);
                 }
                 
                 return config;

@@ -8,7 +8,6 @@ using Arcus.Messaging.Abstractions.ServiceBus.MessageHandling;
 using Arcus.Templates.AzureFunctions.ServiceBus.Queue.Model;
 using Azure.Messaging.ServiceBus;
 using GuardNet;
-using Microsoft.Azure.ServiceBus;
 #if Isolated
 using System.Text.Json;
 using Microsoft.Azure.Functions.Worker;

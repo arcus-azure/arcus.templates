@@ -7,7 +7,6 @@ using Arcus.Messaging.Abstractions.ServiceBus;
 using Arcus.Messaging.Abstractions.ServiceBus.MessageHandling;
 using Arcus.Templates.AzureFunctions.ServiceBus.Topic.Model;
 using Azure.Messaging.ServiceBus;
-using Microsoft.Azure.ServiceBus;
 using GuardNet;
 #if Isolated
 using System.Text.Json;

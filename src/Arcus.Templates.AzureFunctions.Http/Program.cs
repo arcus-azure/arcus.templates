@@ -64,6 +64,11 @@ namespace Arcus.Templates.AzureFunctions.Http
 #endif
 #if Serilog_AppInsights
                        .UseSerilog(Log.Logger)
+                       .ConfigureServices(services =>
+                       {
+                           services.AddAppName("Azure HTTP Trigger");
+                           services.AddAssemblyAppVersion<Program>();
+                       })
 #endif
 #if Isolated
                        .ConfigureFunctionsWorkerDefaults((context, builder) =>
@@ -119,13 +124,13 @@ namespace Arcus.Templates.AzureFunctions.Http
                config.MinimumLevel.Information()
                      .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                      .Enrich.FromLogContext()
-                     .Enrich.WithComponentName("HTTP Trigger")
-                     .Enrich.WithVersion()
+                     .Enrich.WithComponentName(app.Services)
+                     .Enrich.WithVersion(app.Services)
                      .WriteTo.Console();
                 
                 if (!string.IsNullOrWhiteSpace(connectionString))
                 {
-                    config.WriteTo.AzureApplicationInsightsWithConnectionString(connectionString);
+                    config.WriteTo.AzureApplicationInsightsWithConnectionString(app.Services, connectionString);
                 }
                 
                 return config;

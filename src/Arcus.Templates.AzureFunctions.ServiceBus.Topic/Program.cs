@@ -52,6 +52,11 @@ namespace Arcus.Templates.AzureFunctions.ServiceBus.Topic
             return Host.CreateDefaultBuilder(args)
 #if Serilog_AppInsights
                        .UseSerilog(Log.Logger)
+                       .ConfigureServices(services =>
+                       {
+                           services.AddAppName("Service Bus Topic Trigger");
+                           services.AddAssemblyAppVersion<Program>();
+                       })
 #endif
 #if Isolated
                        .ConfigureFunctionsWorkerDefaults((context, builder) =>
@@ -83,13 +88,13 @@ namespace Arcus.Templates.AzureFunctions.ServiceBus.Topic
                config.MinimumLevel.Information()
                      .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                      .Enrich.FromLogContext()
-                     .Enrich.WithComponentName("Service Bus Topic Trigger")
-                     .Enrich.WithVersion()
+                     .Enrich.WithComponentName(app.Services)
+                     .Enrich.WithVersion(app.Services)
                      .WriteTo.Console();
             
                 if (!string.IsNullOrWhiteSpace(connectionString))
                 {
-                    config.WriteTo.AzureApplicationInsightsWithConnectionString(connectionString);
+                    config.WriteTo.AzureApplicationInsightsWithConnectionString(app.Services, connectionString);
                 }
                 
                 return config;

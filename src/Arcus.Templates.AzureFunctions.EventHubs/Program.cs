@@ -49,6 +49,11 @@ namespace Arcus.Templates.AzureFunctions.EventHubs
             return Host.CreateDefaultBuilder(args)
 #if Serilog_AppInsights
                        .UseSerilog(Log.Logger)
+                       .ConfigureServices(services =>
+                       {
+                           services.AddAppName("EventHubs Trigger");
+                           services.AddAssemblyAppVersion<Program>();
+                       })
 #endif
 #if Isolated
                        .ConfigureFunctionsWorkerDefaults((context, builder) =>
@@ -80,13 +85,13 @@ namespace Arcus.Templates.AzureFunctions.EventHubs
                config.MinimumLevel.Information()
                      .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                      .Enrich.FromLogContext()
-                     .Enrich.WithComponentName("EventHubs Trigger")
-                     .Enrich.WithVersion()
+                     .Enrich.WithComponentName(app.Services)
+                     .Enrich.WithVersion(app.Services)
                      .WriteTo.Console();
 
                 if (!string.IsNullOrWhiteSpace(connectionString))
                 {
-                    config.WriteTo.AzureApplicationInsightsWithConnectionString(connectionString);
+                    config.WriteTo.AzureApplicationInsightsWithConnectionString(app.Services, connectionString);
                 }
 
                 return config;

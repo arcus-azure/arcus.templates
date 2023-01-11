@@ -77,6 +77,11 @@ namespace Arcus.Templates.ServiceBus.Queue
 #endif
                        .ConfigureServices((hostContext, services) =>
                        {
+#if Serilog_AppInsights
+                           services.AddAppName("Service Bus Queue Worker");
+                           services.AddAssemblyAppVersion<Program>();
+                           
+#endif
                            services.AddServiceBusQueueMessagePump(secretProvider => secretProvider.GetRawSecretAsync("ARCUS_SERVICEBUS_CONNECTIONSTRING"))
                                    .WithServiceBusMessageHandler<EmptyMessageHandler, EmptyMessage>();
                            

@@ -14,7 +14,7 @@ using Serilog.Configuration;
 using Serilog.Events;
 using Serilog.Extensions.Hosting;
 #endif
-
+ 
 namespace Arcus.Templates.AzureFunctions.ServiceBus.Topic
 {
     public class Program
@@ -26,7 +26,7 @@ namespace Arcus.Templates.AzureFunctions.ServiceBus.Topic
                 .MinimumLevel.Debug()
                 .WriteTo.Console()
                 .CreateBootstrapLogger();
-
+            
             try
             {
                 IHost host = CreateHostBuilder(args).Build();
@@ -70,7 +70,7 @@ namespace Arcus.Templates.AzureFunctions.ServiceBus.Topic
 //[#if DEBUG]
                            stores.AddConfiguration(config);
 //[#endif]
-
+                            
                            //#error Please provide a valid secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secret-store/provider/key-vault
                            stores.AddAzureKeyVaultWithManagedIdentity("https://your-keyvault.vault.azure.net/", CacheConfiguration.Default);
                        });

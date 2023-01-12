@@ -28,11 +28,8 @@ namespace Arcus.Templates.AzureFunctions.EventHubs
         {
             builder.ConfigurationBuilder.AddEnvironmentVariables();
         }
-
-        /// <summary>
-        /// This method gets called by the runtime. Use this method to add services to the container.
-        /// </summary>
-        /// <param name="builder">The instance to build the registered services inside the functions app.</param>
+        
+        // This method gets called by the runtime. Use this method to add services to the container.
         public override void Configure(IFunctionsHostBuilder builder)
         {
             builder.ConfigureSecretStore((context, config, stores) =>
@@ -45,10 +42,10 @@ namespace Arcus.Templates.AzureFunctions.EventHubs
                 stores.AddAzureKeyVaultWithManagedIdentity("https://your-keyvault.vault.azure.net/", CacheConfiguration.Default);
             });
             
-            builder.Services.AddEventHubsMessageRouting()
-                            .WithEventHubsMessageHandler<SensorReadingAzureEventHubsMessageHandler, SensorReading>();
+            builder.AddEventHubsMessageRouting()
+                    .WithEventHubsMessageHandler<SensorReadingAzureEventHubsMessageHandler, SensorReading>();
 #if Serilog_AppInsights
-
+            
             builder.Services.AddAppName("EventHubs Trigger");
             builder.Services.AddAssemblyAppVersion<Startup>();
             builder.Services.AddLogging(logging =>

@@ -25,10 +25,7 @@ namespace Arcus.Templates.AzureFunctions.ServiceBus.Queue
             builder.ConfigurationBuilder.AddEnvironmentVariables();
         }
         
-        /// <summary>
-        /// This method gets called by the runtime. Use this method to add services to the container.
-        /// </summary>
-        /// <param name="builder">The instance to build the registered services inside the functions app.</param>
+        // This method gets called by the runtime. Use this method to add services to the container.
         public override void Configure(IFunctionsHostBuilder builder)
         {
             builder.ConfigureSecretStore((context, config, stores) =>

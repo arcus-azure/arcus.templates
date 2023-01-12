@@ -25,10 +25,7 @@ namespace Arcus.Templates.AzureFunctions.ServiceBus.Topic
             builder.ConfigurationBuilder.AddEnvironmentVariables();
         }
         
-        /// <summary>
-        /// This method gets called by the runtime. Use this method to add services to the container.
-        /// </summary>
-        /// <param name="builder">The instance to build the registered services inside the functions app.</param>
+        // This method gets called by the runtime. Use this method to add services to the container.
         public override void Configure(IFunctionsHostBuilder builder)
         {
             builder.ConfigureSecretStore((context, config, stores) =>
@@ -36,7 +33,7 @@ namespace Arcus.Templates.AzureFunctions.ServiceBus.Topic
 //[#if DEBUG]
                 stores.AddConfiguration(config);
 //[#endif]
-
+                
                 //#error Please provide a valid secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secret-store/provider/key-vault
                 stores.AddAzureKeyVaultWithManagedIdentity("https://your-keyvault.vault.azure.net/", CacheConfiguration.Default);
             });

@@ -11,9 +11,9 @@ using Serilog;
 using Serilog.Configuration;
 using Serilog.Events; 
 #endif
-
+ 
 [assembly: FunctionsStartup(typeof(Startup))]
-
+ 
 namespace Arcus.Templates.AzureFunctions.Http
 {
     public class Startup : FunctionsStartup
@@ -45,14 +45,14 @@ namespace Arcus.Templates.AzureFunctions.Http
 //[#if DEBUG]
                 stores.AddConfiguration(config);
 //[#endif]
-
+                
                 stores.AddEnvironmentVariables();
-
+                
                 //#error Please provide a valid secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secret-store/provider/key-vault
                 stores.AddAzureKeyVaultWithManagedIdentity("https://your-keyvault.vault.azure.net/", CacheConfiguration.Default);
             });
 #if Serilog_AppInsights
-
+            
             builder.Services.AddAppName("Azure HTTP trigger");
             builder.Services.AddAssemblyAppVersion<Startup>();
             builder.Services.AddLogging(logging =>

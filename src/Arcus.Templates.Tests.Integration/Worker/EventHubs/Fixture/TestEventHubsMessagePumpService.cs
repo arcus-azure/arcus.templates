@@ -50,19 +50,18 @@ namespace Arcus.Templates.Tests.Integration.Worker.EventHubs.Fixture
                     "Cannot simulate the message pump because the service is not yet started; please start this service before simulating");
             }
 
-            var operationId = $"operation-{Guid.NewGuid()}";
-            var transactionId = $"transaction-{Guid.NewGuid()}";
+            var traceParent = TraceParent.Generate();
             SensorUpdate update = GenerateSensorReading();
-            await ProduceEventAsync(update, operationId, transactionId);
+            await ProduceEventAsync(update, traceParent);
 
-            var sensorReadEventData = _serviceBusMessageEventConsumer.ConsumeEvent<SensorUpdateEventData>(operationId);
+            var sensorReadEventData = _serviceBusMessageEventConsumer.ConsumeEvent<SensorUpdateEventData>(traceParent.TransactionId);
             Assert.NotNull(sensorReadEventData);
             Assert.NotNull(sensorReadEventData.CorrelationInfo);
             Assert.Equal(update.SensorId, sensorReadEventData.SensorId);
             Assert.Equal(update.SensorStatus, sensorReadEventData.SensorStatus);
             Assert.Equal(update.Timestamp, sensorReadEventData.Timestamp);
-            Assert.Equal(transactionId, sensorReadEventData.CorrelationInfo.TransactionId);
-            Assert.Equal(operationId, sensorReadEventData.CorrelationInfo.OperationId);
+            Assert.Equal(traceParent.TransactionId, sensorReadEventData.CorrelationInfo.TransactionId);
+            Assert.Equal(traceParent.OperationParentId, sensorReadEventData.CorrelationInfo.OperationParentId);
             Assert.NotEmpty(sensorReadEventData.CorrelationInfo.CycleId);
         }
 
@@ -75,16 +74,10 @@ namespace Arcus.Templates.Tests.Integration.Worker.EventHubs.Fixture
                 .Generate();
         }
 
-        private async Task ProduceEventAsync(SensorUpdate sensorUpdate, string operationId, string transactionId)
+        private async Task ProduceEventAsync(SensorUpdate sensorUpdate, TraceParent traceParent)
         {
-            EventData message =
-                EventDataBuilder.CreateForBody(sensorUpdate)
-                                .WithOperationId(operationId)
-                                .WithTransactionId(transactionId)
-                                .Build();
-
-            // Not all EventHubs functionality in the Azure SDK supports the metadata retrieval of the `CorrelationId` property, so here we should use the properties instead.
-            message.Properties["Operation-Id"] = operationId;
+            var message = new EventData(BinaryData.FromObjectAsJson(sensorUpdate));
+            message.Properties["Diagnostic-Id"] = traceParent.DiagnosticId;
 
             EventHubsConfig eventHubsConfig = _configuration.GetEventHubsConfig();
             await using (var client = new EventHubProducerClient(eventHubsConfig.EventHubsConnectionString, eventHubsConfig.EventHubsName))

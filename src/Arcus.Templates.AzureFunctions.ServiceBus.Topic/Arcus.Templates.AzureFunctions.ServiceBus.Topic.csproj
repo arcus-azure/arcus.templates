@@ -30,7 +30,7 @@
   </PropertyGroup>
   <!--#if (AuthoringMode)-->
   <ItemGroup>
-    <Content Include="**\*" Exclude="**\bin\**\*;**\obj\**\*;**\.vs\**\*;**\launchSettings.json" />
+    <Content Include="**\*" Exclude="**\bin\**\*;**\obj\**\*;**\.vs\**\*" />
   </ItemGroup>
 
   <PropertyGroup>

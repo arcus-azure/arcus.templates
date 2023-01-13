@@ -30,7 +30,7 @@
   </PropertyGroup>
   <!--#if (AuthoringMode)-->
   <ItemGroup>
-    <Content Include="**\*" Exclude="**\bin\**\*;**\obj\**\*;**\.vs\**\*;**\launchSettings.json" />
+    <Content Include="**\*" Exclude="**\bin\**\*;**\obj\**\*;**\.vs\**\*" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -42,9 +42,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Properties\launchSettings.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Properties\launchSettings.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />
     <None Include="..\..\LICENSE" Pack="true" PackagePath="\" />
-    <None Include="..\..\docs\static\img\icon.png" Pack="true" PackagePath="\"/>
+    <None Include="..\..\docs\static\img\icon.png" Pack="true" PackagePath="\" />
   </ItemGroup>
   <!--#endif-->
 

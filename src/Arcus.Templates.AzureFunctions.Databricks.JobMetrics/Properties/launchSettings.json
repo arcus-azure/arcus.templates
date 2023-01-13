@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "Arcus.Templates.ServiceBus.Queue": {
+    "Arcus.Templates.AzureFunctions.Databricks.JobMetrics": {
       "commandName": "Project"
     },
     "Docker": {

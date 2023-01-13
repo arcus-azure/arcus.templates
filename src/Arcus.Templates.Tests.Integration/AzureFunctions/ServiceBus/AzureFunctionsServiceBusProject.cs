@@ -56,7 +56,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
         /// <param name="configuration">The collection of configuration values to correctly initialize the resulting project with secret values.</param>
         /// <param name="outputWriter">The output logger to add telemetry information during the creation and startup process.</param>
         /// <returns>
-        ///     An Azure Functions Service Bus Topic project with a set of services to interact with the worker.
+        ///     An Azure Functions Service Bus project with a set of services to interact with the worker.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         ///     Thrown when the <paramref name="configuration"/>, or the <paramref name="outputWriter"/> is <c>null</c>.
@@ -80,7 +80,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
         /// <param name="configuration">The collection of configuration values to correctly initialize the resulting project with secret values.</param>
         /// <param name="outputWriter">The output logger to add telemetry information during the creation and startup process.</param>
         /// <returns>
-        ///     An Azure Functions Service Bus Topic project with a set of services to interact with the project.
+        ///     An Azure Functions Service Bus project with a set of services to interact with the project.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         ///     Thrown when the <paramref name="options"/>, the <paramref name="configuration"/>, or the <paramref name="outputWriter"/> is <c>null</c>.
@@ -101,12 +101,29 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
             return project;
         }
 
-        private static AzureFunctionsServiceBusProject CreateNew(
+        /// <summary>
+        /// Creates a new project from the Azure Functions Service Bus project template.
+        /// </summary>
+        /// <param name="entityType">The type of the Azure Service Bus entity, to control the used project template.</param>
+        /// <param name="options">The additional project options to pass along to the project creation command.</param>
+        /// <param name="configuration">The collection of configuration values to correctly initialize the resulting project with secret values.</param>
+        /// <param name="outputWriter">The output logger to add telemetry information during the creation process.</param>
+        /// <returns>
+        ///     An Azure Functions Service Bus project with a set of services to interact with the project.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown when the <paramref name="options"/>, the <paramref name="configuration"/>, or the <paramref name="outputWriter"/> is <c>null</c>.
+        /// </exception>
+        public static AzureFunctionsServiceBusProject CreateNew(
             ServiceBusEntityType entityType, 
             AzureFunctionsServiceBusProjectOptions options, 
             TestConfig configuration, 
             ITestOutputHelper outputWriter)
         {
+            Guard.NotNull(options, nameof(options), "Requires a set of project options to pass along to the project creation command");
+            Guard.NotNull(configuration, nameof(configuration), "Requires a configuration instance to retrieve the configuration values to pass along to the to-be-created project");
+            Guard.NotNull(outputWriter, nameof(outputWriter), "Requires a test logger to write diagnostic information during the creation process");
+
             var project = new AzureFunctionsServiceBusProject(entityType, configuration, options, outputWriter);
             project.CreateNewProject(options);
             project.AddOrderMessageHandlerImplementation();

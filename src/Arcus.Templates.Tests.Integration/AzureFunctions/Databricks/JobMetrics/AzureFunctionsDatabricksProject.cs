@@ -88,8 +88,24 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics
             return project;
         }
 
-        private static AzureFunctionsDatabricksProject CreateNew(TestConfig configuration, AzureFunctionsDatabricksProjectOptions options, ITestOutputHelper outputWriter)
+        /// <summary>
+        /// Creates a project from the Azure Functions Databricks Job Metrics project template.
+        /// </summary>
+        /// <param name="configuration">The configuration to control the hosting of the to-be-created project.</param>
+        /// <param name="options">The additional user project options to change the project contents and functionality.</param>
+        /// <param name="outputWriter">The output logger to add telemetry information during the creation process.</param>
+        /// <returns>
+        ///     A Azure Functions Databricks Job Metrics project with a full set of endpoint services to interact with the Azure Function.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown when the <paramref name="configuration"/>, <paramref name="options"/>, or <paramref name="outputWriter"/> is <c>null</c>.
+        /// </exception>
+        public static AzureFunctionsDatabricksProject CreateNew(TestConfig configuration, AzureFunctionsDatabricksProjectOptions options, ITestOutputHelper outputWriter)
         {
+            Guard.NotNull(configuration, nameof(configuration), "Requires a test configuration instance to retrieve integration test configuration values to interact with Azure Databricks");
+            Guard.NotNull(options, nameof(options), "Requires a project options to change the project contents and functionality");
+            Guard.NotNull(outputWriter, nameof(outputWriter), "Requires a logging instance to write diagnostic information during the creation process");
+
             var project = new AzureFunctionsDatabricksProject(configuration, options, outputWriter);
             project.CreateNewProject(options);
             project.AddDatabricksSecurityToken(project.AzureFunctionDatabricksConfig.SecurityToken);

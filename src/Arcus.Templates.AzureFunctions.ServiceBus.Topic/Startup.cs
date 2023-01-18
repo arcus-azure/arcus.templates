@@ -1,4 +1,5 @@
-﻿using Arcus.Security.Core.Caching.Configuration;
+﻿using System;
+using Arcus.Security.Core.Caching.Configuration;
 using Arcus.Templates.AzureFunctions.ServiceBus.Topic;
 using Arcus.Templates.AzureFunctions.ServiceBus.Topic.Model;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
@@ -24,10 +25,7 @@ namespace Arcus.Templates.AzureFunctions.ServiceBus.Topic
             builder.ConfigurationBuilder.AddEnvironmentVariables();
         }
         
-        /// <summary>
-        /// This method gets called by the runtime. Use this method to add services to the container.
-        /// </summary>
-        /// <param name="builder">The instance to build the registered services inside the functions app.</param>
+        // This method gets called by the runtime. Use this method to add services to the container.
         public override void Configure(IFunctionsHostBuilder builder)
         {
             builder.ConfigureSecretStore((context, config, stores) =>
@@ -35,7 +33,7 @@ namespace Arcus.Templates.AzureFunctions.ServiceBus.Topic
 //[#if DEBUG]
                 stores.AddConfiguration(config);
 //[#endif]
-
+                
                 //#error Please provide a valid secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secret-store/provider/key-vault
                 stores.AddAzureKeyVaultWithManagedIdentity("https://your-keyvault.vault.azure.net/", CacheConfiguration.Default);
             });
@@ -44,31 +42,32 @@ namespace Arcus.Templates.AzureFunctions.ServiceBus.Topic
                    .WithServiceBusMessageHandler<OrdersAzureServiceBusMessageHandler, Order>();
 #if Serilog_AppInsights
             
-            LoggerConfiguration logConfig = CreateLoggerConfiguration(builder);
+            builder.Services.AddAppName("Service Bus Topic Trigger");
+            builder.Services.AddAssemblyAppVersion<Startup>();
             builder.Services.AddLogging(logging =>
             {
                 logging.RemoveMicrosoftApplicationInsightsLoggerProvider()
-                       .AddSerilog(logConfig.CreateLogger(), dispose: true);
+                       .AddSerilog(provider => CreateLoggerConfiguration(provider).CreateLogger());
             }); 
 #endif
         }
 #if Serilog_AppInsights
         
-        private static LoggerConfiguration CreateLoggerConfiguration(IFunctionsHostBuilder builder)
+        private static LoggerConfiguration CreateLoggerConfiguration(IServiceProvider provider)
         {
-            IConfiguration appConfig = builder.GetContext().Configuration;
+            IConfiguration appConfig = provider.GetRequiredService<IConfiguration>();
             var logConfig = new LoggerConfiguration()
                 .MinimumLevel.Information()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .Enrich.FromLogContext()
-                .Enrich.WithComponentName("Service Bus Topic Trigger")
-                .Enrich.WithVersion()
+                .Enrich.WithComponentName(provider)
+                .Enrich.WithVersion(provider)
                 .WriteTo.Console();
             
             var connectionString = appConfig.GetValue<string>("APPLICATIONINSIGHTS_CONNECTION_STRING");
             if (!string.IsNullOrWhiteSpace(connectionString))
             {
-                logConfig.WriteTo.AzureApplicationInsightsWithConnectionString(connectionString);
+                logConfig.WriteTo.AzureApplicationInsightsWithConnectionString(provider, connectionString);
             }
             
             return logConfig;

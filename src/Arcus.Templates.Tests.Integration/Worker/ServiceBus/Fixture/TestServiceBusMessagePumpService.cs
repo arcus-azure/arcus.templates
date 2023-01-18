@@ -52,19 +52,18 @@ namespace Arcus.Templates.Tests.Integration.Worker.ServiceBus.Fixture
                     "Cannot simulate the message pump because the service is not yet started; please start this service before simulating");
             }
 
-            var operationId = $"operation-{Guid.NewGuid()}";
-            var transactionId = $"transaction-{Guid.NewGuid()}";
+            var traceParent = TraceParent.Generate();
             Order order = GenerateOrder();
-            await ProduceMessageAsync(order, operationId, transactionId);
+            await ProduceMessageAsync(order, traceParent);
 
-            var orderCreatedEventData = _serviceBusMessageEventConsumer.ConsumeEvent<OrderCreatedEventData>(operationId);
+            var orderCreatedEventData = _serviceBusMessageEventConsumer.ConsumeEvent<OrderCreatedEventData>(traceParent.TransactionId);
             Assert.NotNull(orderCreatedEventData);
             Assert.NotNull(orderCreatedEventData.CorrelationInfo);
             Assert.Equal(order.Id, orderCreatedEventData.Id);
             Assert.Equal(order.Amount, orderCreatedEventData.Amount);
             Assert.Equal(order.ArticleNumber, orderCreatedEventData.ArticleNumber);
-            Assert.Equal(transactionId, orderCreatedEventData.CorrelationInfo.TransactionId);
-            Assert.Equal(operationId, orderCreatedEventData.CorrelationInfo.OperationId);
+            Assert.Equal(traceParent.TransactionId, orderCreatedEventData.CorrelationInfo.TransactionId);
+            Assert.Equal(traceParent.OperationParentId, orderCreatedEventData.CorrelationInfo.OperationParentId);
             Assert.NotEmpty(orderCreatedEventData.CorrelationInfo.CycleId);
         }
 
@@ -83,13 +82,10 @@ namespace Arcus.Templates.Tests.Integration.Worker.ServiceBus.Fixture
             return orderGenerator.Generate();
         }
 
-        private async Task ProduceMessageAsync(Order order, string operationId, string transactionId)
+        private async Task ProduceMessageAsync(Order order, TraceParent traceParent)
         {
-            ServiceBusMessage message =
-                ServiceBusMessageBuilder.CreateForBody(order)
-                                        .WithOperationId(operationId)
-                                        .WithTransactionId(transactionId)
-                                        .Build();
+            var message = new ServiceBusMessage(BinaryData.FromObjectAsJson(order));
+            message.ApplicationProperties["Diagnostic-Id"] = traceParent.DiagnosticId;
 
             string connectionString = _configuration.GetServiceBusConnectionString(_entityType);
             var connectionStringProperties = ServiceBusConnectionStringProperties.Parse(connectionString);

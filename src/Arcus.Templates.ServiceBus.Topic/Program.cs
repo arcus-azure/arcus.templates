@@ -76,6 +76,11 @@ namespace Arcus.Templates.ServiceBus.Topic
 #endif
                        .ConfigureServices((hostContext, services) =>
                        {
+#if Serilog_AppInsights
+                           services.AddAppName("Service Bus Topic Worker");
+                           services.AddAssemblyAppVersion<Program>();
+                           
+#endif
                            services.AddServiceBusTopicMessagePump("Receive-All", secretProvider => secretProvider.GetRawSecretAsync("ARCUS_SERVICEBUS_CONNECTIONSTRING"))
                                    .WithServiceBusMessageHandler<EmptyMessageHandler, EmptyMessage>();
                            
@@ -95,13 +100,13 @@ namespace Arcus.Templates.ServiceBus.Topic
                 config.MinimumLevel.Information()
                       .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                       .Enrich.FromLogContext()
-                      .Enrich.WithVersion()
-                      .Enrich.WithComponentName("Service Bus Topic Worker")
+                      .Enrich.WithVersion(host.Services)
+                      .Enrich.WithComponentName(host.Services)
                       .WriteTo.Console();
                 
                 if (!string.IsNullOrWhiteSpace(connectionString))
                 {
-                    config.WriteTo.AzureApplicationInsightsWithConnectionString(connectionString);
+                    config.WriteTo.AzureApplicationInsightsWithConnectionString(host.Services, connectionString);
                 }
                 
                 return config;

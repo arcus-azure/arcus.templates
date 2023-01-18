@@ -11,7 +11,7 @@ using Serilog.Configuration;
 using Serilog.Events;
 using Serilog.Extensions.Hosting; 
 #endif
-
+ 
 namespace Arcus.Templates.AzureFunctions.EventHubs
 {
     public class Program
@@ -23,7 +23,7 @@ namespace Arcus.Templates.AzureFunctions.EventHubs
                 .MinimumLevel.Debug()
                 .WriteTo.Console()
                 .CreateBootstrapLogger();
-
+            
             try
             {
                 IHost host = CreateHostBuilder(args).Build();
@@ -43,12 +43,17 @@ namespace Arcus.Templates.AzureFunctions.EventHubs
             await host.RunAsync();
 #endif
         }
-
+        
         private static IHostBuilder CreateHostBuilder(string[] args)
         {
             return Host.CreateDefaultBuilder(args)
 #if Serilog_AppInsights
                        .UseSerilog(Log.Logger)
+                       .ConfigureServices(services =>
+                       {
+                           services.AddAppName("EventHubs Trigger");
+                           services.AddAssemblyAppVersion<Program>();
+                       })
 #endif
 #if Isolated
                        .ConfigureFunctionsWorkerDefaults((context, builder) =>
@@ -62,33 +67,33 @@ namespace Arcus.Templates.AzureFunctions.EventHubs
 //[#if DEBUG]
                            stores.AddConfiguration(config);
 //[#endif]
-
+                            
                            //#error Please provide a valid secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secret-store/provider/key-vault
                            stores.AddAzureKeyVaultWithManagedIdentity("https://your-keyvault.vault.azure.net/", CacheConfiguration.Default);
                        });
         }
 #if Serilog_AppInsights
-
+        
         private static async Task ConfigureSerilogAsync(IHost app)
         {
             var secretProvider = app.Services.GetRequiredService<ISecretProvider>();
             string connectionString = await secretProvider.GetRawSecretAsync("APPLICATIONINSIGHTS_CONNECTION_STRING");
-
+            
             var reloadLogger = (ReloadableLogger) Log.Logger;
             reloadLogger.Reload(config =>
             {
                config.MinimumLevel.Information()
                      .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                      .Enrich.FromLogContext()
-                     .Enrich.WithComponentName("EventHubs Trigger")
-                     .Enrich.WithVersion()
+                     .Enrich.WithComponentName(app.Services)
+                     .Enrich.WithVersion(app.Services)
                      .WriteTo.Console();
-
+                
                 if (!string.IsNullOrWhiteSpace(connectionString))
                 {
-                    config.WriteTo.AzureApplicationInsightsWithConnectionString(connectionString);
+                    config.WriteTo.AzureApplicationInsightsWithConnectionString(app.Services, connectionString);
                 }
-
+                
                 return config;
             });
         }

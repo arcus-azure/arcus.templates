@@ -56,7 +56,7 @@ namespace Arcus.Templates.Tests.Integration.Worker.EventHubs.Fixture
                 "SensorReadEvent",
                 jsonSerializableData: eventData)
             {
-                Id = correlationInfo.OperationId,
+                Id = correlationInfo.TransactionId,
                 Time = DateTimeOffset.UtcNow
             };
 

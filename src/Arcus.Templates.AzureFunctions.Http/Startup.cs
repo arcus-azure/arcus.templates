@@ -11,9 +11,9 @@ using Serilog;
 using Serilog.Configuration;
 using Serilog.Events; 
 #endif
-
+ 
 [assembly: FunctionsStartup(typeof(Startup))]
-
+ 
 namespace Arcus.Templates.AzureFunctions.Http
 {
     public class Startup : FunctionsStartup
@@ -45,44 +45,41 @@ namespace Arcus.Templates.AzureFunctions.Http
 //[#if DEBUG]
                 stores.AddConfiguration(config);
 //[#endif]
-
+                
                 stores.AddEnvironmentVariables();
-
+                
                 //#error Please provide a valid secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secret-store/provider/key-vault
                 stores.AddAzureKeyVaultWithManagedIdentity("https://your-keyvault.vault.azure.net/", CacheConfiguration.Default);
             });
 #if Serilog_AppInsights
-            IConfiguration appConfig = builder.GetContext().Configuration;
-            var connectionString = appConfig.GetValue<string>("APPLICATIONINSIGHTS_CONNECTION_STRING");
-
-            LoggerConfiguration logConfig = CreateLoggerConfiguration(connectionString);
+            
+            builder.Services.AddAppName("Azure HTTP trigger");
+            builder.Services.AddAssemblyAppVersion<Startup>();
             builder.Services.AddLogging(logging =>
             {
-                logging.AddApplicationInsightsWebJobs(options =>
-                {
-                    options.ConnectionString = connectionString;
-                });
-
                 logging.RemoveMicrosoftApplicationInsightsLoggerProvider()
-                       .AddSerilog(logConfig.CreateLogger(), dispose: true);
+                       .AddSerilog(provider => CreateLoggerConfiguration(provider).CreateLogger());
             }); 
 #endif
         }
 #if Serilog_AppInsights
         
-        private static LoggerConfiguration CreateLoggerConfiguration(string connectionString)
+        private static LoggerConfiguration CreateLoggerConfiguration(IServiceProvider provider)
         {
+            var appConfig = provider.GetRequiredService<IConfiguration>();
+            var connectionString = appConfig.GetValue<string>("APPLICATIONINSIGHTS_CONNECTION_STRING");
+
             var configuration = new LoggerConfiguration()
                 .MinimumLevel.Information()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .Enrich.FromLogContext()
-                .Enrich.WithComponentName("Azure HTTP Trigger")
-                .Enrich.WithVersion()
+                .Enrich.WithComponentName(provider)
+                .Enrich.WithVersion(provider)
                 .WriteTo.Console();
             
             if (!string.IsNullOrWhiteSpace(connectionString))
             {
-                configuration.WriteTo.AzureApplicationInsightsWithConnectionString(connectionString);
+                configuration.WriteTo.AzureApplicationInsightsWithConnectionString(provider, connectionString);
             }
             
             return configuration;

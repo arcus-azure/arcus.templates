@@ -49,8 +49,9 @@
   <!--#endif-->
 
   <ItemGroup>
-    <PackageReference Include="Arcus.Messaging.Abstractions.EventHubs" Version="1.3.0" />
-    <PackageReference Include="Arcus.Messaging.EventHubs.Core" Version="1.3.0" />
+    <PackageReference Include="Arcus.Messaging.Abstractions.EventHubs" Version="1.4.0" />
+    <PackageReference Include="Arcus.Messaging.AzureFunctions.EventHubs" Version="1.4.0" />
+    <PackageReference Include="Arcus.Messaging.EventHubs.Core" Version="1.4.0" />
     <PackageReference Include="Arcus.Observability.Correlation" Version="2.7.0" />
     <PackageReference Include="Arcus.Observability.Telemetry.AzureFunctions" Version="2.7.0" />
     <PackageReference Include="Arcus.Observability.Telemetry.Core" Version="2.7.0" />

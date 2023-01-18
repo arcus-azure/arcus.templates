@@ -115,8 +115,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs
             AddTypeAsFile<TestSensorUpdateAzureEventHubsMessageHandler>();
 
             UpdateFileInProject("SensorReadingFunction.cs", 
-                contents => contents.Replace("EventHubTrigger(\"sensors\"", $"EventHubTrigger(\"{eventHubsConfig.EventHubsName}\"")
-                                    .Replace("var data = new EventData(message);", $"var data = new EventData(message);{Environment.NewLine}data.CorrelationId = properties[\"Operation-Id\"].GetString();"));
+                contents => contents.Replace("EventHubTrigger(\"sensors\"", $"EventHubTrigger(\"{eventHubsConfig.EventHubsName}\""));
 
             UpdateFileInProject(RuntimeFileName, contents => 
                 RemovesUserErrorsFromContents(contents)

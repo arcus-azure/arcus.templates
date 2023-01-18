@@ -190,6 +190,10 @@ namespace Arcus.Templates.WebApi
             });
 #endif
             builder.Services.AddHealthChecks();
+#if Serilog_AppInsights
+            builder.Services.AddAppName("API");
+            builder.Services.AddAssemblyAppVersion<Program>();
+#endif
 #if Correlation
             builder.Services.AddHttpCorrelation();
 #endif
@@ -336,8 +340,8 @@ namespace Arcus.Templates.WebApi
                 config.ReadFrom.Configuration(app.Configuration)
                       .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
                       .Enrich.FromLogContext()
-                      .Enrich.WithVersion()
-                      .Enrich.WithComponentName("API")
+                      .Enrich.WithVersion(app.Services)
+                      .Enrich.WithComponentName(app.Services)
 #if Correlation
                       .Enrich.WithHttpCorrelationInfo(app.Services)
 #endif
@@ -345,7 +349,7 @@ namespace Arcus.Templates.WebApi
             
                 if (!string.IsNullOrWhiteSpace(connectionString))
                 {
-                    config.WriteTo.AzureApplicationInsightsWithConnectionString(connectionString);
+                    config.WriteTo.AzureApplicationInsightsWithConnectionString(app.Services, connectionString);
                 }
                 
                 return config;

@@ -3,6 +3,7 @@ using Arcus.Templates.Tests.Integration.Fixture;
 using Arcus.Templates.Tests.Integration.Worker.Configuration;
 using Arcus.Templates.Tests.Integration.Worker.ServiceBus.Fixture;
 using GuardNet;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
 
@@ -33,7 +34,7 @@ namespace Arcus.Templates.Tests.Integration.Worker
         /// </returns>
         public static async Task<ServiceBusWorkerProject> StartNewWithQueueAsync(ITestOutputHelper outputWriter)
         {
-            Guard.NotNull(outputWriter, nameof(outputWriter));
+            Guard.NotNull(outputWriter, nameof(outputWriter), "Requires a test logger to add telemetry information during the creation and startup process");
 
             var config = TestConfig.Create();
             var options = ServiceBusWorkerProjectOptions.Create(config);
@@ -56,9 +57,9 @@ namespace Arcus.Templates.Tests.Integration.Worker
             ServiceBusWorkerProjectOptions options,
             ITestOutputHelper outputWriter)
         {
-            Guard.NotNull(config, nameof(config));
-            Guard.NotNull(options, nameof(options));
-            Guard.NotNull(outputWriter, nameof(outputWriter));
+            Guard.NotNull(config, nameof(config), "Requires an integration test configuration to configure the resulting project from the Service Bus worker template");
+            Guard.NotNull(options, nameof(options), "Requires a set of options to configure the resulting project from the Service Bus worker template");
+            Guard.NotNull(outputWriter, nameof(outputWriter), "Requires a test logger to add telemetry information during the creation and startup process");
 
             ServiceBusWorkerProject project = await StartNewAsync(ServiceBusEntityType.Queue, config, options, outputWriter);
             return project;
@@ -73,7 +74,7 @@ namespace Arcus.Templates.Tests.Integration.Worker
         /// </returns>
         public static async Task<ServiceBusWorkerProject> StartNewWithTopicAsync(ITestOutputHelper outputWriter)
         {
-            Guard.NotNull(outputWriter, nameof(outputWriter));
+            Guard.NotNull(outputWriter, nameof(outputWriter), "Requires a test logger to add telemetry information during the creation and startup process");
 
             var config = TestConfig.Create();
             var options = ServiceBusWorkerProjectOptions.Create(config);
@@ -96,9 +97,9 @@ namespace Arcus.Templates.Tests.Integration.Worker
             ServiceBusWorkerProjectOptions options,
             ITestOutputHelper outputWriter)
         {
-            Guard.NotNull(config, nameof(config));
-            Guard.NotNull(options, nameof(options));
-            Guard.NotNull(outputWriter, nameof(outputWriter));
+            Guard.NotNull(config, nameof(config), "Requires an integration test configuration to configure the resulting project from the Service Bus worker template");
+            Guard.NotNull(options, nameof(options), "Requires a set of options to configure the resulting project from the Service Bus worker template");
+            Guard.NotNull(outputWriter, nameof(outputWriter), "Requires a test logger to add telemetry information during the creation and startup process");
 
             ServiceBusWorkerProject project = await StartNewAsync(ServiceBusEntityType.Topic, config, options, outputWriter);
             return project;
@@ -112,7 +113,7 @@ namespace Arcus.Templates.Tests.Integration.Worker
         /// <param name="options">The project options to manipulate the resulting structure of the project.</param>
         /// <param name="outputWriter">The output logger to add telemetry information during the creation and startup process.</param>
         /// <returns>
-        ///     A ServiceBus Queue project with a set of services to interact with the worker.
+        ///     A ServiceBus project with a set of services to interact with the worker.
         /// </returns>
         public static async Task<ServiceBusWorkerProject> StartNewAsync(
             ServiceBusEntityType entityType, 
@@ -120,6 +121,10 @@ namespace Arcus.Templates.Tests.Integration.Worker
             ServiceBusWorkerProjectOptions options, 
             ITestOutputHelper outputWriter)
         {
+            Guard.NotNull(configuration, nameof(configuration), "Requires an integration test configuration to configure the resulting project from the Service Bus worker template");
+            Guard.NotNull(options, nameof(options), "Requires a set of options to configure the resulting project from the Service Bus worker template");
+            Guard.NotNull(outputWriter, nameof(outputWriter), "Requires a test logger to add telemetry information during the creation and startup process");
+
             ServiceBusWorkerProject project = CreateNew(entityType, configuration, options, outputWriter);
 
             EventGridConfig eventGridConfig = configuration.GetEventGridConfig();
@@ -133,12 +138,26 @@ namespace Arcus.Templates.Tests.Integration.Worker
             return project;
         }
 
-        private static ServiceBusWorkerProject CreateNew(
+        /// <summary>
+        /// Creates a new project from the ServiceBus worker project template.
+        /// </summary>
+        /// <param name="entityType">The resource entity for which the worker template should be created.</param>
+        /// <param name="configuration">The collection of configuration values to correctly initialize the resulting project with secret values.</param>
+        /// <param name="options">The project options to manipulate the resulting structure of the project.</param>
+        /// <param name="outputWriter">The output logger to add telemetry information during the creation process.</param>
+        /// <returns>
+        ///     A ServiceBus project with a set of services to interact with the worker.
+        /// </returns>
+        public static ServiceBusWorkerProject CreateNew(
             ServiceBusEntityType entityType, 
             TestConfig configuration, 
             ServiceBusWorkerProjectOptions options,
             ITestOutputHelper outputWriter)
         {
+            Guard.NotNull(configuration, nameof(configuration), "Requires an integration test configuration to configure the resulting project from the Service Bus worker template");
+            Guard.NotNull(options, nameof(options), "Requires a set of options to configure the resulting project from the Service Bus worker template");
+            Guard.NotNull(outputWriter, nameof(outputWriter), "Requires a test logger to add telemetry information during the creation process");
+
             var project = new ServiceBusWorkerProject(entityType, configuration, outputWriter);
             project.CreateNewProject(options);
             project.AddTestMessageHandler();

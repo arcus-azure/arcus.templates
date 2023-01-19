@@ -75,11 +75,27 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs
             return project;
         }
 
-        private static AzureFunctionsEventHubsProject CreateNew(
+        /// <summary>
+        /// Creates a project from the Azure Functions EventHubs project template.
+        /// </summary>
+        /// <param name="options">The additional project options to pass along to the project creation command.</param>
+        /// <param name="configuration">The collection of configuration values to correctly initialize the resulting project with secret values.</param>
+        /// <param name="outputWriter">The output logger to add telemetry information during the creation and startup process.</param>
+        /// <returns>
+        ///     An Azure Functions EventHubs project with a set of services to interact with the project.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown when the <paramref name="options"/>, the <paramref name="configuration"/>, or the <paramref name="outputWriter"/> is <c>null</c>.
+        /// </exception>
+        public static AzureFunctionsEventHubsProject CreateNew(
             TestConfig configuration,
             AzureFunctionsEventHubsProjectOptions options,
             ITestOutputHelper outputWriter)
         {
+            Guard.NotNull(options, nameof(options), "Requires a set of project options to pass along to the project creation command");
+            Guard.NotNull(configuration, nameof(configuration), "Requires a configuration instance to retrieve the configuration values to pass along to the to-be-created project");
+            Guard.NotNull(outputWriter, nameof(outputWriter), "Requires a test logger to write diagnostic information during the creation process");
+
             EventHubsConfig eventHubsConfig = configuration.GetEventHubsConfig();
             var project = new AzureFunctionsEventHubsProject(configuration, options, outputWriter);
 

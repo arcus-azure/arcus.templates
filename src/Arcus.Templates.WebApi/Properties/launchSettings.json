@@ -1,6 +1,5 @@
 {
   "profiles": {
-//#if (OpenApi)
     "Arcus.Templates.WebApi": {
       "commandName": "Project",
       "launchBrowser": true,
@@ -8,10 +7,13 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
+//#if (OpenApi)
       "launchUrl": "api/docs",
+//#else
+      "launchUrl": "api/v1/health",
+//#endif
       "applicationUrl": "http://localhost:4068"
     },
-//#endif
     "Docker": {
       "commandName": "Docker",
       "useSSL": false

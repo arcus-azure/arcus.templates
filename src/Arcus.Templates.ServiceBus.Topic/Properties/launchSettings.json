@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "Arcus.Templates.ServiceBus.Queue": {
+    "Arcus.Templates.ServiceBus.Topic": {
       "commandName": "Project"
     },
     "Docker": {

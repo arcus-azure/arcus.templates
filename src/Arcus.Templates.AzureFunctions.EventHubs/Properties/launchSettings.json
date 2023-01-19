@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "Arcus.Templates.ServiceBus.Queue": {
+    "Arcus.Templates.AzureFunctions.EventHubs": {
       "commandName": "Project"
     },
     "Docker": {

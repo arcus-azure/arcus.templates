@@ -1,5 +1,5 @@
 # Arcus Templates
-[![Build Status](https://dev.azure.com/codit/Arcus/_apis/build/status/Commit%20builds/CI%20-%20Arcus.Templates?branchName=master)](https://dev.azure.com/codit/Arcus/_build/latest?definitionId=765&branchName=master)
+[![Build Status](https://dev.azure.com/codit/Arcus/_apis/build/status/Commit%20builds/CI%20-%20Arcus.Templates?branchName=main)](https://dev.azure.com/codit/Arcus/_build/latest?definitionId=765&branchName=main)
 [![NuGet Badge](https://buildstats.info/nuget/Arcus.Templates.WebApi?includePreReleases=true)](https://www.nuget.org/packages/Arcus.Templates.WebApi/)
 
 .NET Core templates to simplify the new projects and applying best practices.

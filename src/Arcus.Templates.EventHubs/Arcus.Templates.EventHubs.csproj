@@ -52,10 +52,10 @@
     <PackageReference Include="Arcus.Messaging.EventHubs.Core" Version="1.4.0" />
     <PackageReference Include="Arcus.Messaging.Health" Version="1.4.0" />
     <PackageReference Include="Arcus.Messaging.Pumps.EventHubs" Version="1.4.0" />
-    <PackageReference Include="Arcus.Observability.Correlation" Version="2.7.0" />
-    <PackageReference Include="Arcus.Observability.Telemetry.Core" Version="2.7.0" />
-    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Filters" Version="2.7.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
-    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Sinks.ApplicationInsights" Version="2.7.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
+    <PackageReference Include="Arcus.Observability.Correlation" Version="2.8.0" />
+    <PackageReference Include="Arcus.Observability.Telemetry.Core" Version="2.8.0" />
+    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Filters" Version="2.8.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
+    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Sinks.ApplicationInsights" Version="2.8.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
     <PackageReference Include="Arcus.Security.Core" Version="1.9.0" />
     <PackageReference Include="Arcus.Security.Providers.AzureKeyVault" Version="1.9.0" />
     <PackageReference Include="Guard.NET" Version="3.0.0" />

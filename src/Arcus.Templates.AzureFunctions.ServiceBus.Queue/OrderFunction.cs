@@ -43,7 +43,7 @@ namespace Arcus.Templates.AzureFunctions.ServiceBus.Queue
         {
             Guard.NotNull(messageRouter, nameof(messageRouter), "Requires an message router instance to route the incoming Azure Service Bus queue message through the order processing");
             Guard.NotNull(messageCorrelation, nameof(messageCorrelation), "Requires a message correlation instance to W3C correlate incoming Azure Service Bus topic messages");
-
+            
             _messageRouter = messageRouter;
             _messageCorrelation = messageCorrelation;
             _jobId = Guid.NewGuid().ToString();
@@ -106,7 +106,7 @@ namespace Arcus.Templates.AzureFunctions.ServiceBus.Queue
                 await _messageRouter.RouteMessageAsync(message, messageContext, result.CorrelationInfo, CancellationToken.None);
             }
         }
-
+        
         private static ServiceBusReceivedMessage ConvertToServiceBusMessage(byte[] messageBody, FunctionContext executionContext)
         {
             var applicationProperties = new Dictionary<string, object>();
@@ -115,11 +115,13 @@ namespace Arcus.Templates.AzureFunctions.ServiceBus.Queue
                 var json = applicationPropertiesObj.ToString();
                 applicationProperties = JsonSerializer.Deserialize<Dictionary<string, object>>(json);
             }
-
+            
+            executionContext.BindingContext.BindingData.TryGetValue("CorrelationId", out object correlationId);
+            
             var message = ServiceBusModelFactory.ServiceBusReceivedMessage(
                 body: BinaryData.FromBytes(messageBody),
                 messageId: executionContext.BindingContext.BindingData["MessageId"]?.ToString(),
-                correlationId: executionContext.BindingContext.BindingData["CorrelationId"]?.ToString(),
+                correlationId: correlationId?.ToString(),
                 properties: applicationProperties);
 
             return message;

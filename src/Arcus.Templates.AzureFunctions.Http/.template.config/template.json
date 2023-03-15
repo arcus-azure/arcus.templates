@@ -6,8 +6,7 @@
     "Serverless",
     "Azure",
     "Http",
-    "Web API",
-    "API"
+    "WebAPI"
   ],
   "name": "Arcus Azure Functions with Http trigger v#{Package.Version}#",
   "identity": "Arcus.Templates.AzureFunctions.Http",

@@ -43,7 +43,7 @@
     <PackageReference Include="Microsoft.Azure.ApplicationInsights.Query" Version="1.0.0" />
     <PackageReference Include="Microsoft.Azure.Databricks.Client" Version="1.1.2515.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.1" />
-    <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.5.0" />
+    <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.6.3" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="xunit" Version="2.4.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">

@@ -1,4 +1,4 @@
 steps:
-  - bash: |
+  - powershell: |
       winget install Microsoft.AzureFunctionsCoreTools
     displayName: 'Install Azure Functions Core tools'

@@ -73,7 +73,8 @@ stages:
         pool:
           vmImage: 'windows-latest'
         steps:
-          - template: 'templates/install-azure-functions-core-tools.yml'
+          - task: FuncToolsInstaller@0
+            displayName: 'Install Azure Functions Core tools'
           - template: test/run-integration-tests.yml@templates
             parameters:
               dotnetSdkVersion: '$(DotNet.Sdk.Version)'

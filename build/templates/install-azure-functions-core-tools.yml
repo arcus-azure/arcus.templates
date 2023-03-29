@@ -1,4 +1,5 @@
 steps:
-  - powershell: |
-      npm i -g azure-functions-core-tools@4 --unsafe-perm true
+  #- powershell: |
+  #    npm i -g azure-functions-core-tools@4 --unsafe-perm true
+  - task: FuncToolsInstaller@0
     displayName: 'Install Azure Functions Core tools'

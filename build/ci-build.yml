@@ -85,7 +85,7 @@ stages:
       - job: RunIntegrationTests
         displayName: 'Run integration tests'
         pool:
-          vmImage: 'windows-latest'
+          vmImage: '$(Vm.Image)'
         steps:
           - template: 'templates/install-azure-functions-core-tools.yml'
           - template: test/run-integration-tests.yml@templates

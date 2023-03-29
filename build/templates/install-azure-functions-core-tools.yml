@@ -1,4 +1,4 @@
 steps:
   - powershell: |
-      winget install Microsoft.AzureFunctionsCoreTools
+      npm i -g azure-functions-core-tools@4 --unsafe-perm true
     displayName: 'Install Azure Functions Core tools'

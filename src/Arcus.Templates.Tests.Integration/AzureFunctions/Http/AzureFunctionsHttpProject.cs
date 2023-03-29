@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Net.Http;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.AzureFunctions.Http.Api;
@@ -27,8 +26,6 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http
         /// Gets the name of the order Azure Function.
         /// </summary>
         public const string OrderFunctionName = "order";
-
-        private static readonly HttpClient HttpClient = new HttpClient();
 
         private AzureFunctionsHttpProject(
             TestConfig configuration, 
@@ -215,8 +212,16 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http
         /// </summary>
         public async Task StartAsync()
         {
-            Run(Configuration.BuildConfiguration, TargetFramework.Net6_0);
-            await WaitUntilTriggerIsAvailableAsync(OrderFunctionEndpoint);
+            try
+            {
+                Run(Configuration.BuildConfiguration, TargetFramework.Net6_0);
+                await WaitUntilTriggerIsAvailableAsync(OrderFunctionEndpoint);
+            }
+            catch
+            {
+                Dispose();
+                throw;
+            }
         }
     }
 }

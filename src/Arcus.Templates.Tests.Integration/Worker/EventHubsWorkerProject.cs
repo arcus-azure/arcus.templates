@@ -62,21 +62,14 @@ namespace Arcus.Templates.Tests.Integration.Worker
 
             EventHubsConfig eventHubsConfig = configuration.GetEventHubsConfig();
             EventGridConfig eventGridConfig = configuration.GetEventGridConfig();
-            try
-            {
-                await project.StartAsync(options,
-                   CommandArgument.CreateSecret("EVENTGRID_TOPIC_URI", eventGridConfig.TopicUri),
-                   CommandArgument.CreateSecret("EVENTGRID_AUTH_KEY", eventGridConfig.AuthenticationKey),
-                   CommandArgument.CreateOpen("EVENTHUBS_NAME", eventHubsConfig.EventHubsName),
-                   CommandArgument.CreateOpen("BLOBSTORAGE_CONTAINERNAME", project._blobStorageContainer.ContainerName),
-                   CommandArgument.CreateSecret("ARCUS_EVENTHUBS_CONNECTIONSTRING", eventHubsConfig.EventHubsConnectionString),
-                   CommandArgument.CreateSecret("ARCUS_STORAGEACCOUNT_CONNECTIONSTRING", eventHubsConfig.StorageConnectionString));
-            }
-            catch
-            {
-                await project._blobStorageContainer.DisposeAsync();
-                throw;
-            }
+            
+            await project.StartAsync(options,
+               CommandArgument.CreateSecret("EVENTGRID_TOPIC_URI", eventGridConfig.TopicUri),
+               CommandArgument.CreateSecret("EVENTGRID_AUTH_KEY", eventGridConfig.AuthenticationKey),
+               CommandArgument.CreateOpen("EVENTHUBS_NAME", eventHubsConfig.EventHubsName),
+               CommandArgument.CreateOpen("BLOBSTORAGE_CONTAINERNAME", project._blobStorageContainer.ContainerName),
+               CommandArgument.CreateSecret("ARCUS_EVENTHUBS_CONNECTIONSTRING", eventHubsConfig.EventHubsConnectionString),
+               CommandArgument.CreateSecret("ARCUS_STORAGEACCOUNT_CONNECTIONSTRING", eventHubsConfig.StorageConnectionString));
 
             return project;
         }

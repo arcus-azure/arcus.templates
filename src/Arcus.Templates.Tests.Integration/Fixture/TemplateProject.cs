@@ -83,6 +83,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
 
             _created = true;
             _options = projectOptions;
+            TearDownOptions = projectOptions.TearDownOptions;
 
             string shortName = GetTemplateShortNameAtTemplateFolder();
             Logger.WriteLine($"Creates new project from template {shortName} at {ProjectDirectory.FullName}");

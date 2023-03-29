@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
-using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.AzureFunctions.Configuration;
 using Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics.Configuration;
@@ -20,8 +19,6 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions
     /// </summary>
     public abstract class AzureFunctionsProject : TemplateProject
     {
-        protected const string ApplicationInsightsConnectionStringKeyVariable = "APPLICATIONINSIGHTS_CONNECTION_STRING";
-
         private static readonly HttpClient HttpClient = new HttpClient();
 
         /// <summary>
@@ -157,7 +154,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions
                 + "or possible check for any compile errors or runtime failures (via the 'TearDownOptions') in the created test project based on the project template", exception);
         }
 
-         /// <summary>
+        /// <summary>
         /// Waits until the Azure Function project is fully running and ready to be interacted with.
         /// </summary>
         /// <param name="endpoint">The HTTP endpoint for the Azure Functions project to poll so the test project knows that the Azure Functions project is available.</param>
@@ -172,7 +169,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions
                       .WaitAndRetryForeverAsync(index => TimeSpan.FromMilliseconds(500));
 
             PolicyResult<HttpResponseMessage> result =
-                await Policy.TimeoutAsync(TimeSpan.FromSeconds(30))
+                await Policy.TimeoutAsync(TimeSpan.FromSeconds(35))
                             .WrapAsync(retryPolicy)
                             .ExecuteAndCaptureAsync(() => HttpClient.GetAsync(endpoint));
 

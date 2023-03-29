@@ -53,7 +53,6 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus.Logging
                     .WithFunctionWorker(workerType)
                     .WithExcludeSerilog();
 
-            options.TearDownOptions = TearDownOptions.KeepProjectDirectory;
             await using (var project = await AzureFunctionsServiceBusProject.StartNewProjectAsync(entityType, options, config, _outputWriter))
             {
                 // Act / Assert

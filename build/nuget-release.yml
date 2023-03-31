@@ -71,7 +71,7 @@ stages:
       - job: RunIntegrationTests
         displayName: 'Run integration tests'
         pool:
-          vmImage: 'windows-latest'
+          vmImage: '$(Vm.Image)'
         steps:
           - task: FuncToolsInstaller@0
             displayName: 'Install Azure Functions Core tools'

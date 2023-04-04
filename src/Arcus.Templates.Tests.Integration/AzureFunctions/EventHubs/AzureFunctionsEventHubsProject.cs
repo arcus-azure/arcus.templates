@@ -127,18 +127,26 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs
 
         private async Task StartAsync()
         {
-            EventHubsConfig eventHubsConfig = Configuration.GetEventHubsConfig();
-            EventGridConfig eventGridConfig = Configuration.GetEventGridConfig();
-            
-            Environment.SetEnvironmentVariable("EventHubsConnectionString", eventHubsConfig.EventHubsConnectionString);
-            Environment.SetEnvironmentVariable("EVENTGRID_TOPIC_URI", eventGridConfig.TopicUri);
-            Environment.SetEnvironmentVariable("EVENTGRID_AUTH_KEY", eventGridConfig.AuthenticationKey);
+            try
+            {
+                EventHubsConfig eventHubsConfig = Configuration.GetEventHubsConfig();
+                EventGridConfig eventGridConfig = Configuration.GetEventGridConfig();
 
-            ApplicationInsightsConfig appInsightsConfig = Configuration.GetApplicationInsightsConfig();
-            Environment.SetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING", $"InstrumentationKey={appInsightsConfig.InstrumentationKey}");
+                Environment.SetEnvironmentVariable("EventHubsConnectionString", eventHubsConfig.EventHubsConnectionString);
+                Environment.SetEnvironmentVariable("EVENTGRID_TOPIC_URI", eventGridConfig.TopicUri);
+                Environment.SetEnvironmentVariable("EVENTGRID_AUTH_KEY", eventGridConfig.AuthenticationKey);
 
-            Run(Configuration.BuildConfiguration, TargetFramework.Net6_0);
-            await Messaging.StartAsync();
+                ApplicationInsightsConfig appInsightsConfig = Configuration.GetApplicationInsightsConfig();
+                Environment.SetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING", $"InstrumentationKey={appInsightsConfig.InstrumentationKey}");
+
+                Run(Configuration.BuildConfiguration, TargetFramework.Net6_0);
+                await Messaging.StartAsync();
+            }
+            catch
+            {
+                await DisposeAsync();
+                throw;
+            }
         }
 
         /// <summary>

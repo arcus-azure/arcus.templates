@@ -206,20 +206,28 @@ namespace Arcus.Templates.Tests.Integration.WebApi
         /// </summary>
         public async Task StartAsync()
         {
-            var commandArguments = Array.Empty<CommandArgument>();
-            if (ContainsFile("appsettings.json"))
+            try
             {
-                UpdateFileInProject(
-                    "appsettings.json", 
-                    contents => contents.Replace("\"ARCUS_HTTP_PORT\": 4068", $"\"ARCUS_HTTP_PORT\": {_baseUrl.Port}"));
-            }
-            else
-            {
-                commandArguments = new[] { CommandArgument.CreateOpen("ARCUS_HTTP_PORT", _baseUrl.Port) };
-            }
+                var commandArguments = Array.Empty<CommandArgument>();
+                if (ContainsFile("appsettings.json"))
+                {
+                    UpdateFileInProject(
+                        "appsettings.json",
+                        contents => contents.Replace("\"ARCUS_HTTP_PORT\": 4068", $"\"ARCUS_HTTP_PORT\": {_baseUrl.Port}"));
+                }
+                else
+                {
+                    commandArguments = new[] { CommandArgument.CreateOpen("ARCUS_HTTP_PORT", _baseUrl.Port) };
+                }
 
-            Run(_configuration.BuildConfiguration, TargetFramework.Net6_0, commandArguments);
-            await WaitUntilWebProjectIsAvailable(_baseUrl.Port);
+                Run(_configuration.BuildConfiguration, TargetFramework.Net6_0, commandArguments);
+                await WaitUntilWebProjectIsAvailable(_baseUrl.Port);
+            }
+            catch
+            {
+                Dispose();
+                throw;
+            }
         }
 
         private async Task WaitUntilWebProjectIsAvailable(int httpPort)

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.Fixture;
 using Arcus.Templates.Tests.Integration.Worker.Fixture;
 using Arcus.Templates.Tests.Integration.Worker.Health;
+using GuardNet;
 using Polly;
 using Xunit.Abstractions;
 
@@ -46,21 +47,32 @@ namespace Arcus.Templates.Tests.Integration.Worker
         public IMessagingService Messaging { get; set; }
 
         /// <summary>
-        /// 
+        /// Starts a new .NET Worker project from a project template.
         /// </summary>
-        /// <param name="options"></param>
-        /// <returns></returns>
+        /// <param name="options">The user-defined options to manipulate the contents of the project created from the project template.</param>
+        /// <param name="additionalArguments">The additional CLI arguments passed along the startup command when starting the project created from the project template.</param>
+        /// <exception cref="ArgumentNullException">Thrown when the <paramref name="options"/> is <c>null</c>.</exception>
         protected async Task StartAsync(WorkerProjectOptions options, params CommandArgument[] additionalArguments)
         {
-           CommandArgument[] commands = 
+            Guard.NotNull(options, nameof(options), "Requires a set of user-defined options to manipulate the contents of the .NET Worker project created from the project template");
+            
+            CommandArgument[] commands = 
                 CreateDefaultWorkerCommand()
                     .Concat(options.AdditionalRunArguments)
                     .Concat(additionalArguments)
                     .ToArray();
-            
-            Run(_configuration.BuildConfiguration, TargetFramework.Net6_0, commands);
-            await WaitUntilWorkerProjectIsAvailableAsync(_healthPort);
-            await Messaging.StartAsync();
+
+            try
+            {
+                Run(_configuration.BuildConfiguration, TargetFramework.Net6_0, commands);
+                await WaitUntilWorkerProjectIsAvailableAsync(_healthPort);
+                await Messaging.StartAsync();
+            }
+            catch
+            {
+                await DisposeAsync();
+                throw;
+            }
         }
 
         private IEnumerable<CommandArgument> CreateDefaultWorkerCommand()
@@ -78,7 +90,7 @@ namespace Arcus.Templates.Tests.Integration.Worker
                       .WaitAndRetryForeverAsync(retryNumber => TimeSpan.FromSeconds(1));
 
             PolicyResult result = 
-                await Policy.TimeoutAsync(TimeSpan.FromSeconds(10))
+                await Policy.TimeoutAsync(TimeSpan.FromSeconds(15))
                             .WrapAsync(waitAndRetryForeverAsync)
                             .ExecuteAndCaptureAsync(() => TryToConnectToTcpListener(tcpPort));
 

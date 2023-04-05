@@ -16,6 +16,11 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         private readonly List<CommandArgument> _additionalRunArguments = new List<CommandArgument>();
 
         /// <summary>
+        /// Sets the options to control how the template project should be tear down during the <see cref="Dispose"/>.
+        /// </summary>
+        public TearDownOptions TearDownOptions { get; set; } = TearDownOptions.None;
+
+        /// <summary>
         /// Gets the additional console arguments to pass along the 'dotnet run' command.
         /// These arguments are related to the project options that were configured for the project.
         /// </summary>

@@ -149,27 +149,35 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
 
         private async Task StartAsync(ServiceBusEntityType entityType)
         {
-            string serviceBusConnectionString = Configuration.GetServiceBusConnectionString(entityType);
-            var properties = ServiceBusConnectionStringProperties.Parse(serviceBusConnectionString);
-            string namespaceConnectionString = $"Endpoint={properties.Endpoint};SharedAccessKeyName={properties.SharedAccessKeyName};SharedAccessKey={properties.SharedAccessKey}";
-            Environment.SetEnvironmentVariable("ServiceBusConnectionString", namespaceConnectionString);
-
-            if (entityType is ServiceBusEntityType.Topic)
+            try
             {
-                await AddServiceBusTopicSubscriptionAsync(properties.EntityPath, namespaceConnectionString);
+                string serviceBusConnectionString = Configuration.GetServiceBusConnectionString(entityType);
+                var properties = ServiceBusConnectionStringProperties.Parse(serviceBusConnectionString);
+                string namespaceConnectionString = $"Endpoint={properties.Endpoint};SharedAccessKeyName={properties.SharedAccessKeyName};SharedAccessKey={properties.SharedAccessKey}";
+                Environment.SetEnvironmentVariable("ServiceBusConnectionString", namespaceConnectionString);
+
+                if (entityType is ServiceBusEntityType.Topic)
+                {
+                    await AddServiceBusTopicSubscriptionAsync(properties.EntityPath, namespaceConnectionString);
+                }
+
+                EventGridConfig eventGridConfig = Configuration.GetEventGridConfig();
+                Environment.SetEnvironmentVariable("EVENTGRID_TOPIC_URI", eventGridConfig.TopicUri);
+                Environment.SetEnvironmentVariable("EVENTGRID_AUTH_KEY", eventGridConfig.AuthenticationKey);
+
+                string instrumentationKey = Configuration.GetApplicationInsightsInstrumentationKey();
+                Environment.SetEnvironmentVariable("APPINSIGHTS_INSTRUMENTATIONKEY", instrumentationKey);
+                Environment.SetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING", $"InstrumentationKey={instrumentationKey}");
+
+                Run(Configuration.BuildConfiguration, TargetFramework.Net6_0);
+                await Messaging.StartAsync();
+                await WaitUntilTriggerIsAvailableAsync(Admin.Endpoint);
             }
-
-            EventGridConfig eventGridConfig = Configuration.GetEventGridConfig();
-            Environment.SetEnvironmentVariable("EVENTGRID_TOPIC_URI", eventGridConfig.TopicUri);
-            Environment.SetEnvironmentVariable("EVENTGRID_AUTH_KEY", eventGridConfig.AuthenticationKey);
-
-            string instrumentationKey = Configuration.GetApplicationInsightsInstrumentationKey();
-            Environment.SetEnvironmentVariable("APPINSIGHTS_INSTRUMENTATIONKEY", instrumentationKey);
-            Environment.SetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING", $"InstrumentationKey={instrumentationKey}");
-
-            Run(Configuration.BuildConfiguration, TargetFramework.Net6_0);
-            await Messaging.StartAsync();
-            await WaitUntilTriggerIsAvailableAsync(Admin.Endpoint);
+            catch
+            {
+                await DisposeAsync();
+                throw;
+            }
         }
 
         private static async Task AddServiceBusTopicSubscriptionAsync(string topic, string connectionString)

@@ -116,8 +116,16 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics
 
         private async Task StartAsync()
         {
-            Run(BuildConfiguration.Debug, TargetFramework.Net6_0);
-            await WaitUntilTriggerIsAvailableAsync(Admin.Endpoint);
+            try
+            {
+                Run(Configuration.BuildConfiguration, TargetFramework.Net6_0);
+                await WaitUntilTriggerIsAvailableAsync(Admin.Endpoint);
+            }
+            catch
+            {
+                Dispose();
+                throw;
+            }
         }
 
         private void AddDatabricksSecurityToken(string securityToken)

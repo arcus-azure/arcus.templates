@@ -6,10 +6,12 @@ using Arcus.Templates.Tests.Integration.Fixture;
 using Microsoft.Azure.ApplicationInsights.Query;
 using Microsoft.Azure.ApplicationInsights.Query.Models;
 using Microsoft.Azure.Databricks.Client;
+using Microsoft.Azure.Databricks.Client.Models;
 using Polly;
 using Polly.Retry;
 using Xunit;
 using Xunit.Abstractions;
+using Policy = Polly.Policy;
 
 namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics.MetricReporting
 {
@@ -30,7 +32,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics
         [Fact(Skip = "Fails now because the Databricks cluster is removed on Azure")]
         public async Task MinimumAzureFunctionsDatabricksProject_WithEmbeddedTimer_ReportsAsMetricPeriodically()
         {
-            var parameters = RunParameters.CreateNotebookParams(Enumerable.Empty<KeyValuePair<string, string>>());
+            var parameters = RunParameters.CreateNotebookParams(new Dictionary<string, string>());
 
             using (var project = await AzureFunctionsDatabricksProject.StartNewAsync(_config, Logger))
             using (var client = DatabricksClient.CreateClient(project.AzureFunctionDatabricksConfig.BaseUrl, project.AzureFunctionDatabricksConfig.SecurityToken))
@@ -68,27 +70,39 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics
             var settings = new JobSettings
             {
                 Name = "(temp) Arcus Templates - Integration Testing",
-                NewCluster = new ClusterInfo
+                JobClusters = new[]
                 {
-                    RuntimeVersion = "8.3.x-scala2.12",
-                    AzureAttributes = new AzureAttributes
+                    new JobCluster
                     {
-                        Availability = AzureAvailability.ON_DEMAND_AZURE,
-                        FirstOnDemand = 1,
-                        SpotBidMaxPrice = -1
-                    },
-                    NodeTypeId = "Standard_DS3_v2",
-                    SparkEnvironmentVariables = new Dictionary<string, string>
-                    {
-                        ["PYSPARK_PYTHON"] = "/databricks/python3/bin/python3"
-                    },
-                    EnableElasticDisk = true,
-                    NumberOfWorkers = 8
+                        NewCluster = new ClusterAttributes
+                        {
+                            RuntimeVersion = "8.3.x-scala2.12",
+                            AzureAttributes = new AzureAttributes
+                            {
+                                Availability = AzureAvailability.ON_DEMAND_AZURE,
+                                FirstOnDemand = 1,
+                                SpotBidMaxPrice = -1
+                            },
+                            NodeTypeId = "Standard_DS3_v2",
+                            SparkEnvironmentVariables = new Dictionary<string, string>
+                            {
+                                ["PYSPARK_PYTHON"] = "/databricks/python3/bin/python3"
+                            },
+                            EnableElasticDisk = true,
+                            NumberOfWorkers = 8
+                        }
+                    }
                 },
                 MaxConcurrentRuns = 10,
-                NotebookTask = new NotebookTask
+                Tasks = new List<JobTaskSettings>
                 {
-                    NotebookPath = "/Arcus - Automation"
+                    new JobTaskSettings
+                    {
+                        NotebookTask = new NotebookTask
+                        {
+                            NotebookPath = "/Arcus - Automation"
+                        }
+                    }
                 }
             };
 

@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json.schemastore.org/vs-2017.3.host",
+  "name": {
+    "text": "Azure Functions HTTP"
+  },
+  "description": {
+    "text": "Provide a template to easily build an Azure Functions that exposes an HTTP endpoint."
+  },
+  "learnMoreLink": "https://templates.arcus-azure.net/features/azurefunctions-http-template",
+  "icon": "icon.jpg",
+  "isApi": true,
+  "symbolInfo": [
+    {
+      "id": "functions-worker",
+      "name": {
+        "text": "Functions Worker"
+      },
+      "isVisible": true
+    },
+    {
+      "id": "include-healthchecks",
+      "name": {
+        "text": "Include Health Checks"
+      },
+      "isVisible": true
+    },
+    {
+      "id": "exclude-openapi",
+      "name": {
+        "text": "Exclude OpenApi Documentation"
+      },
+      "isVisible": true
+    },
+    {
+      "id": "exclude-serilog",
+      "name": {
+        "text": "Exclude Serilog"
+      },
+      "isVisible": true
+    }
+  ]
+}

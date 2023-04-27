@@ -7,7 +7,7 @@
     "text": "Provide a template to easily build an Azure Functions that exposes an HTTP endpoint."
   },
   "learnMoreLink": "https://templates.arcus-azure.net/features/azurefunctions-http-template",
-  "icon": "icon.jpg",
+  "icon": "icon.png",
   "isApi": true,
   "symbolInfo": [
     {

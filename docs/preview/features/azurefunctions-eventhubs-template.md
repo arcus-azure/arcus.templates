@@ -16,7 +16,7 @@ First, install the template from NuGet:
 When installed, the template can be created with shortname: `arcus-az-func-eventhubs`:
 
 ```shell
-> dotnet new arcus-az-func-servicebus-topic --name Arcus.Demo.AzureFunctions.EventHubs
+> dotnet new arcus-az-func-eventhubs --name Arcus.Demo.AzureFunctions.EventHubs
 ```
 
 ## Features

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using Arcus.Security.Core;
 using GuardNet;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace Arcus.Templates.AzureFunctions.Timer
@@ -11,20 +12,26 @@ namespace Arcus.Templates.AzureFunctions.Timer
     public class TimerFunction
     {
         private readonly ISecretProvider _secretProvider;
+        private readonly IConfiguration _configuration;
         private readonly ILogger _logger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TimerFunction" /> class.
         /// </summary>
         /// <param name="secretProvider">The instance that provides secrets to the Timer trigger.</param>
+        /// <param name="configuration">The instance that provides configuration values to the Timer trigger.</param>
         /// <param name="loggerFactory">The factory to create logger instance to write diagnostic information during scheduled runs.</param>
-        /// <exception cref="ArgumentNullException">Thrown when the <paramref name="secretProvider"/> or <paramref name="loggerFactory"/> is <c>null</c>.</exception>
-        public TimerFunction(ISecretProvider secretProvider, ILoggerFactory loggerFactory)
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown when the <paramref name="secretProvider"/>, <paramref name="configuration"/> or <paramref name="loggerFactory"/> is <c>null</c>.
+        /// </exception>
+        public TimerFunction(ISecretProvider secretProvider, IConfiguration configuration, ILoggerFactory loggerFactory)
         {
             Guard.NotNull(secretProvider, nameof(secretProvider));
+            Guard.NotNull(configuration, nameof(configuration));
             Guard.NotNull(loggerFactory, nameof(loggerFactory));
-            
+
             _secretProvider = secretProvider;
+            _configuration = configuration;
             _logger = loggerFactory.CreateLogger<TimerFunction>();
         }
 
@@ -33,6 +40,8 @@ namespace Arcus.Templates.AzureFunctions.Timer
         {
             _logger.LogInformation("C# Timer trigger function executed at: {Time}", DateTimeOffset.UtcNow);
             _logger.LogInformation("Next timer schedule at: {Next}", timer.ScheduleStatus.Next);
+
+            // Execute timed action...
         }
     }
 

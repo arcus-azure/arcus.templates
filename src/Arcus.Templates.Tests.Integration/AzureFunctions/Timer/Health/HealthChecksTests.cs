@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Arcus.Templates.Tests.Integration.Fixture;
+using Azure.Messaging;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -22,9 +22,15 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Timer.Health
         [Fact]
         public async Task Timer_WithDefault_Succeeds()
         {
+            // Arrange
             var options = new AzureFunctionsProjectOptions();
-            using (var project = await AzureFunctionsTimerProject.StartNewAsync(options, _outputWriter))
+            
+            // Act
+            await using (var project = await AzureFunctionsTimerProject.StartNewAsync(options, _outputWriter))
             {
+                // Assert
+                CloudEvent cloudEvent = project.ConsumeTriggeredEvent();
+                Assert.NotNull(cloudEvent);
             }
         }
     }

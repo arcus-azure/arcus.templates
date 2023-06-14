@@ -11,7 +11,7 @@ using Xunit.Abstractions;
 namespace Arcus.Templates.Tests.Integration.AzureFunctions.Admin
 {
     /// <summary>
-    /// Represents a service that acts as a gateway to the running Azure Functions project so the metric reporting function can be manually triggered.
+    /// Represents a service that acts as a gateway to the running Azure Functions project so the function can be manually triggered.
     /// </summary>
     public class AdminEndpointService : EndpointService
     {

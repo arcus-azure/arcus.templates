@@ -74,7 +74,7 @@
     <PackageReference Include="Arcus.WebApi.Hosting.AzureFunctions" Version="1.7.1" Condition="'$(Isolated)' == 'true'" />
     <PackageReference Include="Arcus.WebApi.Logging.AzureFunctions" Version="1.7.1" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.13.0" Condition="'$(Isolated)' == 'true'" />
-    <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.0.13" Condition="'$(Isolated)' == 'true'" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.1.0" Condition="'$(Isolated)' == 'true'" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.OpenApi" Version="1.5.1" Condition="'$(OpenApi)' == 'true' and '$(Isolated)' == 'true'" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.15.0" Condition="'$(Isolated)' == 'true'" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="5.0.0" Condition="'$(InProcess)' == 'true'" />

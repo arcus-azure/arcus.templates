@@ -121,11 +121,19 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         }
 
         /// <summary>
-        /// Gets the project directory of the Azure Functions Databricks project template.
+        /// Gets the project directory of the Azure Functions HTTP project template.
         /// </summary>
         public DirectoryInfo GetAzureFunctionsHttpProjectDirectory()
         {
             return PathCombineWithSourcesDirectory("Arcus.Templates.AzureFunctions.Http");
+        }
+
+        /// <summary>
+        /// Gets the project directory of the Azure Functions Timer project template.
+        /// </summary>
+        public DirectoryInfo GetAzureFunctionsTimerProjectDirectory()
+        {
+            return PathCombineWithSourcesDirectory("Arcus.Templates.AzureFunctions.Timer");
         }
 
         /// <summary>

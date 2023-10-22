@@ -1,0 +1,105 @@
+﻿{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Arcus",
+  "classifications": [
+    "Azure Functions",
+    "Serverless",
+    "Azure",
+    "Timer",
+    "Scheduled"
+  ],
+  "name": "Arcus Azure Functions with Timer trigger v#{Package.Version}#",
+  "identity": "Arcus.Templates.AzureFunctions.Timer",
+  "shortName": "arcus-az-func-timer",
+  "sourceName": "Arcus.Templates.AzureFunctions.Timer",
+  "preferNameDirectory": true,
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "sources": [
+    {
+      "exclude": [
+        "**/[Bb]in/**",
+        "**/[Oo]bj/**",
+        ".template.config/**/*",
+        "**/*.filelist",
+        "**/*.user",
+        "**/*.lock.json"
+      ],
+      "modifiers": [
+       
+      ]
+    }
+  ],
+  "symbols": {
+    "AuthoringMode": {
+      "type": "generated",
+      "generator": "constant",
+      "parameters": {
+        "value": false
+      }
+    },
+    "IfDebug": {
+      "type": "generated",
+      "generator": "constant",
+      "parameters": {
+        "value": "#if DEBUG"
+      },
+      "replaces": "//[#if DEBUG]"
+    },
+    "ElseDirective": {
+      "type": "generated",
+      "generator": "constant",
+      "parameters": {
+        "value": "#else"
+      },
+      "replaces": "//[#else]"
+    },
+    "EndIf": {
+      "type": "generated",
+      "generator": "constant",
+      "parameters": {
+        "value": "#endif"
+      },
+      "replaces": "//[#endif]"
+    },
+    "ErrorDirective": {
+      "type": "generated",
+      "generator": "constant",
+      "parameters": {
+        "value": "#error"
+      },
+      "replaces": "//#error"
+    },
+    "exclude-serilog": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false",
+      "description": "Exclude the Serilog logging infrastructure in the Azure Functions project"
+    },
+    "Serilog_AppInsights": {
+      "type": "computed",
+      "value": "!(exclude-serilog)"
+    }
+  },
+  "postActions": [
+    {
+      "condition": "InProcess",
+      "description": "Adding Reference to Microsoft.NET.Sdk.Functions Nuget package",
+      "actionId": "B17581D1-C5C9-4489-8F0A-004BE667B814",
+      "continueOnError": false,
+      "manualInstructions": [
+        {
+          "text": "Manually add the reference to Microsoft.NET.Sdk.Functions to your project file"
+        }
+      ],
+      "args": {
+        "referenceType": "package",
+        "reference": "Microsoft.NET.Sdk.Functions",
+        "version": "4.1.3",
+        "projectFileExtensions": ".csproj"
+      }
+    }
+  ]
+}

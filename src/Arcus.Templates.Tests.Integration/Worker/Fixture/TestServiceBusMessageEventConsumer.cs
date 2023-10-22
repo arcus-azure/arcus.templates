@@ -86,6 +86,27 @@ namespace Arcus.Templates.Tests.Integration.Worker.Fixture
             return JsonConvert.DeserializeObject<TEventData>(json, new MessageCorrelationInfoJsonConverter());
         }
 
+        public CloudEvent ConsumeEvent<TEventData>(Func<TEventData, bool> filter)
+        {
+            CloudEvent receivedEvent = _serviceBusEventConsumerHost.GetReceivedEvent((CloudEvent ev) =>
+            {
+                if (ev.Data is null)
+                {
+                    return false;
+                }
+
+                var actual = ev.Data.ToObjectFromJson<TEventData>();
+                if (actual is null)
+                {
+                    return false;
+                }
+
+                return filter(actual);
+            }, timeout: TimeSpan.FromSeconds(5));
+
+            return receivedEvent;
+        }
+
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources asynchronously.
         /// </summary>

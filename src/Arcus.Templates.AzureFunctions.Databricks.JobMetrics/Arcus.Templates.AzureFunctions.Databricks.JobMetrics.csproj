@@ -60,10 +60,10 @@
 
   <ItemGroup>
     <PackageReference Include="Arcus.BackgroundJobs.Databricks" Version="0.4.0" />
-    <PackageReference Include="Arcus.Observability.Telemetry.Core" Version="2.8.0" />
-    <PackageReference Include="Arcus.Observability.Telemetry.AzureFunctions" Version="2.8.0" />
-    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Filters" Version="2.8.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
-    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Sinks.Applicationinsights" Version="2.8.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
+    <PackageReference Include="Arcus.Observability.Telemetry.Core" Version="3.0.0" />
+    <PackageReference Include="Arcus.Observability.Telemetry.AzureFunctions" Version="3.0.0" />
+    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Filters" Version="3.0.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
+    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Sinks.Applicationinsights" Version="3.0.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
     <PackageReference Include="Arcus.Security.AzureFunctions" Version="1.9.0" />
     <PackageReference Include="Arcus.Security.Providers.AzureKeyVault" Version="1.9.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="5.0.0" />

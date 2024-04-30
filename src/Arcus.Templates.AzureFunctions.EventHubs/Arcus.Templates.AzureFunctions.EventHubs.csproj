@@ -62,7 +62,7 @@
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" Condition="'$(InProcess)' == 'true'" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.EventHubs" Condition="'$(InProcess)' == 'true'" Version="5.2.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.19.0" Condition="'$(Isolated)' == 'true'" />
-    <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.EventHubs" Version="5.2.0" Condition="'$(Isolated)' == 'true'" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.EventHubs" Version="6.3.1" Condition="'$(Isolated)' == 'true'" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.15.0" Condition="'$(Isolated)' == 'true'" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
     <PackageReference Include="Serilog" Version="2.12.0" Condition="'$(Serilog_AppInsights)' == 'true'" />

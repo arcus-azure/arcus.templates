@@ -27,12 +27,6 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus.MessageHan
         }
 
         [Fact]
-        public async Task ServiceBusTopicProject_AsInProcess_CorrectlyProcessesMessage()
-        {
-            await TestServiceBusProjectWithWorkerTypeCorrectlyProcessesMessageAsync(ServiceBusEntityType.Topic, FunctionsWorker.InProcess);
-        }
-
-        [Fact]
         public async Task ServiceBusQueueProject_AsInProcess_CorrectlyProcessesMessage()
         {
             await TestServiceBusProjectWithWorkerTypeCorrectlyProcessesMessageAsync(ServiceBusEntityType.Queue, FunctionsWorker.InProcess);

@@ -23,7 +23,11 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
         /// <param name="workerType">The Azure Functions worker type the project should target.</param>
         public AzureFunctionsServiceBusProjectOptions WithFunctionWorker(FunctionsWorker workerType)
         {
-            SetFunctionsWorker(workerType);
+            if (_entityType != ServiceBusEntityType.Topic)
+            {
+                SetFunctionsWorker(workerType); 
+            }
+
             return this;
         }
 

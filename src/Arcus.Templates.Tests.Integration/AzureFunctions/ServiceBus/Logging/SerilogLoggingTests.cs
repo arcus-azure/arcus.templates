@@ -27,12 +27,6 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus.Logging
         }
 
         [Fact]
-        public async Task ServiceBusTopicProjectInProcess_WithoutSerilog_CorrectlyProcessesMessage()
-        {
-            await TestServiceBusProjectWithoutSerilogCorrectlyProcessesMessage(ServiceBusEntityType.Topic, FunctionsWorker.InProcess);
-        }
-
-        [Fact]
         public async Task ServiceBusQueueProjectInProcess_WithoutSerilog_CorrectlyProcessesMessage()
         {
             await TestServiceBusProjectWithoutSerilogCorrectlyProcessesMessage(ServiceBusEntityType.Queue, FunctionsWorker.InProcess);

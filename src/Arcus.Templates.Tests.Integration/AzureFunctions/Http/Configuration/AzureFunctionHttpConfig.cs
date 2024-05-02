@@ -11,7 +11,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Configuration
         private readonly int _isolatedHttpPort, _inProcessHttpPort;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref=AzureFunctionHttpConfig"/> class.
+        /// Initializes a new instance of the <see cref="AzureFunctionHttpConfig"/> class.
         /// </summary>
         /// <param name="isolatedHttpPort">The HTTP port where the isolated Azure Functions project will be running.</param>
         /// <param name="inProcessHttpPort">The HTTP port where the in-process Azure Functions project will be running.</param>
@@ -28,16 +28,9 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Configuration
         /// <summary>
         /// Gets the HTTP port associated with the running Azure Functions Docker project.
         /// </summary>
-        /// <param name="workerType">The functions worker type of the running Azure Functions Docker project.</param>
-        public int GetHttpPort(FunctionsWorker workerType)
+        public int GetHttpPort()
         {
-            switch (workerType)
-            {
-                case FunctionsWorker.InProcess: return _inProcessHttpPort;
-                case FunctionsWorker.Isolated: return _isolatedHttpPort;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(workerType), workerType, "Unknown Azure Functions worker type");
-            }
+            return _isolatedHttpPort;
         }
     }
 }

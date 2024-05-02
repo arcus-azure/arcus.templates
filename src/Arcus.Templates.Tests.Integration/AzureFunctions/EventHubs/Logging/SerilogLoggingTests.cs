@@ -30,7 +30,6 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs.Logging
             // Act
             await using (var project = await AzureFunctionsEventHubsProject.StartNewAsync(config, options, _outputWriter))
             {
-                project.TearDownOptions = TearDownOptions.KeepProjectDirectory;
                 // Assert
                 await project.Messaging.SimulateMessageProcessingAsync();
                 Assert.DoesNotContain("Serilog", project.GetFileContentsOfProjectFile());

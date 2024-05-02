@@ -2,8 +2,6 @@
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Arcus.Templates.Tests.Integration.AzureFunctions.Configuration;
-using Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics.Configuration;
 using Arcus.Templates.Tests.Integration.WebApi.Fixture;
 using Flurl;
 using Xunit.Abstractions;

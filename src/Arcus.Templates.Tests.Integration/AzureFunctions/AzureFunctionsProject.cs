@@ -4,7 +4,6 @@ using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.AzureFunctions.Configuration;
-using Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics.Configuration;
 using Arcus.Templates.Tests.Integration.Fixture;
 using Flurl;
 using GuardNet;
@@ -43,17 +42,11 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions
             Guard.NotNull(outputWriter, nameof(outputWriter), "Requires an logger instance to write diagnostic trace messages during the lifetime of the project.");
 
             Configuration = configuration;
-            FunctionsWorker = options.FunctionsWorker;
-            RuntimeFileName = DetermineStartupCodeFileName();
+            RuntimeFileName = "Program.cs";
             RootEndpoint = configuration.GenerateRandomLocalhostUrl().ResetToRoot().ToUri();
             AzureFunctionsConfig = configuration.GetAzureFunctionsConfig();
             ApplicationInsightsConfig = configuration.GetApplicationInsightsConfig();
         }
-
-        /// <summary>
-        /// Gets the Azure Functions worker type the project should target.
-        /// </summary>
-        public FunctionsWorker FunctionsWorker { get; }
 
         /// <summary>
         /// Gets the file name of the Azure Functions that contains the startup code ('Startup.cs' for in-process functions, 'Program.cs' for isolated functions).
@@ -86,32 +79,10 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions
         protected void AddLocalSettings()
         {
             string storageAccountConnectionString = AzureFunctionsConfig.StorageAccountConnectionString;
-            string workerRuntime = DetermineWorkerRuntime();
+            string workerRuntime = "dotnet-isolated";
 
             AddFileInProject("local.settings.json",  
                 $"{{ \"IsEncrypted\": false, \"Values\": {{ \"AzureWebJobsStorage\": \"{storageAccountConnectionString}\", \"FUNCTIONS_WORKER_RUNTIME\": \"{workerRuntime}\", \"APPLICATIONINSIGHTS_CONNECTION_STRING\": \"\" }}, \"Host\": {{ \"LocalHttpPort\": {RootEndpoint.Port} }} }}");
-        }
-
-        private string DetermineWorkerRuntime()
-        {
-            switch (FunctionsWorker)
-            {
-                case FunctionsWorker.InProcess: return "dotnet";
-                case FunctionsWorker.Isolated: return "dotnet-isolated";
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(FunctionsWorker), FunctionsWorker, "Unknown Azure Functions worker type");
-            }
-        }
-
-        private string DetermineStartupCodeFileName()
-        {
-            switch (FunctionsWorker)
-            {
-                case FunctionsWorker.InProcess: return "Startup.cs";
-                case FunctionsWorker.Isolated: return "Program.cs";
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(FunctionsWorker), FunctionsWorker, "Unknown Azure Functions worker type");
-            }
         }
 
         /// <summary>

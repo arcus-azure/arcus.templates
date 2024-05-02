@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics.Configuration;
+using Arcus.Templates.Tests.Integration.AzureFunctions.Configuration;
 using GuardNet;
 using Microsoft.Azure.ApplicationInsights.Query;
 using Polly;

@@ -89,6 +89,8 @@ stages:
         steps:
           - task: FuncToolsInstaller@0
             displayName: 'Install Azure Functions Core tools'
+            inputs:
+              version: '4.0.5390'
           - template: test/run-integration-tests.yml@templates
             parameters:
               dotnetSdkVersion: '$(DotNet.Sdk.Version)'

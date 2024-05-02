@@ -55,13 +55,11 @@ namespace Arcus.Templates.AzureFunctions.EventHubs
                            services.AddAssemblyAppVersion<Program>();
                        })
 #endif
-#if Isolated
                        .ConfigureFunctionsWorkerDefaults((context, builder) =>
                        {
                            builder.Services.AddEventHubsMessageRouting()
                                            .WithEventHubsMessageHandler<SensorReadingAzureEventHubsMessageHandler, SensorReading>();
                        })
-#endif
                        .ConfigureSecretStore((config, stores) =>
                        {
 //[#if DEBUG]

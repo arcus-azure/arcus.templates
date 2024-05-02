@@ -20,37 +20,17 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus.MessageHan
             _outputWriter = outputWriter;
         }
 
-        [Fact]
-        public async Task ServiceBusTopicProject_AsIsolated_CorrectlyProcessesMessage()
-        {
-           await TestServiceBusProjectWithWorkerTypeCorrectlyProcessesMessageAsync(ServiceBusEntityType.Topic, FunctionsWorker.Isolated);
-        }
-
-        [Fact]
-        public async Task ServiceBusQueueProject_AsInProcess_CorrectlyProcessesMessage()
-        {
-            await TestServiceBusProjectWithWorkerTypeCorrectlyProcessesMessageAsync(ServiceBusEntityType.Queue, FunctionsWorker.InProcess);
-        }
-
-        [Fact]
-        public async Task ServiceBusQueueProject_AsIsolated_CorrectlyProcessesMessage()
-        {
-            await TestServiceBusProjectWithWorkerTypeCorrectlyProcessesMessageAsync(ServiceBusEntityType.Queue, FunctionsWorker.Isolated);
-        }
-
-        private async Task TestServiceBusProjectWithWorkerTypeCorrectlyProcessesMessageAsync(ServiceBusEntityType entityType, FunctionsWorker workerType)
+        [Theory]
+        [InlineData(ServiceBusEntityType.Topic)]
+        [InlineData(ServiceBusEntityType.Queue)]
+        public async Task ServiceBusProject_WithDefault_CorrectlyProcessesMessage(ServiceBusEntityType entityType)
         {
             // Arrange
             var config = TestConfig.Create();
-            var options =
-                new AzureFunctionsServiceBusProjectOptions(entityType)
-                    .WithFunctionWorker(workerType);
-
-            await using (var project = await AzureFunctionsServiceBusProject.StartNewProjectAsync(entityType, options, config, _outputWriter))
-            {
-                // Act / Assert
-                await project.Messaging.SimulateMessageProcessingAsync();
-            }
+            await using var project = await AzureFunctionsServiceBusProject.StartNewProjectAsync(entityType, config, _outputWriter);
+            
+            // Act / Assert
+            await project.Messaging.SimulateMessageProcessingAsync();
         }
     }
 }

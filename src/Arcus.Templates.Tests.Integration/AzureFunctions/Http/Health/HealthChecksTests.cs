@@ -28,15 +28,12 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Health
             _config = TestConfig.Create();
         }
 
-        [Theory]
-        [InlineData(FunctionsWorker.InProcess)]
-        [InlineData(FunctionsWorker.Isolated)]
-        public async Task HttpAzureFunctionsProject_WithIncludeHealthChecks_ContainsHealthChecks(FunctionsWorker workerType)
+        [Fact]
+        public async Task HttpAzureFunctionsProject_WithIncludeHealthChecks_ContainsHealthChecks()
         {
             // Arrange
             var options =
                 new AzureFunctionsHttpProjectOptions()
-                    .WithFunctionsWorker(workerType)
                     .WithIncludeHealthChecks();
             
             using (var project = await AzureFunctionsHttpProject.StartNewAsync(_config, options, _outputWriter))
@@ -56,15 +53,12 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Health
             }
         }
 
-        [Theory]
-        [InlineData(FunctionsWorker.InProcess)]
-        [InlineData(FunctionsWorker.Isolated)]
-        public async Task HttpAzureFunctionsProject_RemovesExceptionDetails_WhenRequestingHealth(FunctionsWorker workerType)
+        [Fact]
+        public async Task HttpAzureFunctionsProject_RemovesExceptionDetails_WhenRequestingHealth()
         {
             // Arrange
             var options =
                 new AzureFunctionsHttpProjectOptions()
-                    .WithFunctionsWorker(workerType)
                     .WithIncludeHealthChecks();
 
             using (var project = AzureFunctionsHttpProject.CreateNew(_config, options, _outputWriter))
@@ -97,15 +91,12 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Health
             }
         }
         
-        [Theory]
-        [InlineData(FunctionsWorker.InProcess)]
-        [InlineData(FunctionsWorker.Isolated)]
-        public async Task HttpAzureFunctionsProject_WithIncludeHealthChecks_ChecksAcceptRequestHeader(FunctionsWorker workerType)
+        [Fact]
+        public async Task HttpAzureFunctionsProject_WithIncludeHealthChecks_ChecksAcceptRequestHeader()
         {
             // Arrange
             var options =
                 new AzureFunctionsHttpProjectOptions()
-                    .WithFunctionsWorker(workerType)
                     .WithIncludeHealthChecks();
             
             using (var project = await AzureFunctionsHttpProject.StartNewAsync(_config, options, _outputWriter))
@@ -123,14 +114,11 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Health
             }
         }
 
-        [Theory]
-        [InlineData(FunctionsWorker.InProcess)]
-        [InlineData(FunctionsWorker.Isolated)]
-        public async Task HttpAzureFunctionsProject_WithoutOptions_DoesNotContainHealthChecks(FunctionsWorker workerType)
+        [Fact]
+        public async Task HttpAzureFunctionsProject_WithoutOptions_DoesNotContainHealthChecks()
         {
             // Arrange
-            var options = new AzureFunctionsHttpProjectOptions().WithFunctionsWorker(workerType);
-            using (var project = await AzureFunctionsHttpProject.StartNewAsync(_config, options, _outputWriter))
+            using (var project = await AzureFunctionsHttpProject.StartNewAsync(_config, _outputWriter))
             {
                 // Act
                 using (HttpResponseMessage response = await project.Health.GetAsync())

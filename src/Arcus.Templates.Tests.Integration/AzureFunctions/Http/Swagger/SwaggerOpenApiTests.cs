@@ -33,10 +33,8 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Swagger
             _outputWriter = outputWriter;
         }
 
-        [Theory]
-        [InlineData(FunctionsWorker.InProcess)]
-        [InlineData(FunctionsWorker.Isolated)]
-        public async Task PostOrder_WithoutOpenApiDocs_StillWorks(FunctionsWorker workerType)
+        [Fact]
+        public async Task PostOrder_WithoutOpenApiDocs_StillWorks()
         {
             // Arrange
             var order = new Order
@@ -48,7 +46,6 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Swagger
 
             var options =
                 new AzureFunctionsHttpProjectOptions()
-                    .WithFunctionsWorker(workerType)
                     .WithExcludeOpenApiDocs();
 
             using (var project = await AzureFunctionsHttpProject.StartNewAsync(options, _outputWriter))
@@ -66,15 +63,12 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Swagger
             }
         }
 
-        [Theory]
-        [InlineData(FunctionsWorker.InProcess)]
-        [InlineData(FunctionsWorker.Isolated)]
-        public async Task GetHealth_WithoutOpenApiDocs_StillWorks(FunctionsWorker workerType)
+        [Fact]
+        public async Task GetHealth_WithoutOpenApiDocs_StillWorks()
         {
             // Arrange
             var options =
                 new AzureFunctionsHttpProjectOptions()
-                    .WithFunctionsWorker(workerType)
                     .WithIncludeHealthChecks()
                     .WithExcludeOpenApiDocs();
 
@@ -94,15 +88,12 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Swagger
             }
         }
 
-        [Theory]
-        [InlineData(FunctionsWorker.InProcess)]
-        [InlineData(FunctionsWorker.Isolated)]
-        public async Task Create_WithoutOpenApiDocs_RemovesOpenApiFiles(FunctionsWorker workerType)
+        [Fact]
+        public async Task Create_WithoutOpenApiDocs_RemovesOpenApiFiles()
         {
             // Arrange
             var options =
                 new AzureFunctionsHttpProjectOptions()
-                    .WithFunctionsWorker(workerType)
                     .WithExcludeOpenApiDocs();
 
             using (var project = await AzureFunctionsHttpProject.StartNewAsync(options, _outputWriter))
@@ -113,14 +104,11 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Swagger
             }
         }
 
-        [Theory]
-        [InlineData(FunctionsWorker.InProcess)]
-        [InlineData(FunctionsWorker.Isolated)]
-        public async Task Create_WithOpenApiDocs_RemovesOpenApiFiles(FunctionsWorker workerType)
+        [Fact]
+        public async Task Create_WithOpenApiDocs_RemovesOpenApiFiles()
         {
             // Arrange
-            var options = new AzureFunctionsHttpProjectOptions().WithFunctionsWorker(workerType);
-            using (var project = await AzureFunctionsHttpProject.StartNewAsync(options, _outputWriter))
+            using (var project = await AzureFunctionsHttpProject.StartNewAsync(_outputWriter))
             {
                 // Assert
                 Assert.True(project.ContainsFile("HttpCorrelationOpenApiResponseHeaders.cs"), "should contain OpenApi response headers file");
@@ -129,19 +117,15 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Swagger
         }
         
         [Theory]
-        [InlineData(FunctionsWorker.InProcess, BuildConfiguration.Debug, HttpStatusCode.OK)]
-        [InlineData(FunctionsWorker.InProcess, BuildConfiguration.Release, HttpStatusCode.NotFound)]
-        [InlineData(FunctionsWorker.Isolated, BuildConfiguration.Debug, HttpStatusCode.OK)]
-        [InlineData(FunctionsWorker.Isolated, BuildConfiguration.Release, HttpStatusCode.OK)]
+        [InlineData(BuildConfiguration.Debug, HttpStatusCode.OK)]
+        [InlineData(BuildConfiguration.Release, HttpStatusCode.OK)]
         public async Task GetSwaggerUI_WithBuildConfiguration_Returns(
-            FunctionsWorker workerType, 
             BuildConfiguration buildConfiguration, 
             HttpStatusCode expectedStatusCode)
         {
             // Arrange
             var testConfiguration = TestConfig.Create(buildConfiguration);
-            var options = new AzureFunctionsHttpProjectOptions().WithFunctionsWorker(workerType);
-            using (var project = await AzureFunctionsHttpProject.StartNewAsync(testConfiguration, options, _outputWriter))
+            using (var project = await AzureFunctionsHttpProject.StartNewAsync(testConfiguration, _outputWriter))
             {
                 // Act
                 using (HttpResponseMessage response = await project.Swagger.GetSwaggerUIAsync())
@@ -153,15 +137,12 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Swagger
             }
         }
         
-        [Theory]
-        [InlineData(FunctionsWorker.InProcess)]
-        [InlineData(FunctionsWorker.Isolated)]
-        public async Task GetSwaggerUI_WithExcludeOpenApiProjectOption_ReturnsNotFound(FunctionsWorker workerType)
+        [Fact]
+        public async Task GetSwaggerUI_WithExcludeOpenApiProjectOption_ReturnsNotFound()
         {
             // Arrange
             var options =
                 new AzureFunctionsHttpProjectOptions()
-                    .WithFunctionsWorker(workerType)
                     .WithExcludeOpenApiDocs();
 
             using (var project = await AzureFunctionsHttpProject.StartNewAsync(options, _outputWriter))
@@ -174,15 +155,12 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Swagger
             }
         }
 
-        [Theory]
-        [InlineData(FunctionsWorker.InProcess)]
-        [InlineData(FunctionsWorker.Isolated)]
-        public async Task GetSwaggerDocs_WithExcludeOpenApiProjectOption_ReturnsNotFound(FunctionsWorker workerType)
+        [Fact]
+        public async Task GetSwaggerDocs_WithExcludeOpenApiProjectOption_ReturnsNotFound()
         {
             // Arrange
             var options = 
                 new AzureFunctionsHttpProjectOptions()
-                    .WithFunctionsWorker(workerType)
                     .WithExcludeOpenApiDocs();
 
             using (var project = await AzureFunctionsHttpProject.StartNewAsync(options, _outputWriter))
@@ -197,14 +175,11 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Swagger
             }
         }
         
-        [Theory]
-        [InlineData(FunctionsWorker.InProcess)]
-        [InlineData(FunctionsWorker.Isolated)]
-        public async Task GetSwaggerDocs_WithOpenApiConfigurationWithoutHealth_ReturnsOpenApiDocumentOfApplication(FunctionsWorker workerType)
+        [Fact]
+        public async Task GetSwaggerDocs_WithOpenApiConfigurationWithoutHealth_ReturnsOpenApiDocumentOfApplication()
         {
             // Arrange
-            var options = new AzureFunctionsHttpProjectOptions().WithFunctionsWorker(workerType);
-            using (var project = await AzureFunctionsHttpProject.StartNewAsync(options, _outputWriter)) 
+            using (var project = await AzureFunctionsHttpProject.StartNewAsync(_outputWriter))
             // Act
             using (HttpResponseMessage response = await project.Swagger.GetSwaggerDocsAsync())
             {
@@ -217,14 +192,11 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Swagger
             }
         }
 
-        [Theory]
-        [InlineData(FunctionsWorker.InProcess)]
-        [InlineData(FunctionsWorker.Isolated)]
-        public async Task GetSwaggerDocs_WithOpenApiConfigurationWithHealth_ReturnsOpenApiDocumentOfApplication(FunctionsWorker workerType)
+        [Fact]
+        public async Task GetSwaggerDocs_WithOpenApiConfigurationWithHealth_ReturnsOpenApiDocumentOfApplication()
         {
             // Arrange
             var options = new AzureFunctionsHttpProjectOptions()
-                .WithFunctionsWorker(workerType)
                 .WithIncludeHealthChecks();
             
             using (var project = await AzureFunctionsHttpProject.StartNewAsync(options, _outputWriter))

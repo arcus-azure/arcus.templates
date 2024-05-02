@@ -8,11 +8,9 @@ using System.Threading.Tasks;
 using Arcus.Security.Core.Caching.Configuration;
 using Arcus.Security.Core;
 using Arcus.WebApi.Logging.AzureFunctions;
-#if Isolated
 using Arcus.WebApi.Hosting.AzureFunctions.Formatting; 
-#endif
 using Azure.Core.Serialization;
-#if OpenApi && Isolated
+#if OpenApi
 using Microsoft.Azure.Functions.Worker.Extensions.OpenApi.Extensions; 
 #endif
 using Microsoft.Extensions.DependencyInjection;
@@ -70,7 +68,6 @@ namespace Arcus.Templates.AzureFunctions.Http
                            services.AddAssemblyAppVersion<Program>();
                        })
 #endif
-#if Isolated
                        .ConfigureFunctionsWorkerDefaults((context, builder) =>
                        {
 #if IncludeHealthChecks
@@ -85,7 +82,7 @@ namespace Arcus.Templates.AzureFunctions.Http
                            builder.UseOnlyJsonFormatting()
                                   .UseFunctionContext()
                                   .UseHttpCorrelation()
-                                   .UseRequestTracking(options =>
+                                  .UseRequestTracking(options =>
                                   {
                                       options.OmittedRoutes.Add("/");
 #if IncludeHealthChecks
@@ -98,7 +95,6 @@ namespace Arcus.Templates.AzureFunctions.Http
                                   })
                                   .UseExceptionHandling();
                        })
-#endif
                        .ConfigureSecretStore((config, stores) =>
                        {
 //[#if DEBUG]

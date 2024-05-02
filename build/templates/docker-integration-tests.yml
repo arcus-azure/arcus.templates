@@ -88,34 +88,8 @@ stages:
                 APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=$(Arcus.ApplicationInsights.InstrumentationKey)
           - template: 'run-new-project-from-template.yml'
             parameters:
-              projectName: 'Arcus.Demo.AzureFunctions.Databricks.JobMetrics'
-              projectAlias: 'arcus-az-databricks-jobmetrics'
-              ports: '$(Arcus.AzureFunctions.Databricks.HttpPort):80'
-              script: |
-                Get-Content './Arcus.Demo.AzureFunctions.Databricks.JobMetrics/Startup.cs' -Raw |
-                  % { $_ -replace '#error', '#warning' -replace '#if DEBUG', '#if RELEASE' } |
-                  Set-Content './Arcus.Demo.AzureFunctions.Databricks.JobMetrics/Startup.cs'
-              envVars: |
-                Arcus__Databricks__Url=$(Arcus.Databricks.Url)
-                Arcus__ApplicationInsights__MetricName=$(Arcus.ApplicationInsights.MetricName)
-                APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=$(Arcus.ApplicationInsights.InstrumentationKey)
-          - template: 'run-new-project-from-template.yml'
-            parameters:
-              projectName: 'Arcus.Demo.AzureFunctions.InProcess.Http'
-              projectAlias: 'arcus-az-func-http'
-              projectOptions: '--functions-worker inProcess'
-              ports: '$(Arcus.AzureFunctions.Http.InProcess.HttpPort):80'
-              script: |
-                Get-Content './Arcus.Demo.AzureFunctions.InProcess.Http/Startup.cs' -Raw |
-                   % { $_ -replace '#error', '#warning' -replace '#if DEBUG', '#if RELEASE' } |
-                  Set-Content './Arcus.Demo.AzureFunctions.InProcess.Http/Startup.cs'
-              envVars: |
-                APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=$(Arcus.ApplicationInsights.InstrumentationKey)
-          - template: 'run-new-project-from-template.yml'
-            parameters:
               projectName: 'Arcus.Demo.AzureFunctions.Isolated.Http'
               projectAlias: 'arcus-az-func-http'
-              projectOptions: '--functions-worker isolated'
               ports: '$(Arcus.AzureFunctions.Http.Isolated.HttpPort):80'
               script: |
                 Get-Content './Arcus.Demo.AzureFunctions.Isolated.Http/Program.cs' -Raw |
@@ -125,22 +99,8 @@ stages:
                 APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=$(Arcus.ApplicationInsights.InstrumentationKey)
           - template: 'run-new-project-from-template.yml'
             parameters:
-              projectName: 'Arcus.Demo.AzureFunctions.ServiceBus.Queue.InProcess'
-              projectAlias: 'arcus-az-func-servicebus-queue'
-              projectOptions: '--functions-worker inProcess'
-              ports: '$(Arcus.AzureFunctions.ServiceBus.Queue.InProcess.Port):$(Arcus.AzureFunctions.ServiceBus.Queue.InProcess.Port)'
-              script: |
-                Get-Content './Arcus.Demo.AzureFunctions.ServiceBus.Queue.InProcess/Startup.cs' -Raw |
-                   % { $_ -replace '#error', '#warning' -replace '#if DEBUG', '#if RELEASE' } |
-                  Set-Content './Arcus.Demo.AzureFunctions.ServiceBus.Queue.InProcess/Startup.cs'
-              envVars: |
-                ServiceBusConnectionString=$(Arcus.Worker.ServiceBus.Queue.ConnectionString)
-                APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=$(Arcus.ApplicationInsights.InstrumentationKey)
-          - template: 'run-new-project-from-template.yml'
-            parameters:
               projectName: 'Arcus.Demo.AzureFunctions.ServiceBus.Queue.Isolated'
               projectAlias: 'arcus-az-func-servicebus-queue'
-              projectOptions: '--functions-worker isolated'
               ports: '$(Arcus.AzureFunctions.ServiceBus.Queue.Isolated.Port):$(Arcus.AzureFunctions.ServiceBus.Queue.Isolated.Port)'
               script: |
                 Get-Content './Arcus.Demo.AzureFunctions.ServiceBus.Queue.Isolated/Program.cs' -Raw |
@@ -151,22 +111,8 @@ stages:
                 APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=$(Arcus.ApplicationInsights.InstrumentationKey)
           - template: 'run-new-project-from-template.yml'
             parameters:
-              projectName: 'Arcus.Demo.AzureFunctions.ServiceBus.Topic.InProcess'
-              projectAlias: 'arcus-az-func-servicebus-topic'
-              projectOptions: '--functions-worker inProcess'
-              ports: '$(Arcus.AzureFunctions.ServiceBus.Topic.InProcess.Port):$(Arcus.AzureFunctions.ServiceBus.Topic.InProcess.Port)'
-              script: |
-                Get-Content './Arcus.Demo.AzureFunctions.ServiceBus.Topic.InProcess/Startup.cs' -Raw |
-                  % { $_ -replace '#error', '#warning' -replace '#if DEBUG', '#if RELEASE' } |
-                  Set-Content './Arcus.Demo.AzureFunctions.ServiceBus.Topic.InProcess/Startup.cs'
-              envVars: |
-                ServiceBusConnectionString=$(Arcus.Worker.ServiceBus.Topic.ConnectionString)
-                APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=$(Arcus.ApplicationInsights.InstrumentationKey)
-          - template: 'run-new-project-from-template.yml'
-            parameters:
               projectName: 'Arcus.Demo.AzureFunctions.ServiceBus.Topic.Isolated'
               projectAlias: 'arcus-az-func-servicebus-topic'
-              projectOptions: '--functions-worker isolated'
               ports: '$(Arcus.AzureFunctions.ServiceBus.Topic.Isolated.Port):$(Arcus.AzureFunctions.ServiceBus.Topic.Isolated.Port)'
               script: |
                 Get-Content './Arcus.Demo.AzureFunctions.ServiceBus.Topic.Isolated/Program.cs' -Raw |
@@ -177,26 +123,8 @@ stages:
                 APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=$(Arcus.ApplicationInsights.InstrumentationKey)
           - template: 'run-new-project-from-template.yml'
             parameters:
-              projectName: 'Arcus.Demo.AzureFunctions.EventHubs.InProcess'
-              projectAlias: 'arcus-az-func-eventhubs'
-              projectOptions: '--functions-worker inProcess'
-              ports: '$(Arcus.AzureFunctions.EventHubs.InProcess.Port):$(Arcus.AzureFunctions.EventHubs.InProcess.Port)'
-              script: |
-                Get-Content './Arcus.Demo.AzureFunctions.EventHubs.InProcess/Startup.cs' -Raw |
-                  % { $_ -replace '#error', '#warning' -replace '#if DEBUG', '#if RELEASE' } |
-                  Set-Content './Arcus.Demo.AzureFunctions.EventHubs.InProcess/Startup.cs'
-                Get-Content './Arcus.Demo.AzureFunctions.EventHubs.InProcess/SensorReadingFunction.cs' -Raw |
-                  % { $_ -replace 'sensors', '$(Arcus.EventHubs.Docker.EventHubsName)' } |
-                  Set-Content './Arcus.Demo.AzureFunctions.EventHubs.InProcess/SensorReadingFunction.cs'
-              envVars: |
-                EventHubsConnectionString=$(Arcus.EventHubs.ConnectionString)
-                AzureWebJobsStorage=$(Arcus.EventHubs.BlobStorage.StorageAccountConnectionString)
-                APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=$(Arcus.ApplicationInsights.InstrumentationKey)
-          - template: 'run-new-project-from-template.yml'
-            parameters:
               projectName: 'Arcus.Demo.AzureFunctions.EventHubs.Isolated'
               projectAlias: 'arcus-az-func-eventhubs'
-              projectOptions: '--functions-worker isolated'
               ports: '$(Arcus.AzureFunctions.EventHubs.Isolated.Port):$(Arcus.AzureFunctions.EventHubs.Isolated.Port)'
               script: |
                 Get-Content './Arcus.Demo.AzureFunctions.EventHubs.Isolated/Program.cs' -Raw |
@@ -239,34 +167,16 @@ stages:
               script: 'docker logs Arcus.Demo.EventHubs'
             condition: failed()
           - task: PowerShell@2
-            displayName: 'Get Docker container logs for Arcus.Demo.AzureFunctions.EventHubs.InProcess'
-            inputs:
-              targetType: 'inline'
-              script: 'docker logs Arcus.Demo.AzureFunctions.EventHubs.InProcess'
-            condition: failed()
-          - task: PowerShell@2
             displayName: 'Get Docker container logs for Arcus.Demo.AzureFunctions.EventHubs.Isolated'
             inputs:
               targetType: 'inline'
               script: 'docker logs Arcus.Demo.AzureFunctions.EventHubs.Isolated'
             condition: failed()
           - task: PowerShell@2
-            displayName: 'Get Docker container logs for Arcus.Demo.AzureFunctions.ServiceBus.Topic.InProcess'
-            inputs:
-              targetType: 'inline'
-              script: 'docker logs Arcus.Demo.AzureFunctions.ServiceBus.Topic.InProcess'
-            condition: failed()
-          - task: PowerShell@2
             displayName: 'Get Docker container logs for Arcus.Demo.AzureFunctions.ServiceBus.Topic.Isolated'
             inputs:
               targetType: 'inline'
               script: 'docker logs Arcus.Demo.AzureFunctions.ServiceBus.Topic.Isolated'
-            condition: failed()
-          - task: PowerShell@2
-            displayName: 'Get Docker container logs for Arcus.Demo.AzureFunctions.InProcess.Http'
-            inputs:
-              targetType: 'inline'
-              script: 'docker logs Arcus.Demo.AzureFunctions.InProcess.Http'
             condition: failed()
           - task: PowerShell@2
             displayName: 'Get Docker container logs for Arcus.Demo.AzureFunctions.Isolated.Http'

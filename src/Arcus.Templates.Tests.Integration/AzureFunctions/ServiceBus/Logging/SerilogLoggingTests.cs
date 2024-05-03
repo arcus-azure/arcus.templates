@@ -20,46 +20,21 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus.Logging
             _outputWriter = outputWriter;
         }
 
-        [Fact]
-        public async Task ServiceBusTopicProjectIsolated_WithoutSerilog_CorrectlyProcessesMessage()
-        {
-            await TestServiceBusProjectWithoutSerilogCorrectlyProcessesMessage(ServiceBusEntityType.Topic, FunctionsWorker.Isolated);
-        }
-
-        [Fact]
-        public async Task ServiceBusTopicProjectInProcess_WithoutSerilog_CorrectlyProcessesMessage()
-        {
-            await TestServiceBusProjectWithoutSerilogCorrectlyProcessesMessage(ServiceBusEntityType.Topic, FunctionsWorker.InProcess);
-        }
-
-        [Fact]
-        public async Task ServiceBusQueueProjectInProcess_WithoutSerilog_CorrectlyProcessesMessage()
-        {
-            await TestServiceBusProjectWithoutSerilogCorrectlyProcessesMessage(ServiceBusEntityType.Queue, FunctionsWorker.InProcess);
-        }
-
-        [Fact]
-        public async Task ServiceBusQueueProjectIsolated_WithoutSerilog_CorrectlyProcessesMessage()
-        {
-            await TestServiceBusProjectWithoutSerilogCorrectlyProcessesMessage(ServiceBusEntityType.Queue, FunctionsWorker.Isolated);
-        }
-
-        private async Task TestServiceBusProjectWithoutSerilogCorrectlyProcessesMessage(ServiceBusEntityType entityType, FunctionsWorker workerType)
+        [Theory]
+        [InlineData(ServiceBusEntityType.Topic)]
+        [InlineData(ServiceBusEntityType.Queue)]
+        public async Task ServiceBusTopicProject_WithoutSerilog_CorrectlyProcessesMessage(ServiceBusEntityType entityType)
         {
             // Arrange
             var config = TestConfig.Create();
-            var options =
-                new AzureFunctionsServiceBusProjectOptions(entityType)
-                    .WithFunctionWorker(workerType)
-                    .WithExcludeSerilog();
+            var options = new AzureFunctionsServiceBusProjectOptions().WithExcludeSerilog();
 
-            await using (var project = await AzureFunctionsServiceBusProject.StartNewProjectAsync(entityType, options, config, _outputWriter))
-            {
-                // Act / Assert
-                await project.Messaging.SimulateMessageProcessingAsync();
-                Assert.DoesNotContain("Serilog", project.GetFileContentsOfProjectFile());
-                Assert.DoesNotContain("Serilog", project.GetFileContentsInProject(project.RuntimeFileName));
-            }
+            await using var project = await AzureFunctionsServiceBusProject.StartNewProjectAsync(entityType, options, config, _outputWriter);
+            
+            // Act / Assert
+            await project.Messaging.SimulateMessageProcessingAsync();
+            Assert.DoesNotContain("Serilog", project.GetFileContentsOfProjectFile());
+            Assert.DoesNotContain("Serilog", project.GetFileContentsInProject(project.RuntimeFileName));
         }
     }
 }

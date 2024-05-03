@@ -69,7 +69,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
             Guard.NotNull(configuration, nameof(configuration), "Requires a configuration instance to retrieve the configuration values to pass along to the to-be-created project");
             Guard.NotNull(outputWriter, nameof(outputWriter), "Requires a test logger to write diagnostic information during the creation and startup process");
 
-            return await StartNewProjectAsync(entityType, new AzureFunctionsServiceBusProjectOptions(entityType), configuration, outputWriter);
+            return await StartNewProjectAsync(entityType, new AzureFunctionsServiceBusProjectOptions(), configuration, outputWriter);
         }
 
         /// <summary>

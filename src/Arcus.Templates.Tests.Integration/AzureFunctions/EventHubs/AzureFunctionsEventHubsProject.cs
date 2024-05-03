@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics.Configuration;
+using Arcus.Templates.Tests.Integration.AzureFunctions.Configuration;
 using Arcus.Templates.Tests.Integration.Fixture;
 using Arcus.Templates.Tests.Integration.Worker.Configuration;
 using Arcus.Templates.Tests.Integration.Worker.EventHubs.Fixture;

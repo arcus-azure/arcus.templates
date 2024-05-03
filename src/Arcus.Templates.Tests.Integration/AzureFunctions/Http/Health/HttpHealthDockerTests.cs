@@ -21,15 +21,13 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Health
             _outputWriter = outputWriter;
         }
         
-        [Theory]
-        [InlineData(FunctionsWorker.InProcess)]
-        [InlineData(FunctionsWorker.Isolated)]
-        public async Task AzureFunctionsHttpProject_WithoutOptions_ShouldAnswerToAdministratorEndpoint(FunctionsWorker workerType)
+        [Fact]
+        public async Task AzureFunctionsHttpProject_WithoutOptions_ShouldAnswerToAdministratorEndpoint()
         {
             // Arrange
             var configuration = TestConfig.Create();
             AzureFunctionHttpConfig httpConfig = configuration.GetAzureFunctionHttpConfig();
-            int httpPort = httpConfig.GetHttpPort(workerType);
+            int httpPort = httpConfig.GetHttpPort();
             var service = new AdminEndpointService(httpPort, AzureFunctionsHttpProject.OrderFunctionName, _outputWriter);
 
             // Act / Assert

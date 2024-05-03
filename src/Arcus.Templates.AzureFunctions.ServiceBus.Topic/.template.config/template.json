@@ -28,20 +28,6 @@
         "**/*.filelist",
         "**/*.user",
         "**/*.lock.json"
-      ],
-      "modifiers": [
-        {
-          "condition": "Isolated",
-          "exclude": [
-            "Startup.cs"
-          ]
-        },
-        {
-          "condition": "InProcess",
-          "exclude": [
-            "Program.cs"
-          ]
-        }
       ]
     }
   ],
@@ -77,30 +63,6 @@
       },
       "replaces": "//#error"
     },
-    "functions-worker": {
-      "type": "parameter",
-      "datatype": "choice",
-      "choices": [
-        {
-          "choice": "inProcess",
-          "description": "Uses Azure Functions in-process worker template"
-        },
-        {
-          "choice": "isolated",
-          "description": "Uses Azure Functions isolated worker template"
-        }
-      ],
-      "defaultValue": "isolated",
-      "description": "Chooses the kind of Azure Functions worker template"
-    },
-    "InProcess": {
-      "type": "computed",
-      "value": "(functions-worker == \"inProcess\")"
-    },
-    "Isolated": {
-      "type": "computed",
-      "value": "(functions-worker == \"isolated\")"
-    },
     "exclude-serilog": {
       "type": "parameter",
       "datatype": "bool",
@@ -111,24 +73,5 @@
       "type": "computed",
       "value": "!(exclude-serilog)"
     }
-  },
-  "postActions": [
-    {
-      "description": "Adding Reference to Microsoft.NET.Sdk.Functions NuGet package",
-      "actionId": "B17581D1-C5C9-4489-8F0A-004BE667B814",
-      "continueOnError": false,
-      "manualInstructions": [
-        {
-          "text": "Manually add the reference to Microsoft.NET.Sdk.Functions to your project file"
-        }
-      ],
-      "condition": "InProcess",
-      "args": {
-        "referenceType": "package",
-        "reference": "Microsoft.NET.Sdk.Functions",
-        "version": "4.1.3",
-        "projectFileExtensions": ".csproj"
-      }
-    }
-  ]
+  }
 }

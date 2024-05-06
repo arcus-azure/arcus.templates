@@ -21,7 +21,7 @@ ID = "37e42309-db08-474a-b7ad-c16ebbf6a8cc"
   # functions = "project/functions/"
 
 [build.environment]
-  NODE_VERSION = "16.14"
+  NODE_VERSION = "18.19"
 
 # Production context: all deploys from the Production branch set in your site's
 # deploy settings will inherit these settings.

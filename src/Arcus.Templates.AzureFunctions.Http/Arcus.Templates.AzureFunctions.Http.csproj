@@ -69,8 +69,8 @@
     <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Sinks.Applicationinsights" Version="2.8.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
     <PackageReference Include="Arcus.Security.AzureFunctions" Version="1.9.0" />
     <PackageReference Include="Arcus.Security.Providers.AzureKeyVault" Version="1.9.0" />
-    <PackageReference Include="Arcus.WebApi.Hosting.AzureFunctions" Version="1.7.1" />
-    <PackageReference Include="Arcus.WebApi.Logging.AzureFunctions" Version="1.7.1" />
+    <PackageReference Include="Arcus.WebApi.Hosting.AzureFunctions" Version="2.0.0" />
+    <PackageReference Include="Arcus.WebApi.Logging.AzureFunctions" Version="2.0.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.19.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.0.13" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.OpenApi" Version="1.5.1" Condition="'$(OpenApi)' == 'true'" />

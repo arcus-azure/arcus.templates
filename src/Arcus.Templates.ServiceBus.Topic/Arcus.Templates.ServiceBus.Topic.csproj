@@ -49,8 +49,8 @@
   <!--#endif-->
 
   <ItemGroup>
-    <PackageReference Include="Arcus.Messaging.Health" Version="1.4.0" />
-    <PackageReference Include="Arcus.Messaging.Pumps.ServiceBus" Version="1.4.0" />
+    <PackageReference Include="Arcus.Messaging.Health" Version="2.0.0" />
+    <PackageReference Include="Arcus.Messaging.Pumps.ServiceBus" Version="2.0.0" />
     <PackageReference Include="Arcus.Observability.Correlation" Version="2.8.0" />
     <PackageReference Include="Arcus.Observability.Telemetry.Core" Version="2.8.0" />
     <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Filters" Version="2.8.0" Condition="'$(Serilog_AppInsights)' == 'true'" />

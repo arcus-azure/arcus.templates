@@ -220,7 +220,7 @@ namespace Arcus.Templates.Tests.Integration.WebApi
                     commandArguments = new[] { CommandArgument.CreateOpen("ARCUS_HTTP_PORT", _baseUrl.Port) };
                 }
 
-                Run(_configuration.BuildConfiguration, TargetFramework.Net6_0, commandArguments);
+                Run(_configuration.BuildConfiguration, TargetFramework.Net8_0, commandArguments);
                 await WaitUntilWebProjectIsAvailable(_baseUrl.Port);
             }
             catch

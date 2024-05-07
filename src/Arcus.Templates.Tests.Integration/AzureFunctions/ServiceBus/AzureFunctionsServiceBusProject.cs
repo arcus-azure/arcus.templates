@@ -169,7 +169,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
                 Environment.SetEnvironmentVariable("APPINSIGHTS_INSTRUMENTATIONKEY", instrumentationKey);
                 Environment.SetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING", $"InstrumentationKey={instrumentationKey}");
 
-                Run(Configuration.BuildConfiguration, TargetFramework.Net6_0);
+                Run(Configuration.BuildConfiguration, TargetFramework.Net8_0);
                 await Messaging.StartAsync();
                 await WaitUntilTriggerIsAvailableAsync(Admin.Endpoint);
             }

@@ -64,7 +64,7 @@ namespace Arcus.Templates.Tests.Integration.Worker
 
             try
             {
-                Run(_configuration.BuildConfiguration, TargetFramework.Net6_0, commands);
+                Run(_configuration.BuildConfiguration, TargetFramework.Net8_0, commands);
                 await WaitUntilWorkerProjectIsAvailableAsync(_healthPort);
                 await Messaging.StartAsync();
             }

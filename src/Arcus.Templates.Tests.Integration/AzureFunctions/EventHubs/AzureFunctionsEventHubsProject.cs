@@ -139,7 +139,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs
                 ApplicationInsightsConfig appInsightsConfig = Configuration.GetApplicationInsightsConfig();
                 Environment.SetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING", $"InstrumentationKey={appInsightsConfig.InstrumentationKey}");
 
-                Run(Configuration.BuildConfiguration, TargetFramework.Net6_0);
+                Run(Configuration.BuildConfiguration, TargetFramework.Net8_0);
                 await Messaging.StartAsync();
             }
             catch

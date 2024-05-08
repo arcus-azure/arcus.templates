@@ -108,7 +108,8 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs
 
         private void AddTestMessageHandler(EventHubsConfig eventHubsConfig)
         {
-            AddPackage("Arcus.EventGrid.Core", "3.3.0");
+            AddPackage("Azure.Messaging.EventGrid", "4.11.0");
+
             AddTypeAsFile<SensorUpdate>();
             AddTypeAsFile<SensorStatus>();
             AddTypeAsFile<SensorUpdateEventData>();

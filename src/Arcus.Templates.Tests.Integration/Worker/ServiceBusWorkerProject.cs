@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Arcus.Messaging.Pumps.ServiceBus;
 using Arcus.Templates.Tests.Integration.Fixture;
 using Arcus.Templates.Tests.Integration.Worker.Configuration;
 using Arcus.Templates.Tests.Integration.Worker.ServiceBus.Fixture;
@@ -130,7 +131,7 @@ namespace Arcus.Templates.Tests.Integration.Worker
             EventGridConfig eventGridConfig = configuration.GetEventGridConfig();
             string serviceBusConnection = configuration.GetServiceBusConnectionString(entityType);
 
-            await project.StartAsync(options, 
+            await project.StartAsync(options,
                 CommandArgument.CreateSecret("EVENTGRID_TOPIC_URI", eventGridConfig.TopicUri),
                 CommandArgument.CreateSecret("EVENTGRID_AUTH_KEY", eventGridConfig.AuthenticationKey),
                 CommandArgument.CreateSecret("ARCUS_SERVICEBUS_CONNECTIONSTRING", serviceBusConnection));
@@ -162,7 +163,20 @@ namespace Arcus.Templates.Tests.Integration.Worker
             project.CreateNewProject(options);
             project.AddTestMessageHandler();
 
+            if (entityType is ServiceBusEntityType.Topic)
+            {
+                project.AddAutomaticTopicSubscription();
+            }
+
             return project;
+        }
+
+        private void AddAutomaticTopicSubscription()
+        {
+            UpdateFileInProject("Program.cs",
+                contents => contents.Replace(
+                    "AddServiceBusTopicMessagePump(\"Receive-All\", \"ARCUS_SERVICEBUS_CONNECTIONSTRING\")",
+                    $"AddServiceBusTopicMessagePump(\"Receive-All\", \"ARCUS_SERVICEBUS_CONNECTIONSTRING\", opt => opt.TopicSubscription = {typeof(TopicSubscription).FullName}.{TopicSubscription.Automatic})"));
         }
 
         private void AddTestMessageHandler()

@@ -44,7 +44,7 @@ namespace Arcus.Templates.ServiceBus.Queue
             }
             finally
             {
-                await Log.CloseAndFlushAsync();
+                Log.CloseAndFlush();
             }
 #else
             CreateHostBuilder(args)
@@ -82,7 +82,7 @@ namespace Arcus.Templates.ServiceBus.Queue
                            services.AddAssemblyAppVersion<Program>();
                            
 #endif
-                           services.AddServiceBusQueueMessagePump("ARCUS_SERVICEBUS_CONNECTIONSTRING")
+                           services.AddServiceBusQueueMessagePump(secretProvider => secretProvider.GetRawSecretAsync("ARCUS_SERVICEBUS_CONNECTIONSTRING"))
                                    .WithServiceBusMessageHandler<EmptyMessageHandler, EmptyMessage>();
                            
                            services.AddTcpHealthProbes("ARCUS_HEALTH_PORT");

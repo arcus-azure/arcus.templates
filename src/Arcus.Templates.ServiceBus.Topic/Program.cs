@@ -43,8 +43,8 @@ namespace Arcus.Templates.ServiceBus.Topic
                 return 1;
             }
             finally
-            {
-                await Log.CloseAndFlushAsync();
+            { 
+                Log.CloseAndFlush();
             }
 #else
             IHost host = CreateHostBuilder(args).Build();
@@ -81,7 +81,7 @@ namespace Arcus.Templates.ServiceBus.Topic
                            services.AddAssemblyAppVersion<Program>();
                            
 #endif
-                           services.AddServiceBusTopicMessagePump("Receive-All", "ARCUS_SERVICEBUS_CONNECTIONSTRING")
+                           services.AddServiceBusTopicMessagePump("Receive-All", secretProvider => secretProvider.GetRawSecretAsync("ARCUS_SERVICEBUS_CONNECTIONSTRING"))
                                    .WithServiceBusMessageHandler<EmptyMessageHandler, EmptyMessage>();
                            
                            services.AddTcpHealthProbes("ARCUS_HEALTH_PORT");

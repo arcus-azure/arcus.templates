@@ -43,7 +43,7 @@ namespace Arcus.Templates.ServiceBus.Topic
                 return 1;
             }
             finally
-            { 
+            {
                 Log.CloseAndFlush();
             }
 #else

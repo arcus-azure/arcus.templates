@@ -14,11 +14,6 @@ stages:
             inputs:
               artifact: 'Templates'
               path: '$(Build.SourcesDirectory)/templates'
-          - task: UseDotNet@0
-            displayName: 'Import .NET Core SDK ($(DotNet.Sdk.Version))'
-            inputs:
-              packageType: 'sdk'
-              version: '$(DotNet.Sdk.Version)'
           - task: DotNetCoreCLI@2
             displayName: 'Install template'
             inputs:

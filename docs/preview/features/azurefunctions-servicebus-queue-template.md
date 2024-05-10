@@ -10,7 +10,7 @@ layout: default
 First, install the template from NuGet:
 
 ```shell
-> dotnet new --install Arcus.Templates.AzureFunctions.ServiceBus.Queue
+> dotnet new install Arcus.Templates.AzureFunctions.ServiceBus.Queue
 ```
 
 When installed, the template can be created with shortname: `arcus-az-func-servicebus-queue`:

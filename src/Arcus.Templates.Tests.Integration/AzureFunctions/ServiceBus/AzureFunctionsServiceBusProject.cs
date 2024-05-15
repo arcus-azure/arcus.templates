@@ -158,10 +158,6 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
                     await AddServiceBusTopicSubscriptionAsync(properties.EntityPath, namespaceConnectionString);
                 }
 
-                EventGridConfig eventGridConfig = Configuration.GetEventGridConfig();
-                Environment.SetEnvironmentVariable("EVENTGRID_TOPIC_URI", eventGridConfig.TopicUri);
-                Environment.SetEnvironmentVariable("EVENTGRID_AUTH_KEY", eventGridConfig.AuthenticationKey);
-
                 string instrumentationKey = Configuration.GetApplicationInsightsInstrumentationKey();
                 Environment.SetEnvironmentVariable("APPINSIGHTS_INSTRUMENTATIONKEY", instrumentationKey);
                 Environment.SetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING", $"InstrumentationKey={instrumentationKey}");
@@ -234,8 +230,6 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
         {
             base.Disposing(disposing);
             Environment.SetEnvironmentVariable("ServiceBusConnectionString", null);
-            Environment.SetEnvironmentVariable("EVENTGRID_TOPIC_URI", null);
-            Environment.SetEnvironmentVariable("EVENTGRID_AUTH_KEY", null);
             Environment.SetEnvironmentVariable("APPINSIGHTS_INSTRUMENTATIONKEY", null);
             Environment.SetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING", null);
         }

@@ -127,13 +127,9 @@ namespace Arcus.Templates.Tests.Integration.Worker
 
             ServiceBusWorkerProject project = CreateNew(entityType, configuration, options, outputWriter);
 
-            EventGridConfig eventGridConfig = configuration.GetEventGridConfig();
             string serviceBusConnection = configuration.GetServiceBusConnectionString(entityType);
 
-            await project.StartAsync(options,
-                CommandArgument.CreateSecret("EVENTGRID_TOPIC_URI", eventGridConfig.TopicUri),
-                CommandArgument.CreateSecret("EVENTGRID_AUTH_KEY", eventGridConfig.AuthenticationKey),
-                CommandArgument.CreateSecret("ARCUS_SERVICEBUS_CONNECTIONSTRING", serviceBusConnection));
+            await project.StartAsync(options, CommandArgument.CreateSecret("ARCUS_SERVICEBUS_CONNECTIONSTRING", serviceBusConnection));
 
             return project;
         }

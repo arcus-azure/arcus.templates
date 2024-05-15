@@ -5,11 +5,22 @@ using System.Threading.Tasks;
 using Arcus.Messaging.Abstractions;
 using Arcus.Messaging.Abstractions.ServiceBus;
 using Arcus.Messaging.Abstractions.ServiceBus.MessageHandling;
+using Microsoft.Extensions.Logging;
 
 namespace Arcus.Templates.Tests.Integration.Worker.ServiceBus.Fixture
 {
     public class WriteToFileMessageHandler : IAzureServiceBusMessageHandler<Order>
     {
+        private readonly ILogger<WriteToFileMessageHandler> _logger;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WriteToFileMessageHandler" /> class.
+        /// </summary>
+        public WriteToFileMessageHandler(ILogger<WriteToFileMessageHandler> logger)
+        {
+            _logger = logger;
+        }
+
         public Task ProcessMessageAsync(
             Order orderMessage,
             AzureServiceBusMessageContext messageContext,
@@ -25,7 +36,10 @@ namespace Arcus.Templates.Tests.Integration.Worker.ServiceBus.Fixture
 
             string json = JsonSerializer.Serialize(eventData);
             string currentDirPath = Directory.GetCurrentDirectory();
-            File.WriteAllText(Path.Combine(currentDirPath, $"{correlationInfo.TransactionId}.json"), json);
+
+            var fileName = $"{correlationInfo.TransactionId}.json";
+            _logger.LogTrace("Processed message by writing on disk: {FileName}", fileName);
+            File.WriteAllText(Path.Combine(currentDirPath, fileName), json);
 
             return Task.CompletedTask;
         }

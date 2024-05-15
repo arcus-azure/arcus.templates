@@ -32,7 +32,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
                    options,
                    outputWriter)
         {
-            Messaging = new TestServiceBusMessagePumpService(entityType, configuration, outputWriter);
+            Messaging = new TestServiceBusMessagePumpService(entityType, configuration, ProjectDirectory, outputWriter);
             Admin = new AdminEndpointService(RootEndpoint.Port, "order-processing", outputWriter);
         }
 
@@ -134,16 +134,14 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
 
         private void AddOrderMessageHandlerImplementation()
         {
-            AddPackage("Azure.Messaging.EventGrid", "4.11.0");
-
             AddTypeAsFile<Order>();
             AddTypeAsFile<Customer>();
             AddTypeAsFile<OrderCreatedEventData>();
 
-            AddTypeAsFile<TestOrdersAzureServiceBusMessageHandler>();
+            AddTypeAsFile<WriteToFileMessageHandler>();
             UpdateFileInProject(RuntimeFileName, contents =>
                 RemovesUserErrorsFromContents(contents)
-                    .Replace("OrdersAzureServiceBusMessageHandler", nameof(TestOrdersAzureServiceBusMessageHandler))); 
+                    .Replace("OrdersAzureServiceBusMessageHandler", nameof(WriteToFileMessageHandler))); 
         }
 
         private async Task StartAsync(ServiceBusEntityType entityType)

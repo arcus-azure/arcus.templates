@@ -22,17 +22,24 @@ namespace Arcus.Templates.Tests.Integration.Worker
         protected WorkerProject(
             DirectoryInfo templateDirectory,
             TestConfig configuration,
-            IMessagingService messagingService,
             ITestOutputHelper outputWriter)
             : base(templateDirectory, configuration.GetFixtureProjectDirectory(), outputWriter)
         {
             _healthPort = configuration.GenerateWorkerHealthPort();
             _configuration = configuration;
 
-            Messaging = messagingService;
             Health = new HealthEndpointService(_healthPort, outputWriter);
         }
 
+        protected WorkerProject(
+            DirectoryInfo templateDirectory,
+            TestConfig configuration,
+            IMessagingService messaging,
+            ITestOutputHelper outputWriter)
+            : this(templateDirectory, configuration, outputWriter)
+        {
+            Messaging = messaging;
+        }
         /// <summary>
         /// Gets the service that interacts with the exposed health report information of the worker project.
         /// </summary>
@@ -44,7 +51,7 @@ namespace Arcus.Templates.Tests.Integration.Worker
         /// <remarks>
         ///     Only when the project is started, is this service available for interaction.
         /// </remarks>
-        public IMessagingService Messaging { get; set; }
+        public IMessagingService Messaging { get; protected init; }
 
         /// <summary>
         /// Starts a new .NET Worker project from a project template.

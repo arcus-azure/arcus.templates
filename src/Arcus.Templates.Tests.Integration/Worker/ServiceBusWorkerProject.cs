@@ -4,7 +4,6 @@ using Arcus.Templates.Tests.Integration.Fixture;
 using Arcus.Templates.Tests.Integration.Worker.Configuration;
 using Arcus.Templates.Tests.Integration.Worker.ServiceBus.Fixture;
 using GuardNet;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
 
@@ -21,9 +20,9 @@ namespace Arcus.Templates.Tests.Integration.Worker
             ITestOutputHelper outputWriter)
             : base(configuration.GetServiceBusProjectDirectory(entityType), 
                    configuration, 
-                   new TestServiceBusMessagePumpService(entityType, configuration, outputWriter),
-                   outputWriter)
+                   outputWriter: outputWriter)
         {
+            Messaging = new TestServiceBusMessagePumpService(entityType, configuration, ProjectDirectory, outputWriter);
         }
 
         /// <summary>
@@ -181,17 +180,15 @@ namespace Arcus.Templates.Tests.Integration.Worker
 
         private void AddTestMessageHandler()
         {
-            AddPackage("Azure.Messaging.EventGrid", "4.11.0");
-
             AddTypeAsFile<Order>();
             AddTypeAsFile<Customer>();
             AddTypeAsFile<OrderCreatedEventData>();
-            AddTypeAsFile<TestOrdersAzureServiceBusMessageHandler>();
+            AddTypeAsFile<WriteToFileMessageHandler>();
             
             UpdateFileInProject("Program.cs", contents => 
                 RemovesUserErrorsFromContents(contents)
                     .Replace(".MinimumLevel.Debug()", ".MinimumLevel.Verbose()")
-                    .Replace("EmptyMessageHandler", nameof(TestOrdersAzureServiceBusMessageHandler))
+                    .Replace("EmptyMessageHandler", nameof(WriteToFileMessageHandler))
                     .Replace("EmptyMessage", nameof(Order))
                     .Replace("stores.AddAzureKeyVaultWithManagedIdentity(\"https://your-keyvault.vault.azure.net/\", CacheConfiguration.Default);", ""));
         }

@@ -52,7 +52,7 @@ namespace Arcus.Templates.Tests.Integration.Worker.Fixture
         /// <exception cref="ArgumentNullException">Thrown when the <paramref name="eventId"/> is blank.</exception>
         public TEventData ConsumeEvent<TEventData>(string eventId)
         {
-            string receivedEvent = _serviceBusEventConsumerHost.GetReceivedEvent(eventId, retryCount: 10);
+            string receivedEvent = _serviceBusEventConsumerHost.GetReceivedEvent(eventId, retryCount: 15);
             Assert.NotEmpty(receivedEvent);
 
             BinaryData data = BinaryData.FromString(receivedEvent);

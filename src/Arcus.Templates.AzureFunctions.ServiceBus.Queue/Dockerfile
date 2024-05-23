@@ -2,7 +2,7 @@ FROM mcr.microsoft.com/azure-functions/dotnet:4 AS base
 WORKDIR /app
 EXPOSE 80
 
-FROM mcr.microsoft.com/dotnet/sdk:7.0.203-bullseye-slim AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0-bookworm-slim AS build
 WORKDIR /src
 COPY ["Arcus.Templates.AzureFunctions.ServiceBus.Queue.csproj", ""]
 

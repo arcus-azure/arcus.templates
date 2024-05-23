@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Arcus.Messaging.Pumps.ServiceBus;
 using Arcus.Security.Core;
 using Arcus.Security.Core.Caching.Configuration;
 using Microsoft.Extensions.Configuration;
@@ -81,7 +82,10 @@ namespace Arcus.Templates.ServiceBus.Topic
                            services.AddAssemblyAppVersion<Program>();
                            
 #endif
-                           services.AddServiceBusTopicMessagePump("Receive-All", secretProvider => secretProvider.GetRawSecretAsync("ARCUS_SERVICEBUS_CONNECTIONSTRING"))
+                           services.AddServiceBusTopicMessagePump(
+                                       subscriptionName: "Receive-All", 
+                                       secretProvider => secretProvider.GetRawSecretAsync("ARCUS_SERVICEBUS_CONNECTIONSTRING"), 
+                                       options => options.TopicSubscription = TopicSubscription.Automatic)
                                    .WithServiceBusMessageHandler<EmptyMessageHandler, EmptyMessage>();
                            
                            services.AddTcpHealthProbes("ARCUS_HEALTH_PORT");

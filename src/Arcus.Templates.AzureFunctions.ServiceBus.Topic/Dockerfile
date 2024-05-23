@@ -1,8 +1,8 @@
-FROM mcr.microsoft.com/azure-functions/dotnet:4 AS base
+FROM mcr.microsoft.com/azure-functions/dotnet-isolated:4-dotnet-isolated8.0 AS base
 WORKDIR /app
 EXPOSE 80
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0-bookworm-slim AS build
+FROM mcr.microsoft.com/dotnet/runtime:8.0-bookworm-slim AS build
 WORKDIR /src
 COPY ["Arcus.Templates.AzureFunctions.ServiceBus.Topic.csproj", ""]
 

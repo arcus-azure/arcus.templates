@@ -1,8 +1,8 @@
-FROM mcr.microsoft.com/dotnet/aspnet:8.0-jammy-chiseled AS base
+FROM mcr.microsoft.com/dotnet/aspnet:8.0.4-jammy-chiseled AS base
 WORKDIR /app
 EXPOSE 80
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0-jammy-chiseled AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0.4-jammy-chiseled AS build
 WORKDIR /src
 COPY ["Arcus.Templates.WebApi.csproj", ""]
 

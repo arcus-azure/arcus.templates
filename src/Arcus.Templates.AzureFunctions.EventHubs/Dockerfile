@@ -2,7 +2,7 @@ FROM mcr.microsoft.com/azure-functions/dotnet-isolated:4-dotnet-isolated8.0 AS b
 WORKDIR /app
 EXPOSE 80
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0-jammy-chiseled AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0.4-jammy-chiseled AS build
 WORKDIR /src
 COPY ["Arcus.Templates.AzureFunctions.EventHubs.csproj", ""]
 

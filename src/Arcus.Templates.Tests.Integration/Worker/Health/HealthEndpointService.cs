@@ -60,7 +60,7 @@ namespace Arcus.Templates.Tests.Integration.Worker.Health
                     JObject json = JObject.Parse(healthReportJson);
                     Assert.NotNull(json);
 
-                    JToken statusToken = json["Status"];
+                    JToken statusToken = json["status"];
                     Assert.NotNull(statusToken);
 
                     var status = Enum.Parse<HealthStatus>(statusToken.ToString());

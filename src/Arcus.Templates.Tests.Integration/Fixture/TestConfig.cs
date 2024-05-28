@@ -49,7 +49,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         /// <param name="targetFramework">The target framework in which the created project from the template should be build and run.</param>
         public static TestConfig Create(
             BuildConfiguration buildConfiguration = BuildConfiguration.Debug,
-            TargetFramework targetFramework = TargetFramework.NetCoreApp31)
+            TargetFramework targetFramework = TargetFramework.Net8_0)
         {
             var configuration = new ConfigurationBuilder()
                 .AddJsonFile(path: "appsettings.json", optional: true)

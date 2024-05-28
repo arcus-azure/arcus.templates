@@ -214,7 +214,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http
         {
             try
             {
-                Run(Configuration.BuildConfiguration, TargetFramework.Net6_0);
+                Run(Configuration.BuildConfiguration, TargetFramework.Net8_0);
                 await WaitUntilTriggerIsAvailableAsync(OrderFunctionEndpoint);
             }
             catch

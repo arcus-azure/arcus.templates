@@ -4,8 +4,8 @@
     <OutputType>Exe</OutputType>
     <AzureFunctionsVersion>v4</AzureFunctionsVersion>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-  <Nullable>enable</Nullable>
-  <!--#if (AuthoringMode)-->
+    <Nullable>enable</Nullable>
+    <!--#if (AuthoringMode)-->
     <Authors>Arcus</Authors>
     <Company>Arcus</Company>
     <RepositoryType>Git</RepositoryType>

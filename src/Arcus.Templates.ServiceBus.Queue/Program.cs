@@ -44,7 +44,7 @@ namespace Arcus.Templates.ServiceBus.Queue
             }
             finally
             {
-                Log.CloseAndFlush();
+                await Log.CloseAndFlushAsync();
             }
 #else
             CreateHostBuilder(args)

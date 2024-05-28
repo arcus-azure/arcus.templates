@@ -22,7 +22,7 @@ namespace Arcus.Templates.AzureFunctions.Http
 
         private static OpenApiVersionType GetOrLoadOpenApiVersion()
         {
-            string environmentOpenApiVersion = Environment.GetEnvironmentVariable("OpenApi__Version");
+            string? environmentOpenApiVersion = Environment.GetEnvironmentVariable("OpenApi__Version");
             if (Enum.TryParse(environmentOpenApiVersion, true, out OpenApiVersionType result))
             {
                 return result;

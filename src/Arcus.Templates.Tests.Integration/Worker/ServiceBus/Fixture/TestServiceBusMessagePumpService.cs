@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.Fixture;
 using Arcus.Templates.Tests.Integration.Logging;
@@ -6,6 +7,8 @@ using Arcus.Templates.Tests.Integration.Worker.Fixture;
 using Azure.Messaging.ServiceBus;
 using Bogus;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Polly;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -15,9 +18,8 @@ namespace Arcus.Templates.Tests.Integration.Worker.ServiceBus.Fixture
     {
         private readonly ServiceBusEntityType _entityType;
         private readonly TestConfig _configuration;
+        private readonly DirectoryInfo _projectDirectory;
         private readonly ILogger _logger;
-
-        private TestServiceBusMessageEventConsumer _serviceBusMessageEventConsumer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TestServiceBusMessagePumpService" /> class.
@@ -25,38 +27,27 @@ namespace Arcus.Templates.Tests.Integration.Worker.ServiceBus.Fixture
         public TestServiceBusMessagePumpService(
             ServiceBusEntityType entityType,
             TestConfig configuration,
+            DirectoryInfo projectDirectory,
             ITestOutputHelper outputWriter)
         {
             _entityType = entityType;
             _configuration = configuration;
+            _projectDirectory = projectDirectory;
             _logger = new XunitTestLogger(outputWriter);
         }
 
-        public async Task StartAsync()
+        public Task StartAsync()
         {
-            if (_serviceBusMessageEventConsumer is null)
-            {
-                _serviceBusMessageEventConsumer = await TestServiceBusMessageEventConsumer.StartNewAsync(_configuration, _logger);
-            }
-            else
-            {
-                throw new InvalidOperationException("Service is already started!");
-            }
+            return Task.CompletedTask;
         }
 
         public async Task SimulateMessageProcessingAsync()
         {
-            if (_serviceBusMessageEventConsumer is null)
-            {
-                throw new InvalidOperationException(
-                    "Cannot simulate the message pump because the service is not yet started; please start this service before simulating");
-            }
-
             var traceParent = TraceParent.Generate();
             Order order = GenerateOrder();
             await ProduceMessageAsync(order, traceParent);
 
-            var orderCreatedEventData = _serviceBusMessageEventConsumer.ConsumeEvent<OrderCreatedEventData>(traceParent.TransactionId);
+            OrderCreatedEventData orderCreatedEventData = await ConsumeMessageAsync(traceParent);
             Assert.NotNull(orderCreatedEventData);
             Assert.NotNull(orderCreatedEventData.CorrelationInfo);
             Assert.Equal(order.Id, orderCreatedEventData.Id);
@@ -84,6 +75,8 @@ namespace Arcus.Templates.Tests.Integration.Worker.ServiceBus.Fixture
 
         private async Task ProduceMessageAsync(Order order, TraceParent traceParent)
         {
+            _logger.LogTrace("Produces a message with transaction ID: {TransactionId}", traceParent.TransactionId);
+
             var message = new ServiceBusMessage(BinaryData.FromObjectAsJson(order));
             message.ApplicationProperties["Diagnostic-Id"] = traceParent.DiagnosticId;
 
@@ -104,12 +97,36 @@ namespace Arcus.Templates.Tests.Integration.Worker.ServiceBus.Fixture
             }
         }
 
-        public async ValueTask DisposeAsync()
+        private async Task<OrderCreatedEventData> ConsumeMessageAsync(TraceParent traceParent)
         {
-            if (_serviceBusMessageEventConsumer != null)
+            try
             {
-                await _serviceBusMessageEventConsumer.DisposeAsync();
+                _logger.LogTrace("Consumes a message with transaction ID: {TransactionId}", traceParent.TransactionId);
+
+                FileInfo[] foundFiles =
+                    Policy.Timeout(TimeSpan.FromMinutes(1))
+                          .Wrap(Policy.HandleResult((FileInfo[] files) => files.Length <= 0)
+                                      .WaitAndRetryForever(_ => TimeSpan.FromMilliseconds(200)))
+                          .Execute(() => _projectDirectory.GetFiles(traceParent.TransactionId + ".json", SearchOption.AllDirectories));
+
+                FileInfo found = Assert.Single(foundFiles);
+                string json = await File.ReadAllTextAsync(found.FullName);
+                var settings = new JsonSerializerSettings();
+                settings.Converters.Add(new MessageCorrelationInfoJsonConverter());
+
+                return JsonConvert.DeserializeObject<OrderCreatedEventData>(json, settings);
             }
+            catch (TimeoutException ex)
+            {
+                throw new TimeoutException(
+                    "Failed to retrieve the necessary produced message from the temporary project created from the worker project template, " +
+                    "please check whether the injected message handler was correct and if the created project correctly receives the message", ex);
+            }
+        }
+
+        public ValueTask DisposeAsync()
+        {
+           return ValueTask.CompletedTask;
         }
     }
 }

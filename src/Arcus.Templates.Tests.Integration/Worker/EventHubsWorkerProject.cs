@@ -91,7 +91,8 @@ namespace Arcus.Templates.Tests.Integration.Worker
 
         private void AddTestMessageHandler()
         {
-            AddPackage("Arcus.EventGrid.Core", "3.3.0");
+            AddPackage("Azure.Messaging.EventGrid", "4.11.0");
+
             AddTypeAsFile<SensorUpdate>();
             AddTypeAsFile<SensorStatus>();
             AddTypeAsFile<SensorUpdateEventData>();

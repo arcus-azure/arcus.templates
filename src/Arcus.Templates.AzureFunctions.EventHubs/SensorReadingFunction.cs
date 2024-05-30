@@ -15,6 +15,7 @@ namespace Arcus.Templates.AzureFunctions.EventHubs
 {
     public class SensorReadingFunction
     {
+        private readonly string _jobId = Guid.NewGuid().ToString();
         private readonly IAzureEventHubsMessageRouter _messageRouter;
         
         /// <summary>
@@ -49,7 +50,7 @@ namespace Arcus.Templates.AzureFunctions.EventHubs
                 Dictionary<string, JsonElement> properties = propertiesArray[index];
                 EventData data = CreateEventData(message, properties);
                 
-                AzureEventHubsMessageContext messageContext = data.GetMessageContext("sensor-reading.servicebus.windows.net", "sensors");
+                AzureEventHubsMessageContext messageContext = data.GetMessageContext("sensor-reading.servicebus.windows.net", "sensors", "$Default", _jobId);
                 using (MessageCorrelationResult result = executionContext.GetCorrelationInfo(properties))
                 {
                     await _messageRouter.RouteMessageAsync(data, messageContext, result.CorrelationInfo, CancellationToken.None);

@@ -10,7 +10,7 @@ layout: default
 First, install the template from NuGet:
 
 ```shell
-> dotnet new --install Arcus.Templates.WebApi
+> dotnet new install Arcus.Templates.WebApi
 ```
 
 When installed, the template can be created with shortname: `arcus-webapi`:

@@ -10,7 +10,7 @@ layout: default
 First, install the template from NuGet:
 
 ```shell
-> dotnet new --install Arcus.Templates.AzureFunctions.EventHubs
+> dotnet new install Arcus.Templates.AzureFunctions.EventHubs
 ```
 
 When installed, the template can be created with shortname: `arcus-az-func-eventhubs`:

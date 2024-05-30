@@ -20,7 +20,7 @@ namespace Arcus.Templates.AzureFunctions.Http.Model
         /// <summary>
         /// Gets a human-readable description of the status of the component that was checked.
         /// </summary>
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         /// <summary>
         /// Gets the health check execution duration.

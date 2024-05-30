@@ -5,6 +5,7 @@
     <GenerateDocumentationFile Condition="'$(OpenApi)' == 'true'">true</GenerateDocumentationFile>
     <DocumentationFile Condition="'$(OpenApi)' == 'true'">Arcus.Templates.WebApi.Open-Api.xml</DocumentationFile>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <Nullable>enable</Nullable>
     <!--#if (AuthoringMode)-->
     <Authors>Arcus</Authors>
     <Company>Arcus</Company>

@@ -19,7 +19,7 @@ namespace Arcus.Templates.AzureFunctions.Http.Model
         /// <summary>
         /// Gets a dictionary containing the results from each health check.
         /// </summary>
-        public IDictionary<string, ApiHealthReportEntry> Entries { get; set; }
+        public IDictionary<string, ApiHealthReportEntry> Entries { get; set; } = new Dictionary<string, ApiHealthReportEntry>();
 
         /// <summary>
         /// Gets a <see cref="HealthStatus"/> representing the aggregate status of all the health checks.

@@ -9,7 +9,7 @@ The available .NET project templates in this repository are all available via th
 For example:
 
 ```shell
-PM > dotnet new --install Arcus.Templates.WebApi
+PM > dotnet new install Arcus.Templates.WebApi
 ```
 
 Which will install the template on your machine so it can be used for creating new projects:

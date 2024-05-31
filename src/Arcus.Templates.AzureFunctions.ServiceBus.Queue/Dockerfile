@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/azure-functions/dotnet:4 AS base
+FROM mcr.microsoft.com/azure-functions/dotnet-isolated:4-dotnet-isolated8.0-slim AS base
 WORKDIR /app
 EXPOSE 80
 

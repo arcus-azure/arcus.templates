@@ -58,13 +58,11 @@ namespace Arcus.Templates.AzureFunctions.ServiceBus.Queue
                            services.AddAssemblyAppVersion<Program>();
                        })
 #endif
-#if Isolated
                        .ConfigureFunctionsWorkerDefaults((context, builder) =>
                        {
                            builder.Services.AddServiceBusMessageRouting()
                                            .WithServiceBusMessageHandler<OrdersAzureServiceBusMessageHandler, Order>();
                        })
-#endif
                        .ConfigureSecretStore((config, stores) =>
                        {
 //[#if DEBUG]

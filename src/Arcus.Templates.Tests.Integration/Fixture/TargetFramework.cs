@@ -6,13 +6,8 @@
     public enum TargetFramework
     {
         /// <summary>
-        /// Sets the target framework of the project created from the templates to netcoreapp3.1.
-        /// </summary>
-        NetCoreApp31,
-
-        /// <summary>
         /// Sets the target framework of the project created from the templates to net6.0.
         /// </summary>
-        Net6_0
+        Net8_0
     }
 }

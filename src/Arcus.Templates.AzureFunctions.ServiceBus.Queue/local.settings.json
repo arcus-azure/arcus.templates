@@ -1,11 +1,7 @@
 {
   "IsEncrypted": false,
   "Values": {
-    //#if(Isolated)
     "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
-    //#else
-    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
-    //#endif
     "AzureWebJobsStorage": "UseDevelopmentStorage=true"
   }
 }

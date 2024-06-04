@@ -25,10 +25,8 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Logging
             _outputWriter = outputWriter;
         }
 
-        [Theory]
-        [InlineData(FunctionsWorker.InProcess)]
-        [InlineData(FunctionsWorker.Isolated)]
-        public async Task HttpTriggerProject_WithoutSerilog_StillProcessHttpRequest(FunctionsWorker workerType)
+        [Fact]
+        public async Task HttpTriggerProject_WithoutSerilog_StillProcessHttpRequest()
         {
             // Arrange
             var order = new Order
@@ -39,7 +37,6 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Logging
             };
 
             var options = new AzureFunctionsHttpProjectOptions()
-                .WithFunctionsWorker(workerType)
                 .WithExcludeSerilog();
 
             // Act
@@ -55,10 +52,8 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Logging
             }
         }
 
-        [Theory]
-        [InlineData(FunctionsWorker.InProcess)]
-        [InlineData(FunctionsWorker.Isolated)]
-        public async Task HttpTriggerProject_WithSerilog_StillProcessHttpRequest(FunctionsWorker workerType)
+        [Fact]
+        public async Task HttpTriggerProject_WithSerilog_StillProcessHttpRequest()
         {
             // Arrange
             var order = new Order
@@ -68,10 +63,8 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Http.Logging
                 Scheduled = BogusGenerator.Date.RecentOffset()
             };
 
-            var options = new AzureFunctionsHttpProjectOptions().WithFunctionsWorker(workerType);
-
             // Act
-            using (var project = await AzureFunctionsHttpProject.StartNewAsync(options, _outputWriter))
+            using (var project = await AzureFunctionsHttpProject.StartNewAsync(_outputWriter))
             {
                 using (HttpResponseMessage response = await project.Order.PostAsync(order))
                 {

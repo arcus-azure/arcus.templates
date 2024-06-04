@@ -334,8 +334,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         {
             switch (targetFramework)
             {
-                case TargetFramework.NetCoreApp31: return "netcoreapp3.1";
-                case TargetFramework.Net6_0: return "net6.0";
+                case TargetFramework.Net8_0: return "net8.0";
                 default:
                     throw new ArgumentOutOfRangeException(nameof(targetFramework), targetFramework, "Unknown target framework specified for template project");
             }

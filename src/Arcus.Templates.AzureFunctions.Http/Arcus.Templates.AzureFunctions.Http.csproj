@@ -1,9 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <AzureFunctionsVersion>v4</AzureFunctionsVersion>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-    <OutputType Condition="'$(Isolated)' == 'true'">Exe</OutputType>
+    <OutputType>Exe</OutputType>
+    <Nullable>enable</Nullable>
     <!--#if (AuthoringMode)-->
     <Authors>Arcus</Authors>
     <Company>Arcus</Company>
@@ -37,9 +38,7 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <DefineConstants>$(DefineConstants);OpenApi;Serilog_AppInsights;InProcess</DefineConstants>
-    <Isolated>false</Isolated>
-    <InProcess>true</InProcess>
+    <DefineConstants>$(DefineConstants);OpenApi;Serilog_AppInsights</DefineConstants>
     <OpenApi>true</OpenApi>
     <Serilog_AppInsights>true</Serilog_AppInsights>
     <DockerFastModeProjectMountDirectory>/home/site/wwwroot</DockerFastModeProjectMountDirectory>
@@ -48,7 +47,7 @@
   <ItemGroup>
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />
     <None Include="..\..\LICENSE" Pack="true" PackagePath="\" />
-    <None Include="..\..\docs\static\img\icon.png" Pack="true" PackagePath="\"/>
+    <None Include="..\..\docs\static\img\icon.png" Pack="true" PackagePath="\" />
   </ItemGroup>
   <!--#endif-->
 
@@ -63,26 +62,23 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Arcus.Observability.Correlation" Version="2.8.0" />
-    <PackageReference Include="Arcus.Observability.Telemetry.AspNetCore" Version="2.8.0" />
-    <PackageReference Include="Arcus.Observability.Telemetry.AzureFunctions" Version="2.8.0" />
-    <PackageReference Include="Arcus.Observability.Telemetry.Core" Version="2.8.0" />
-    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Filters" Version="2.8.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
-    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Sinks.Applicationinsights" Version="2.8.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
-    <PackageReference Include="Arcus.Security.AzureFunctions" Version="1.9.0" />
-    <PackageReference Include="Arcus.Security.Providers.AzureKeyVault" Version="1.9.0" />
-    <PackageReference Include="Arcus.WebApi.Hosting.AzureFunctions" Version="1.7.1" Condition="'$(Isolated)' == 'true'" />
-    <PackageReference Include="Arcus.WebApi.Logging.AzureFunctions" Version="1.7.1" />
-    <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.19.0" Condition="'$(Isolated)' == 'true'" />
-    <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.0.13" Condition="'$(Isolated)' == 'true'" />
-    <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.OpenApi" Version="1.5.1" Condition="'$(OpenApi)' == 'true' and '$(Isolated)' == 'true'" />
-    <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.15.0" Condition="'$(Isolated)' == 'true'" />
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="5.0.0" Condition="'$(InProcess)' == 'true'" />
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.2.0" Condition="'$(InProcess)' == 'true'" />
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.OpenApi" Version="1.5.1" Condition="'$(OpenApi)' == 'true' and '$(InProcess)' == 'true'" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
-    <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
-    <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
-    <PackageReference Include="Serilog.Extensions.Hosting" Version="5.0.1" Condition="'$(Serilog_AppInsights)' == 'true'" />
+    <PackageReference Include="Arcus.Observability.Correlation" Version="3.0.0" />
+    <PackageReference Include="Arcus.Observability.Telemetry.AspNetCore" Version="3.0.0" />
+    <PackageReference Include="Arcus.Observability.Telemetry.AzureFunctions" Version="3.0.0" />
+    <PackageReference Include="Arcus.Observability.Telemetry.Core" Version="3.0.0" />
+    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Filters" Version="3.0.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
+    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Sinks.Applicationinsights" Version="3.0.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
+    <PackageReference Include="Arcus.Security.AzureFunctions" Version="2.0.0" />
+    <PackageReference Include="Arcus.Security.Providers.AzureKeyVault" Version="2.0.0" />
+    <PackageReference Include="Arcus.WebApi.Hosting.AzureFunctions" Version="2.0.0" />
+    <PackageReference Include="Arcus.WebApi.Logging.AzureFunctions" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.22.0" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.2.0" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.OpenApi" Version="1.5.1" Condition="'$(OpenApi)' == 'true'" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.17.2" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.20.1" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="5.0.1" Condition="'$(Serilog_AppInsights)' == 'true'" />
+    <PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
   </ItemGroup>
 </Project>

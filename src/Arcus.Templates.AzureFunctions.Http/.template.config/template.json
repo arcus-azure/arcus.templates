@@ -40,19 +40,6 @@
             "HttpCorrelationOpenApiResponseHeaders.cs",
             "OpenApiConfigurationOptions.cs"
           ]
-        },
-        {
-          "condition": "Isolated",
-          "exclude": [
-            "Startup.cs",
-            "HttpBasedAzureFunction.cs"
-          ]
-        },
-        {
-          "condition": "InProcess",
-          "exclude": [
-            "Program.cs"
-          ]
         }
       ]
     }
@@ -97,30 +84,6 @@
       },
       "replaces": "//#error"
     },
-    "functions-worker": {
-      "type": "parameter",
-      "datatype": "choice",
-      "choices": [
-        {
-          "choice": "inProcess",
-          "description": "Uses Azure Functions in-process project template"
-        },
-        {
-          "choice": "isolated",
-          "description": "Uses Azure Functions isolated project template"
-        }
-      ],
-      "defaultValue": "isolated",
-      "description": "Chooses the kind of Azure Functions project template"
-    },
-    "InProcess": {
-      "type": "computed",
-      "value": "(functions-worker == \"inProcess\")"
-    },
-    "Isolated": {
-      "type": "computed",
-      "value": "(functions-worker == \"isolated\")"
-    },
     "include-healthchecks": {
       "type": "parameter",
       "datatype": "bool",
@@ -151,24 +114,5 @@
       "type": "computed",
       "value": "!(exclude-serilog)"
     }
-  },
-  "postActions": [
-    {
-      "condition": "InProcess",
-      "description": "Adding Reference to Microsoft.NET.Sdk.Functions Nuget package",
-      "actionId": "B17581D1-C5C9-4489-8F0A-004BE667B814",
-      "continueOnError": false,
-      "manualInstructions": [
-        {
-          "text": "Manually add the reference to Microsoft.NET.Sdk.Functions to your project file"
-        }
-      ],
-      "args": {
-        "referenceType": "package",
-        "reference": "Microsoft.NET.Sdk.Functions",
-        "version": "4.1.3",
-        "projectFileExtensions": ".csproj"
-      }
-    }
-  ]
+  }
 }

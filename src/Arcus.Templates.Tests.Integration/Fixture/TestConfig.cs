@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using Arcus.Templates.Tests.Integration.AzureFunctions.Configuration;
-using Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics.Configuration;
 using Arcus.Templates.Tests.Integration.AzureFunctions.Http.Configuration;
 using Arcus.Templates.Tests.Integration.Worker.Configuration;
 using Microsoft.Extensions.Configuration;
@@ -50,7 +49,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         /// <param name="targetFramework">The target framework in which the created project from the template should be build and run.</param>
         public static TestConfig Create(
             BuildConfiguration buildConfiguration = BuildConfiguration.Debug,
-            TargetFramework targetFramework = TargetFramework.NetCoreApp31)
+            TargetFramework targetFramework = TargetFramework.Net8_0)
         {
             var configuration = new ConfigurationBuilder()
                 .AddJsonFile(path: "appsettings.json", optional: true)
@@ -296,20 +295,6 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             var storageAccountConnectionString = _configuration.GetRequiredValue<string>("Arcus:AzureFunctions:AzureWebJobsStorage");
 
             return new AzureFunctionsConfig(storageAccountConnectionString);
-        }
-
-        /// <summary>
-        /// Gets the Azure Databricks application configuration to interact with the Databricks Azure Function.
-        /// </summary>
-        /// <exception cref="KeyNotFoundException">Thrown when one of the Azure Databricks configuration values are not found.</exception>
-        public AzureFunctionDatabricksConfig GetDatabricksConfig()
-        {
-            var httpPort = _configuration.GetRequiredValue<int>("Arcus:AzureFunctions:Databricks:HttpPort");
-            var baseUrl = _configuration.GetRequiredValue<string>("Arcus:AzureFunctions:Databricks:BaseUrl");
-            var securityToken = _configuration.GetRequiredValue<string>("Arcus:AzureFunctions:Databricks:Token");
-            var jobId = _configuration.GetRequiredValue<int>("Arcus:AzureFunctions:Databricks:JobId");
-
-            return new AzureFunctionDatabricksConfig(httpPort, baseUrl, securityToken, jobId);
         }
 
         /// <summary>

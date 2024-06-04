@@ -1,0 +1,87 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Arcus",
+  "classifications": [
+    "Test",
+    "Integration"
+  ],
+  "name": "Arcus Integration Tests v#{Package.Version}#",
+  "identity": "Arcus.Templates.IntegratioTests",
+  "shortName": "arcus-integration-tests",
+  "sourceName": "Arcus.Templates.IntegrationTests",
+  "preferNameDirectory": true,
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "sources": [
+    {
+      "exclude": [
+        "**/[Bb]in/**",
+        "**/[Oo]bj/**",
+        ".template.config/**/*",
+        "**/*.filelist",
+        "**/*.user",
+        "**/*.lock.json",
+        "*Open-Api.xml"
+      ],
+      "modifiers": []
+    }
+  ],
+  "symbols": {
+    "AuthoringMode": {
+      "type": "generated",
+      "generator": "constant",
+      "parameters": {
+        "value": false
+      }
+    },
+    "isPackable": {
+      "type": "generated",
+      "generator": "constant",
+      "replaces": "isPackableValue",
+      "defaultValue": "false"
+    },
+    "testFramework": {
+      "type": "parameter",
+      "choices": [
+        {
+          "choice": "xUnit",
+          "description": "Use the xUnit testing framework in the integration tests project"
+        },
+        {
+          "choice": "NUnit",
+          "description": "Use the NUnit testing framework in the integration tests project"
+        },
+        {
+          "choice": "MSTest",
+          "description": "Use the MSTest testing framework in the integration tests project"
+        }
+      ],
+      "defaultValue": "xUnit",
+      "description": "Choose which kind of testing framework is used in the integration tests project"
+    },
+    "xUnit": {
+      "type": "computed",
+      "value": "(testFramework == \"xUnit\")"
+    },
+    "NUnit": {
+      "type": "computed",
+      "value": "(testFramework == \"NUnit\")"
+    },
+    "MSTest": {
+      "type": "computed",
+      "value": "(testFramework == \"MSTest\")"
+    },
+    "include-assert-package": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false",
+      "description": "Include the Arcus.Testing.Assert package into the interation tests project"
+    },
+    "Include_Assert_Package": {
+      "type": "computed",
+      "value": "include-assert-package"
+    }
+  }
+}

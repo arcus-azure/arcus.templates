@@ -1,0 +1,76 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <IsPackable>isPackableValue</IsPackable>
+    <!--#if (AuthoringMode)-->
+    <Authors>Arcus</Authors>
+    <Company>Arcus</Company>
+    <RepositoryType>Git</RepositoryType>
+    <Description>Provide a template to easily setup integration tests.</Description>
+    <IsPackable>true</IsPackable>
+    <PackageId>Arcus.Templates.IntegrationTests</PackageId>
+    <Title>Template for an integration tests project</Title>
+    <PackageTags>Azure;Tests;Integration;System;Integration tests</PackageTags>
+    <PackageType>Template</PackageType>
+    <Copyright>Copyright (c) Arcus</Copyright>
+    <PackageProjectUrl>https://templates.arcus-azure.net/</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/arcus-azure/arcus.templates</RepositoryUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageIcon>icon.png</PackageIcon>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <IncludeContentInPack>true</IncludeContentInPack>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <ContentTargetFolders>content</ContentTargetFolders>
+    <EnableDefaultContentItems>false</EnableDefaultContentItems>
+    <DockerComposeProjectPath>..\Arcus.Templates.Orchestrator.dcproj</DockerComposeProjectPath>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>CS1030;NU5128</NoWarn>
+    <!--#endif-->
+  </PropertyGroup>
+  <!--#if (AuthoringMode)-->
+
+  <ItemGroup>
+    <Content Include="**\*" Exclude="**\bin\**\*;**\obj\**\*;**\.vs\**\*" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);xUnit;MSTest;Include_Assert_Package</DefineConstants>
+    <NUnit>false</NUnit>
+    <xUnit>true</xUnit>
+    <MSTest>true</MSTest>
+    <Include_Assert_Package>true</Include_Assert_Package>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+    <None Include="..\..\LICENSE" Pack="true" PackagePath="\" />
+    <None Include="..\..\docs\static\img\icon.png" Pack="true" PackagePath="\" />
+  </ItemGroup>
+  <!--#endif-->
+
+  <ItemGroup>
+    <Content Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="appsettings.local.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Arcus.Testing.Assert" Version="1.0.0-preview-4" Condition="'$(Include_Assert_Package)' == 'true'" />
+    <PackageReference Include="Arcus.Testing.Core" Version="1.0.0-preview-4" />
+    <PackageReference Include="Arcus.Testing.Logging.Xunit" Version="1.0.0-preview-4" Condition="'$(Xunit)' == 'true'" />
+    <PackageReference Include="Arcus.Testing.Logging.NUnit" Version="1.0.0-preview-4" Condition="'$(NUnit)' == 'true'" />
+    <PackageReference Include="Arcus.Testing.Logging.MSTest" Version="1.0.0-preview-4" Condition="'$(MSTest)' == 'true'" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
+    <PackageReference Include="MSTest" Version="3.4.3" Condition="'$(MSTest)' == 'true'" />
+    <PackageReference Include="NUnit" Version="4.1.0" Condition="'$(NUnit)' == 'true'" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" Condition="'$(NUnit)' == 'true'" />
+    <PackageReference Include="xunit" Version="2.8.1" Condition="'$(xUnit)' == 'true'" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.0" Condition="'$(xUnit)' == 'true'" />
+  </ItemGroup>
+
+</Project>

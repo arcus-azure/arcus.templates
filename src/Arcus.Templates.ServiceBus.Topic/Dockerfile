@@ -1,8 +1,8 @@
-FROM mcr.microsoft.com/dotnet/sdk:6.0.301-alpine3.14 AS base
+FROM mcr.microsoft.com/dotnet/runtime:8.0.4-jammy-chiseled AS base
 WORKDIR /app
 EXPOSE 80
 
-FROM mcr.microsoft.com/dotnet/sdk:6.0.301-alpine3.14 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0-jammy AS build
 WORKDIR /src
 COPY ["Arcus.Templates.ServiceBus.Topic.csproj", ""]
 

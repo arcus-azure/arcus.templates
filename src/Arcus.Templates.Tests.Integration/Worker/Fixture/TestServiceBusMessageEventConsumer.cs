@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Arcus.EventGrid;
-using Arcus.EventGrid.Contracts;
-using Arcus.EventGrid.Parsers;
 using Arcus.EventGrid.Testing.Infrastructure.Hosts.ServiceBus;
 using Arcus.Templates.Tests.Integration.Fixture;
-using Arcus.Templates.Tests.Integration.Worker.ServiceBus.Fixture;
 using Azure.Messaging;
 using GuardNet;
 using Microsoft.Extensions.Configuration;
@@ -54,25 +50,6 @@ namespace Arcus.Templates.Tests.Integration.Worker.Fixture
         /// </summary>
         /// <param name="eventId">The ID to identity the produced event.</param>
         /// <exception cref="ArgumentNullException">Thrown when the <paramref name="eventId"/> is blank.</exception>
-        public OrderCreatedEventData ConsumeOrderEvent(string eventId)
-        {
-            Guard.NotNullOrWhitespace(eventId, nameof(eventId), "Requires a non-blank event ID to identity the produced event on the Azure Service Bus");
-
-            string receivedEvent = _serviceBusEventConsumerHost.GetReceivedEvent(eventId, retryCount: 10);
-            Assert.NotEmpty(receivedEvent);
-
-            EventBatch<Event> eventBatch = EventParser.Parse(receivedEvent);
-            Assert.NotNull(eventBatch);
-            Event @event = Assert.Single(eventBatch.Events);
-            Assert.NotNull(@event);
-
-            var data = @event.Data.ToString();
-            Assert.NotNull(data);
-
-            var eventData = JsonConvert.DeserializeObject<OrderCreatedEventData>(data, new MessageCorrelationInfoJsonConverter());
-            return eventData;
-        }
-
         public TEventData ConsumeEvent<TEventData>(string eventId)
         {
             string receivedEvent = _serviceBusEventConsumerHost.GetReceivedEvent(eventId, retryCount: 10);

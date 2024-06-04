@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Arcus.Templates.Tests.Integration.Fixture;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -20,23 +19,10 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs.MessageHand
         }
 
         [Fact]
-        public async Task EventHubsProject_AsIsolated_CorrectlyProcessesMessage()
-        {
-            await TestEventHubsProjectWithWorkerTypeCorrectlyProcessesMessage(FunctionsWorker.Isolated);
-        }
-
-        [Fact]
-        public async Task EventHubsProject_AsInProcess_CorrectlyProcessesMessage()
-        {
-            await TestEventHubsProjectWithWorkerTypeCorrectlyProcessesMessage(FunctionsWorker.InProcess);
-        }
-
-        private async Task TestEventHubsProjectWithWorkerTypeCorrectlyProcessesMessage(FunctionsWorker workerType)
+        public async Task EventHubsProject_WithDefault_CorrectlyProcessesMessage()
         {
             // Arrange
-            var config = TestConfig.Create();
-            var options = new AzureFunctionsEventHubsProjectOptions().WithFunctionWorker(workerType);
-            await using (var project = await AzureFunctionsEventHubsProject.StartNewAsync(config, options, _outputWriter))
+            await using (var project = await AzureFunctionsEventHubsProject.StartNewAsync(_outputWriter))
             {
                 // Act / Assert
                 await project.Messaging.SimulateMessageProcessingAsync();

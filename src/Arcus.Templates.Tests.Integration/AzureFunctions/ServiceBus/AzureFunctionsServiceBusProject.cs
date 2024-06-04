@@ -32,7 +32,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
                    options,
                    outputWriter)
         {
-            Messaging = new TestServiceBusMessagePumpService(entityType, configuration, outputWriter);
+            Messaging = new TestServiceBusMessagePumpService(entityType, configuration, ProjectDirectory, outputWriter);
             Admin = new AdminEndpointService(RootEndpoint.Port, "order-processing", outputWriter);
         }
 
@@ -69,7 +69,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
             Guard.NotNull(configuration, nameof(configuration), "Requires a configuration instance to retrieve the configuration values to pass along to the to-be-created project");
             Guard.NotNull(outputWriter, nameof(outputWriter), "Requires a test logger to write diagnostic information during the creation and startup process");
 
-            return await StartNewProjectAsync(entityType, new AzureFunctionsServiceBusProjectOptions(entityType), configuration, outputWriter);
+            return await StartNewProjectAsync(entityType, new AzureFunctionsServiceBusProjectOptions(), configuration, outputWriter);
         }
 
         /// <summary>
@@ -134,17 +134,14 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
 
         private void AddOrderMessageHandlerImplementation()
         {
-            AddPackage("Arcus.EventGrid.Core", "3.3.0");
-
             AddTypeAsFile<Order>();
             AddTypeAsFile<Customer>();
-            AddTypeAsFile<OrderCreatedEvent>();
             AddTypeAsFile<OrderCreatedEventData>();
 
-            AddTypeAsFile<TestOrdersAzureServiceBusMessageHandler>();
+            AddTypeAsFile<WriteToFileMessageHandler>();
             UpdateFileInProject(RuntimeFileName, contents =>
                 RemovesUserErrorsFromContents(contents)
-                    .Replace("OrdersAzureServiceBusMessageHandler", nameof(TestOrdersAzureServiceBusMessageHandler))); 
+                    .Replace("OrdersAzureServiceBusMessageHandler", nameof(WriteToFileMessageHandler))); 
         }
 
         private async Task StartAsync(ServiceBusEntityType entityType)
@@ -161,15 +158,11 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
                     await AddServiceBusTopicSubscriptionAsync(properties.EntityPath, namespaceConnectionString);
                 }
 
-                EventGridConfig eventGridConfig = Configuration.GetEventGridConfig();
-                Environment.SetEnvironmentVariable("EVENTGRID_TOPIC_URI", eventGridConfig.TopicUri);
-                Environment.SetEnvironmentVariable("EVENTGRID_AUTH_KEY", eventGridConfig.AuthenticationKey);
-
                 string instrumentationKey = Configuration.GetApplicationInsightsInstrumentationKey();
                 Environment.SetEnvironmentVariable("APPINSIGHTS_INSTRUMENTATIONKEY", instrumentationKey);
                 Environment.SetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING", $"InstrumentationKey={instrumentationKey}");
 
-                Run(Configuration.BuildConfiguration, TargetFramework.Net6_0);
+                Run(Configuration.BuildConfiguration, TargetFramework.Net8_0);
                 await Messaging.StartAsync();
                 await WaitUntilTriggerIsAvailableAsync(Admin.Endpoint);
             }
@@ -237,8 +230,6 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
         {
             base.Disposing(disposing);
             Environment.SetEnvironmentVariable("ServiceBusConnectionString", null);
-            Environment.SetEnvironmentVariable("EVENTGRID_TOPIC_URI", null);
-            Environment.SetEnvironmentVariable("EVENTGRID_AUTH_KEY", null);
             Environment.SetEnvironmentVariable("APPINSIGHTS_INSTRUMENTATIONKEY", null);
             Environment.SetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING", null);
         }

@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
+using Arcus.Messaging.Pumps.ServiceBus;
 using Arcus.Templates.Tests.Integration.Fixture;
 using Arcus.Templates.Tests.Integration.Worker.Configuration;
 using Arcus.Templates.Tests.Integration.Worker.ServiceBus.Fixture;
 using GuardNet;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
 
@@ -20,9 +20,9 @@ namespace Arcus.Templates.Tests.Integration.Worker
             ITestOutputHelper outputWriter)
             : base(configuration.GetServiceBusProjectDirectory(entityType), 
                    configuration, 
-                   new TestServiceBusMessagePumpService(entityType, configuration, outputWriter),
-                   outputWriter)
+                   outputWriter: outputWriter)
         {
+            Messaging = new TestServiceBusMessagePumpService(entityType, configuration, ProjectDirectory, outputWriter);
         }
 
         /// <summary>
@@ -127,13 +127,9 @@ namespace Arcus.Templates.Tests.Integration.Worker
 
             ServiceBusWorkerProject project = CreateNew(entityType, configuration, options, outputWriter);
 
-            EventGridConfig eventGridConfig = configuration.GetEventGridConfig();
             string serviceBusConnection = configuration.GetServiceBusConnectionString(entityType);
 
-            await project.StartAsync(options, 
-                CommandArgument.CreateSecret("EVENTGRID_TOPIC_URI", eventGridConfig.TopicUri),
-                CommandArgument.CreateSecret("EVENTGRID_AUTH_KEY", eventGridConfig.AuthenticationKey),
-                CommandArgument.CreateSecret("ARCUS_SERVICEBUS_CONNECTIONSTRING", serviceBusConnection));
+            await project.StartAsync(options, CommandArgument.CreateSecret("ARCUS_SERVICEBUS_CONNECTIONSTRING", serviceBusConnection));
 
             return project;
         }
@@ -162,22 +158,33 @@ namespace Arcus.Templates.Tests.Integration.Worker
             project.CreateNewProject(options);
             project.AddTestMessageHandler();
 
+            if (entityType is ServiceBusEntityType.Topic)
+            {
+                project.AddAutomaticTopicSubscription();
+            }
+
             return project;
+        }
+
+        private void AddAutomaticTopicSubscription()
+        {
+            UpdateFileInProject("Program.cs",
+                contents => contents.Replace(
+                    "AddServiceBusTopicMessagePump(\"Receive-All\", \"ARCUS_SERVICEBUS_CONNECTIONSTRING\")",
+                    $"AddServiceBusTopicMessagePump(\"Receive-All\", \"ARCUS_SERVICEBUS_CONNECTIONSTRING\", opt => opt.TopicSubscription = {typeof(TopicSubscription).FullName}.{TopicSubscription.Automatic})"));
         }
 
         private void AddTestMessageHandler()
         {
-            AddPackage("Arcus.EventGrid.Core", "3.3.0");
             AddTypeAsFile<Order>();
             AddTypeAsFile<Customer>();
-            AddTypeAsFile<OrderCreatedEvent>();
             AddTypeAsFile<OrderCreatedEventData>();
-            AddTypeAsFile<TestOrdersAzureServiceBusMessageHandler>();
+            AddTypeAsFile<WriteToFileMessageHandler>();
             
             UpdateFileInProject("Program.cs", contents => 
                 RemovesUserErrorsFromContents(contents)
                     .Replace(".MinimumLevel.Debug()", ".MinimumLevel.Verbose()")
-                    .Replace("EmptyMessageHandler", nameof(TestOrdersAzureServiceBusMessageHandler))
+                    .Replace("EmptyMessageHandler", nameof(WriteToFileMessageHandler))
                     .Replace("EmptyMessage", nameof(Order))
                     .Replace("stores.AddAzureKeyVaultWithManagedIdentity(\"https://your-keyvault.vault.azure.net/\", CacheConfiguration.Default);", ""));
         }

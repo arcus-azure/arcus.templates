@@ -19,21 +19,17 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs.Logging
             _outputWriter = outputWriter;
         }
 
-        [Theory]
-        [InlineData(FunctionsWorker.InProcess)]
-        [InlineData(FunctionsWorker.Isolated)]
-        public async Task EventHubsProject_WithoutSerilog_CorrectlyProcessesMessage(FunctionsWorker workerType)
+        [Fact]
+        public async Task EventHubsProject_WithoutSerilog_CorrectlyProcessesMessage()
         {
             // Arrange
             var config = TestConfig.Create();
             var options = new AzureFunctionsEventHubsProjectOptions()
-                .WithFunctionWorker(workerType)
                 .ExcludeSerilog();
 
             // Act
             await using (var project = await AzureFunctionsEventHubsProject.StartNewAsync(config, options, _outputWriter))
             {
-                project.TearDownOptions = TearDownOptions.KeepProjectDirectory;
                 // Assert
                 await project.Messaging.SimulateMessageProcessingAsync();
                 Assert.DoesNotContain("Serilog", project.GetFileContentsOfProjectFile());

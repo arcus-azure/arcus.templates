@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Arcus.Templates.Tests.Integration.AzureFunctions.Databricks.JobMetrics.Configuration;
+using Arcus.Templates.Tests.Integration.AzureFunctions.Configuration;
 using Arcus.Templates.Tests.Integration.Fixture;
 using Arcus.Templates.Tests.Integration.Worker.Configuration;
 using Arcus.Templates.Tests.Integration.Worker.EventHubs.Fixture;
@@ -108,7 +108,8 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs
 
         private void AddTestMessageHandler(EventHubsConfig eventHubsConfig)
         {
-            AddPackage("Arcus.EventGrid.Core", "3.3.0");
+            AddPackage("Azure.Messaging.EventGrid", "4.11.0");
+
             AddTypeAsFile<SensorUpdate>();
             AddTypeAsFile<SensorStatus>();
             AddTypeAsFile<SensorUpdateEventData>();
@@ -139,7 +140,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs
                 ApplicationInsightsConfig appInsightsConfig = Configuration.GetApplicationInsightsConfig();
                 Environment.SetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING", $"InstrumentationKey={appInsightsConfig.InstrumentationKey}");
 
-                Run(Configuration.BuildConfiguration, TargetFramework.Net6_0);
+                Run(Configuration.BuildConfiguration, TargetFramework.Net8_0);
                 await Messaging.StartAsync();
             }
             catch

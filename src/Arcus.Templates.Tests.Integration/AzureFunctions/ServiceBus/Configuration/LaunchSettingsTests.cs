@@ -25,7 +25,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus.Configurat
         public void ServiceBusTriggerTemplate_WithDefault_ConfiguresLaunchSettings(ServiceBusEntityType entityType)
         {
             // Arrange
-            var options = new AzureFunctionsServiceBusProjectOptions(entityType);
+            var options = new AzureFunctionsServiceBusProjectOptions();
             var config = TestConfig.Create();
 
             // Act

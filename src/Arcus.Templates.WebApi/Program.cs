@@ -139,12 +139,7 @@ namespace Arcus.Templates.WebApi
                 options.ReturnHttpNotAcceptable = true;
                 options.RespectBrowserAcceptHeader = true;
                 options.OnlyAllowJsonFormatting();
-                options.ConfigureJsonFormatting(json =>
-                {
-                    json.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-                    json.Converters.Add(new JsonStringEnumConverter());
-                });
-
+                
 #if SharedAccessKeyAuth
                 #warning Please provide a valid request header name and secret name to the shared access filter
                 options.AddSharedAccessKeyAuthenticationFilterOnHeader(SharedAccessKeyHeaderName, "<your-secret-name>");
@@ -164,6 +159,10 @@ namespace Arcus.Templates.WebApi
                 
                 options.Filters.Add(new AuthorizeFilter(policy));
 #endif
+            }).AddJsonOptions(json =>
+            {
+                json.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+                json.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
             });
 #if JwtAuth
             #error Use previously registered secret provider, for example Azure Key Vault: https://security.arcus-azure.net/features/secrets/consume-from-key-vault
@@ -323,7 +322,7 @@ namespace Arcus.Templates.WebApi
             builder.Host.UseSerilog(Log.Logger);
 #endif
 #if Console
-            builder.Host.ConfigureLogging(logging => logging.AddConsole());
+            builder.Logging.AddConsole();
 #endif
         }
 

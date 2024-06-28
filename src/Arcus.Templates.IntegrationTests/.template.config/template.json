@@ -39,10 +39,12 @@
     "isPackable": {
       "type": "generated",
       "generator": "constant",
-      "replaces": "isPackableValue",
-      "defaultValue": "false"
+      "parameters": {
+        "value": "false"
+      },
+      "replaces": "isPackableValue"
     },
-    "testFramework": {
+    "test-framework": {
       "type": "parameter",
       "choices": [
         {
@@ -63,15 +65,15 @@
     },
     "xUnit": {
       "type": "computed",
-      "value": "(testFramework == \"xUnit\")"
+      "value": "(test-framework == \"xUnit\")"
     },
     "NUnit": {
       "type": "computed",
-      "value": "(testFramework == \"NUnit\")"
+      "value": "(test-framework == \"NUnit\")"
     },
     "MSTest": {
       "type": "computed",
-      "value": "(testFramework == \"MSTest\")"
+      "value": "(test-framework == \"MSTest\")"
     },
     "include-assert-package": {
       "type": "parameter",

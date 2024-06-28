@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Arcus.Testing;
+﻿using Arcus.Testing;
 using Microsoft.Extensions.Logging;
 #if xUnit
 using Xunit.Abstractions; 
@@ -19,14 +14,14 @@ namespace Arcus.Templates.IntegrationTests
     /// <summary>
     /// Provides a base template for integration tests.
     /// </summary>
-    public abstract class IntegrationTest
+    public abstract class IntegrationTestBase
     {
 #if xUnit
         /// <summary>
-        /// Initializes a new instance of the <see cref="IntegrationTest" /> class.
+        /// Initializes a new instance of the <see cref="IntegrationTestBase" /> class.
         /// </summary>
         /// <param name="outputWriter">The test output helper to write diagnostic information during the test execution.</param>
-        protected IntegrationTest(ITestOutputHelper outputWriter) 
+        protected IntegrationTestBase(ITestOutputHelper outputWriter) 
         {
             Config = TestConfig.Create();
             Logger = new XunitTestLogger(outputWriter);
@@ -34,26 +29,29 @@ namespace Arcus.Templates.IntegrationTests
 #endif
 #if NUnit
         /// <summary>
-        /// Initializes a new instance of the <see cref="IntegrationTest" /> class.
+        /// Initializes a new instance of the <see cref="IntegrationTestBase" /> class.
         /// </summary>
-        protected IntegrationTest()
+        protected IntegrationTestBase()
         {
             Config = TestConfig.Create();
             Logger = new NUnitTestLogger(TestContext.Out, TestContext.Error); 
         }
 #elif MSTest
         /// <summary>
-        /// Initializes a new instance of the <see cref="IntegrationTest" /> class.
+        /// Initializes a new instance of the <see cref="IntegrationTestBase" /> class.
         /// </summary>
-        protected IntegrationTest()
+        protected IntegrationTestBase()
         {
             Config = TestConfig.Create();
             Logger = new MSTestLogger(TestContext);
         }
 
         /// <summary>
-        /// Automatically injected test context by the MSTest framework.
+        /// Gets the current context for the test run.
         /// </summary>
+        /// <remarks>
+        ///     Automatically injected by the MSTest framework.
+        /// </remarks>
         public TestContext TestContext { get; set; }
 #endif
 

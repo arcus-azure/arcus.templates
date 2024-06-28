@@ -37,7 +37,7 @@
 
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);xUnit;MSTest;Include_Assert_Package</DefineConstants>
-    <NUnit>false</NUnit>
+    <NUnit>true</NUnit>
     <xUnit>true</xUnit>
     <MSTest>true</MSTest>
     <Include_Assert_Package>true</Include_Assert_Package>
@@ -60,11 +60,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Arcus.Testing.Assert" Version="1.0.0-preview-4" Condition="'$(Include_Assert_Package)' == 'true'" />
-    <PackageReference Include="Arcus.Testing.Core" Version="1.0.0-preview-4" />
-    <PackageReference Include="Arcus.Testing.Logging.Xunit" Version="1.0.0-preview-4" Condition="'$(Xunit)' == 'true'" />
-    <PackageReference Include="Arcus.Testing.Logging.NUnit" Version="1.0.0-preview-4" Condition="'$(NUnit)' == 'true'" />
-    <PackageReference Include="Arcus.Testing.Logging.MSTest" Version="1.0.0-preview-4" Condition="'$(MSTest)' == 'true'" />
+    <PackageReference Include="Arcus.Testing.Assert" Version="1.0.0" Condition="'$(Include_Assert_Package)' == 'true'" />
+    <PackageReference Include="Arcus.Testing.Core" Version="1.0.0" />
+    <PackageReference Include="Arcus.Testing.Logging.Xunit" Version="1.0.0" Condition="'$(xUnit)' == 'true'" />
+    <PackageReference Include="Arcus.Testing.Logging.NUnit" Version="1.0.0" Condition="'$(NUnit)' == 'true'" />
+    <PackageReference Include="Arcus.Testing.Logging.MSTest" Version="1.0.0" Condition="'$(MSTest)' == 'true'" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
     <PackageReference Include="MSTest" Version="3.4.3" Condition="'$(MSTest)' == 'true'" />
     <PackageReference Include="NUnit" Version="4.1.0" Condition="'$(NUnit)' == 'true'" />

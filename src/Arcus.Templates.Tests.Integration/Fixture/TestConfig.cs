@@ -114,17 +114,17 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         /// <summary>
         /// Gets the project directory of the Azure Functions Databricks project template.
         /// </summary>
-        public DirectoryInfo GetAzureFunctionsDatabricksJobMetricsProjectDirectory()
-        {
-            return PathCombineWithSourcesDirectory("Arcus.Templates.AzureFunctions.Databricks.JobMetrics");
-        }
-
-        /// <summary>
-        /// Gets the project directory of the Azure Functions Databricks project template.
-        /// </summary>
         public DirectoryInfo GetAzureFunctionsHttpProjectDirectory()
         {
             return PathCombineWithSourcesDirectory("Arcus.Templates.AzureFunctions.Http");
+        }
+
+        /// <summary>
+        /// Gets the project directory of the integration test project template.
+        /// </summary>
+        public DirectoryInfo GetIntegrationTestTemplateProjectDirectory()
+        {
+            return PathCombineWithSourcesDirectory("Arcus.Templates.IntegrationTests");
         }
 
         /// <summary>

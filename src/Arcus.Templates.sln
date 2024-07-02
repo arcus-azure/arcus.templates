@@ -25,6 +25,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arcus.Templates.EventHubs",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arcus.Templates.AzureFunctions.EventHubs", "Arcus.Templates.AzureFunctions.EventHubs\Arcus.Templates.AzureFunctions.EventHubs.csproj", "{58CAF85E-5FFE-4422-B1E7-9D438DD94A57}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arcus.Templates.IntegrationTests", "Arcus.Templates.IntegrationTests\Arcus.Templates.IntegrationTests.csproj", "{7B0BD59B-E480-4F73-8AF5-6820A9429DAF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +73,10 @@ Global
 		{58CAF85E-5FFE-4422-B1E7-9D438DD94A57}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{58CAF85E-5FFE-4422-B1E7-9D438DD94A57}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{58CAF85E-5FFE-4422-B1E7-9D438DD94A57}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B0BD59B-E480-4F73-8AF5-6820A9429DAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B0BD59B-E480-4F73-8AF5-6820A9429DAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B0BD59B-E480-4F73-8AF5-6820A9429DAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B0BD59B-E480-4F73-8AF5-6820A9429DAF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

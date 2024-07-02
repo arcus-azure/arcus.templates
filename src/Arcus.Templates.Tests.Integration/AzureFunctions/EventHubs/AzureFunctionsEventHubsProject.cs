@@ -107,7 +107,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs
             var project = new AzureFunctionsEventHubsProject(configuration, options, outputWriter);
 
             project.CreateNewProject(options);
-            project.AddTestMessageHandler(eventHubsConfig);
+            project.AddTestMessageHandler();
             project.AddLocalSettings();
 
             ApplicationInsightsConfig appInsightsConfig = configuration.GetApplicationInsightsConfig();
@@ -120,15 +120,12 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs
             return project;
         }
 
-        private void AddTestMessageHandler(EventHubsConfig eventHubsConfig)
+        private void AddTestMessageHandler()
         {
             AddTypeAsFile<SensorUpdate>();
             AddTypeAsFile<SensorStatus>();
             AddTypeAsFile<SensorUpdateEventData>();
             AddTypeAsFile<WriteSensorUpdateToFileAzureEventHubsMessageHandler>();
-
-            UpdateFileInProject("SensorReadingFunction.cs", 
-                contents => contents.Replace("EventHubTrigger(\"sensors\"", $"EventHubTrigger(\"{eventHubsConfig.EventHubsName}\""));
 
             UpdateFileInProject(RuntimeFileName, contents => 
                 RemovesUserErrorsFromContents(contents)

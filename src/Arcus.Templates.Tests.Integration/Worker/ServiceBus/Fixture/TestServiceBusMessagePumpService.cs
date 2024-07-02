@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.Fixture;
 using Arcus.Templates.Tests.Integration.Logging;
@@ -9,7 +10,6 @@ using Azure.Messaging.ServiceBus;
 using Bogus;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Polly;
 using Xunit;
 using Xunit.Abstractions;
 using TestConfig = Arcus.Templates.Tests.Integration.Fixture.TestConfig;
@@ -100,7 +100,7 @@ namespace Arcus.Templates.Tests.Integration.Worker.ServiceBus.Fixture
 
             FileInfo[] foundFiles =
                 await Poll.Target(() => Task.FromResult(_projectDirectory.GetFiles(traceParent.TransactionId + ".json", SearchOption.AllDirectories)))
-                          .Until(files => files.Length > 0)
+                          .Until(files => files.Length > 0 && files.All(f => f.Length > 0))
                           .Every(TimeSpan.FromMilliseconds(200))
                           .Timeout(TimeSpan.FromMinutes(1))
                           .FailWith("Failed to retrieve the necessary produced message from the temporary project created from the worker project template, " +

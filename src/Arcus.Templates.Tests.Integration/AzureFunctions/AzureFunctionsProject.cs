@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.AzureFunctions.Configuration;
@@ -76,13 +79,17 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions
         /// <summary>
         /// Adds an test Azure storage account connection string to the Azure Function project so the project can start up correctly.
         /// </summary>
-        protected void AddLocalSettings()
+        protected void AddLocalSettings(IDictionary<string, string>? additionalValues = null)
         {
             string storageAccountConnectionString = AzureFunctionsConfig.StorageAccountConnectionString;
             string workerRuntime = "dotnet-isolated";
 
+            additionalValues ??= new Dictionary<string, string>();
+            additionalValues.TryAdd("APPLICATIONINSIGHTS_CONNECTION_STRING", "");
+            string additionalValuesJson = additionalValues.Select(kv => $", \"{kv.Key}\": \"{kv.Value}\"").Aggregate((x, y) => x + y);
+            
             AddFileInProject("local.settings.json",  
-                $"{{ \"IsEncrypted\": false, \"Values\": {{ \"AzureWebJobsStorage\": \"{storageAccountConnectionString}\", \"FUNCTIONS_WORKER_RUNTIME\": \"{workerRuntime}\", \"APPLICATIONINSIGHTS_CONNECTION_STRING\": \"\" }}, \"Host\": {{ \"LocalHttpPort\": {RootEndpoint.Port} }} }}");
+                $"{{ \"IsEncrypted\": false, \"Values\": {{ \"AzureWebJobsStorage\": \"{storageAccountConnectionString}\", \"FUNCTIONS_WORKER_RUNTIME\": \"{workerRuntime}\" {additionalValuesJson} }}, \"Host\": {{ \"LocalHttpPort\": {RootEndpoint.Port} }} }}");
         }
 
         /// <summary>

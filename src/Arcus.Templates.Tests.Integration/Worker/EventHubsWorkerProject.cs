@@ -22,10 +22,11 @@ namespace Arcus.Templates.Tests.Integration.Worker
             ITestOutputHelper outputWriter)
             : base(configuration.GetEventHubsProjectDirectory(),
                    configuration,
-                   new TestEventHubsMessagePumpService(configuration, outputWriter),
                    outputWriter)
         {
             _blobStorageContainer = blobStorageContainer;
+
+            Messaging = new TestEventHubsMessagePumpService(configuration, ProjectDirectory, outputWriter);
         }
 
         /// <summary>
@@ -61,11 +62,7 @@ namespace Arcus.Templates.Tests.Integration.Worker
             EventHubsWorkerProject project = await CreateNewAsync(configuration, options, outputWriter);
 
             EventHubsConfig eventHubsConfig = configuration.GetEventHubsConfig();
-            EventGridConfig eventGridConfig = configuration.GetEventGridConfig();
-            
             await project.StartAsync(options,
-               CommandArgument.CreateSecret("EVENTGRID_TOPIC_URI", eventGridConfig.TopicUri),
-               CommandArgument.CreateSecret("EVENTGRID_AUTH_KEY", eventGridConfig.AuthenticationKey),
                CommandArgument.CreateOpen("EVENTHUBS_NAME", eventHubsConfig.EventHubsName),
                CommandArgument.CreateOpen("BLOBSTORAGE_CONTAINERNAME", project._blobStorageContainer.ContainerName),
                CommandArgument.CreateSecret("ARCUS_EVENTHUBS_CONNECTIONSTRING", eventHubsConfig.EventHubsConnectionString),
@@ -91,17 +88,15 @@ namespace Arcus.Templates.Tests.Integration.Worker
 
         private void AddTestMessageHandler()
         {
-            AddPackage("Azure.Messaging.EventGrid", "4.11.0");
-
             AddTypeAsFile<SensorUpdate>();
             AddTypeAsFile<SensorStatus>();
             AddTypeAsFile<SensorUpdateEventData>();
-            AddTypeAsFile<TestSensorUpdateAzureEventHubsMessageHandler>();
+            AddTypeAsFile<WriteSensorUpdateToFileAzureEventHubsMessageHandler>();
             
             UpdateFileInProject("Program.cs", contents => 
                 RemovesUserErrorsFromContents(contents)
                     .Replace(".MinimumLevel.Debug()", ".MinimumLevel.Verbose()")
-                    .Replace("SensorReadingAzureEventHubsMessageHandler", nameof(TestSensorUpdateAzureEventHubsMessageHandler))
+                    .Replace("SensorReadingAzureEventHubsMessageHandler", nameof(WriteSensorUpdateToFileAzureEventHubsMessageHandler))
                     .Replace("SensorReading", nameof(SensorUpdate))
                     .Replace("stores.AddAzureKeyVaultWithManagedIdentity(\"https://your-keyvault.vault.azure.net/\", CacheConfiguration.Default);", ""));
         }

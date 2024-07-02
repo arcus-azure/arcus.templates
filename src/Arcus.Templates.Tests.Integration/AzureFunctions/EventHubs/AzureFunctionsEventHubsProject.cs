@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Arcus.Templates.Tests.Integration.AzureFunctions.Admin;
 using Arcus.Templates.Tests.Integration.AzureFunctions.Configuration;
 using Arcus.Templates.Tests.Integration.Fixture;
-using Arcus.Templates.Tests.Integration.Worker.Configuration;
 using Arcus.Templates.Tests.Integration.Worker.EventHubs.Fixture;
 using Arcus.Templates.Tests.Integration.Worker.Fixture;
 using GuardNet;
@@ -13,7 +14,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs
     /// <summary>
     /// Project template to create Azure Functions EventHubs trigger projects.
     /// </summary>
-    public class AzureFunctionsEventHubsProject : AzureFunctionsProject, IAsyncDisposable
+    public class AzureFunctionsEventHubsProject : AzureFunctionsProject
     {
         private AzureFunctionsEventHubsProject(
             TestConfig config,
@@ -21,7 +22,8 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs
             ITestOutputHelper outputWriter)
             : base(config.GetAzureFunctionsEventHubsProjectDirectory(), config, options, outputWriter)
         {
-            Messaging = new TestEventHubsMessagePumpService(config, outputWriter);
+            Messaging = new TestEventHubsMessagePumpService(config, ProjectDirectory, outputWriter);
+            Admin = new AdminEndpointService(RootEndpoint.Port, "sensor-reading", outputWriter);
         }
 
         /// <summary>
@@ -31,6 +33,11 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs
         ///     Only when the project is started, is this service available for interaction.
         /// </remarks>
         public IMessagingService Messaging { get; }
+
+        /// <summary>
+        /// Gets the service to run administrative actions on the Azure Functions project.
+        /// </summary>
+        public AdminEndpointService Admin { get; }
 
         /// <summary>
         /// Starts a newly created project from the Azure Functions EventHubs project template.
@@ -100,28 +107,33 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs
             var project = new AzureFunctionsEventHubsProject(configuration, options, outputWriter);
 
             project.CreateNewProject(options);
-            project.AddTestMessageHandler(eventHubsConfig);
+            project.AddTestMessageHandler();
             project.AddLocalSettings();
+
+            ApplicationInsightsConfig appInsightsConfig = configuration.GetApplicationInsightsConfig();
+            project.AddLocalSettings(new Dictionary<string, string>
+            {
+                ["APPLICATIONINSIGHTS_CONNECTION_STRING"] = $"InstrumentationKey={appInsightsConfig.InstrumentationKey}",
+                ["EventHubsConnectionString"] = eventHubsConfig.EventHubsConnectionString
+            });
+
+            Environment.SetEnvironmentVariable("EventHubsConnectionString", eventHubsConfig.EventHubsConnectionString);
+            Environment.SetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING", $"InstrumentationKey={appInsightsConfig.InstrumentationKey}");
 
             return project;
         }
 
-        private void AddTestMessageHandler(EventHubsConfig eventHubsConfig)
+        private void AddTestMessageHandler()
         {
-            AddPackage("Azure.Messaging.EventGrid", "4.11.0");
-
             AddTypeAsFile<SensorUpdate>();
             AddTypeAsFile<SensorStatus>();
             AddTypeAsFile<SensorUpdateEventData>();
-            AddTypeAsFile<TestSensorUpdateAzureEventHubsMessageHandler>();
-
-            UpdateFileInProject("SensorReadingFunction.cs", 
-                contents => contents.Replace("EventHubTrigger(\"sensors\"", $"EventHubTrigger(\"{eventHubsConfig.EventHubsName}\""));
+            AddTypeAsFile<WriteSensorUpdateToFileAzureEventHubsMessageHandler>();
 
             UpdateFileInProject(RuntimeFileName, contents => 
                 RemovesUserErrorsFromContents(contents)
                     .Replace(".MinimumLevel.Debug()", ".MinimumLevel.Verbose()")
-                    .Replace("SensorReadingAzureEventHubsMessageHandler", nameof(TestSensorUpdateAzureEventHubsMessageHandler))
+                    .Replace("SensorReadingAzureEventHubsMessageHandler", nameof(WriteSensorUpdateToFileAzureEventHubsMessageHandler))
                     .Replace("SensorReading", nameof(SensorUpdate))
                     .Replace("stores.AddAzureKeyVaultWithManagedIdentity(\"https://your-keyvault.vault.azure.net/\", CacheConfiguration.Default);", ""));
         }
@@ -130,39 +142,26 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs
         {
             try
             {
-                EventHubsConfig eventHubsConfig = Configuration.GetEventHubsConfig();
-                EventGridConfig eventGridConfig = Configuration.GetEventGridConfig();
-
-                Environment.SetEnvironmentVariable("EventHubsConnectionString", eventHubsConfig.EventHubsConnectionString);
-                Environment.SetEnvironmentVariable("EVENTGRID_TOPIC_URI", eventGridConfig.TopicUri);
-                Environment.SetEnvironmentVariable("EVENTGRID_AUTH_KEY", eventGridConfig.AuthenticationKey);
-
-                ApplicationInsightsConfig appInsightsConfig = Configuration.GetApplicationInsightsConfig();
-                Environment.SetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING", $"InstrumentationKey={appInsightsConfig.InstrumentationKey}");
-
                 Run(Configuration.BuildConfiguration, TargetFramework.Net8_0);
-                await Messaging.StartAsync();
+                await WaitUntilTriggerIsAvailableAsync(Admin.Endpoint);
             }
             catch
             {
-                await DisposeAsync();
+                Dispose();
                 throw;
             }
         }
 
         /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources asynchronously.
+        /// Performs additional application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
-        /// <returns>A task that represents the asynchronous dispose operation.</returns>
-        public async ValueTask DisposeAsync()
+        /// <param name="disposing">The flag indicating whether or not the additional tasks should be disposed.</param>
+        protected override void Disposing(bool disposing)
         {
-            Environment.SetEnvironmentVariable("EventHubsConnectionString", null);
-            Environment.SetEnvironmentVariable("EVENTGRID_TOPIC_URI", null);
-            Environment.SetEnvironmentVariable("EVENTGRID_AUTH_KEY", null);
-            Environment.SetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING", null);
+            base.Disposing(disposing);
 
-            Dispose();
-            await Messaging.DisposeAsync();
+            Environment.SetEnvironmentVariable("EventHubsConnectionString", null);
+            Environment.SetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING", null);
         }
     }
 }

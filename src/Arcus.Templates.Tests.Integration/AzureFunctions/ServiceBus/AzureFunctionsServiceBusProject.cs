@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.AzureFunctions.Admin;
 using Arcus.Templates.Tests.Integration.Fixture;
-using Arcus.Templates.Tests.Integration.Worker.Configuration;
 using Arcus.Templates.Tests.Integration.Worker.Fixture;
 using Arcus.Templates.Tests.Integration.Worker.ServiceBus.Fixture;
 using Azure;
@@ -20,7 +18,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
     /// Project template to create new Azure Functions Service Bus projects.
     /// </summary>
     [DebuggerDisplay("Project = {ProjectDirectory.FullName}")]
-    public class AzureFunctionsServiceBusProject : AzureFunctionsProject, IAsyncDisposable
+    public class AzureFunctionsServiceBusProject : AzureFunctionsProject
     {
         private AzureFunctionsServiceBusProject(
             ServiceBusEntityType entityType, 
@@ -163,12 +161,11 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
                 Environment.SetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING", $"InstrumentationKey={instrumentationKey}");
 
                 Run(Configuration.BuildConfiguration, TargetFramework.Net8_0);
-                await Messaging.StartAsync();
                 await WaitUntilTriggerIsAvailableAsync(Admin.Endpoint);
             }
             catch
             {
-                await DisposeAsync();
+                Dispose();
                 throw;
             }
         }
@@ -182,43 +179,6 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus
             if (!subscriptionExists.Value)
             {
                 await client.CreateSubscriptionAsync(topic, subscriptionName);
-            }
-        }
-
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources asynchronously.
-        /// </summary>
-        /// <returns>A task that represents the asynchronous dispose operation.</returns>
-        public async ValueTask DisposeAsync()
-        {
-            var exceptions = new Collection<Exception>();
-
-            try
-            {
-                Dispose();
-            }
-            catch (Exception exception)
-            {
-                exceptions.Add(exception);
-            }
-
-            try
-            {
-                await Messaging.DisposeAsync();
-            }
-            catch (Exception exception)
-            {
-                exceptions.Add(exception);
-            }
-
-            if (exceptions.Count is 1)
-            {
-                throw exceptions[0];
-            }
-
-            if (exceptions.Count > 1)
-            {
-                throw new AggregateException(exceptions);
             }
         }
 

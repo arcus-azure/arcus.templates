@@ -73,7 +73,6 @@ namespace Arcus.Templates.Tests.Integration.Worker
             {
                 Run(_configuration.BuildConfiguration, TargetFramework.Net8_0, commands);
                 await WaitUntilWorkerProjectIsAvailableAsync(_healthPort);
-                await Messaging.StartAsync();
             }
             catch
             {
@@ -141,7 +140,6 @@ namespace Arcus.Templates.Tests.Integration.Worker
             Dispose();
 
             await DisposingAsync(true);
-            await Messaging.DisposeAsync();
         }
 
         /// <summary>

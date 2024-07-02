@@ -1,60 +1,47 @@
 ﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.Fixture;
 using Arcus.Templates.Tests.Integration.Logging;
 using Arcus.Templates.Tests.Integration.Worker.Fixture;
+using Arcus.Testing;
 using Azure.Messaging.EventHubs;
 using Azure.Messaging.EventHubs.Producer;
 using Bogus;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Xunit;
 using Xunit.Abstractions;
+using TestConfig = Arcus.Templates.Tests.Integration.Fixture.TestConfig;
 
 namespace Arcus.Templates.Tests.Integration.Worker.EventHubs.Fixture
 {
     public class TestEventHubsMessagePumpService : IMessagingService
     {
         private readonly TestConfig _configuration;
+        private readonly DirectoryInfo _projectDirectory;
         private readonly ILogger _logger;
-
-        private TestServiceBusMessageEventConsumer _serviceBusMessageEventConsumer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TestEventHubsMessagePumpService" /> class.
         /// </summary>
         public TestEventHubsMessagePumpService(
             TestConfig configuration,
+            DirectoryInfo projectDirectory,
             ITestOutputHelper outputWriter)
         {
             _configuration = configuration;
+            _projectDirectory = projectDirectory;
             _logger = new XunitTestLogger(outputWriter);
-        }
-
-        public async Task StartAsync()
-        {
-            if (_serviceBusMessageEventConsumer is null)
-            {
-                _serviceBusMessageEventConsumer = await TestServiceBusMessageEventConsumer.StartNewAsync(_configuration, _logger);
-            }
-            else
-            {
-                throw new InvalidOperationException("Service is already started!");
-            }
         }
 
         public async Task SimulateMessageProcessingAsync()
         {
-            if (_serviceBusMessageEventConsumer is null)
-            {
-                throw new InvalidOperationException(
-                    "Cannot simulate the message pump because the service is not yet started; please start this service before simulating");
-            }
-
             var traceParent = TraceParent.Generate();
             SensorUpdate update = GenerateSensorReading();
             await ProduceEventAsync(update, traceParent);
 
-            var sensorReadEventData = _serviceBusMessageEventConsumer.ConsumeEvent<SensorUpdateEventData>(traceParent.TransactionId);
+            SensorUpdateEventData sensorReadEventData = await ConsumeEventAsync(traceParent);
             Assert.NotNull(sensorReadEventData);
             Assert.NotNull(sensorReadEventData.CorrelationInfo);
             Assert.Equal(update.SensorId, sensorReadEventData.SensorId);
@@ -86,12 +73,24 @@ namespace Arcus.Templates.Tests.Integration.Worker.EventHubs.Fixture
             }
         }
 
-        public async ValueTask DisposeAsync()
+        private async Task<SensorUpdateEventData> ConsumeEventAsync(TraceParent traceParent)
         {
-            if (_serviceBusMessageEventConsumer != null)
-            {
-                await _serviceBusMessageEventConsumer.DisposeAsync();
-            }
+            _logger.LogTrace("Consumes a message with transaction ID: {TransactionId}", traceParent.TransactionId);
+
+            FileInfo[] foundFiles =
+                await Poll.Target(() => Task.FromResult(_projectDirectory.GetFiles(traceParent.TransactionId + ".json", SearchOption.AllDirectories)))
+                          .Until(files => files.Length > 0)
+                          .Every(TimeSpan.FromMilliseconds(200))
+                          .Timeout(TimeSpan.FromMinutes(1))
+                          .FailWith("Failed to retrieve the necessary produced message from the temporary project created from the worker project template, " +
+                                    "please check whether the injected message handler was correct and if the created project correctly receives the message");
+
+            FileInfo found = Assert.Single(foundFiles);
+            string json = await File.ReadAllTextAsync(found.FullName);
+            var settings = new JsonSerializerSettings();
+            settings.Converters.Add(new MessageCorrelationInfoJsonConverter());
+
+            return JsonConvert.DeserializeObject<SensorUpdateEventData>(json, settings);
         }
     }
 }

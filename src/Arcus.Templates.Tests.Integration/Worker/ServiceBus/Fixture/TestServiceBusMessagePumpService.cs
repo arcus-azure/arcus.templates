@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.Fixture;
 using Arcus.Templates.Tests.Integration.Logging;
 using Arcus.Templates.Tests.Integration.Worker.Fixture;
+using Arcus.Testing;
 using Azure.Messaging.ServiceBus;
 using Bogus;
 using Microsoft.Extensions.Logging;
@@ -11,6 +12,7 @@ using Newtonsoft.Json;
 using Polly;
 using Xunit;
 using Xunit.Abstractions;
+using TestConfig = Arcus.Templates.Tests.Integration.Fixture.TestConfig;
 
 namespace Arcus.Templates.Tests.Integration.Worker.ServiceBus.Fixture
 {
@@ -34,11 +36,6 @@ namespace Arcus.Templates.Tests.Integration.Worker.ServiceBus.Fixture
             _configuration = configuration;
             _projectDirectory = projectDirectory;
             _logger = new XunitTestLogger(outputWriter);
-        }
-
-        public Task StartAsync()
-        {
-            return Task.CompletedTask;
         }
 
         public async Task SimulateMessageProcessingAsync()
@@ -99,34 +96,22 @@ namespace Arcus.Templates.Tests.Integration.Worker.ServiceBus.Fixture
 
         private async Task<OrderCreatedEventData> ConsumeMessageAsync(TraceParent traceParent)
         {
-            try
-            {
-                _logger.LogTrace("Consumes a message with transaction ID: {TransactionId}", traceParent.TransactionId);
+            _logger.LogTrace("Consumes a message with transaction ID: {TransactionId}", traceParent.TransactionId);
 
-                FileInfo[] foundFiles =
-                    Policy.Timeout(TimeSpan.FromMinutes(1))
-                          .Wrap(Policy.HandleResult((FileInfo[] files) => files.Length <= 0)
-                                      .WaitAndRetryForever(_ => TimeSpan.FromMilliseconds(200)))
-                          .Execute(() => _projectDirectory.GetFiles(traceParent.TransactionId + ".json", SearchOption.AllDirectories));
+            FileInfo[] foundFiles =
+                await Poll.Target(() => Task.FromResult(_projectDirectory.GetFiles(traceParent.TransactionId + ".json", SearchOption.AllDirectories)))
+                          .Until(files => files.Length > 0)
+                          .Every(TimeSpan.FromMilliseconds(200))
+                          .Timeout(TimeSpan.FromMinutes(1))
+                          .FailWith("Failed to retrieve the necessary produced message from the temporary project created from the worker project template, " +
+                                    "please check whether the injected message handler was correct and if the created project correctly receives the message");
 
-                FileInfo found = Assert.Single(foundFiles);
-                string json = await File.ReadAllTextAsync(found.FullName);
-                var settings = new JsonSerializerSettings();
-                settings.Converters.Add(new MessageCorrelationInfoJsonConverter());
+            FileInfo found = Assert.Single(foundFiles);
+            string json = await File.ReadAllTextAsync(found.FullName);
+            var settings = new JsonSerializerSettings();
+            settings.Converters.Add(new MessageCorrelationInfoJsonConverter());
 
-                return JsonConvert.DeserializeObject<OrderCreatedEventData>(json, settings);
-            }
-            catch (TimeoutException ex)
-            {
-                throw new TimeoutException(
-                    "Failed to retrieve the necessary produced message from the temporary project created from the worker project template, " +
-                    "please check whether the injected message handler was correct and if the created project correctly receives the message", ex);
-            }
-        }
-
-        public ValueTask DisposeAsync()
-        {
-           return ValueTask.CompletedTask;
+            return JsonConvert.DeserializeObject<OrderCreatedEventData>(json, settings);
         }
     }
 }

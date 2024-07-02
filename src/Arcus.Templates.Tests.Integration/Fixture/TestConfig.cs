@@ -275,18 +275,6 @@ namespace Arcus.Templates.Tests.Integration.Fixture
         }
 
         /// <summary>
-        /// Gets the configuration model to use an Azure Event Grid resource.
-        /// </summary>
-        /// <exception cref="KeyNotFoundException">Thrown when one or more configuration values cannot be found.</exception>
-        public EventGridConfig GetEventGridConfig()
-        {
-            var eventGridTopicUri = _configuration.GetRequiredValue<string>("Arcus:Worker:EventGrid:TopicUri");
-            var eventGridAuthKey = _configuration.GetRequiredValue<string>("Arcus:Worker:EventGrid:AuthKey");
-
-            return new EventGridConfig(eventGridTopicUri, eventGridAuthKey);
-        }
-
-        /// <summary>
         /// Gets the Azure Functions application configuration to create valid Azure Functions projects.
         /// </summary>
         /// <exception cref="KeyNotFoundException">Thrown when one of the Azure Functions configuration values are not found.</exception>
@@ -317,9 +305,8 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             var instrumentationKey = _configuration.GetRequiredValue<string>("Arcus:AzureFunctions:ApplicationInsights:InstrumentationKey");
             var applicationId = _configuration.GetRequiredValue<string>("Arcus:AzureFunctions:ApplicationInsights:ApplicationId");
             var apiKey = _configuration.GetRequiredValue<string>("Arcus:AzureFunctions:ApplicationInsights:ApiKey");
-            var metricName = _configuration.GetRequiredValue<string>("Arcus:AzureFunctions:ApplicationInsights:MetricName");
 
-            return new ApplicationInsightsConfig(instrumentationKey, applicationId, apiKey, metricName);
+            return new ApplicationInsightsConfig(instrumentationKey, applicationId, apiKey);
         }
 
         /// <summary>

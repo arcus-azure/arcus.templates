@@ -28,7 +28,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs.Logging
                 .ExcludeSerilog();
 
             // Act
-            await using (var project = await AzureFunctionsEventHubsProject.StartNewAsync(config, options, _outputWriter))
+            using (var project = await AzureFunctionsEventHubsProject.StartNewAsync(config, options, _outputWriter))
             {
                 // Assert
                 await project.Messaging.SimulateMessageProcessingAsync();

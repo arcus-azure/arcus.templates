@@ -22,11 +22,10 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs.MessageHand
         public async Task EventHubsProject_WithDefault_CorrectlyProcessesMessage()
         {
             // Arrange
-            await using (var project = await AzureFunctionsEventHubsProject.StartNewAsync(_outputWriter))
-            {
-                // Act / Assert
-                await project.Messaging.SimulateMessageProcessingAsync();
-            }
+            using var project = await AzureFunctionsEventHubsProject.StartNewAsync(_outputWriter);
+            
+            // Act / Assert
+            await project.Messaging.SimulateMessageProcessingAsync();
         }
     }
 }

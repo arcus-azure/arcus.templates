@@ -27,7 +27,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.ServiceBus.MessageHan
         {
             // Arrange
             var config = TestConfig.Create();
-            await using var project = await AzureFunctionsServiceBusProject.StartNewProjectAsync(entityType, config, _outputWriter);
+            using var project = await AzureFunctionsServiceBusProject.StartNewProjectAsync(entityType, config, _outputWriter);
             
             // Act / Assert
             await project.Messaging.SimulateMessageProcessingAsync();

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Arcus.Templates.Tests.Integration.AzureFunctions.Admin;
 using Arcus.Templates.Tests.Integration.AzureFunctions.Configuration;
 using Arcus.Templates.Tests.Integration.Fixture;
-using Arcus.Templates.Tests.Integration.Worker.Configuration;
 using Arcus.Templates.Tests.Integration.Worker.EventHubs.Fixture;
 using Arcus.Templates.Tests.Integration.Worker.Fixture;
 using GuardNet;
@@ -13,7 +13,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs
     /// <summary>
     /// Project template to create Azure Functions EventHubs trigger projects.
     /// </summary>
-    public class AzureFunctionsEventHubsProject : AzureFunctionsProject, IAsyncDisposable
+    public class AzureFunctionsEventHubsProject : AzureFunctionsProject
     {
         private AzureFunctionsEventHubsProject(
             TestConfig config,
@@ -22,6 +22,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs
             : base(config.GetAzureFunctionsEventHubsProjectDirectory(), config, options, outputWriter)
         {
             Messaging = new TestEventHubsMessagePumpService(config, ProjectDirectory, outputWriter);
+            Admin = new AdminEndpointService(RootEndpoint.Port, "sensor-reading", outputWriter);
         }
 
         /// <summary>
@@ -31,6 +32,11 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs
         ///     Only when the project is started, is this service available for interaction.
         /// </remarks>
         public IMessagingService Messaging { get; }
+
+        /// <summary>
+        /// Gets the service to run administrative actions on the Azure Functions project.
+        /// </summary>
+        public AdminEndpointService Admin { get; }
 
         /// <summary>
         /// Starts a newly created project from the Azure Functions EventHubs project template.
@@ -135,26 +141,25 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs
                 Environment.SetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING", $"InstrumentationKey={appInsightsConfig.InstrumentationKey}");
 
                 Run(Configuration.BuildConfiguration, TargetFramework.Net8_0);
-                await Messaging.StartAsync();
+                await WaitUntilTriggerIsAvailableAsync(Admin.Endpoint);
             }
             catch
             {
-                await DisposeAsync();
+                Dispose();
                 throw;
             }
         }
 
         /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources asynchronously.
+        /// Performs additional application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
-        /// <returns>A task that represents the asynchronous dispose operation.</returns>
-        public async ValueTask DisposeAsync()
+        /// <param name="disposing">The flag indicating whether or not the additional tasks should be disposed.</param>
+        protected override void Disposing(bool disposing)
         {
+            base.Disposing(disposing);
+
             Environment.SetEnvironmentVariable("EventHubsConnectionString", null);
             Environment.SetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING", null);
-
-            Dispose();
-            await Messaging.DisposeAsync();
         }
     }
 }

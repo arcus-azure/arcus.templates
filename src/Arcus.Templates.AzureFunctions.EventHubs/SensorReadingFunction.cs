@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Arcus.Messaging.Abstractions;
@@ -30,7 +28,7 @@ namespace Arcus.Templates.AzureFunctions.EventHubs
             Guard.NotNull(messageRouter, nameof(messageRouter), "Requires a message router instance to route incoming Azure EventHubs events through the sensor-reading processing");
             _messageRouter = messageRouter;
         }
-        
+
         /// <summary>
         /// Processes Azure EventHubs <paramref name="datas"/>.
         /// </summary>
@@ -47,11 +45,11 @@ namespace Arcus.Templates.AzureFunctions.EventHubs
             foreach (EventData data in datas)
             {
                 AzureEventHubsMessageContext messageContext = data.GetMessageContext("sensor-reading.servicebus.windows.net", "sensors", "$Default", _jobId);
-            
+
                 var telemetryClient = executionContext.InstanceServices.GetService<TelemetryClient>();
                 (string? transactionId, string? operationParentId) = data.Properties.GetTraceParent();
                 using var result = MessageCorrelationResult.Create(telemetryClient, transactionId, operationParentId);
-            
+
                 await _messageRouter.RouteMessageAsync(data, messageContext, result.CorrelationInfo, CancellationToken.None);
             }
         }

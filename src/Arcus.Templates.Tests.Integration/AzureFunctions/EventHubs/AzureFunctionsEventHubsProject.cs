@@ -117,6 +117,9 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs
                 ["EventHubsConnectionString"] = eventHubsConfig.EventHubsConnectionString
             });
 
+            Environment.SetEnvironmentVariable("EventHubsConnectionString", eventHubsConfig.EventHubsConnectionString);
+            Environment.SetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING", $"InstrumentationKey={appInsightsConfig.InstrumentationKey}");
+
             return project;
         }
 
@@ -147,6 +150,18 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs
                 Dispose();
                 throw;
             }
+        }
+
+        /// <summary>
+        /// Performs additional application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        /// <param name="disposing">The flag indicating whether or not the additional tasks should be disposed.</param>
+        protected override void Disposing(bool disposing)
+        {
+            base.Disposing(disposing);
+
+            Environment.SetEnvironmentVariable("EventHubsConnectionString", null);
+            Environment.SetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING", null);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.Fixture;
 using Arcus.Templates.Tests.Integration.Logging;
@@ -81,9 +82,9 @@ namespace Arcus.Templates.Tests.Integration.Worker.EventHubs.Fixture
 
             FileInfo[] foundFiles =
                 await Poll.Target(() => Task.FromResult(_projectDirectory.GetFiles(traceParent.TransactionId + ".json", SearchOption.AllDirectories)))
-                          .Until(files => files.Length > 0)
+                          .Until(files => files.Length > 0 && files.All(f => f.Length > 0))
                           .Every(TimeSpan.FromMilliseconds(200))
-                          .Timeout(TimeSpan.FromMinutes(5))
+                          .Timeout(TimeSpan.FromMinutes(2))
                           .FailWith("Failed to retrieve the necessary produced message from the temporary project created from the worker project template, " +
                                     "please check whether the injected message handler was correct and if the created project correctly receives the message");
 

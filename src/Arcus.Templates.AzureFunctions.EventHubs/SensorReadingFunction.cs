@@ -8,7 +8,9 @@ using Arcus.Messaging.Abstractions.EventHubs;
 using Arcus.Messaging.Abstractions.EventHubs.MessageHandling;
 using Azure.Messaging.EventHubs;
 using GuardNet;
-using Microsoft.Azure.Functions.Worker; 
+using Microsoft.ApplicationInsights;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
  
 namespace Arcus.Templates.AzureFunctions.EventHubs
@@ -30,43 +32,28 @@ namespace Arcus.Templates.AzureFunctions.EventHubs
         }
         
         /// <summary>
-        /// Processes Azure EventHubs <paramref name="events"/>.
+        /// Processes Azure EventHubs <paramref name="datas"/>.
         /// </summary>
-        /// <param name="events">The incoming events on the Azure EventHubs instance.</param>
-        /// <param name="propertiesArray">The array containing the set of properties for each received Azure EventHubs event.</param>
+        /// <param name="datas">The incoming events on the Azure EventHubs instance.</param>
         /// <param name="executionContext">The execution context for this Azure Functions instance.</param>
         [Function("sensor-reading")]
         public async Task Run(
-            [EventHubTrigger("sensors", Connection = "EventHubsConnectionString")] string[] events,
-            Dictionary<string, JsonElement>[] propertiesArray,
+            [EventHubTrigger("sensors", Connection = "EventHubsConnectionString")] EventData[] datas,
             FunctionContext executionContext)
         {
             ILogger logger = executionContext.GetLogger<SensorReadingFunction>();
-            logger.LogInformation("Azure EventHubs function triggered with {Length} events", events.Length);
-            
-            for (var index = 0; index < events.Length; index++)
+            logger.LogInformation("Azure EventHubs function triggered with {Length} events", datas.Length);
+
+            foreach (EventData data in datas)
             {
-                string message = events[index];
-                Dictionary<string, JsonElement> properties = propertiesArray[index];
-                EventData data = CreateEventData(message, properties);
-                
                 AzureEventHubsMessageContext messageContext = data.GetMessageContext("sensor-reading.servicebus.windows.net", "sensors", "$Default", _jobId);
-                using (MessageCorrelationResult result = executionContext.GetCorrelationInfo(properties))
-                {
-                    await _messageRouter.RouteMessageAsync(data, messageContext, result.CorrelationInfo, CancellationToken.None);
-                }
-            }
-        }
-        
-        private static EventData CreateEventData(string message, IDictionary<string, JsonElement> properties)
-        {
-            var data = new EventData(message);
-            foreach (KeyValuePair<string, JsonElement> property in properties)
-            {
-                data.Properties.Add(property.Key, property.Value.GetString());
-            }
             
-            return data;
+                var telemetryClient = executionContext.InstanceServices.GetService<TelemetryClient>();
+                (string? transactionId, string? operationParentId) = data.Properties.GetTraceParent();
+                using var result = MessageCorrelationResult.Create(telemetryClient, transactionId, operationParentId);
+            
+                await _messageRouter.RouteMessageAsync(data, messageContext, result.CorrelationInfo, CancellationToken.None);
+            }
         }
     }
 }

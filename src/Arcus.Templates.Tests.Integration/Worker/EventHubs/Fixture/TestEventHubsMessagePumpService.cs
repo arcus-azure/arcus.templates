@@ -63,19 +63,21 @@ namespace Arcus.Templates.Tests.Integration.Worker.EventHubs.Fixture
 
         private async Task ProduceEventAsync(SensorUpdate sensorUpdate, TraceParent traceParent)
         {
-            var message = new EventData(BinaryData.FromObjectAsJson(sensorUpdate));
-            message.Properties["Diagnostic-Id"] = traceParent.DiagnosticId;
+            _logger.LogTrace("Produces an event with transaction ID: {TransactionId}", traceParent.TransactionId);
+
+            var message = new EventData(BinaryData.FromObjectAsJson(sensorUpdate))
+            {
+                Properties = { ["Diagnostic-Id"] = traceParent.DiagnosticId }
+            };
 
             EventHubsConfig eventHubsConfig = _configuration.GetEventHubsConfig();
-            await using (var client = new EventHubProducerClient(eventHubsConfig.EventHubsConnectionString, eventHubsConfig.EventHubsName))
-            {
-                await client.SendAsync(new[] { message });
-            }
+            await using var client = new EventHubProducerClient(eventHubsConfig.EventHubsConnectionString, eventHubsConfig.EventHubsName);
+            await client.SendAsync(new[] { message });
         }
 
         private async Task<SensorUpdateEventData> ConsumeEventAsync(TraceParent traceParent)
         {
-            _logger.LogTrace("Consumes a message with transaction ID: {TransactionId}", traceParent.TransactionId);
+            _logger.LogTrace("Consumes an event with transaction ID: {TransactionId}", traceParent.TransactionId);
 
             FileInfo[] foundFiles =
                 await Poll.Target(() => Task.FromResult(_projectDirectory.GetFiles(traceParent.TransactionId + ".json", SearchOption.AllDirectories)))

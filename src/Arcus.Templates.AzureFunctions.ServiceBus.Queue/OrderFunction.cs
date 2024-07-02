@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Arcus.Messaging.Abstractions;
@@ -8,7 +7,6 @@ using Arcus.Messaging.Abstractions.ServiceBus.MessageHandling;
 using Arcus.Templates.AzureFunctions.ServiceBus.Queue.Model;
 using Azure.Messaging.ServiceBus;
 using GuardNet;
-using System.Text.Json;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
  
@@ -36,16 +34,15 @@ namespace Arcus.Templates.AzureFunctions.ServiceBus.Queue
         }
         
         /// <summary>
-        /// Process an Azure Service Bus queue <paramref name="messageBody"/> as an <see cref="Order"/>.
+        /// Process an Azure Service Bus queue <paramref name="message"/> as an <see cref="Order"/>.
         /// </summary>
-        /// <param name="messageBody">The incoming message on the Azure Service Bus queue, representing an <see cref="Order"/>.</param>
+        /// <param name="message">The incoming message on the Azure Service Bus queue, representing an <see cref="Order"/>.</param>
         /// <param name="executionContext">The execution context for this Azure Functions instance.</param>
         [Function("order-processing")]
         public async Task Run(
-            [ServiceBusTrigger("orders", Connection = "ServiceBusConnectionString")] byte[] messageBody,
+            [ServiceBusTrigger("orders", Connection = "ServiceBusConnectionString")] ServiceBusReceivedMessage message,
             FunctionContext executionContext)
         {
-            ServiceBusReceivedMessage message = ConvertToServiceBusMessage(messageBody, executionContext);
             var logger = executionContext.GetLogger<ILogger<OrderFunction>>();
             logger.LogInformation("C# ServiceBus queue trigger function processed message: {MessageId}", message.MessageId);
             
@@ -54,26 +51,6 @@ namespace Arcus.Templates.AzureFunctions.ServiceBus.Queue
             {
                 await _messageRouter.RouteMessageAsync(message, messageContext, result.CorrelationInfo, CancellationToken.None);
             }
-        }
-        
-        private static ServiceBusReceivedMessage ConvertToServiceBusMessage(byte[] messageBody, FunctionContext executionContext)
-        {
-            var applicationProperties = new Dictionary<string, object>();
-            if (executionContext.BindingContext.BindingData.TryGetValue("ApplicationProperties", out object applicationPropertiesObj))
-            {
-                var json = applicationPropertiesObj.ToString();
-                applicationProperties = JsonSerializer.Deserialize<Dictionary<string, object>>(json);
-            }
-            
-            executionContext.BindingContext.BindingData.TryGetValue("CorrelationId", out object correlationId);
-            
-            var message = ServiceBusModelFactory.ServiceBusReceivedMessage(
-                body: BinaryData.FromBytes(messageBody),
-                messageId: executionContext.BindingContext.BindingData["MessageId"]?.ToString(),
-                correlationId: correlationId?.ToString(),
-                properties: applicationProperties);
-
-            return message;
         }
     }
 }

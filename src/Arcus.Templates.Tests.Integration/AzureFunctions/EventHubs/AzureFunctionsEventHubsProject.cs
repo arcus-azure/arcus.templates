@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.AzureFunctions.Admin;
 using Arcus.Templates.Tests.Integration.AzureFunctions.Configuration;
@@ -109,6 +110,13 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs
             project.AddTestMessageHandler(eventHubsConfig);
             project.AddLocalSettings();
 
+            ApplicationInsightsConfig appInsightsConfig = configuration.GetApplicationInsightsConfig();
+            project.AddLocalSettings(new Dictionary<string, string>
+            {
+                ["APPLICATIONINSIGHTS_CONNECTION_STRING"] = $"InstrumentationKey={appInsightsConfig.InstrumentationKey}",
+                ["EventHubsConnectionString"] = eventHubsConfig.EventHubsConnectionString
+            });
+
             return project;
         }
 
@@ -134,12 +142,6 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs
         {
             try
             {
-                EventHubsConfig eventHubsConfig = Configuration.GetEventHubsConfig();
-                Environment.SetEnvironmentVariable("EventHubsConnectionString", eventHubsConfig.EventHubsConnectionString);
-
-                ApplicationInsightsConfig appInsightsConfig = Configuration.GetApplicationInsightsConfig();
-                Environment.SetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING", $"InstrumentationKey={appInsightsConfig.InstrumentationKey}");
-
                 Run(Configuration.BuildConfiguration, TargetFramework.Net8_0);
                 await WaitUntilTriggerIsAvailableAsync(Admin.Endpoint);
             }
@@ -148,18 +150,6 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs
                 Dispose();
                 throw;
             }
-        }
-
-        /// <summary>
-        /// Performs additional application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        /// <param name="disposing">The flag indicating whether or not the additional tasks should be disposed.</param>
-        protected override void Disposing(bool disposing)
-        {
-            base.Disposing(disposing);
-
-            Environment.SetEnvironmentVariable("EventHubsConnectionString", null);
-            Environment.SetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING", null);
         }
     }
 }

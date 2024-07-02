@@ -36,16 +36,15 @@ namespace Arcus.Templates.AzureFunctions.ServiceBus.Topic
         }
         
         /// <summary>
-        /// Process an Azure Service Bus topic <paramref name="messageBody"/> as an <see cref="Order"/>.
+        /// Process an Azure Service Bus topic <paramref name="message"/> as an <see cref="Order"/>.
         /// </summary>
-        /// <param name="messageBody">The incoming message on the Azure Service Bus topic, representing an <see cref="Order"/>.</param>
+        /// <param name="message">The incoming message on the Azure Service Bus topic, representing an <see cref="Order"/>.</param>
         /// <param name="executionContext">The execution context for this Azure Functions instance.</param>
         [Function("order-processing")]
         public async Task Run(
-            [ServiceBusTrigger("order-topic", "order-subscription", Connection = "ServiceBusConnectionString")] byte[] messageBody,
+            [ServiceBusTrigger("order-topic", "order-subscription", Connection = "ServiceBusConnectionString")] ServiceBusReceivedMessage message,
             FunctionContext executionContext)
         {
-            ServiceBusReceivedMessage message = ConvertToServiceBusMessage(messageBody, executionContext);
             var logger = executionContext.GetLogger<ILogger<OrderFunction>>();
             logger.LogInformation("C# ServiceBus topic trigger function processed message: {MessageId}", message.MessageId);
             
@@ -54,26 +53,6 @@ namespace Arcus.Templates.AzureFunctions.ServiceBus.Topic
             {
                 await _messageRouter.RouteMessageAsync(message, messageContext, result.CorrelationInfo, CancellationToken.None);
             }
-        }
-        
-        private static ServiceBusReceivedMessage ConvertToServiceBusMessage(byte[] messageBody, FunctionContext executionContext)
-        {
-            var applicationProperties = new Dictionary<string, object>();
-            if (executionContext.BindingContext.BindingData.TryGetValue("ApplicationProperties", out object applicationPropertiesObj))
-            {
-                var json = applicationPropertiesObj.ToString();
-                applicationProperties = JsonSerializer.Deserialize<Dictionary<string, object>>(json);
-            }
-            
-            executionContext.BindingContext.BindingData.TryGetValue("CorrelationId", out object correlationId);
-            
-            var message = ServiceBusModelFactory.ServiceBusReceivedMessage(
-                body: BinaryData.FromBytes(messageBody),
-                messageId: executionContext.BindingContext.BindingData["MessageId"]?.ToString(),
-                correlationId: correlationId?.ToString(),
-                properties: applicationProperties);
-            
-            return message;
         }
     }
 }

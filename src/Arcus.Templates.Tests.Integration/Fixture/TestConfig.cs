@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using Arcus.Templates.Tests.Integration.AzureFunctions.Configuration;
 using Arcus.Templates.Tests.Integration.AzureFunctions.Http.Configuration;
-using Arcus.Templates.Tests.Integration.Worker.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Primitives;
 using GuardNet;

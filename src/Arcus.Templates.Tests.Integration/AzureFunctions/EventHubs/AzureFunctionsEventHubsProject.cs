@@ -112,9 +112,6 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs
             AddTypeAsFile<SensorUpdateEventData>();
             AddTypeAsFile<WriteSensorUpdateToFileAzureEventHubsMessageHandler>();
 
-            UpdateFileInProject("SensorReadingFunction.cs", 
-                contents => contents.Replace("EventHubTrigger(\"sensors\"", $"EventHubTrigger(\"{eventHubsConfig.EventHubsName}\""));
-
             UpdateFileInProject(RuntimeFileName, contents => 
                 RemovesUserErrorsFromContents(contents)
                     .Replace(".MinimumLevel.Debug()", ".MinimumLevel.Verbose()")

@@ -42,9 +42,10 @@ namespace Arcus.Templates.Tests.Integration.Worker.EventHubs.Fixture
 
             var fileName = $"{correlationInfo.TransactionId}.json";
             _logger.LogTrace("Processed message by writing on disk: {FileName}", fileName);
-            await File.WriteAllTextAsync(Path.Combine(currentDirPath, fileName), json, cancellationToken);
+            string filePath = Path.Combine(currentDirPath, fileName);
+            await File.WriteAllTextAsync(filePath, json, cancellationToken);
 
-            _logger.LogInformation("Sensor {SensorId} processed", message.SensorId);
+            _logger.LogInformation("Sensor {SensorId} processed to: {FilePath}", message.SensorId, filePath);
         }
     }
 }

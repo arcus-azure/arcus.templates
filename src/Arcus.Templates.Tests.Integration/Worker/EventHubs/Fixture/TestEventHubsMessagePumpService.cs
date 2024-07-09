@@ -2,7 +2,8 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Arcus.Templates.Tests.Integration.Fixture;
+ using Arcus.Observability.Correlation;
+ using Arcus.Templates.Tests.Integration.Fixture;
 using Arcus.Templates.Tests.Integration.Logging;
 using Arcus.Templates.Tests.Integration.Worker.Fixture;
 using Arcus.Testing;
@@ -78,7 +79,11 @@ namespace Arcus.Templates.Tests.Integration.Worker.EventHubs.Fixture
 
             EventHubsConfig eventHubsConfig = _configuration.GetEventHubsConfig();
             await using var client = new EventHubProducerClient(eventHubsConfig.EventHubsConnectionString, eventHubsConfig.EventHubsName);
-            await client.SendAsync(new[] { message });
+            await client.SendAsync(new[] { message },
+                new CorrelationInfo(Guid.NewGuid().ToString(),
+                    traceParent.TransactionId,
+                    traceParent.OperationParentId),
+                _logger);
         }
 
         private async Task<SensorUpdateEventData> ConsumeEventAsync(TraceParent traceParent)

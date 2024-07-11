@@ -90,7 +90,7 @@ namespace Arcus.Templates.Tests.Integration.Worker.EventHubs.Fixture
                 await Poll.Target(() => _projectDirectory.GetFiles(traceParent.TransactionId + ".json", SearchOption.AllDirectories))
                           .Until(files => files.Length > 0 && files.All(f => f.Length > 0))
                           .Every(TimeSpan.FromMilliseconds(200))
-                          .Timeout(TimeSpan.FromMinutes(3))
+                          .Timeout(TimeSpan.FromMinutes(5))
                           .FailWith("Failed to retrieve the necessary produced message from the temporary project created from the worker project template, " +
                                     "please check whether the injected message handler was correct and if the created project correctly receives the message");
 

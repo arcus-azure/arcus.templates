@@ -4,9 +4,10 @@ using Arcus.Templates.Tests.Integration.AzureFunctions.Admin;
 using Arcus.Templates.Tests.Integration.AzureFunctions.Configuration;
 using Arcus.Templates.Tests.Integration.Fixture;
 using Arcus.Templates.Tests.Integration.Worker.EventHubs.Fixture;
-using Arcus.Templates.Tests.Integration.Worker.Fixture;
+using Arcus.Testing;
 using GuardNet;
 using Xunit.Abstractions;
+using TestConfig = Arcus.Templates.Tests.Integration.Fixture.TestConfig;
 
 namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs
 {
@@ -21,17 +22,8 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs
             ITestOutputHelper outputWriter)
             : base(config.GetAzureFunctionsEventHubsProjectDirectory(), config, options, outputWriter)
         {
-            Messaging = new TestEventHubsMessagePumpService(config, ProjectDirectory, outputWriter);
-            Admin = new AdminEndpointService(RootEndpoint.Port, "sensors", outputWriter);
+            Admin = new AdminEndpointService(RootEndpoint.Port, "sensor-reading", outputWriter);
         }
-
-        /// <summary>
-        /// Gets the service that interacts with the hosted-service message pump in the Service project.
-        /// </summary>
-        /// <remarks>
-        ///     Only when the project is started, is this service available for interaction.
-        /// </remarks>
-        public IMessagingService Messaging { get; }
 
         /// <summary>
         /// Gets the service to run administrative actions on the Azure Functions project.
@@ -102,29 +94,11 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs
             Guard.NotNull(configuration, nameof(configuration), "Requires a configuration instance to retrieve the configuration values to pass along to the to-be-created project");
             Guard.NotNull(outputWriter, nameof(outputWriter), "Requires a test logger to write diagnostic information during the creation process");
 
-            EventHubsConfig eventHubsConfig = configuration.GetEventHubsConfig();
             var project = new AzureFunctionsEventHubsProject(configuration, options, outputWriter);
-
             project.CreateNewProject(options);
-            project.AddTestMessageHandler(eventHubsConfig);
             project.AddLocalSettings();
 
             return project;
-        }
-
-        private void AddTestMessageHandler(EventHubsConfig eventHubsConfig)
-        {
-            AddTypeAsFile<SensorUpdate>();
-            AddTypeAsFile<SensorStatus>();
-            AddTypeAsFile<SensorUpdateEventData>();
-            AddTypeAsFile<WriteSensorUpdateToFileAzureEventHubsMessageHandler>();
-
-            UpdateFileInProject(RuntimeFileName, contents => 
-                RemovesUserErrorsFromContents(contents)
-                    .Replace(".MinimumLevel.Debug()", ".MinimumLevel.Verbose()")
-                    .Replace("SensorReadingAzureEventHubsMessageHandler", nameof(WriteSensorUpdateToFileAzureEventHubsMessageHandler))
-                    .Replace("SensorReading", nameof(SensorUpdate))
-                    .Replace("stores.AddAzureKeyVaultWithManagedIdentity(\"https://your-keyvault.vault.azure.net/\", CacheConfiguration.Default);", ""));
         }
 
         private async Task StartAsync()
@@ -139,9 +113,8 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs
                 Environment.SetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING", $"InstrumentationKey={appInsightsConfig.InstrumentationKey}");
 
                 Run(Configuration.BuildConfiguration, TargetFramework.Net8_0);
-                await Messaging.StartAsync();
 
-                await WaitUntilTriggerIsAvailableAsync(Admin.Endpoint);
+                await Poll.UntilAvailableAsync(() => Admin.TriggerFunctionAsync());
             }
             catch
             {
@@ -160,7 +133,6 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs
             Environment.SetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING", null);
 
             Dispose();
-            await Messaging.DisposeAsync();
         }
     }
 }

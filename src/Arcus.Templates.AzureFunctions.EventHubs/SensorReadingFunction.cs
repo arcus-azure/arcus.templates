@@ -49,7 +49,7 @@ namespace Arcus.Templates.AzureFunctions.EventHubs
                 AzureEventHubsMessageContext messageContext = @event.GetMessageContext("sensor-reading.servicebus.windows.net", "sensors", "$Default", _jobId);
 
                 using MessageCorrelationResult result = MessageCorrelationResult.Create(client, transactionId, operationParentId);
-                await _messageRouter.RouteMessageAsync(@event, messageContext, result.CorrelationInfo, CancellationToken.None); 
+                await _messageRouter.RouteMessageAsync(@event, messageContext, result.CorrelationInfo, CancellationToken.None);
             }
         }
     }

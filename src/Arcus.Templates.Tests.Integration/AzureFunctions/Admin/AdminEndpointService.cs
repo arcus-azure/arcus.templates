@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Arcus.Templates.Tests.Integration.WebApi.Fixture;
-using Flurl;
+using Xunit;
 using Xunit.Abstractions;
 
 namespace Arcus.Templates.Tests.Integration.AzureFunctions.Admin
@@ -13,18 +14,13 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Admin
     /// </summary>
     public class AdminEndpointService : EndpointService
     {
-        private readonly int _httpPort;
-        private readonly string _functionName;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="AdminEndpointService"/> class.
         /// </summary>
         public AdminEndpointService(int httpPort, string functionName, ITestOutputHelper outputWriter) 
             : base(outputWriter)
         {
-            _httpPort = httpPort;
-            _functionName = functionName;
-            Endpoint = new Uri($"http://localhost:{_httpPort}/admin/functions/{_functionName}");
+            Endpoint = new Uri($"http://localhost:{httpPort}/admin/functions/{functionName}");
         }
 
         /// <summary>
@@ -45,6 +41,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.Admin
                 using (HttpResponseMessage response = await HttpClient.PostAsync(Endpoint, content))
                 {
                     Logger.WriteLine("{0} <- {1}", response.StatusCode, Endpoint);
+                    Assert.NotEqual(HttpStatusCode.NotFound, response.StatusCode);
                 }
             }
             catch (Exception exception)

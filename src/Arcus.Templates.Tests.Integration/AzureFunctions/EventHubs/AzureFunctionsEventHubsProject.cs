@@ -98,6 +98,10 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs
             project.CreateNewProject(options);
             project.AddLocalSettings();
 
+            project.UpdateFileInProject(project.RuntimeFileName,
+                contents => project.RemovesUserErrorsFromContents(contents)
+                                   .Replace("stores.AddAzureKeyVaultWithManagedIdentity(\"https://your-keyvault.vault.azure.net/\", CacheConfiguration.Default);", ""));
+
             return project;
         }
 

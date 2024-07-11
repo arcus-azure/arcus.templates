@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Arcus.Templates.Tests.Integration.AzureFunctions.Admin;
 using Arcus.Templates.Tests.Integration.AzureFunctions.Configuration;
 using Arcus.Templates.Tests.Integration.Fixture;
 using Arcus.Templates.Tests.Integration.Worker.EventHubs.Fixture;
@@ -21,6 +22,7 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs
             : base(config.GetAzureFunctionsEventHubsProjectDirectory(), config, options, outputWriter)
         {
             Messaging = new TestEventHubsMessagePumpService(config, ProjectDirectory, outputWriter);
+            Admin = new AdminEndpointService(RootEndpoint.Port, "sensors", outputWriter);
         }
 
         /// <summary>
@@ -30,6 +32,11 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs
         ///     Only when the project is started, is this service available for interaction.
         /// </remarks>
         public IMessagingService Messaging { get; }
+
+        /// <summary>
+        /// Gets the service to run administrative actions on the Azure Functions project.
+        /// </summary>
+        public AdminEndpointService Admin { get; }
 
         /// <summary>
         /// Starts a newly created project from the Azure Functions EventHubs project template.
@@ -133,6 +140,8 @@ namespace Arcus.Templates.Tests.Integration.AzureFunctions.EventHubs
 
                 Run(Configuration.BuildConfiguration, TargetFramework.Net8_0);
                 await Messaging.StartAsync();
+
+                await WaitUntilTriggerIsAvailableAsync(Admin.Endpoint);
             }
             catch
             {

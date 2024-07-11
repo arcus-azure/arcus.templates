@@ -79,11 +79,7 @@ namespace Arcus.Templates.Tests.Integration.Worker.EventHubs.Fixture
 
             EventHubsConfig eventHubsConfig = _configuration.GetEventHubsConfig();
             await using var client = new EventHubProducerClient(eventHubsConfig.EventHubsConnectionString, eventHubsConfig.EventHubsName);
-            await client.SendAsync(new[] { message },
-                new CorrelationInfo(Guid.NewGuid().ToString(),
-                    traceParent.TransactionId,
-                    traceParent.OperationParentId),
-                _logger);
+            await client.SendAsync(new[] { message });
         }
 
         private async Task<SensorUpdateEventData> ConsumeEventAsync(TraceParent traceParent)

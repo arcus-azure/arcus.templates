@@ -3,7 +3,6 @@ using System.Net;
 using System.Threading.Tasks;
 using Arcus.Templates.AzureFunctions.Http.Model;
 using Azure.Core.Serialization;
-using GuardNet;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http; 
 #if OpenApi
@@ -34,8 +33,8 @@ namespace Arcus.Templates.AzureFunctions.Http
         /// <exception cref="ArgumentNullException">Thrown when the <paramref name="healthCheckService"/> or the <paramref name="jsonSerializer"/> is <c>null</c>.</exception>
         public HealthFunction(HealthCheckService healthCheckService, JsonObjectSerializer jsonSerializer)
         {
-            Guard.NotNull(healthCheckService, nameof(healthCheckService), "Requires a health check service to check the current health of the running Azure Function");
-            Guard.NotNull(jsonSerializer, nameof(jsonSerializer), "Requires a JSON serializer to write JSON contents to the HTTP response");
+            ArgumentNullException.ThrowIfNull(healthCheckService);
+            ArgumentNullException.ThrowIfNull(jsonSerializer);
             
             _healthCheckService = healthCheckService;
             _jsonSerializer = jsonSerializer;

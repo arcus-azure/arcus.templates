@@ -2,7 +2,6 @@ using System;
 using System.Net;
 using System.Threading.Tasks;
 using Arcus.Security.Core;
-using GuardNet;
 using Microsoft.Extensions.Logging;
 using Arcus.Templates.AzureFunctions.Http.Model;
 using Microsoft.Azure.Functions.Worker;
@@ -29,7 +28,7 @@ namespace Arcus.Templates.AzureFunctions.Http
         /// <exception cref="ArgumentNullException">Thrown when the <paramref name="secretProvider"/> is <c>null</c>.</exception>
         public OrderFunction(ISecretProvider secretProvider)
         {
-            Guard.NotNull(secretProvider, nameof(secretProvider), "Requires a secret provider instance");
+            ArgumentNullException.ThrowIfNull(secretProvider);
             _secretProvider = secretProvider;
         }
 

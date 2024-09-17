@@ -8,7 +8,6 @@ using Arcus.Messaging.Abstractions.ServiceBus;
 using Arcus.Messaging.Abstractions.ServiceBus.MessageHandling;
 using Arcus.Templates.AzureFunctions.ServiceBus.Topic.Model;
 using Azure.Messaging.ServiceBus;
-using GuardNet;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
  
@@ -29,8 +28,8 @@ namespace Arcus.Templates.AzureFunctions.ServiceBus.Topic
         /// <exception cref="ArgumentNullException">Thrown when the <paramref name="messageRouter"/> is <c>null</c>.</exception>
         public OrderFunction(IAzureServiceBusMessageRouter messageRouter)
         {
-            Guard.NotNull(messageRouter, nameof(messageRouter), "Requires a message router instance to route the incoming Azure Service Bus topic message through the order processing");
-            
+            ArgumentNullException.ThrowIfNull(messageRouter);
+
             _messageRouter = messageRouter;
             _jobId = Guid.NewGuid().ToString();
         }

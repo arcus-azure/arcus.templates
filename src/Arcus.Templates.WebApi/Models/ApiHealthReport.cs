@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using GuardNet;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace Arcus.Templates.WebApi.Models
@@ -40,7 +39,7 @@ namespace Arcus.Templates.WebApi.Models
         /// <exception cref="ArgumentNullException">Thrown when the <paramref name="report"/> is <c>null</c>.</exception>
         public static ApiHealthReport FromHealthReport(HealthReport report)
         {
-            Guard.NotNull(report, nameof(report), "Requires a Microsoft HealthReport instance to convert to a JSON instance without the exception details");
+            ArgumentNullException.ThrowIfNull(report);
 
             IDictionary<string, ApiHealthReportEntry> entries = 
                 report.Entries.ToDictionary(
@@ -62,7 +61,7 @@ namespace Arcus.Templates.WebApi.Models
         /// <exception cref="ArgumentNullException">Thrown when the <paramref name="report"/> is <c>null</c>.</exception>
         public static HealthReport ToHealthReport(ApiHealthReport report)
         {
-            Guard.NotNull(report, nameof(report), "Requires a Microsoft HealthReport instance to convert to a JSON instance without the exception details");
+            ArgumentNullException.ThrowIfNull(report);
 
             IDictionary<string, HealthReportEntry> entries =
                 report.Entries.ToDictionary(

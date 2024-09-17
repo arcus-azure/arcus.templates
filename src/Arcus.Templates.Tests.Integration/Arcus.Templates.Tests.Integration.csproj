@@ -36,15 +36,15 @@
     <PackageReference Include="Arcus.Messaging.Pumps.ServiceBus" Version="2.0.0" />
     <PackageReference Include="Arcus.Messaging.Pumps.EventHubs" Version="2.0.0" />
     <PackageReference Include="Arcus.Testing.Core" Version="1.0.3" />
-    <PackageReference Include="Bogus" Version="35.5.1" />
+    <PackageReference Include="Bogus" Version="35.6.1" />
     <PackageReference Include="BouncyCastle.NetCoreSdk" Version="1.9.7" />
     <PackageReference Include="Flurl.Http" Version="4.0.2" />
     <PackageReference Include="Microsoft.Azure.ApplicationInsights.Query" Version="1.0.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.0" />
-    <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.6.15" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.6.21" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="xunit" Version="2.8.0" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.0">
+    <PackageReference Include="xunit" Version="2.9.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

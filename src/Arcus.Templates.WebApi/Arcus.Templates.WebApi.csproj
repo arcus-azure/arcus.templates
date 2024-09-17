@@ -78,8 +78,8 @@
     <PackageReference Include="Guard.NET" Version="3.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.6" Condition="'$(JwtAuth)' == 'true'" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
-    <PackageReference Include="Serilog.AspNetCore" Version="8.0.1" Condition="'$(Serilog_AppInsights)' == 'true'" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" Condition="'$(OpenApi)' == 'true'" />
+    <PackageReference Include="Serilog.AspNetCore" Version="8.0.2" Condition="'$(Serilog_AppInsights)' == 'true'" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.7.3" Condition="'$(OpenApi)' == 'true'" />
     <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="8.0.2" Condition="'$(OpenApi)' == 'true' and '$(Correlation)' == 'true'" />
   </ItemGroup>
 

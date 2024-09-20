@@ -5,7 +5,6 @@ using Arcus.Messaging.Abstractions;
 using Arcus.Messaging.Abstractions.EventHubs;
 using Arcus.Messaging.Abstractions.EventHubs.MessageHandling;
 using Azure.Messaging.EventHubs;
-using GuardNet;
 using Microsoft.ApplicationInsights;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,7 +24,7 @@ namespace Arcus.Templates.AzureFunctions.EventHubs
         /// <exception cref="ArgumentNullException">Thrown when the <paramref name="messageRouter"/> is <c>null</c>.</exception>
         public SensorReadingFunction(IAzureEventHubsMessageRouter messageRouter)
         {
-            Guard.NotNull(messageRouter, nameof(messageRouter), "Requires a message router instance to route incoming Azure EventHubs events through the sensor-reading processing");
+            ArgumentNullException.ThrowIfNull(messageRouter);
             _messageRouter = messageRouter;
         }
         

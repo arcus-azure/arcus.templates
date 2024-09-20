@@ -1,10 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Arcus.Templates.WebApi.Models;
 using Arcus.WebApi.Logging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using GuardNet;
 #if OpenApi
 using Arcus.Templates.WebApi.ExampleProviders;
 using Swashbuckle.AspNetCore.Filters;
@@ -27,9 +27,7 @@ namespace Arcus.Templates.WebApi.Controllers
         /// <param name="healthCheckService">The service to provide the health of the API application.</param>
         public HealthController(HealthCheckService healthCheckService)
         {
-            Guard.NotNull(healthCheckService, nameof(healthCheckService));
-
-            _healthCheckService = healthCheckService;
+            _healthCheckService = healthCheckService ?? throw new ArgumentNullException(nameof(healthCheckService));
         }
 
         /// <summary>

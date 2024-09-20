@@ -5,7 +5,6 @@ using Arcus.Messaging.Abstractions;
 using Arcus.Messaging.Abstractions.EventHubs;
 using Arcus.Messaging.Abstractions.EventHubs.MessageHandling;
 using Arcus.Templates.EventHubs.Model;
-using GuardNet;
 using Microsoft.Extensions.Logging;
 
 namespace Arcus.Templates.EventHubs
@@ -24,7 +23,7 @@ namespace Arcus.Templates.EventHubs
         /// <exception cref="ArgumentNullException">Thrown when the <paramref name="logger"/> is <c>null</c>.</exception>
         public SensorReadingAzureEventHubsMessageHandler(ILogger<SensorReadingAzureEventHubsMessageHandler> logger)
         {
-            Guard.NotNull(logger, nameof(logger), "Requires an logger instance to write informational messages during the sensor reading processing");
+            ArgumentNullException.ThrowIfNull(logger);
             _logger = logger;
         }
 

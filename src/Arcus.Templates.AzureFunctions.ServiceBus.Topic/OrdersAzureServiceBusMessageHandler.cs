@@ -5,7 +5,6 @@ using Arcus.Messaging.Abstractions;
 using Arcus.Messaging.Abstractions.ServiceBus;
 using Arcus.Messaging.Abstractions.ServiceBus.MessageHandling;
 using Arcus.Templates.AzureFunctions.ServiceBus.Topic.Model;
-using GuardNet;
 using Microsoft.Extensions.Logging;
 
 namespace Arcus.Templates.AzureFunctions.ServiceBus.Topic
@@ -24,7 +23,7 @@ namespace Arcus.Templates.AzureFunctions.ServiceBus.Topic
         /// <exception cref="ArgumentNullException">Thrown when the <paramref name="logger"/> is <c>null</c>.</exception>
         public OrdersAzureServiceBusMessageHandler(ILogger<OrdersAzureServiceBusMessageHandler> logger)
         {
-            Guard.NotNull(logger, nameof(logger), "Requires an logger instance to write informational messages during the order processing");
+            ArgumentNullException.ThrowIfNull(logger);
             _logger = logger;
         }
 

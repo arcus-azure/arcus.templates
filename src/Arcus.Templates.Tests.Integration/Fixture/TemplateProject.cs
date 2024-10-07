@@ -88,7 +88,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
             string shortName = GetTemplateShortNameAtTemplateFolder();
             Logger.WriteLine($"Creates new project from template {shortName} at {ProjectDirectory.FullName}");
 
-            RunDotNet($"new -i {_templateDirectory.FullName}");
+            RunDotNet($"new install {_templateDirectory.FullName} --force");
 
             string commandArguments = projectOptions.ToCommandLineArguments();
             RunDotNet($"new {shortName} {commandArguments ?? String.Empty} -n {ProjectName} -o {ProjectDirectory.FullName}");
@@ -453,7 +453,7 @@ namespace Arcus.Templates.Tests.Integration.Fixture
 
         private void UninstallTemplate()
         {
-            RunDotNet($"new -u {_templateDirectory.FullName}");
+            RunDotNet($"new uninstall {_templateDirectory.FullName}");
         }
 
         protected void RunDotNet(string command)

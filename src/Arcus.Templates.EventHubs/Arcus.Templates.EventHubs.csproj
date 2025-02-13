@@ -50,9 +50,9 @@
   <!--#endif-->
 
   <ItemGroup>
-    <PackageReference Include="Arcus.Messaging.EventHubs.Core" Version="2.0.0" />
-    <PackageReference Include="Arcus.Messaging.Health" Version="2.0.0" />
-    <PackageReference Include="Arcus.Messaging.Pumps.EventHubs" Version="2.0.0" />
+    <PackageReference Include="Arcus.Messaging.EventHubs.Core" Version="2.1.0" />
+    <PackageReference Include="Arcus.Messaging.Health" Version="2.1.0" />
+    <PackageReference Include="Arcus.Messaging.Pumps.EventHubs" Version="2.1.0" />
     <PackageReference Include="Arcus.Observability.Correlation" Version="3.0.0" />
     <PackageReference Include="Arcus.Observability.Telemetry.Core" Version="3.0.0" />
     <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Filters" Version="3.0.0" Condition="'$(Serilog_AppInsights)' == 'true'" />

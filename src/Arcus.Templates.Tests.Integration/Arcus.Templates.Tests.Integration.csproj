@@ -33,8 +33,8 @@
     <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Sinks.ApplicationInsights" Version="3.0.0" />
     <PackageReference Include="Arcus.Security.Core" Version="2.0.0" />
     <PackageReference Include="Arcus.WebApi.Security" Version="2.0.0" />
-    <PackageReference Include="Arcus.Messaging.Pumps.ServiceBus" Version="2.0.0" />
-    <PackageReference Include="Arcus.Messaging.Pumps.EventHubs" Version="2.0.0" />
+    <PackageReference Include="Arcus.Messaging.Pumps.ServiceBus" Version="2.1.0" />
+    <PackageReference Include="Arcus.Messaging.Pumps.EventHubs" Version="2.1.0" />
     <PackageReference Include="Arcus.Testing.Core" Version="1.2.1" />
     <PackageReference Include="Bogus" Version="35.6.1" />
     <PackageReference Include="BouncyCastle.NetCoreSdk" Version="1.9.7" />

@@ -77,7 +77,7 @@
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.OpenApi" Version="1.5.1" Condition="'$(OpenApi)' == 'true'" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.18.1" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.1" />
-    <PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="9.0.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
     <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
     <PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" Condition="'$(Serilog_AppInsights)' == 'true'" />
   </ItemGroup>

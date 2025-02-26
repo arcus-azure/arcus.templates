@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/runtime:8.0.10-jammy-chiseled AS base
+FROM mcr.microsoft.com/dotnet/runtime:8.0.13-jammy-chiseled AS base
 WORKDIR /app
 EXPOSE 80
 

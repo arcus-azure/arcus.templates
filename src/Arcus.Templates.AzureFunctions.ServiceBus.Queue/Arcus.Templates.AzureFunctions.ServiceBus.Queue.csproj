@@ -49,7 +49,7 @@
   <!--#endif-->
   
   <ItemGroup>
-    <PackageReference Include="Arcus.Messaging.Abstractions.ServiceBus" Version="2.1.0" />
+    <PackageReference Include="Arcus.Messaging.Abstractions.ServiceBus" Version="2.2.0" />
     <PackageReference Include="Arcus.Messaging.AzureFunctions.ServiceBus" Version="2.1.0" />
     <PackageReference Include="Arcus.Observability.Correlation" Version="3.0.0" />
     <PackageReference Include="Arcus.Observability.Telemetry.AzureFunctions" Version="3.0.0" />
